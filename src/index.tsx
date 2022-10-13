@@ -66,7 +66,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
             <i className="fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
           </button>
         </div>
-        <ProgressBar progress={step / Object.values(Steps).length} />
+        <ProgressBar progress={step / (Steps.__LENGTH - 1)} />
         <div className="!mt-0 w-full p-2">
           <AnimatePresence exitBeforeEnter>
             {step === Steps.AssetSelection && (
