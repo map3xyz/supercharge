@@ -1,6 +1,6 @@
 import '@map3xyz/components/dist/index.css';
 
-import { Button, Modal } from '@map3xyz/components';
+import { Button } from '@map3xyz/components';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
