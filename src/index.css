@@ -1,12 +1,11 @@
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .sbui-modal-content {
-    @apply !p-0;
-    @apply !pt-6;
+  @apply !p-0;
+  @apply !pt-6;
 }
 
 .sbui-modal-footer {
-    display: none;
+  display: none !important;
 }

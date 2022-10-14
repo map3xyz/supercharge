@@ -1,9 +1,9 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-import { Modal } from '@map3xyz/components';
+import { Button, Modal } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 
 import ProgressBar from './components/ProgressBar';
 import { Context, Steps, Store } from './providers/Store';
@@ -39,8 +39,6 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
   return (
     <div>
       <Modal
-        alignFooter="right"
-        confirmText={isLastStep ? 'Done' : 'Continue'}
         footerBackground
         onCancel={handleClose}
         onConfirm={() =>
@@ -101,6 +99,11 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
             )}
           </AnimatePresence>
         </div>
+        <div className="!mt-0 w-full bg-neutral-100 p-2">
+          <div className="flex justify-end">
+            <Button>{isLastStep ? 'Close' : 'Next'}</Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
@@ -110,17 +113,38 @@ type Props = {
   onClose: () => void;
 };
 
+export class Map3 {
+  private element: string;
+  private onClose: () => void;
+  private root: Root;
+
+  constructor(config: Map3InitConfig) {
+    this.element = config.element;
+    this.onClose = () => {
+      this.root.unmount();
+    };
+
+    const host = document.getElementById(this.element);
+    if (!host) throw new Error(`Element ${this.element} not found`);
+
+    this.root = createRoot(host);
+  }
+
+  public open() {
+    this.root.render(
+      <Store>
+        <Map3Sdk onClose={this.onClose} />
+      </Store>
+    );
+  }
+
+  public close() {
+    this.onClose();
+  }
+}
+
 export const initMap3Sdk = ({ element }: Map3InitConfig) => {
-  const host = document.getElementById(element);
-
-  if (!host) throw new Error(`Element ${element} not found`);
-
-  const root = createRoot(host);
-  root.render(
-    <Store>
-      <Map3Sdk onClose={() => root.unmount()} />
-    </Store>
-  );
+  return new Map3({ element });
 };
 
 export default Map3Sdk;
