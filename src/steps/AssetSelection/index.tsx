@@ -5,7 +5,7 @@ import { Context } from '../../providers/Store';
 const coins = ['Bitcoin', 'Ethereum', 'Litecoin', 'Bitcoin Cash', 'Ripple'];
 
 const AssetSelection: React.FC<Props> = () => {
-  const [state, dispatch] = useContext(Context);
+  const [_, dispatch] = useContext(Context);
 
   return (
     <>

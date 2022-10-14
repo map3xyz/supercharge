@@ -2018,6 +2018,13 @@
     "@parcel/utils" "2.7.0"
     posthtml "^0.16.4"
 
+"@parcel/packager-ts@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.npmjs.org/@parcel/packager-ts/-/packager-ts-2.7.0.tgz#631c3918fe475a1f69fc82628bebe99d73bae921"
+  integrity sha512-XT46njOHQCYmubQRbtjQOLT9RbXgxQ8aTxCOeO9jEay6snDnY6k+HdMXHAD6qZNyVgm85HJzjmDFDUeJQt9LKw==
+  dependencies:
+    "@parcel/plugin" "2.7.0"
+
 "@parcel/plugin@2.7.0":
   version "2.7.0"
   resolved "https://registry.npmjs.org/@parcel/plugin/-/plugin-2.7.0.tgz#0211281025d02afbc5a23fba237b7aae02e34e51"
@@ -2227,6 +2234,25 @@
     posthtml-parser "^0.10.1"
     posthtml-render "^3.0.0"
     semver "^5.7.1"
+
+"@parcel/transformer-typescript-types@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.npmjs.org/@parcel/transformer-typescript-types/-/transformer-typescript-types-2.7.0.tgz#a3e35c1f5030ce772d82d6ae18311dfab36d96b4"
+  integrity sha512-7eZFJH+0ZOZoh+4ZUKVnP79LI8h45hGAAqCI1UG8l7ZEf6q9yy8lwF9cREu4dUih70TDUHnHkxoNHfZWOjkDSg==
+  dependencies:
+    "@parcel/diagnostic" "2.7.0"
+    "@parcel/plugin" "2.7.0"
+    "@parcel/source-map" "^2.0.0"
+    "@parcel/ts-utils" "2.7.0"
+    "@parcel/utils" "2.7.0"
+    nullthrows "^1.1.1"
+
+"@parcel/ts-utils@2.7.0":
+  version "2.7.0"
+  resolved "https://registry.npmjs.org/@parcel/ts-utils/-/ts-utils-2.7.0.tgz#b5abe7eb5f977c238e11178bbf9a481481d60d1e"
+  integrity sha512-hxgWu9p9+zo9OvllYy12DRrAEyAGGLQysI6PyNvYvsZSmb7sQg9YQ7spD1QmWIQUC1H6BkyzQsowpK0hvPK1xg==
+  dependencies:
+    nullthrows "^1.1.1"
 
 "@parcel/types@2.7.0":
   version "2.7.0"
@@ -9631,7 +9657,12 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.4.2, typescript@^4.8.4:
+typescript@^4.4.2, typescript@~4.7:
+  version "4.7.4"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
+  integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
+typescript@^4.8.4:
   version "4.8.4"
   resolved "https://registry.npmjs.org/typescript/-/typescript-4.8.4.tgz#c464abca159669597be5f96b8943500b238e60e6"
   integrity sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==

@@ -25,7 +25,7 @@ const initialState: State = {
   step: Steps.AssetSelection,
 };
 
-export const Store = ({ children }) => {
+export const Store: React.FC<any> = ({ children }) => {
   const [state, dispatch] = useReducer((state: State, action: Action) => {
     switch (action.type) {
       case 'SET_COIN':

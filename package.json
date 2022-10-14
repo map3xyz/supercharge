@@ -5,11 +5,17 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "parcel build src/index.tsx",
+    "build": "parcel build src/index.tsx && npx tailwindcss -i src/index.css -o dist/index.css --minify",
     "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix"
   },
+  "resolutions": {
+    "typescript": "~4.7",
+    "typescript:comment": "see https://github.com/parcel-bundler/parcel/issues/8419"
+  },
   "devDependencies": {
+    "@parcel/packager-ts": "2.7.0",
+    "@parcel/transformer-typescript-types": "2.7.0",
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/parser": "^5.38.1",
@@ -33,7 +39,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "6.1.2",
     "@map3xyz/components": "0.1.18",
-    "framer-motion":"^7.5.3",
+    "framer-motion": "^7.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.1.8"
