@@ -1,6 +1,6 @@
 {
   "name": "@map3xyz/client-deposit-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "source": "src/index.ts",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
