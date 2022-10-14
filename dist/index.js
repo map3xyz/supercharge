@@ -1,6 +1,6 @@
 import {jsx as $4MPRY$jsx, jsxs as $4MPRY$jsxs, Fragment as $4MPRY$Fragment} from "react/jsx-runtime";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import {Modal as $4MPRY$Modal} from "@map3xyz/components";
+import {Modal as $4MPRY$Modal, Button as $4MPRY$Button} from "@map3xyz/components";
 import {AnimatePresence as $4MPRY$AnimatePresence, motion as $4MPRY$motion} from "framer-motion";
 import {useState as $4MPRY$useState, useContext as $4MPRY$useContext, useEffect as $4MPRY$useEffect, useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext} from "react";
 import {createRoot as $4MPRY$createRoot} from "react-dom/client";
@@ -15,7 +15,7 @@ import {createRoot as $4MPRY$createRoot} from "react-dom/client";
 
 const $44e8e929fd5cdf17$var$ProgressBar = ({ progress: progress  })=>{
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-        className: "relative h-1 w-full bg-neutral-700",
+        className: "relative h-1 w-full bg-neutral-100 dark:bg-neutral-700",
         children: /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
             className: "absolute left-0 h-full bg-blue-600 transition-all duration-150",
             style: {
@@ -231,8 +231,6 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
     const isLastStep = state.step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).__LENGTH - 1;
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
         children: /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Modal), {
-            alignFooter: "right",
-            confirmText: isLastStep ? "Done" : "Continue",
             footerBackground: true,
             onCancel: handleClose,
             onConfirm: ()=>isLastStep ? handleClose() : dispatch({
@@ -310,23 +308,48 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                             }, "PaymentMethod")
                         ]
                     })
+                }),
+                /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                    className: "!mt-0 w-full bg-neutral-100 p-2",
+                    children: /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                        className: "flex justify-end",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
+                            children: isLastStep ? "Close" : "Next"
+                        })
+                    })
                 })
             ]
         })
     });
 };
+class $090815f5086f7f29$export$c06370d2ab5297a3 {
+    constructor(config){
+        this.element = config.element;
+        this.onClose = ()=>{
+            this.root.unmount();
+        };
+        const host = document.getElementById(this.element);
+        if (!host) throw new Error(`Element ${this.element} not found`);
+        this.root = (0, $4MPRY$createRoot)(host);
+    }
+    open() {
+        this.root.render(/*#__PURE__*/ (0, $4MPRY$jsx)((0, $68c68372be4a9678$export$390f32400eaf98c9), {
+            children: /*#__PURE__*/ (0, $4MPRY$jsx)($090815f5086f7f29$var$Map3Sdk, {
+                onClose: this.onClose
+            })
+        }));
+    }
+    close() {
+        this.onClose();
+    }
+}
 const $090815f5086f7f29$export$421c3119381668 = ({ element: element  })=>{
-    const host = document.getElementById(element);
-    if (!host) throw new Error(`Element ${element} not found`);
-    const root = (0, $4MPRY$createRoot)(host);
-    root.render(/*#__PURE__*/ (0, $4MPRY$jsx)((0, $68c68372be4a9678$export$390f32400eaf98c9), {
-        children: /*#__PURE__*/ (0, $4MPRY$jsx)($090815f5086f7f29$var$Map3Sdk, {
-            onClose: ()=>root.unmount()
-        })
-    }));
+    return new $090815f5086f7f29$export$c06370d2ab5297a3({
+        element: element
+    });
 };
 var $090815f5086f7f29$export$2e2bcd8739ae039 = $090815f5086f7f29$var$Map3Sdk;
 
 
-export {$090815f5086f7f29$export$421c3119381668 as initMap3Sdk, $090815f5086f7f29$export$2e2bcd8739ae039 as default};
+export {$090815f5086f7f29$export$c06370d2ab5297a3 as Map3, $090815f5086f7f29$export$421c3119381668 as initMap3Sdk, $090815f5086f7f29$export$2e2bcd8739ae039 as default};
 //# sourceMappingURL=index.js.map
