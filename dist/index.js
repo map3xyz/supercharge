@@ -4,6 +4,8 @@ import {Modal as $4MPRY$Modal, Button as $4MPRY$Button} from "@map3xyz/component
 import {AnimatePresence as $4MPRY$AnimatePresence, motion as $4MPRY$motion} from "framer-motion";
 import {useState as $4MPRY$useState, useContext as $4MPRY$useContext, useEffect as $4MPRY$useEffect, useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext} from "react";
 import {createRoot as $4MPRY$createRoot} from "react-dom/client";
+import "@map3xyz/components/dist/index.css";
+
 
 
 
@@ -15,7 +17,7 @@ import {createRoot as $4MPRY$createRoot} from "react-dom/client";
 
 const $44e8e929fd5cdf17$var$ProgressBar = ({ progress: progress  })=>{
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-        className: "relative h-1 w-full bg-neutral-100 dark:bg-neutral-700",
+        className: "relative h-1 w-full bg-neutral-100 dark:bg-neutral-800",
         children: /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
             className: "absolute left-0 h-full bg-blue-600 transition-all duration-150",
             style: {
@@ -230,8 +232,8 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
     };
     const isLastStep = state.step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).__LENGTH - 1;
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-        className: "map3-sdk-root",
         children: /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Modal), {
+            className: "map3-sdk-modal",
             footerBackground: true,
             onCancel: handleClose,
             onConfirm: ()=>isLastStep ? handleClose() : dispatch({
@@ -311,7 +313,7 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                     })
                 }),
                 /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                    className: "!mt-0 w-full bg-neutral-100 p-2",
+                    className: "!mt-0 w-full bg-neutral-100 p-2 dark:bg-neutral-800",
                     children: /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
                         className: "flex justify-end",
                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
