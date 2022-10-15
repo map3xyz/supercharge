@@ -5,7 +5,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "parcel build src/index.tsx && npx tailwindcss -i src/index.css -o dist/index.css --minify",
+    "build": "parcel build src/index.tsx && npx tailwindcss -i src/index.css -o dist/index.css --postcss --minify",
     "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix"
   },
