@@ -1,6 +1,7 @@
 
 {
   "plugins": {
-    "tailwindcss": {}
+    "tailwindcss": {},
+    "tailwindcss/nesting": {}
   }
 }

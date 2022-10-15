@@ -1,4 +1,5 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import '@map3xyz/components/dist/index.css';
 
 import { Button, Modal } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -39,6 +40,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
   return (
     <div>
       <Modal
+        className="map3-sdk-modal"
         footerBackground
         onCancel={handleClose}
         onConfirm={() =>
@@ -99,7 +101,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
             )}
           </AnimatePresence>
         </div>
-        <div className="!mt-0 w-full bg-neutral-100 p-2">
+        <div className="!mt-0 w-full bg-neutral-100 p-2 dark:bg-neutral-800">
           <div className="flex justify-end">
             <Button>{isLastStep ? 'Close' : 'Next'}</Button>
           </div>

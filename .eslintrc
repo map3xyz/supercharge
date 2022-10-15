@@ -16,7 +16,12 @@
   "rules": {
     "prettier/prettier": "error",
     "react/jsx-sort-props": "error",
-    "tailwindcss/no-custom-classname": 1,
+    "tailwindcss/no-custom-classname": [
+      1,
+      {
+        "whitelist": ["map3-sdk-modal"]
+      }
+    ],
     "simple-import-sort/exports": "error",
     "simple-import-sort/imports": "error",
     "sort-destructure-keys/sort-destructure-keys": "error",
