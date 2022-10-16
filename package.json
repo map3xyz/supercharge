@@ -1,6 +1,6 @@
 {
   "name": "@map3xyz/client-deposit-sdk",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "global": "dist/index.js",
