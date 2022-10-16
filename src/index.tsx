@@ -159,4 +159,8 @@ export const initMap3Sdk = ({ element }: Map3InitConfig) => {
   return new Map3({ element });
 };
 
+// attach to window
+// @ts-ignore
+window.initMap3Sdk = initMap3Sdk;
+
 export default Map3Sdk;
