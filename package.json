@@ -4,6 +4,7 @@
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "global": "dist/index.js",
+  "types": "dist/types.d.ts",
   "targets": {
     "module": {
       "source": "src/index.tsx"
@@ -11,6 +12,9 @@
     "global": {
       "source": "src/index.tsx",
       "outputFormat": "global"
+    },
+    "types": {
+      "source": "src/index.tsx"
     }
   },
   "scripts": {
