@@ -1,6 +1,6 @@
 {
   "name": "@map3xyz/client-deposit-sdk",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "scripts": {
     "build": "parcel build src/index.tsx && npx tailwindcss -i src/index.css -o dist/index.css --postcss --minify",
     "start": "parcel src/index.html",
