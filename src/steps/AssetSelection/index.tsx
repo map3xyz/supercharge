@@ -1,3 +1,4 @@
+import { Button } from '@map3xyz/components';
 import React, { useContext } from 'react';
 
 import { Context } from '../../providers/Store';
@@ -5,28 +6,27 @@ import { Context } from '../../providers/Store';
 const coins = ['Bitcoin', 'Ethereum', 'Litecoin', 'Bitcoin Cash', 'Ripple'];
 
 const AssetSelection: React.FC<Props> = () => {
-  const [_, dispatch] = useContext(Context);
+  const [state, dispatch] = useContext(Context);
 
   return (
     <>
-      <h3 className="text-lg font-semibold dark:text-white">Deposit Crypto</h3>
-      <h5 className="text-xs text-neutral-600">
+      <h3 className="text-lg font-semibold dark:text-white">Select Asset</h3>
+      <h5 className="text-xs text-neutral-400">
         Select the asset you want to deposit.
       </h5>
       <div className="my-3 flex flex-col gap-1">
         {coins.map((coin) => (
-          <div
-            className="flex cursor-pointer items-center"
+          <Button
+            block
             key={coin}
             onClick={() => {
               dispatch({ payload: coin, type: 'SET_COIN' });
               dispatch({ payload: 1, type: 'SET_STEP' });
             }}
-            role="button"
+            type={state.coin === coin ? 'primary' : 'secondary'}
           >
-            <div className="mr-2 h-3 w-3 rounded-full bg-neutral-700"></div>
-            <div className="text-sm dark:text-white">{coin}</div>
-          </div>
+            {coin}
+          </Button>
         ))}
       </div>
     </>

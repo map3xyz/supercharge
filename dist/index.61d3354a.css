@@ -1,11 +1,3 @@
-.sbui-modal-content {
-  padding: 1.5rem 0 0 !important;
-}
-
-.sbui-modal-footer {
-  display: none !important;
-}
-
 .map3-sdk-modal .container {
   width: 100%;
 }
@@ -44,24 +36,16 @@
   visibility: visible;
 }
 
+.map3-sdk-modal .invisible {
+  visibility: hidden;
+}
+
 .map3-sdk-modal .absolute {
   position: absolute;
 }
 
 .map3-sdk-modal .relative {
   position: relative;
-}
-
-.map3-sdk-modal .left-1 {
-  left: .25rem;
-}
-
-.map3-sdk-modal .top-2 {
-  top: .5rem;
-}
-
-.map3-sdk-modal .right-1 {
-  right: .25rem;
 }
 
 .map3-sdk-modal .left-0 {
@@ -77,12 +61,20 @@
   margin-top: 0 !important;
 }
 
-.map3-sdk-modal .mr-2 {
-  margin-right: .5rem;
+.map3-sdk-modal .mt-1 {
+  margin-top: .25rem;
+}
+
+.map3-sdk-modal .block {
+  display: block;
 }
 
 .map3-sdk-modal .flex {
   display: flex;
+}
+
+.map3-sdk-modal .h-4 {
+  height: 1rem;
 }
 
 .map3-sdk-modal .h-1 {
@@ -97,36 +89,44 @@
   height: .75rem;
 }
 
+.map3-sdk-modal .h-2 {
+  height: .5rem;
+}
+
+.map3-sdk-modal .h-2\.5 {
+  height: .625rem;
+}
+
 .map3-sdk-modal .w-full {
   width: 100%;
-}
-
-.map3-sdk-modal .w-3 {
-  width: .75rem;
-}
-
-.map3-sdk-modal .cursor-pointer {
-  cursor: pointer;
 }
 
 .map3-sdk-modal .flex-col {
   flex-direction: column;
 }
 
+.map3-sdk-modal .items-end {
+  align-items: flex-end;
+}
+
 .map3-sdk-modal .items-center {
   align-items: center;
 }
 
-.map3-sdk-modal .justify-end {
-  justify-content: flex-end;
+.map3-sdk-modal .justify-between {
+  justify-content: space-between;
+}
+
+.map3-sdk-modal .gap-4 {
+  gap: 1rem;
 }
 
 .map3-sdk-modal .gap-1 {
   gap: .25rem;
 }
 
-.map3-sdk-modal .rounded-full {
-  border-radius: 9999px;
+.map3-sdk-modal .rounded-lg {
+  border-radius: .5rem;
 }
 
 .map3-sdk-modal .bg-neutral-100 {
@@ -139,25 +139,26 @@
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
-.map3-sdk-modal .bg-neutral-700 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(64 64 64 / var(--tw-bg-opacity));
-}
-
-.map3-sdk-modal .p-1\.5 {
-  padding: .375rem;
-}
-
-.map3-sdk-modal .p-1 {
-  padding: .25rem;
-}
-
 .map3-sdk-modal .p-2 {
   padding: .5rem;
 }
 
-.map3-sdk-modal .pt-0 {
-  padding-top: 0;
+.map3-sdk-modal .px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.map3-sdk-modal .py-3 {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+}
+
+.map3-sdk-modal .pb-2 {
+  padding-bottom: .5rem;
+}
+
+.map3-sdk-modal .text-xxs {
+  font-size: .625rem;
 }
 
 .map3-sdk-modal .text-lg {
@@ -170,13 +171,13 @@
   line-height: 1rem;
 }
 
-.map3-sdk-modal .text-sm {
-  font-size: .875rem;
-  line-height: 1.25rem;
-}
-
 .map3-sdk-modal .font-semibold {
   font-weight: 600;
+}
+
+.map3-sdk-modal .text-neutral-400 {
+  --tw-text-opacity: 1;
+  color: rgb(163 163 163 / var(--tw-text-opacity));
 }
 
 .map3-sdk-modal .text-neutral-600 {
@@ -432,14 +433,21 @@
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+.map3-sdk-modal .sbui-modal-content {
+  padding: 0 !important;
+}
+
+.map3-sdk-modal .sbui-space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin: 0 !important;
+}
+
+.map3-sdk-modal .sbui-modal-footer {
+  display: none !important;
+}
+
 .dark .dark\:bg-neutral-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(38 38 38 / var(--tw-bg-opacity));
-}
-
-.dark .dark\:bg-neutral-700 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(64 64 64 / var(--tw-bg-opacity));
 }
 
 .dark .dark\:text-neutral-600 {
