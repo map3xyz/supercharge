@@ -1,5 +1,6 @@
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '@map3xyz/components/dist/index.css';
+import './index.css';
 
 import { Button, Modal } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';

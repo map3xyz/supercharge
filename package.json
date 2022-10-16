@@ -1,15 +1,20 @@
 {
   "name": "@map3xyz/client-deposit-sdk",
   "version": "0.0.11",
+  "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "global": "dist/index.js",
   "targets": {
+    "module": {
+      "source": "src/index.tsx"
+    },
     "global": {
+      "source": "src/index.tsx",
       "outputFormat": "global"
     }
   },
   "scripts": {
-    "build": "parcel build src/index.tsx",
+    "build": "parcel build",
     "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix"
   },
