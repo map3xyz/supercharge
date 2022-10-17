@@ -13,6 +13,7 @@ import { Context, Steps, Store } from './providers/Store';
 import AssetSelection from './steps/AssetSelection';
 import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
+
 interface Map3InitConfig {
   element: string;
 }
@@ -41,7 +42,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
   return (
     <div>
       <Modal
-        className="map3-sdk-modal map3"
+        className="map3"
         footerBackground
         onCancel={handleClose}
         onConfirm={() =>
