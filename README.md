@@ -19,7 +19,7 @@ import { initMap3Sdk } from '@map3xyz/client-deposit-sdk'
 import '@map3xyz/client-deposit-sdk/dist/index.css'
 
 const map3 = initMap3Sdk({ element: 'map3' })
-map3.open()
+map3.open({})
 ```
 
 ### Install via CDN
@@ -36,7 +36,7 @@ You can also include a normal script and link tag if your app doesn't support mo
     </head>
 
     <body>
-        <button onClick="openSdk()">Open SDK</button>
+        <button onClick="openSdk({})">Open SDK</button>
     </body>
     <script>
         function openSdk() {

@@ -11,10 +11,13 @@ import Logo from './assets/logo.svg';
 import ProgressBar from './components/ProgressBar';
 import { Context, Steps, Store } from './providers/Store';
 import AssetSelection from './steps/AssetSelection';
+import EnterAmount from './steps/EnterAmount';
 import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
 
 interface Map3InitConfig {
+  coin?: string;
+  network?: string;
   theme?: 'dark' | 'light';
 }
 
@@ -75,7 +78,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
-                key={'AssetSelection'}
+                key={Steps[step]}
               >
                 <AssetSelection />
               </motion.div>
@@ -85,7 +88,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
-                key={'NetworkSelection'}
+                key={Steps[step]}
               >
                 <NetworkSelection />
               </motion.div>
@@ -95,9 +98,19 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
-                key={'PaymentMethod'}
+                key={Steps[step]}
               >
                 <PaymentMethod />
+              </motion.div>
+            )}
+            {step === Steps.EnterAmount && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <EnterAmount />
               </motion.div>
             )}
           </AnimatePresence>
@@ -115,7 +128,17 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <Logo className="h-3" />
               </div>
             </a>
-            <Button>{isLastStep ? 'Close' : 'Next'}</Button>
+            <Button
+              onClick={() => {
+                if (isLastStep) {
+                  handleClose();
+                } else {
+                  dispatch({ payload: step + 1, type: 'SET_STEP' });
+                }
+              }}
+            >
+              {isLastStep ? 'Close' : 'Next'}
+            </Button>
           </div>
         </div>
       </Modal>
@@ -130,8 +153,11 @@ type Props = {
 export class Map3 {
   private onClose: () => void;
   private root: Root;
+  private config: Map3InitConfig;
 
   constructor(config: Map3InitConfig) {
+    this.config = config;
+
     this.onClose = () => {
       this.root.unmount();
       document.body.classList.remove('dark');
@@ -150,7 +176,7 @@ export class Map3 {
 
   public open() {
     this.root.render(
-      <Store>
+      <Store {...this.config}>
         <Map3Sdk onClose={this.onClose} />
       </Store>
     );

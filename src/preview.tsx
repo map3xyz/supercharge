@@ -9,7 +9,11 @@ root.render(
   <div className="p-2">
     <button
       onClick={() => {
-        const map3 = initMap3Sdk({ theme: 'dark' });
+        const map3 = initMap3Sdk({
+          coin: 'Bitcoin',
+          network: 'BTC',
+          theme: 'dark',
+        });
         map3.open();
       }}
     >
