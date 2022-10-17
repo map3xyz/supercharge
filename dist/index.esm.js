@@ -365,7 +365,7 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
     const isLastStep = state.step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).__LENGTH - 1;
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
         children: /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Modal), {
-            className: "map3-sdk-modal",
+            className: "map3-sdk-modal map3",
             footerBackground: true,
             onCancel: handleClose,
             onConfirm: ()=>isLastStep ? handleClose() : dispatch({

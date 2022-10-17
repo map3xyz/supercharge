@@ -1,270 +1,270 @@
-.map3-sdk-modal .container {
+.map3 .container {
   width: 100%;
 }
 
 @media (min-width: 640px) {
-  .map3-sdk-modal .container {
+  .map3 .container {
     max-width: 640px;
   }
 }
 
 @media (min-width: 768px) {
-  .map3-sdk-modal .container {
+  .map3 .container {
     max-width: 768px;
   }
 }
 
 @media (min-width: 1024px) {
-  .map3-sdk-modal .container {
+  .map3 .container {
     max-width: 1024px;
   }
 }
 
 @media (min-width: 1280px) {
-  .map3-sdk-modal .container {
+  .map3 .container {
     max-width: 1280px;
   }
 }
 
 @media (min-width: 1536px) {
-  .map3-sdk-modal .container {
+  .map3 .container {
     max-width: 1536px;
   }
 }
 
-.map3-sdk-modal .visible {
+.map3 .visible {
   visibility: visible;
 }
 
-.map3-sdk-modal .invisible {
+.map3 .invisible {
   visibility: hidden;
 }
 
-.map3-sdk-modal .absolute {
+.map3 .absolute {
   position: absolute;
 }
 
-.map3-sdk-modal .relative {
+.map3 .relative {
   position: relative;
 }
 
-.map3-sdk-modal .left-0 {
+.map3 .left-0 {
   left: 0;
 }
 
-.map3-sdk-modal .my-3 {
+.map3 .my-3 {
   margin-top: .75rem;
   margin-bottom: .75rem;
 }
 
-.map3-sdk-modal .\!mt-0 {
+.map3 .\!mt-0 {
   margin-top: 0 !important;
 }
 
-.map3-sdk-modal .block {
+.map3 .block {
   display: block;
 }
 
-.map3-sdk-modal .flex {
+.map3 .flex {
   display: flex;
 }
 
-.map3-sdk-modal .h-3 {
+.map3 .h-3 {
   height: .75rem;
 }
 
-.map3-sdk-modal .h-1 {
+.map3 .h-1 {
   height: .25rem;
 }
 
-.map3-sdk-modal .h-full {
+.map3 .h-full {
   height: 100%;
 }
 
-.map3-sdk-modal .w-full {
+.map3 .w-full {
   width: 100%;
 }
 
-.map3-sdk-modal .flex-col {
+.map3 .flex-col {
   flex-direction: column;
 }
 
-.map3-sdk-modal .items-end {
+.map3 .items-end {
   align-items: flex-end;
 }
 
-.map3-sdk-modal .items-center {
+.map3 .items-center {
   align-items: center;
 }
 
-.map3-sdk-modal .justify-between {
+.map3 .justify-between {
   justify-content: space-between;
 }
 
-.map3-sdk-modal .gap-4 {
+.map3 .gap-4 {
   gap: 1rem;
 }
 
-.map3-sdk-modal .gap-1 {
+.map3 .gap-1 {
   gap: .25rem;
 }
 
-.map3-sdk-modal .rounded-lg {
+.map3 .rounded-lg {
   border-radius: .5rem;
 }
 
-.map3-sdk-modal .bg-neutral-100 {
+.map3 .bg-neutral-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));
 }
 
-.map3-sdk-modal .bg-blue-600 {
+.map3 .bg-blue-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
-.map3-sdk-modal .p-2 {
+.map3 .p-2 {
   padding: .5rem;
 }
 
-.map3-sdk-modal .px-4 {
+.map3 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-.map3-sdk-modal .py-3 {
+.map3 .py-3 {
   padding-top: .75rem;
   padding-bottom: .75rem;
 }
 
-.map3-sdk-modal .pb-2 {
+.map3 .pb-2 {
   padding-bottom: .5rem;
 }
 
-.map3-sdk-modal .text-xxs {
+.map3 .text-xxs {
   font-size: .625rem;
 }
 
-.map3-sdk-modal .text-lg {
+.map3 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
 }
 
-.map3-sdk-modal .text-xs {
+.map3 .text-xs {
   font-size: .75rem;
   line-height: 1rem;
 }
 
-.map3-sdk-modal .font-semibold {
+.map3 .font-semibold {
   font-weight: 600;
 }
 
-.map3-sdk-modal .text-neutral-400 {
+.map3 .text-neutral-400 {
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));
 }
 
-.map3-sdk-modal .text-neutral-600 {
+.map3 .text-neutral-600 {
   --tw-text-opacity: 1;
   color: rgb(82 82 82 / var(--tw-text-opacity));
 }
 
-.map3-sdk-modal .transition {
+.map3 .transition {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter, backdrop-filter;
   transition-duration: .15s;
   transition-timing-function: cubic-bezier(.4, 0, .2, 1);
 }
 
-.map3-sdk-modal .transition-all {
+.map3 .transition-all {
   transition-property: all;
   transition-duration: .15s;
   transition-timing-function: cubic-bezier(.4, 0, .2, 1);
 }
 
-.map3-sdk-modal .duration-75 {
+.map3 .duration-75 {
   transition-duration: 75ms;
 }
 
-.map3-sdk-modal .duration-150 {
+.map3 .duration-150 {
   transition-duration: .15s;
 }
 
-.map3-sdk-modal *, .map3-sdk-modal :before, .map3-sdk-modal :after {
+.map3 *, .map3 :before, .map3 :after {
   box-sizing: border-box;
   border: 0 solid #e5e7eb;
 }
 
-.map3-sdk-modal :before, .map3-sdk-modal :after {
+.map3 :before, .map3 :after {
   --tw-content: "";
 }
 
-.map3-sdk-modal html {
+.map3 html {
   -webkit-text-size-adjust: 100%;
   tab-size: 4;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   line-height: 1.5;
 }
 
-.map3-sdk-modal body {
+.map3 body {
   line-height: inherit;
   margin: 0;
 }
 
-.map3-sdk-modal hr {
+.map3 hr {
   height: 0;
   color: inherit;
   border-top-width: 1px;
 }
 
-.map3-sdk-modal abbr:where([title]) {
+.map3 abbr:where([title]) {
   text-decoration: underline dotted;
 }
 
-.map3-sdk-modal h1, .map3-sdk-modal h2, .map3-sdk-modal h3, .map3-sdk-modal h4, .map3-sdk-modal h5, .map3-sdk-modal h6 {
+.map3 h1, .map3 h2, .map3 h3, .map3 h4, .map3 h5, .map3 h6 {
   font-size: inherit;
   font-weight: inherit;
 }
 
-.map3-sdk-modal a {
+.map3 a {
   color: inherit;
   text-decoration: inherit;
 }
 
-.map3-sdk-modal b, .map3-sdk-modal strong {
+.map3 b, .map3 strong {
   font-weight: bolder;
 }
 
-.map3-sdk-modal code, .map3-sdk-modal kbd, .map3-sdk-modal samp, .map3-sdk-modal pre {
+.map3 code, .map3 kbd, .map3 samp, .map3 pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   font-size: 1em;
 }
 
-.map3-sdk-modal small {
+.map3 small {
   font-size: 80%;
 }
 
-.map3-sdk-modal sub, .map3-sdk-modal sup {
+.map3 sub, .map3 sup {
   vertical-align: baseline;
   font-size: 75%;
   line-height: 0;
   position: relative;
 }
 
-.map3-sdk-modal sub {
+.map3 sub {
   bottom: -.25em;
 }
 
-.map3-sdk-modal sup {
+.map3 sup {
   top: -.5em;
 }
 
-.map3-sdk-modal table {
+.map3 table {
   text-indent: 0;
   border-color: inherit;
   border-collapse: collapse;
 }
 
-.map3-sdk-modal button, .map3-sdk-modal input, .map3-sdk-modal optgroup, .map3-sdk-modal select, .map3-sdk-modal textarea {
+.map3 button, .map3 input, .map3 optgroup, .map3 select, .map3 textarea {
   font-family: inherit;
   font-size: 100%;
   font-weight: inherit;
@@ -274,97 +274,97 @@
   padding: 0;
 }
 
-.map3-sdk-modal button, .map3-sdk-modal select {
+.map3 button, .map3 select {
   text-transform: none;
 }
 
-.map3-sdk-modal button, .map3-sdk-modal [type="button"], .map3-sdk-modal [type="reset"], .map3-sdk-modal [type="submit"] {
+.map3 button, .map3 [type="button"], .map3 [type="reset"], .map3 [type="submit"] {
   -webkit-appearance: button;
   background-color: #0000;
   background-image: none;
 }
 
-.map3-sdk-modal :-moz-focusring {
+.map3 :-moz-focusring {
   outline: auto;
 }
 
-.map3-sdk-modal :-moz-ui-invalid {
+.map3 :-moz-ui-invalid {
   box-shadow: none;
 }
 
-.map3-sdk-modal progress {
+.map3 progress {
   vertical-align: baseline;
 }
 
-.map3-sdk-modal ::-webkit-inner-spin-button, .map3-sdk-modal ::-webkit-outer-spin-button {
+.map3 ::-webkit-inner-spin-button, .map3 ::-webkit-outer-spin-button {
   height: auto;
 }
 
-.map3-sdk-modal [type="search"] {
+.map3 [type="search"] {
   -webkit-appearance: textfield;
   outline-offset: -2px;
 }
 
-.map3-sdk-modal ::-webkit-search-decoration {
+.map3 ::-webkit-search-decoration {
   -webkit-appearance: none;
 }
 
-.map3-sdk-modal ::-webkit-file-upload-button {
+.map3 ::-webkit-file-upload-button {
   -webkit-appearance: button;
   font: inherit;
 }
 
-.map3-sdk-modal summary {
+.map3 summary {
   display: list-item;
 }
 
-.map3-sdk-modal blockquote, .map3-sdk-modal dl, .map3-sdk-modal dd, .map3-sdk-modal h1, .map3-sdk-modal h2, .map3-sdk-modal h3, .map3-sdk-modal h4, .map3-sdk-modal h5, .map3-sdk-modal h6, .map3-sdk-modal hr, .map3-sdk-modal figure, .map3-sdk-modal p, .map3-sdk-modal pre {
+.map3 blockquote, .map3 dl, .map3 dd, .map3 h1, .map3 h2, .map3 h3, .map3 h4, .map3 h5, .map3 h6, .map3 hr, .map3 figure, .map3 p, .map3 pre {
   margin: 0;
 }
 
-.map3-sdk-modal fieldset {
+.map3 fieldset {
   margin: 0;
   padding: 0;
 }
 
-.map3-sdk-modal legend {
+.map3 legend {
   padding: 0;
 }
 
-.map3-sdk-modal ol, .map3-sdk-modal ul, .map3-sdk-modal menu {
+.map3 ol, .map3 ul, .map3 menu {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.map3-sdk-modal textarea {
+.map3 textarea {
   resize: vertical;
 }
 
-.map3-sdk-modal input::placeholder, .map3-sdk-modal textarea::placeholder {
+.map3 input::placeholder, .map3 textarea::placeholder {
   opacity: 1;
   color: #9ca3af;
 }
 
-.map3-sdk-modal button, .map3-sdk-modal [role="button"] {
+.map3 button, .map3 [role="button"] {
   cursor: pointer;
 }
 
-.map3-sdk-modal :disabled {
+.map3 :disabled {
   cursor: default;
 }
 
-.map3-sdk-modal img, .map3-sdk-modal svg, .map3-sdk-modal video, .map3-sdk-modal canvas, .map3-sdk-modal audio, .map3-sdk-modal iframe, .map3-sdk-modal embed, .map3-sdk-modal object {
+.map3 img, .map3 svg, .map3 video, .map3 canvas, .map3 audio, .map3 iframe, .map3 embed, .map3 object {
   vertical-align: middle;
   display: block;
 }
 
-.map3-sdk-modal img, .map3-sdk-modal video {
+.map3 img, .map3 video {
   max-width: 100%;
   height: auto;
 }
 
-.map3-sdk-modal *, .map3-sdk-modal :before, .map3-sdk-modal :after, .map3-sdk-modal ::backdrop {
+.map3 *, .map3 :before, .map3 :after, .map3 ::backdrop {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
   --tw-translate-x: 0;
@@ -411,21 +411,21 @@
   --tw-backdrop-sepia: ;
 }
 
-.map3-sdk-modal {
+.map3 {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-.map3-sdk-modal .sbui-modal-content {
+.map3 .sbui-modal-content {
   padding: 0 !important;
 }
 
-.map3-sdk-modal .sbui-space-y-4 > :not([hidden]) ~ :not([hidden]) {
+.map3 .sbui-space-y-4 > :not([hidden]) ~ :not([hidden]) {
   margin: 0 !important;
 }
 
-.map3-sdk-modal .sbui-modal-footer {
+.map3 .sbui-modal-footer {
   display: none !important;
 }
 
