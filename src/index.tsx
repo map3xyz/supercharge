@@ -41,7 +41,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
   return (
     <div>
       <Modal
-        className="map3-sdk-modal"
+        className="map3-sdk-modal map3"
         footerBackground
         onCancel={handleClose}
         onConfirm={() =>

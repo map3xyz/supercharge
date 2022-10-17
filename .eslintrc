@@ -19,7 +19,7 @@
     "tailwindcss/no-custom-classname": [
       1,
       {
-        "whitelist": ["map3-sdk-modal"]
+        "whitelist": ["map3"]
       }
     ],
     "simple-import-sort/exports": "error",
