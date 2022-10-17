@@ -9,12 +9,11 @@ root.render(
   <div className="p-2">
     <button
       onClick={() => {
-        const map3 = initMap3Sdk({ element: 'map3-sdk-element' });
+        const map3 = initMap3Sdk({ theme: 'dark' });
         map3.open();
       }}
     >
       Open SDK
     </button>
-    <div id="map3-sdk-element"></div>
   </div>
 );

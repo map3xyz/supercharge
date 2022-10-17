@@ -15,7 +15,7 @@ import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
 
 interface Map3InitConfig {
-  element: string;
+  theme?: 'dark' | 'light';
 }
 
 const TRANSITION = 300;
@@ -128,20 +128,24 @@ type Props = {
 };
 
 export class Map3 {
-  private element: string;
   private onClose: () => void;
   private root: Root;
 
   constructor(config: Map3InitConfig) {
-    this.element = config.element;
     this.onClose = () => {
       this.root.unmount();
+      document.body.classList.remove('dark');
     };
 
-    const host = document.getElementById(this.element);
-    if (!host) throw new Error(`Element ${this.element} not found`);
+    const element = document.createElement('div');
+    element.id = 'map3';
+    document.body.appendChild(element);
 
-    this.root = createRoot(host);
+    if (config.theme === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    this.root = createRoot(element);
   }
 
   public open() {
@@ -157,11 +161,10 @@ export class Map3 {
   }
 }
 
-export const initMap3Sdk = ({ element }: Map3InitConfig) => {
-  return new Map3({ element });
+export const initMap3Sdk = (args: Map3InitConfig) => {
+  return new Map3(args);
 };
 
-// attach to window
 // @ts-ignore
 window.initMap3Sdk = initMap3Sdk;
 

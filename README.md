@@ -12,15 +12,6 @@ or
 yarn add @map3xyz/client-deposit-sdk
 ```
 
-```html
-// index.html
-
-<body>
-    ...
-    <div id="map3" />
-</body>
-```
-
 ```js
 // index.js
 
@@ -46,8 +37,6 @@ You can also include a normal script and link tag if your app doesn't support mo
 
     <body>
         <button onClick="openSdk()">Open SDK</button>
-
-        <div id="map3-element" class="map3" />
     </body>
     <script>
         function openSdk() {
@@ -56,14 +45,4 @@ You can also include a normal script and link tag if your app doesn't support mo
         }
     </script>
 </html>
-```
-
-### Dark Mode
-
-You can enable dark mode by adding the class name "dark" to the body element.
-
-```html
-<body class="dark">
-...
-</body>
 ```
