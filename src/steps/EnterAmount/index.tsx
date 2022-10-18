@@ -6,25 +6,28 @@ import { Context } from '../../providers/Store';
 const BASE_FONT_SIZE = 48;
 
 const EnterAmount: React.FC<Props> = () => {
-  const dummyRef = useRef<HTMLSpanElement>(null);
+  const dummyInputRef = useRef<HTMLSpanElement>(null);
+  const dummySymbolRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const quoteRef = useRef<HTMLSpanElement>(null);
 
   const [state] = useContext(Context);
   const [formValue, setFormValue] = useState<{
     base: string;
+    inputSelected: 'crypto' | 'fiat';
     quote: string;
-  }>({ base: '0', quote: '0' });
+  }>({ base: '0', inputSelected: 'fiat', quote: '0' });
 
   useEffect(() => {
-    dummyRef.current!.innerText = formValue.base;
-    let nextInputWidth = dummyRef.current!.getBoundingClientRect().width;
+    dummyInputRef.current!.innerText = formValue.base;
+    let nextInputWidth = dummyInputRef.current!.getBoundingClientRect().width;
+    const symbolWidth = dummySymbolRef.current!.getBoundingClientRect().width;
     const formWidth = formRef.current!.getBoundingClientRect().width;
 
     if (inputRef.current && formRef.current) {
-      inputRef.current.style.width = `${nextInputWidth}px`;
       if (nextInputWidth > formWidth) {
-        const percentFontChange = formWidth / nextInputWidth;
+        const percentFontChange = formWidth / (nextInputWidth + symbolWidth);
         const fontSize = Math.floor(BASE_FONT_SIZE * percentFontChange) - 1;
 
         nextInputWidth = formWidth;
@@ -32,9 +35,14 @@ const EnterAmount: React.FC<Props> = () => {
         formRef.current.style.fontSize = `${fontSize}px`;
         inputRef.current.style.width = `${nextInputWidth}px`;
       } else {
+        inputRef.current.style.width = `${nextInputWidth}px`;
         formRef.current.style.fontSize = `${BASE_FONT_SIZE}px`;
       }
     }
+  }, [formValue]);
+
+  useEffect(() => {
+    // convert base to quote on input change
   }, [formValue]);
 
   if (!state.coin || !state.network) {
@@ -61,7 +69,9 @@ const EnterAmount: React.FC<Props> = () => {
         ref={formRef}
       >
         <div className="relative box-border flex max-w-full items-center justify-center">
-          <span className="text-inherit">$</span>
+          {formValue.inputSelected === 'fiat' ? (
+            <span className="text-inherit">$</span>
+          ) : null}
           <input
             autoFocus
             className="flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
@@ -73,8 +83,22 @@ const EnterAmount: React.FC<Props> = () => {
           />
           <span
             className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
-            ref={dummyRef}
+            ref={dummyInputRef}
           />
+          <span
+            className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
+            ref={dummySymbolRef}
+          >
+            {formValue.inputSelected === 'crypto' ? 'BTC' : '$'}
+          </span>
+          {formValue.inputSelected === 'crypto' ? (
+            <span className="text-inherit">BTC</span>
+          ) : null}
+        </div>
+        <div className=" mt-8 text-xs text-neutral-400">
+          {formValue.inputSelected === 'crypto' ? <span>$&nbsp;</span> : null}
+          <span ref={quoteRef}>0.001</span>
+          {formValue.inputSelected === 'fiat' ? <span>&nbsp;BTC</span> : null}
         </div>
       </form>
     </>
