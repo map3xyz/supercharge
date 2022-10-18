@@ -13,11 +13,17 @@
     padding: 0 !important;
   }
 
-  .sbui-space-y-4>:not([hidden])~:not([hidden]) {
+  .sbui-space-y-4 > :not([hidden]) ~ :not([hidden]) {
     margin: 0 !important;
   }
 
   .sbui-modal-footer {
     display: none !important;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }

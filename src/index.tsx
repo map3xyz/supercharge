@@ -13,7 +13,7 @@ import { Context, Steps, Store } from './providers/Store';
 import AssetSelection from './steps/AssetSelection';
 import EnterAmount from './steps/EnterAmount';
 import NetworkSelection from './steps/NetworkSelection';
-import PaymentMethod from './steps/PaymentMethod';
+// import PaymentMethod from './steps/PaymentMethod';
 
 interface Map3InitConfig {
   coin?: string;
@@ -93,7 +93,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <NetworkSelection />
               </motion.div>
             )}
-            {step === Steps.PaymentMethod && (
+            {/* {step === Steps.PaymentMethod && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -102,7 +102,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
               >
                 <PaymentMethod />
               </motion.div>
-            )}
+            )} */}
             {step === Steps.EnterAmount && (
               <motion.div
                 animate={{ opacity: 1 }}

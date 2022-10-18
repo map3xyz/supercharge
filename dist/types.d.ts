@@ -1,6 +1,8 @@
 import React from "react";
 interface Map3InitConfig {
-    element: string;
+    coin?: string;
+    network?: string;
+    theme?: 'dark' | 'light';
 }
 declare const Map3Sdk: React.FC<Props>;
 type Props = {
@@ -11,7 +13,7 @@ export class Map3 {
     open(): void;
     close(): void;
 }
-export const initMap3Sdk: ({ element }: Map3InitConfig) => Map3;
+export const initMap3Sdk: (args: Map3InitConfig) => Map3;
 export default Map3Sdk;
 
 //# sourceMappingURL=types.d.ts.map

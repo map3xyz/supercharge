@@ -29,7 +29,7 @@ const NetworkSelection: React.FC<Props> = () => {
         Select the network to deposit <Badge color="blue">{state.coin}</Badge>{' '}
         in.
       </h5>
-      <div className="my-3 flex flex-col gap-1">
+      <div className="my-3 flex flex-col gap-1 dark:text-white">
         {networks.map((network) => (
           <Button
             block

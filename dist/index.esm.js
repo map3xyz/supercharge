@@ -4,7 +4,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@map3xyz/components/dist/index.css";
 import {Modal as $4MPRY$Modal, Button as $4MPRY$Button, Badge as $4MPRY$Badge} from "@map3xyz/components";
 import {AnimatePresence as $4MPRY$AnimatePresence, motion as $4MPRY$motion} from "framer-motion";
-import {useState as $4MPRY$useState, useContext as $4MPRY$useContext, useEffect as $4MPRY$useEffect, useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext} from "react";
+import {useState as $4MPRY$useState, useContext as $4MPRY$useContext, useEffect as $4MPRY$useEffect, useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext, useRef as $4MPRY$useRef} from "react";
 import {createRoot as $4MPRY$createRoot} from "react-dom/client";
 
 
@@ -177,16 +177,19 @@ let $68c68372be4a9678$export$fb587a27d5a722e7;
 (function(Steps) {
     Steps[Steps["AssetSelection"] = 0] = "AssetSelection";
     Steps[Steps["NetworkSelection"] = 1] = "NetworkSelection";
-    Steps[Steps["PaymentMethod"] = 2] = "PaymentMethod";
-    Steps[Steps["EnterAmount"] = 3] = "EnterAmount";
-    Steps[Steps["__LENGTH"] = 4] = "__LENGTH";
+    Steps[Steps[// 'PaymentMethod' = 2,
+    "EnterAmount"] = 2] = "EnterAmount";
+    Steps[Steps["__LENGTH"] = 3] = "__LENGTH";
 })($68c68372be4a9678$export$fb587a27d5a722e7 || ($68c68372be4a9678$export$fb587a27d5a722e7 = {}));
 const $68c68372be4a9678$var$initialState = {
-    coin: null,
-    network: null,
+    coin: undefined,
+    network: undefined,
     step: $68c68372be4a9678$export$fb587a27d5a722e7.AssetSelection
 };
-const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children  })=>{
+const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: coin , network: network  })=>{
+    let step = 0;
+    if (coin) step = 1;
+    if (coin && network) step = 2;
     const [state, dispatch] = (0, $4MPRY$useReducer)((state, action)=>{
         switch(action.type){
             case "SET_COIN":
@@ -207,7 +210,12 @@ const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children  })=>{
             default:
                 return state;
         }
-    }, $68c68372be4a9678$var$initialState);
+    }, {
+        ...$68c68372be4a9678$var$initialState,
+        coin: coin,
+        network: network,
+        step: step
+    });
     return /*#__PURE__*/ (0, $4MPRY$jsx)($68c68372be4a9678$export$841858b892ce1f4c.Provider, {
         value: [
             state,
@@ -246,7 +254,7 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
                 children: "Select the asset you want to deposit."
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "my-3 flex flex-col gap-1",
+                className: "my-3 flex flex-col gap-1 dark:text-white",
                 children: $d8f5e4867dc7bbaa$var$coins.map((coin)=>/*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
                         block: true,
                         onClick: ()=>{
@@ -267,6 +275,102 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
     });
 };
 var $d8f5e4867dc7bbaa$export$2e2bcd8739ae039 = $d8f5e4867dc7bbaa$var$AssetSelection;
+
+
+
+
+
+
+const $389c6829553d16e1$var$BASE_FONT_SIZE = 48;
+const $389c6829553d16e1$var$EnterAmount = ()=>{
+    const dummyRef = (0, $4MPRY$useRef)(null);
+    const inputRef = (0, $4MPRY$useRef)(null);
+    const formRef = (0, $4MPRY$useRef)(null);
+    const [state] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
+    const [formValue, setFormValue] = (0, $4MPRY$useState)({
+        base: "0",
+        quote: "0"
+    });
+    (0, $4MPRY$useEffect)(()=>{
+        dummyRef.current.innerText = formValue.base;
+        let nextInputWidth = dummyRef.current.getBoundingClientRect().width;
+        const formWidth = formRef.current.getBoundingClientRect().width;
+        if (inputRef.current && formRef.current) {
+            inputRef.current.style.width = `${nextInputWidth}px`;
+            if (nextInputWidth > formWidth) {
+                const percentFontChange = formWidth / nextInputWidth;
+                const fontSize = Math.floor($389c6829553d16e1$var$BASE_FONT_SIZE * percentFontChange) - 1;
+                nextInputWidth = formWidth;
+                formRef.current.style.fontSize = `${fontSize}px`;
+                inputRef.current.style.width = `${nextInputWidth}px`;
+            } else formRef.current.style.fontSize = `${$389c6829553d16e1$var$BASE_FONT_SIZE}px`;
+        }
+    }, [
+        formValue
+    ]);
+    if (!state.coin || !state.network) return null;
+    return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                className: "text-lg font-semibold dark:text-white",
+                children: "Enter Amount"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
+                className: "text-xs text-neutral-400",
+                children: [
+                    "How much ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                        color: "blue",
+                        children: state.coin
+                    }),
+                    " would you like to deposit on the",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                        color: "indigo",
+                        children: `${state.network} Network`
+                    }),
+                    "?"
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("form", {
+                className: "flex flex-col items-center justify-center py-8 text-5xl font-semibold dark:text-white",
+                onChange: (event)=>{
+                    const target = event.target;
+                    setFormValue((formValue)=>({
+                            ...formValue,
+                            [target.name]: target.value
+                        }));
+                },
+                ref: formRef,
+                children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                    className: "relative box-border flex max-w-full items-center justify-center",
+                    children: [
+                        /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                            className: "text-inherit",
+                            children: "$"
+                        }),
+                        /*#__PURE__*/ (0, $4MPRY$jsx)("input", {
+                            autoFocus: true,
+                            className: "flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0",
+                            name: "base",
+                            placeholder: "0",
+                            ref: inputRef,
+                            style: {
+                                minWidth: `${$389c6829553d16e1$var$BASE_FONT_SIZE}px`
+                            },
+                            type: "number"
+                        }),
+                        /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                            className: "invisible absolute -left-96 -top-96 pl-6 !text-5xl",
+                            ref: dummyRef
+                        })
+                    ]
+                })
+            })
+        ]
+    });
+};
+var $389c6829553d16e1$export$2e2bcd8739ae039 = $389c6829553d16e1$var$EnterAmount;
 
 
 
@@ -306,7 +410,7 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
                 ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "my-3 flex flex-col gap-1",
+                className: "my-3 flex flex-col gap-1 dark:text-white",
                 children: $e9fc485e32047442$var$networks.map((network)=>/*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
                         block: true,
                         onClick: ()=>{
@@ -327,25 +431,6 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
     });
 };
 var $e9fc485e32047442$export$2e2bcd8739ae039 = $e9fc485e32047442$var$NetworkSelection;
-
-
-
-
-const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
-    return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
-        children: [
-            /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
-                className: "text-lg font-semibold dark:text-white",
-                children: "Payment Method"
-            }),
-            /*#__PURE__*/ (0, $4MPRY$jsx)("h5", {
-                className: "text-xs text-neutral-600",
-                children: "Select the payment method you want to use."
-            })
-        ]
-    });
-};
-var $d752ec9124ef7f1d$export$2e2bcd8739ae039 = $d752ec9124ef7f1d$var$PaymentMethod;
 
 
 const $090815f5086f7f29$var$TRANSITION = 300;
@@ -418,7 +503,7 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                                     opacity: 0
                                 },
                                 children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $d8f5e4867dc7bbaa$export$2e2bcd8739ae039), {})
-                            }, "AssetSelection"),
+                            }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step]),
                             step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$motion).div, {
                                 animate: {
                                     opacity: 1
@@ -430,8 +515,8 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                                     opacity: 0
                                 },
                                 children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $e9fc485e32047442$export$2e2bcd8739ae039), {})
-                            }, "NetworkSelection"),
-                            step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).PaymentMethod && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$motion).div, {
+                            }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step]),
+                            step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).EnterAmount && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$motion).div, {
                                 animate: {
                                     opacity: 1
                                 },
@@ -441,8 +526,8 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                                 initial: {
                                     opacity: 0
                                 },
-                                children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $d752ec9124ef7f1d$export$2e2bcd8739ae039), {})
-                            }, "PaymentMethod")
+                                children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $389c6829553d16e1$export$2e2bcd8739ae039), {})
+                            }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step])
                         ]
                     })
                 }),
@@ -468,6 +553,13 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                                 ]
                             }),
                             /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
+                                onClick: ()=>{
+                                    if (isLastStep) handleClose();
+                                    else dispatch({
+                                        payload: step + 1,
+                                        type: "SET_STEP"
+                                    });
+                                },
                                 children: isLastStep ? "Close" : "Next"
                             })
                         ]
@@ -479,16 +571,20 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
 };
 class $090815f5086f7f29$export$c06370d2ab5297a3 {
     constructor(config){
-        this.element = config.element;
+        this.config = config;
         this.onClose = ()=>{
             this.root.unmount();
+            document.body.classList.remove("dark");
         };
-        const host = document.getElementById(this.element);
-        if (!host) throw new Error(`Element ${this.element} not found`);
-        this.root = (0, $4MPRY$createRoot)(host);
+        const element = document.createElement("div");
+        element.id = "map3";
+        document.body.appendChild(element);
+        if (config.theme === "dark") document.body.classList.add("dark");
+        this.root = (0, $4MPRY$createRoot)(element);
     }
     open() {
         this.root.render(/*#__PURE__*/ (0, $4MPRY$jsx)((0, $68c68372be4a9678$export$390f32400eaf98c9), {
+            ...this.config,
             children: /*#__PURE__*/ (0, $4MPRY$jsx)($090815f5086f7f29$var$Map3Sdk, {
                 onClose: this.onClose
             })
@@ -498,12 +594,9 @@ class $090815f5086f7f29$export$c06370d2ab5297a3 {
         this.onClose();
     }
 }
-const $090815f5086f7f29$export$421c3119381668 = ({ element: element  })=>{
-    return new $090815f5086f7f29$export$c06370d2ab5297a3({
-        element: element
-    });
+const $090815f5086f7f29$export$421c3119381668 = (args)=>{
+    return new $090815f5086f7f29$export$c06370d2ab5297a3(args);
 };
-// attach to window
 // @ts-ignore
 window.initMap3Sdk = $090815f5086f7f29$export$421c3119381668;
 var $090815f5086f7f29$export$2e2bcd8739ae039 = $090815f5086f7f29$var$Map3Sdk;

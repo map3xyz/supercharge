@@ -3,8 +3,8 @@ import React, { createContext, PropsWithChildren, useReducer } from 'react';
 export enum Steps {
   'AssetSelection' = 0,
   'NetworkSelection' = 1,
-  'PaymentMethod' = 2,
-  'EnterAmount' = 3,
+  // 'PaymentMethod' = 2,
+  'EnterAmount' = 2,
   __LENGTH,
 }
 

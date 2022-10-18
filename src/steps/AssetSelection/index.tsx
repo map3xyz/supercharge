@@ -14,7 +14,7 @@ const AssetSelection: React.FC<Props> = () => {
       <h5 className="text-xs text-neutral-400">
         Select the asset you want to deposit.
       </h5>
-      <div className="my-3 flex flex-col gap-1">
+      <div className="my-3 flex flex-col gap-1 dark:text-white">
         {coins.map((coin) => (
           <Button
             block
