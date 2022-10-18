@@ -41,9 +41,18 @@ const EnterAmount: React.FC<Props> = () => {
     }
   }, [formValue]);
 
-  useEffect(() => {
-    // convert base to quote on input change
-  }, [formValue]);
+  const toggleBase = () => {
+    if (inputRef.current) {
+      inputRef.current.value = quoteRef.current!.innerText;
+      inputRef.current.focus();
+
+      setFormValue((formValue) => ({
+        base: quoteRef.current!.innerText,
+        inputSelected: formValue.inputSelected === 'fiat' ? 'crypto' : 'fiat',
+        quote: formValue.base,
+      }));
+    }
+  };
 
   if (!state.coin || !state.network) {
     return null;
@@ -95,10 +104,22 @@ const EnterAmount: React.FC<Props> = () => {
             <span className="text-inherit">BTC</span>
           ) : null}
         </div>
-        <div className=" mt-8 text-xs text-neutral-400">
-          {formValue.inputSelected === 'crypto' ? <span>$&nbsp;</span> : null}
-          <span ref={quoteRef}>0.001</span>
-          {formValue.inputSelected === 'fiat' ? <span>&nbsp;BTC</span> : null}
+        <div className="mt-8 flex items-center justify-center text-neutral-400">
+          <div className="text-xs">
+            {formValue.inputSelected === 'crypto' ? <span>$&nbsp;</span> : null}
+            <span ref={quoteRef}>0.001</span>
+            {formValue.inputSelected === 'fiat' ? <span>&nbsp;BTC</span> : null}
+          </div>
+          <div className="ml-4 flex items-center justify-center">
+            <div
+              className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 dark:text-white hover:dark:text-blue-600"
+              onClick={toggleBase}
+              role="button"
+            >
+              <i className="fa fa-chevron-up" />
+              <i className="fa fa-chevron-down" />
+            </div>
+          </div>
         </div>
       </form>
     </>
