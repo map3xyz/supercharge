@@ -5,6 +5,10 @@ import { Context } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
 
+const rates = {
+  'BTC/USD': 20_000,
+};
+
 const EnterAmount: React.FC<Props> = () => {
   const dummyInputRef = useRef<HTMLSpanElement>(null);
   const dummySymbolRef = useRef<HTMLSpanElement>(null);
@@ -40,6 +44,20 @@ const EnterAmount: React.FC<Props> = () => {
       }
     }
   }, [formValue]);
+
+  useEffect(() => {
+    const rate = rates['BTC/USD'];
+    const base = parseFloat(formValue.base);
+    const quote =
+      formValue.inputSelected === 'crypto' ? base * rate : base / rate;
+    setFormValue((formValue) => ({
+      ...formValue,
+      quote:
+        formValue.inputSelected === 'crypto'
+          ? quote.toFixed(2)
+          : quote.toFixed(8),
+    }));
+  }, [formValue.base]);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -107,7 +125,7 @@ const EnterAmount: React.FC<Props> = () => {
         <div className="mt-8 flex items-center justify-center text-neutral-400">
           <div className="text-xs">
             {formValue.inputSelected === 'crypto' ? <span>$&nbsp;</span> : null}
-            <span ref={quoteRef}>0.001</span>
+            <span ref={quoteRef}>{formValue.quote}</span>
             {formValue.inputSelected === 'fiat' ? <span>&nbsp;BTC</span> : null}
           </div>
           <div className="ml-4 flex items-center justify-center">
