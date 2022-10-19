@@ -8,12 +8,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 import Logo from './assets/logo.svg';
+import InnerWrapper from './components/InnerWrapper';
 import ProgressBar from './components/ProgressBar';
 import { Context, Steps, Store } from './providers/Store';
 import AssetSelection from './steps/AssetSelection';
 import EnterAmount from './steps/EnterAmount';
 import NetworkSelection from './steps/NetworkSelection';
-// import PaymentMethod from './steps/PaymentMethod';
+import PaymentMethod from './steps/PaymentMethod';
 
 interface Map3InitConfig {
   coin?: string;
@@ -57,21 +58,23 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
         transition={TRANSITION}
         visible={open}
       >
-        <div className="flex w-full items-center justify-between gap-4 px-4 py-3">
-          <button
-            className={step === 0 ? 'invisible' : 'visible'}
-            onClick={() => dispatch({ payload: step - 1, type: 'SET_STEP' })}
-          >
-            <i className="fa transition-color fa-long-arrow-left duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
-          </button>
-          <ProgressBar progress={step / (Steps.__LENGTH - 1)} />
-          <div>
-            <button onClick={handleClose}>
-              <i className="fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
+        <InnerWrapper>
+          <div className="flex w-full items-center justify-between gap-4">
+            <button
+              className={step === 0 ? 'invisible' : 'visible'}
+              onClick={() => dispatch({ payload: step - 1, type: 'SET_STEP' })}
+            >
+              <i className="fa transition-color fa-long-arrow-left duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
             </button>
+            <ProgressBar progress={step / (Steps.__LENGTH - 1)} />
+            <div>
+              <button onClick={handleClose}>
+                <i className="fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="!mt-0 w-full px-4 pb-2">
+        </InnerWrapper>
+        <div className="!mt-0 w-full">
           <AnimatePresence exitBeforeEnter>
             {step === Steps.AssetSelection && (
               <motion.div
@@ -93,7 +96,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <NetworkSelection />
               </motion.div>
             )}
-            {/* {step === Steps.PaymentMethod && (
+            {step === Steps.PaymentMethod && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -102,7 +105,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
               >
                 <PaymentMethod />
               </motion.div>
-            )} */}
+            )}
             {step === Steps.EnterAmount && (
               <motion.div
                 animate={{ opacity: 1 }}

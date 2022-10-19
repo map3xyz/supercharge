@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "parcel build",
-    "start": "parcel src/index.html",
+    "start": "parcel src/index.html --watch",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix"
   },
   "resolutions": {
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@parcel/packager-ts": "2.7.0",
+    "@parcel/transformer-inline-string": "2.7.0",
     "@parcel/transformer-svg-react": "^2.7.0",
     "@parcel/transformer-typescript-types": "2.7.0",
     "@types/react": "^18.0.18",

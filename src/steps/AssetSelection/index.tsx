@@ -1,32 +1,73 @@
-import { Button } from '@map3xyz/components';
 import React, { useContext } from 'react';
 
+import InnerWrapper from '../../components/InnerWrapper';
 import { Context } from '../../providers/Store';
 
-const coins = ['Bitcoin', 'Ethereum', 'Litecoin', 'Bitcoin Cash', 'Ripple'];
+const coins = [
+  {
+    label: 'Bitcoin',
+    logo: {
+      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+    },
+    name: 'bitcoin',
+  },
+  {
+    label: 'Ethereum',
+    logo: {
+      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+    },
+    name: 'ethereum',
+  },
+  {
+    label: 'Ethereum Classic',
+    logo: {
+      png: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/classic/info/logo.png',
+    },
+    name: 'ethereum-classic',
+  },
+  {
+    label: 'USDC',
+    logo: {
+      png: 'https://raw.githubusercontent.com/map3xyz/ethereum-tokenlist/master/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
+    },
+    name: 'usdc',
+  },
+];
 
 const AssetSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
 
+  const selectedCoin = coins.find((coin) => coin.name === state.coin);
+
   return (
     <>
-      <h3 className="text-lg font-semibold dark:text-white">Select Asset</h3>
-      <h5 className="text-xs text-neutral-400">
-        Select the asset you want to deposit.
-      </h5>
-      <div className="my-3 flex flex-col gap-1 dark:text-white">
+      <InnerWrapper>
+        <h3 className="text-lg font-semibold dark:text-white">Select Asset</h3>
+        <h5 className="text-xs text-neutral-400">
+          Select the Asset you want to deposit.
+        </h5>
+      </InnerWrapper>
+      <div className="mt-3 flex flex-col dark:text-white">
         {coins.map((coin) => (
-          <Button
-            block
-            key={coin}
+          <div
+            className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800"
+            key={coin.name}
             onClick={() => {
-              dispatch({ payload: coin, type: 'SET_COIN' });
+              dispatch({ payload: coin.name, type: 'SET_COIN' });
               dispatch({ payload: 1, type: 'SET_STEP' });
             }}
-            type={state.coin === coin ? 'primary' : 'secondary'}
+            role="button"
           >
-            {coin}
-          </Button>
+            <div className="flex items-center gap-2">
+              <img className="h-4" src={coin.logo.svg || coin.logo.png} />
+              <span>{coin.label}</span>
+            </div>
+            {coin === selectedCoin ? (
+              <i className="fa fa-check-circle text-green-400" />
+            ) : (
+              <i className="fa fa-chevron-right text-xxs" />
+            )}
+          </div>
         ))}
       </div>
     </>

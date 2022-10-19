@@ -10,8 +10,6 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
-          coin: 'Bitcoin',
-          network: 'BTC',
           theme: 'dark',
         });
         map3.open();
