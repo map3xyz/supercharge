@@ -41,7 +41,7 @@ const PaymentMethod: React.FC<Props> = () => {
           How do you want to deposit?
         </h5>
       </InnerWrapper>
-      <div className="w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white">
+      <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Deposit{' '}
         <span
           className="text-blue-600 underline"
@@ -71,10 +71,10 @@ const PaymentMethod: React.FC<Props> = () => {
         </span>{' '}
         via
       </div>
-      <div className="mt-3 flex flex-col dark:text-white">
+      <div className="flex flex-col dark:text-white">
         {methods.map((method) => (
           <div
-            className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800"
+            className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
             key={method.label}
             onClick={() => {
               dispatch({ payload: method.name, type: 'SET_PAYMENT_METHOD' });

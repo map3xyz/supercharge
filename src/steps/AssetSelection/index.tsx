@@ -47,10 +47,10 @@ const AssetSelection: React.FC<Props> = () => {
           Select the Asset you want to deposit.
         </h5>
       </InnerWrapper>
-      <div className="mt-3 flex flex-col dark:text-white">
+      <div className="flex flex-col dark:text-white">
         {coins.map((coin) => (
           <div
-            className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800"
+            className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
             key={coin.name}
             onClick={() => {
               dispatch({ payload: coin.name, type: 'SET_COIN' });

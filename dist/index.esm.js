@@ -307,9 +307,9 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
                 ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "mt-3 flex flex-col dark:text-white",
+                className: "flex flex-col dark:text-white",
                 children: $d8f5e4867dc7bbaa$var$coins.map((coin)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800",
+                        className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
                         onClick: ()=>{
                             dispatch({
                                 payload: coin.name,
@@ -486,7 +486,7 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
                 ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                className: "w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white",
+                className: "w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
                 children: [
                     "Deposit",
                     " ",
@@ -528,9 +528,9 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
                 ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "mt-3 flex flex-col dark:text-white",
+                className: "flex flex-col dark:text-white",
                 children: $d752ec9124ef7f1d$export$e13b82b2b0368a6a.map((method)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800",
+                        className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
                         onClick: ()=>{
                             dispatch({
                                 payload: method.name,
@@ -636,7 +636,7 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                 })
             }),
             /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                className: "w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white",
+                className: "w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
                 children: [
                     "Deposit",
                     " ",
@@ -858,7 +858,7 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
                 ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                className: "w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white",
+                className: "w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
                 children: [
                     "Deposit",
                     " ",
@@ -882,9 +882,9 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
                 ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "mt-3 flex flex-col dark:text-white",
+                className: "flex flex-col dark:text-white",
                 children: $e9fc485e32047442$var$networks.map((network)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800",
+                        className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
                         onClick: ()=>{
                             dispatch({
                                 payload: network.code,
@@ -1028,7 +1028,7 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                     })
                 }),
                 /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                    className: "!mt-0 w-full bg-neutral-100 px-4 py-3 dark:bg-neutral-800",
+                    className: "!mt-0 w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800",
                     children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
                         className: "flex items-end justify-between",
                         children: [

@@ -118,7 +118,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
             )}
           </AnimatePresence>
         </div>
-        <div className="!mt-0 w-full bg-neutral-100 px-4 py-3 dark:bg-neutral-800">
+        <div className="!mt-0 w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800">
           <div className="flex items-end justify-between">
             <a
               aria-label="Map3.xyz"

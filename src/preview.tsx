@@ -10,7 +10,7 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
-          theme: 'light',
+          theme: 'dark',
         });
         map3.open();
       }}
