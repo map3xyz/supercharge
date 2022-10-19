@@ -157,6 +157,17 @@ var $6b7119262a76a333$export$2e2bcd8739ae039 = $6b7119262a76a333$var$SvgLogo;
 
 
 
+const $bdbf379108fa6dba$var$InnerWrapper = ({ children: children  })=>{
+    return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+        className: "w-full px-4 py-3",
+        children: children
+    });
+};
+var $bdbf379108fa6dba$export$2e2bcd8739ae039 = $bdbf379108fa6dba$var$InnerWrapper;
+
+
+
+
 const $44e8e929fd5cdf17$var$ProgressBar = ({ progress: progress  })=>{
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
         className: "relative h-1 w-full rounded-lg bg-neutral-100 dark:bg-neutral-800",
@@ -177,12 +188,20 @@ let $68c68372be4a9678$export$fb587a27d5a722e7;
 (function(Steps) {
     Steps[Steps["AssetSelection"] = 0] = "AssetSelection";
     Steps[Steps["NetworkSelection"] = 1] = "NetworkSelection";
-    Steps[Steps[// 'PaymentMethod' = 2,
-    "EnterAmount"] = 2] = "EnterAmount";
-    Steps[Steps["__LENGTH"] = 3] = "__LENGTH";
+    Steps[Steps["PaymentMethod"] = 2] = "PaymentMethod";
+    Steps[Steps["EnterAmount"] = 3] = "EnterAmount";
+    Steps[Steps["__LENGTH"] = 4] = "__LENGTH";
 })($68c68372be4a9678$export$fb587a27d5a722e7 || ($68c68372be4a9678$export$fb587a27d5a722e7 = {}));
+let $68c68372be4a9678$export$31bb55db0b3e4187;
+(function(Method) {
+    Method["binance"] = "binance";
+    Method["cb-pay"] = "cb-pay";
+    Method["metamask"] = "metamask";
+    Method["qr"] = "qr";
+})($68c68372be4a9678$export$31bb55db0b3e4187 || ($68c68372be4a9678$export$31bb55db0b3e4187 = {}));
 const $68c68372be4a9678$var$initialState = {
     coin: undefined,
+    method: undefined,
     network: undefined,
     step: $68c68372be4a9678$export$fb587a27d5a722e7.AssetSelection
 };
@@ -190,6 +209,7 @@ const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: 
     let step = 0;
     if (coin) step = 1;
     if (coin && network) step = 2;
+    if (coin && network) step = 3;
     const [state, dispatch] = (0, $4MPRY$useReducer)((state, action)=>{
         switch(action.type){
             case "SET_COIN":
@@ -206,6 +226,11 @@ const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: 
                 return {
                     ...state,
                     step: action.payload
+                };
+            case "SET_PAYMENT_METHOD":
+                return {
+                    ...state,
+                    method: action.payload
                 };
             default:
                 return state;
@@ -235,31 +260,59 @@ const $68c68372be4a9678$export$841858b892ce1f4c = /*#__PURE__*/ (0, $4MPRY$creat
 
 
 const $d8f5e4867dc7bbaa$var$coins = [
-    "Bitcoin",
-    "Ethereum",
-    "Litecoin",
-    "Bitcoin Cash",
-    "Ripple"
+    {
+        label: "Bitcoin",
+        logo: {
+            svg: "https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg"
+        },
+        name: "bitcoin"
+    },
+    {
+        label: "Ethereum",
+        logo: {
+            svg: "https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg"
+        },
+        name: "ethereum"
+    },
+    {
+        label: "Ethereum Classic",
+        logo: {
+            png: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/classic/info/logo.png"
+        },
+        name: "ethereum-classic"
+    },
+    {
+        label: "USDC",
+        logo: {
+            png: "https://raw.githubusercontent.com/map3xyz/ethereum-tokenlist/master/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+        },
+        name: "usdc"
+    }, 
 ];
 const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
+    const selectedCoin = $d8f5e4867dc7bbaa$var$coins.find((coin)=>coin.name === state.coin);
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
-                className: "text-lg font-semibold dark:text-white",
-                children: "Select Asset"
-            }),
-            /*#__PURE__*/ (0, $4MPRY$jsx)("h5", {
-                className: "text-xs text-neutral-400",
-                children: "Select the asset you want to deposit."
+            /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: [
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                        className: "text-lg font-semibold dark:text-white",
+                        children: "Select Asset"
+                    }),
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("h5", {
+                        className: "text-xs text-neutral-400",
+                        children: "Select the Asset you want to deposit."
+                    })
+                ]
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "my-3 flex flex-col gap-1 dark:text-white",
-                children: $d8f5e4867dc7bbaa$var$coins.map((coin)=>/*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
-                        block: true,
+                className: "mt-3 flex flex-col dark:text-white",
+                children: $d8f5e4867dc7bbaa$var$coins.map((coin)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800",
                         onClick: ()=>{
                             dispatch({
-                                payload: coin,
+                                payload: coin.name,
                                 type: "SET_COIN"
                             });
                             dispatch({
@@ -267,9 +320,27 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
                                 type: "SET_STEP"
                             });
                         },
-                        type: state.coin === coin ? "primary" : "secondary",
-                        children: coin
-                    }, coin))
+                        role: "button",
+                        children: [
+                            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                className: "flex items-center gap-2",
+                                children: [
+                                    /*#__PURE__*/ (0, $4MPRY$jsx)("img", {
+                                        className: "h-4",
+                                        src: coin.logo.svg || coin.logo.png
+                                    }),
+                                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                        children: coin.label
+                                    })
+                                ]
+                            }),
+                            coin === selectedCoin ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-check-circle text-green-400"
+                            }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-chevron-right text-xxs"
+                            })
+                        ]
+                    }, coin.name))
             })
         ]
     });
@@ -281,88 +352,434 @@ var $d8f5e4867dc7bbaa$export$2e2bcd8739ae039 = $d8f5e4867dc7bbaa$var$AssetSelect
 
 
 
+
+
+
+
+
+
+const $d4bf502028e0348a$var$SvgMetamask = (props)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("svg", {
+        xmlns: "http://www.w3.org/2000/svg",
+        xmlSpace: "preserve",
+        id: "Metamask__Layer_1",
+        x: 0,
+        y: 0,
+        viewBox: "0 0 318.6 318.6",
+        role: "img",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, $4MPRY$jsx)("style", {
+                children: ".Metamask__st1,.Metamask__st6{fill:#e4761b;stroke:#e4761b;stroke-linecap:round;stroke-linejoin:round}.Metamask__st6{fill:#f6851b;stroke:#f6851b}"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#e2761b",
+                stroke: "#e2761b",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m274.1 35.5-99.5 73.9L193 65.8z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                d: "m44.4 35.5 98.7 74.6-17.5-44.3zm193.9 171.3-26.5 40.6 56.7 15.6 16.3-55.3zm-204.4.9L50.1 263l56.7-15.6-26.5-40.6z",
+                className: "Metamask__st1"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                d: "m103.6 138.2-15.8 23.9 56.3 2.5-2-60.5zm111.3 0-39-34.8-1.3 61.2 56.2-2.5zM106.8 247.4l33.8-16.5-29.2-22.8zm71.1-16.5 33.9 16.5-4.7-39.3z",
+                className: "Metamask__st1"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#d7c1b3",
+                stroke: "#d7c1b3",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m211.8 247.4-33.9-16.5 2.7 22.1-.3 9.3zm-105 0 31.5 14.9-.2-9.3 2.5-22.1z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#233447",
+                stroke: "#233447",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m138.8 193.5-28.2-8.3 19.9-9.1zm40.9 0 8.3-17.4 20 9.1z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#cd6116",
+                stroke: "#cd6116",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m106.8 247.4 4.8-40.6-31.3.9zM207 206.8l4.8 40.6 26.5-39.7zm23.8-44.7-56.2 2.5 5.2 28.9 8.3-17.4 20 9.1zm-120.2 23.1 20-9.1 8.2 17.4 5.3-28.9-56.3-2.5z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#e4751f",
+                stroke: "#e4751f",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m87.8 162.1 23.6 46-.8-22.9zm120.3 23.1-1 22.9 23.7-46zm-64-20.6-5.3 28.9 6.6 34.1 1.5-44.9zm30.5 0-2.7 18 1.2 45 6.7-34.1z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                d: "m179.8 193.5-6.7 34.1 4.8 3.3 29.2-22.8 1-22.9zm-69.2-8.3.8 22.9 29.2 22.8 4.8-3.3-6.6-34.1z",
+                className: "Metamask__st6"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#c0ad9e",
+                stroke: "#c0ad9e",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m180.3 262.3.3-9.3-2.5-2.2h-37.7l-2.3 2.2.2 9.3-31.5-14.9 11 9 22.3 15.5h38.3l22.4-15.5 11-9z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#161616",
+                stroke: "#161616",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m177.9 230.9-4.8-3.3h-27.7l-4.8 3.3-2.5 22.1 2.3-2.2h37.7l2.5 2.2z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                fill: "#763d16",
+                stroke: "#763d16",
+                strokeLinecap: "round",
+                strokeLinejoin: "round",
+                d: "m278.3 114.2 8.5-40.8-12.7-37.9-96.2 71.4 37 31.3 52.3 15.3 11.6-13.5-5-3.6 8-7.3-6.2-4.8 8-6.1zM31.8 73.4l8.5 40.8-5.4 4 8 6.1-6.1 4.8 8 7.3-5 3.6 11.5 13.5 52.3-15.3 37-31.3-96.2-71.4z"
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("path", {
+                d: "m267.2 153.5-52.3-15.3 15.9 23.9-23.7 46 31.2-.4h46.5zm-163.6-15.3-52.3 15.3-17.4 54.2h46.4l31.1.4-23.6-46zm71 26.4 3.3-57.7 15.2-41.1h-67.5l15 41.1 3.5 57.7 1.2 18.2.1 44.8h27.7l.2-44.8z",
+                className: "Metamask__st6"
+            })
+        ]
+    });
+var $d4bf502028e0348a$export$2e2bcd8739ae039 = $d4bf502028e0348a$var$SvgMetamask;
+
+
+
+
+const $d752ec9124ef7f1d$export$e13b82b2b0368a6a = [
+    {
+        icon: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+            className: "fa fa-qrcode h-4 w-4"
+        }),
+        label: "QR Code",
+        name: (0, $68c68372be4a9678$export$31bb55db0b3e4187).qr
+    },
+    {
+        icon: /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+            className: "h-4 w-4",
+            children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $d4bf502028e0348a$export$2e2bcd8739ae039), {})
+        }),
+        label: "MetaMask",
+        name: (0, $68c68372be4a9678$export$31bb55db0b3e4187).metamask
+    }, 
+];
+const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
+    const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
+    if (!state.coin || !state.network) return null;
+    const selectedMethod = $d752ec9124ef7f1d$export$e13b82b2b0368a6a.find((method)=>method.name === state.method);
+    return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: [
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                        className: "text-lg font-semibold dark:text-white",
+                        children: "Payment Method"
+                    }),
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("h5", {
+                        className: "text-xs text-neutral-400",
+                        children: "How do you want to deposit?"
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                className: "w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white",
+                children: [
+                    "Deposit",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: state.coin
+                        })
+                    }),
+                    " ",
+                    "on",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: state.network
+                        })
+                    }),
+                    " ",
+                    "via"
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                className: "mt-3 flex flex-col dark:text-white",
+                children: $d752ec9124ef7f1d$export$e13b82b2b0368a6a.map((method)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: method.name,
+                                type: "SET_PAYMENT_METHOD"
+                            });
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).EnterAmount,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: [
+                            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                className: "flex items-center gap-2",
+                                children: [
+                                    method.icon,
+                                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                        children: method.label
+                                    })
+                                ]
+                            }),
+                            selectedMethod?.label === method.label ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-check-circle text-green-400"
+                            }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-chevron-right text-xxs"
+                            })
+                        ]
+                    }, method.label))
+            })
+        ]
+    });
+};
+var $d752ec9124ef7f1d$export$2e2bcd8739ae039 = $d752ec9124ef7f1d$var$PaymentMethod;
+
+
 const $389c6829553d16e1$var$BASE_FONT_SIZE = 48;
+const $389c6829553d16e1$var$rates = {
+    "BTC/USD": 20000
+};
 const $389c6829553d16e1$var$EnterAmount = ()=>{
-    const dummyRef = (0, $4MPRY$useRef)(null);
+    const dummyInputRef = (0, $4MPRY$useRef)(null);
+    const dummySymbolRef = (0, $4MPRY$useRef)(null);
     const inputRef = (0, $4MPRY$useRef)(null);
     const formRef = (0, $4MPRY$useRef)(null);
-    const [state] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
+    const quoteRef = (0, $4MPRY$useRef)(null);
+    const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
     const [formValue, setFormValue] = (0, $4MPRY$useState)({
         base: "0",
+        inputSelected: "fiat",
         quote: "0"
     });
     (0, $4MPRY$useEffect)(()=>{
-        dummyRef.current.innerText = formValue.base;
-        let nextInputWidth = dummyRef.current.getBoundingClientRect().width;
+        dummyInputRef.current.innerText = formValue.base;
+        let nextInputWidth = dummyInputRef.current.getBoundingClientRect().width;
+        const symbolWidth = dummySymbolRef.current.getBoundingClientRect().width;
         const formWidth = formRef.current.getBoundingClientRect().width;
         if (inputRef.current && formRef.current) {
-            inputRef.current.style.width = `${nextInputWidth}px`;
-            if (nextInputWidth > formWidth) {
-                const percentFontChange = formWidth / nextInputWidth;
+            if (nextInputWidth + symbolWidth > formWidth) {
+                const percentFontChange = formWidth / (nextInputWidth + symbolWidth);
                 const fontSize = Math.floor($389c6829553d16e1$var$BASE_FONT_SIZE * percentFontChange) - 1;
                 nextInputWidth = formWidth;
                 formRef.current.style.fontSize = `${fontSize}px`;
                 inputRef.current.style.width = `${nextInputWidth}px`;
-            } else formRef.current.style.fontSize = `${$389c6829553d16e1$var$BASE_FONT_SIZE}px`;
+            } else {
+                inputRef.current.style.width = `${nextInputWidth}px`;
+                formRef.current.style.fontSize = `${$389c6829553d16e1$var$BASE_FONT_SIZE}px`;
+            }
         }
     }, [
         formValue
     ]);
-    if (!state.coin || !state.network) return null;
+    (0, $4MPRY$useEffect)(()=>{
+        const rate = $389c6829553d16e1$var$rates["BTC/USD"];
+        const base = parseFloat(formValue.base || "0");
+        const quote = formValue.inputSelected === "crypto" ? base * rate : base / rate;
+        setFormValue((formValue)=>({
+                ...formValue,
+                quote: formValue.inputSelected === "crypto" ? quote.toFixed(2) : quote.toFixed(8)
+            }));
+    }, [
+        formValue.base
+    ]);
+    const toggleBase = ()=>{
+        if (inputRef.current) {
+            inputRef.current.value = quoteRef.current.innerText;
+            inputRef.current.focus();
+            setFormValue((formValue)=>({
+                    base: quoteRef.current.innerText,
+                    inputSelected: formValue.inputSelected === "fiat" ? "crypto" : "fiat",
+                    quote: formValue.base
+                }));
+        }
+    };
+    if (!state.coin || !state.network || !state.method) return null;
+    const method = (0, $d752ec9124ef7f1d$export$e13b82b2b0368a6a).find((method)=>method.name === state.method);
+    if (!method) return null;
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
-                className: "text-lg font-semibold dark:text-white",
-                children: "Enter Amount"
+            /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                    className: "text-lg font-semibold dark:text-white",
+                    children: "Enter Amount"
+                })
             }),
-            /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
-                className: "text-xs text-neutral-400",
+            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                className: "w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white",
                 children: [
-                    "How much ",
-                    /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
-                        color: "blue",
-                        children: state.coin
-                    }),
-                    " would you like to deposit on the",
+                    "Deposit",
                     " ",
-                    /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
-                        color: "indigo",
-                        children: `${state.network} Network`
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: state.coin
+                        })
                     }),
-                    "?"
+                    " ",
+                    "on",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: state.network
+                        })
+                    }),
+                    " ",
+                    "via",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).PaymentMethod,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: /*#__PURE__*/ (0, $4MPRY$jsxs)("span", {
+                                className: "flex items-center gap-1",
+                                children: [
+                                    method.icon,
+                                    " ",
+                                    method?.label
+                                ]
+                            })
+                        })
+                    })
                 ]
             }),
-            /*#__PURE__*/ (0, $4MPRY$jsx)("form", {
-                className: "flex flex-col items-center justify-center py-8 text-5xl font-semibold dark:text-white",
-                onChange: (event)=>{
-                    const target = event.target;
-                    setFormValue((formValue)=>({
-                            ...formValue,
-                            [target.name]: target.value
-                        }));
-                },
-                ref: formRef,
-                children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                    className: "relative box-border flex max-w-full items-center justify-center",
+            /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4MPRY$jsxs)("form", {
+                    className: "flex flex-col items-center justify-center py-8 text-5xl font-semibold dark:text-white",
+                    onChange: (event)=>{
+                        const target = event.target;
+                        setFormValue((formValue)=>({
+                                ...formValue,
+                                [target.name]: target.value
+                            }));
+                    },
+                    ref: formRef,
                     children: [
-                        /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
-                            className: "text-inherit",
-                            children: "$"
+                        /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                            className: "relative box-border flex max-w-full items-center justify-center",
+                            children: [
+                                formValue.inputSelected === "fiat" ? /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                    className: "text-inherit",
+                                    children: "$"
+                                }) : null,
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("input", {
+                                    autoFocus: true,
+                                    className: "flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0",
+                                    name: "base",
+                                    placeholder: "0",
+                                    ref: inputRef,
+                                    style: {
+                                        minWidth: `${$389c6829553d16e1$var$BASE_FONT_SIZE}px`
+                                    },
+                                    type: "number"
+                                }),
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                    className: "invisible absolute -left-96 -top-96 pl-6 !text-5xl",
+                                    ref: dummyInputRef
+                                }),
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                    className: "invisible absolute -left-96 -top-96 pl-6 !text-5xl",
+                                    ref: dummySymbolRef,
+                                    children: formValue.inputSelected === "crypto" ? "BTC" : "$"
+                                }),
+                                formValue.inputSelected === "crypto" ? /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                    className: "text-inherit",
+                                    children: "BTC"
+                                }) : null
+                            ]
                         }),
-                        /*#__PURE__*/ (0, $4MPRY$jsx)("input", {
-                            autoFocus: true,
-                            className: "flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0",
-                            name: "base",
-                            placeholder: "0",
-                            ref: inputRef,
-                            style: {
-                                minWidth: `${$389c6829553d16e1$var$BASE_FONT_SIZE}px`
-                            },
-                            type: "number"
-                        }),
-                        /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
-                            className: "invisible absolute -left-96 -top-96 pl-6 !text-5xl",
-                            ref: dummyRef
+                        /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                            className: "mt-8 flex items-center justify-center text-neutral-400",
+                            children: [
+                                /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                    className: "text-xs",
+                                    children: [
+                                        formValue.inputSelected === "crypto" ? /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                            children: "$\xa0"
+                                        }) : null,
+                                        /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                            ref: quoteRef,
+                                            children: formValue.quote
+                                        }),
+                                        formValue.inputSelected === "fiat" ? /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                            children: "\xa0BTC"
+                                        }) : null
+                                    ]
+                                }),
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                    className: "ml-4 flex items-center justify-center",
+                                    children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                        className: "flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600",
+                                        onClick: toggleBase,
+                                        role: "button",
+                                        children: [
+                                            /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                                className: "fa fa-chevron-up"
+                                            }),
+                                            /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                                className: "fa fa-chevron-down"
+                                            })
+                                        ]
+                                    })
+                                })
+                            ]
                         })
                     ]
                 })
@@ -377,60 +794,125 @@ var $389c6829553d16e1$export$2e2bcd8739ae039 = $389c6829553d16e1$var$EnterAmount
 
 
 
+
 const $e9fc485e32047442$var$networks = [
-    "BTC",
-    "ETH",
-    "LTC",
-    "BCH",
-    "XRP",
-    "MATIC",
-    "ADA",
-    "DOT",
-    "UNI", 
+    {
+        code: "BTC",
+        name: "BTC"
+    },
+    {
+        code: "ETH",
+        name: "ETH"
+    },
+    {
+        code: "LTC",
+        name: "LTC"
+    },
+    {
+        code: "BCH",
+        name: "BCH"
+    },
+    {
+        code: "XRP",
+        name: "XRP"
+    },
+    {
+        code: "MATIC",
+        name: "MATIC"
+    },
+    {
+        code: "ADA",
+        name: "ADA"
+    },
+    {
+        code: "DOT",
+        name: "DOT"
+    },
+    {
+        code: "UNI",
+        name: "UNI"
+    }, 
 ];
 const $e9fc485e32047442$var$NetworkSelection = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
     if (!state.coin) return null;
+    const selectedNetwork = $e9fc485e32047442$var$networks.find((network)=>network.code === state.network);
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
-                className: "text-lg font-semibold dark:text-white",
-                children: "Select Network"
-            }),
-            /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
-                className: "text-xs text-neutral-400",
+            /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
                 children: [
-                    "Select the network to deposit ",
-                    /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
-                        color: "blue",
-                        children: state.coin
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                        className: "text-lg font-semibold dark:text-white",
+                        children: "Select Network"
                     }),
-                    " ",
-                    "in."
+                    /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
+                        className: "text-xs text-neutral-400",
+                        children: [
+                            "Select the Network to deposit ",
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("b", {
+                                children: state.coin
+                            }),
+                            " on."
+                        ]
+                    })
                 ]
             }),
-            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "my-3 flex flex-col gap-1 dark:text-white",
-                children: $e9fc485e32047442$var$networks.map((network)=>/*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Button), {
-                        block: true,
+            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                className: "w-full bg-neutral-100 px-4 py-3 text-xs dark:bg-neutral-800 dark:text-white",
+                children: [
+                    "Deposit",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
                         onClick: ()=>{
                             dispatch({
-                                payload: network,
-                                type: "SET_NETWORK"
-                            });
-                            dispatch({
-                                payload: 2,
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
                                 type: "SET_STEP"
                             });
                         },
-                        type: state.network === network ? "primary" : "secondary",
-                        children: network
-                    }, network))
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: state.coin
+                        })
+                    }),
+                    " ",
+                    "on"
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                className: "mt-3 flex flex-col dark:text-white",
+                children: $e9fc485e32047442$var$networks.map((network)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-200 dark:border-neutral-800 hover:dark:bg-neutral-800",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: network.code,
+                                type: "SET_NETWORK"
+                            });
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).PaymentMethod,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: [
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                children: network.code
+                            }),
+                            selectedNetwork?.code === network.code ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-check-circle text-green-400"
+                            }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-chevron-right text-xxs"
+                            })
+                        ]
+                    }, network.code))
             })
         ]
     });
 };
 var $e9fc485e32047442$export$2e2bcd8739ae039 = $e9fc485e32047442$var$NetworkSelection;
+
 
 
 const $090815f5086f7f29$var$TRANSITION = 300;
@@ -461,34 +943,36 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
             transition: $090815f5086f7f29$var$TRANSITION,
             visible: open,
             children: [
-                /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                    className: "flex w-full items-center justify-between gap-4 px-4 py-3",
-                    children: [
-                        /*#__PURE__*/ (0, $4MPRY$jsx)("button", {
-                            className: step === 0 ? "invisible" : "visible",
-                            onClick: ()=>dispatch({
-                                    payload: step - 1,
-                                    type: "SET_STEP"
-                                }),
-                            children: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
-                                className: "fa transition-color fa-long-arrow-left duration-75 dark:text-neutral-600 dark:hover:text-neutral-400"
-                            })
-                        }),
-                        /*#__PURE__*/ (0, $4MPRY$jsx)((0, $44e8e929fd5cdf17$export$2e2bcd8739ae039), {
-                            progress: step / ((0, $68c68372be4a9678$export$fb587a27d5a722e7).__LENGTH - 1)
-                        }),
-                        /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                            children: /*#__PURE__*/ (0, $4MPRY$jsx)("button", {
-                                onClick: handleClose,
+                /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex w-full items-center justify-between gap-4",
+                        children: [
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("button", {
+                                className: step === 0 ? "invisible" : "visible",
+                                onClick: ()=>dispatch({
+                                        payload: step - 1,
+                                        type: "SET_STEP"
+                                    }),
                                 children: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
-                                    className: "fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400"
+                                    className: "fa transition-color fa-long-arrow-left duration-75 dark:text-neutral-600 dark:hover:text-neutral-400"
+                                })
+                            }),
+                            /*#__PURE__*/ (0, $4MPRY$jsx)((0, $44e8e929fd5cdf17$export$2e2bcd8739ae039), {
+                                progress: step / ((0, $68c68372be4a9678$export$fb587a27d5a722e7).__LENGTH - 1)
+                            }),
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                children: /*#__PURE__*/ (0, $4MPRY$jsx)("button", {
+                                    onClick: handleClose,
+                                    children: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                        className: "fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400"
+                                    })
                                 })
                             })
-                        })
-                    ]
+                        ]
+                    })
                 }),
                 /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                    className: "!mt-0 w-full px-4 pb-2",
+                    className: "!mt-0 w-full",
                     children: /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$AnimatePresence), {
                         exitBeforeEnter: true,
                         children: [
@@ -515,6 +999,18 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                                     opacity: 0
                                 },
                                 children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $e9fc485e32047442$export$2e2bcd8739ae039), {})
+                            }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step]),
+                            step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).PaymentMethod && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$motion).div, {
+                                animate: {
+                                    opacity: 1
+                                },
+                                exit: {
+                                    opacity: 0
+                                },
+                                initial: {
+                                    opacity: 0
+                                },
+                                children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $d752ec9124ef7f1d$export$2e2bcd8739ae039), {})
                             }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step]),
                             step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).EnterAmount && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$motion).div, {
                                 animate: {
