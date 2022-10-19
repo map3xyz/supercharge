@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "parcel build",
-    "start": "parcel src/index.html --watch",
+    "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix"
   },
   "resolutions": {
