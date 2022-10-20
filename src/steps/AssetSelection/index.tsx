@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
-import { Context } from '../../providers/Store';
+import { Context, Steps } from '../../providers/Store';
 
 export const coins = [
   {
@@ -54,12 +54,14 @@ const AssetSelection: React.FC<Props> = () => {
             key={coin.name}
             onClick={() => {
               dispatch({ payload: coin.name, type: 'SET_COIN' });
-              dispatch({ payload: 1, type: 'SET_STEP' });
+              dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
             }}
             role="button"
           >
             <div className="flex items-center gap-2">
-              <img className="h-4" src={coin.logo.svg || coin.logo.png} />
+              <div className="flex w-4 justify-center">
+                <img className="h-4" src={coin.logo.svg || coin.logo.png} />
+              </div>
               <span>{coin.label}</span>
             </div>
             {coin === selectedCoin ? (

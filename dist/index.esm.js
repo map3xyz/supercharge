@@ -2,10 +2,11 @@ import "./index.esm.css";
 import {jsx as $4MPRY$jsx, jsxs as $4MPRY$jsxs, Fragment as $4MPRY$Fragment} from "react/jsx-runtime";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@map3xyz/components/dist/index.css";
-import {Modal as $4MPRY$Modal, Button as $4MPRY$Button, Badge as $4MPRY$Badge} from "@map3xyz/components";
+import {Modal as $4MPRY$Modal, Button as $4MPRY$Button, Badge as $4MPRY$Badge, ReadOnlyText as $4MPRY$ReadOnlyText} from "@map3xyz/components";
 import {AnimatePresence as $4MPRY$AnimatePresence, motion as $4MPRY$motion} from "framer-motion";
 import {useState as $4MPRY$useState, useContext as $4MPRY$useContext, useEffect as $4MPRY$useEffect, useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext, useRef as $4MPRY$useRef} from "react";
 import {createRoot as $4MPRY$createRoot} from "react-dom/client";
+import {QRCodeSVG as $4MPRY$QRCodeSVG} from "qrcode.react";
 
 
 
@@ -190,7 +191,8 @@ let $68c68372be4a9678$export$fb587a27d5a722e7;
     Steps[Steps["NetworkSelection"] = 1] = "NetworkSelection";
     Steps[Steps["PaymentMethod"] = 2] = "PaymentMethod";
     Steps[Steps["EnterAmount"] = 3] = "EnterAmount";
-    Steps[Steps["__LENGTH"] = 4] = "__LENGTH";
+    Steps[Steps["QRCode"] = 4] = "QRCode";
+    Steps[Steps["__LENGTH"] = 5] = "__LENGTH";
 })($68c68372be4a9678$export$fb587a27d5a722e7 || ($68c68372be4a9678$export$fb587a27d5a722e7 = {}));
 let $68c68372be4a9678$export$31bb55db0b3e4187;
 (function(Method) {
@@ -201,11 +203,16 @@ let $68c68372be4a9678$export$31bb55db0b3e4187;
 })($68c68372be4a9678$export$31bb55db0b3e4187 || ($68c68372be4a9678$export$31bb55db0b3e4187 = {}));
 const $68c68372be4a9678$var$initialState = {
     coin: undefined,
+    depositAddress: {
+        data: undefined,
+        status: "idle"
+    },
     method: undefined,
     network: undefined,
-    step: $68c68372be4a9678$export$fb587a27d5a722e7.AssetSelection
+    step: $68c68372be4a9678$export$fb587a27d5a722e7.AssetSelection,
+    theme: undefined
 };
-const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: coin , network: network  })=>{
+const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: coin , generateDepositAddress: generateDepositAddress , network: network , theme: theme  })=>{
     let step = 0;
     if (coin) step = 1;
     if (coin && network) step = 2;
@@ -232,6 +239,38 @@ const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: 
                     ...state,
                     method: action.payload
                 };
+            case "GENERATE_DEPOSIT_ADDRESS_SUCCESS":
+                return {
+                    ...state,
+                    depositAddress: {
+                        data: action.payload,
+                        status: "success"
+                    }
+                };
+            case "GENERATE_DEPOSIT_ADDRESS_ERROR":
+                return {
+                    ...state,
+                    depositAddress: {
+                        data: undefined,
+                        status: "error"
+                    }
+                };
+            case "GENERATE_DEPOSIT_ADDRESS_LOADING":
+                return {
+                    ...state,
+                    depositAddress: {
+                        data: undefined,
+                        status: "loading"
+                    }
+                };
+            case "GENERATE_DEPOSIT_ADDRESS_IDLE":
+                return {
+                    ...state,
+                    depositAddress: {
+                        data: undefined,
+                        status: "idle"
+                    }
+                };
             default:
                 return state;
         }
@@ -239,19 +278,26 @@ const $68c68372be4a9678$export$390f32400eaf98c9 = ({ children: children , coin: 
         ...$68c68372be4a9678$var$initialState,
         coin: coin,
         network: network,
-        step: step
+        step: step,
+        theme: theme
     });
     return /*#__PURE__*/ (0, $4MPRY$jsx)($68c68372be4a9678$export$841858b892ce1f4c.Provider, {
         value: [
             state,
-            dispatch
+            dispatch,
+            {
+                generateDepositAddress: generateDepositAddress
+            }
         ],
         children: children
     });
 };
 const $68c68372be4a9678$export$841858b892ce1f4c = /*#__PURE__*/ (0, $4MPRY$createContext)([
     $68c68372be4a9678$var$initialState,
-    ()=>null, 
+    ()=>null,
+    {
+        generateDepositAddress: ()=>new Promise((resolve)=>resolve(""))
+    }, 
 ]);
 
 
@@ -259,7 +305,7 @@ const $68c68372be4a9678$export$841858b892ce1f4c = /*#__PURE__*/ (0, $4MPRY$creat
 
 
 
-const $d8f5e4867dc7bbaa$var$coins = [
+const $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8 = [
     {
         label: "Bitcoin",
         logo: {
@@ -291,7 +337,7 @@ const $d8f5e4867dc7bbaa$var$coins = [
 ];
 const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
-    const selectedCoin = $d8f5e4867dc7bbaa$var$coins.find((coin)=>coin.name === state.coin);
+    const selectedCoin = $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8.find((coin)=>coin.name === state.coin);
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
             /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
@@ -308,7 +354,7 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
                 className: "flex flex-col dark:text-white",
-                children: $d8f5e4867dc7bbaa$var$coins.map((coin)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                children: $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8.map((coin)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
                         className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
                         onClick: ()=>{
                             dispatch({
@@ -316,7 +362,7 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
                                 type: "SET_COIN"
                             });
                             dispatch({
-                                payload: 1,
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection,
                                 type: "SET_STEP"
                             });
                         },
@@ -325,9 +371,12 @@ const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
                             /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
                                 className: "flex items-center gap-2",
                                 children: [
-                                    /*#__PURE__*/ (0, $4MPRY$jsx)("img", {
-                                        className: "h-4",
-                                        src: coin.logo.svg || coin.logo.png
+                                    /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                        className: "flex w-4 justify-center",
+                                        children: /*#__PURE__*/ (0, $4MPRY$jsx)("img", {
+                                            className: "h-4",
+                                            src: coin.logo.svg || coin.logo.png
+                                        })
                                     }),
                                     /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
                                         children: coin.label
@@ -351,6 +400,139 @@ var $d8f5e4867dc7bbaa$export$2e2bcd8739ae039 = $d8f5e4867dc7bbaa$var$AssetSelect
 
 
 
+
+
+
+
+
+
+
+
+
+const $e9fc485e32047442$export$f09b1917886389c3 = [
+    {
+        code: "BTC",
+        name: "BTC"
+    },
+    {
+        code: "ETH",
+        name: "ETH"
+    },
+    {
+        code: "LTC",
+        name: "LTC"
+    },
+    {
+        code: "BCH",
+        name: "BCH"
+    },
+    {
+        code: "XRP",
+        name: "XRP"
+    },
+    {
+        code: "MATIC",
+        name: "MATIC"
+    },
+    {
+        code: "ADA",
+        name: "ADA"
+    },
+    {
+        code: "DOT",
+        name: "DOT"
+    },
+    {
+        code: "UNI",
+        name: "UNI"
+    }, 
+];
+const $e9fc485e32047442$var$NetworkSelection = ()=>{
+    const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
+    const selectedNetwork = $e9fc485e32047442$export$f09b1917886389c3.find((network)=>network.code === state.network);
+    const selectedCoin = (0, $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8).find((coin)=>coin.name === state.coin);
+    if (!selectedCoin) {
+        dispatch({
+            payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+            type: "SET_STEP"
+        });
+        return null;
+    }
+    return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: [
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                        className: "text-lg font-semibold dark:text-white",
+                        children: "Select Network"
+                    }),
+                    /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
+                        className: "text-xs text-neutral-400",
+                        children: [
+                            "Select the Network to deposit ",
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("b", {
+                                children: selectedCoin.label
+                            }),
+                            " on."
+                        ]
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                className: "w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
+                children: [
+                    "Deposit",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: selectedCoin.label
+                        })
+                    }),
+                    " ",
+                    "on"
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                className: "flex flex-col dark:text-white",
+                children: $e9fc485e32047442$export$f09b1917886389c3.map((network)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
+                        onClick: ()=>{
+                            dispatch({
+                                payload: network.code,
+                                type: "SET_NETWORK"
+                            });
+                            dispatch({
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).PaymentMethod,
+                                type: "SET_STEP"
+                            });
+                        },
+                        role: "button",
+                        children: [
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                children: network.code
+                            }),
+                            selectedNetwork?.code === network.code ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-check-circle text-green-400"
+                            }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                className: "fa fa-chevron-right text-xxs"
+                            })
+                        ]
+                    }, network.code))
+            })
+        ]
+    });
+};
+var $e9fc485e32047442$export$2e2bcd8739ae039 = $e9fc485e32047442$var$NetworkSelection;
 
 
 
@@ -450,8 +632,11 @@ var $d4bf502028e0348a$export$2e2bcd8739ae039 = $d4bf502028e0348a$var$SvgMetamask
 
 
 
+
+
 const $d752ec9124ef7f1d$export$e13b82b2b0368a6a = [
     {
+        enabled: true,
         icon: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
             className: "fa fa-qrcode h-4 w-4"
         }),
@@ -459,6 +644,7 @@ const $d752ec9124ef7f1d$export$e13b82b2b0368a6a = [
         name: (0, $68c68372be4a9678$export$31bb55db0b3e4187).qr
     },
     {
+        enabled: false,
         icon: /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
             className: "h-4 w-4",
             children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $d4bf502028e0348a$export$2e2bcd8739ae039), {})
@@ -469,8 +655,16 @@ const $d752ec9124ef7f1d$export$e13b82b2b0368a6a = [
 ];
 const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
-    if (!state.coin || !state.network) return null;
     const selectedMethod = $d752ec9124ef7f1d$export$e13b82b2b0368a6a.find((method)=>method.name === state.method);
+    const selectedCoin = (0, $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8).find((coin)=>coin.name === state.coin);
+    const selectedNetwork = (0, $e9fc485e32047442$export$f09b1917886389c3).find((network)=>network.name === state.network);
+    if (!selectedCoin || !selectedNetwork) {
+        dispatch({
+            payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+            type: "SET_STEP"
+        });
+        return null;
+    }
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
             /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
@@ -502,7 +696,7 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
                             color: "blue",
                             size: "large",
-                            children: state.coin
+                            children: selectedCoin?.label || ""
                         })
                     }),
                     " ",
@@ -520,7 +714,7 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
                             color: "blue",
                             size: "large",
-                            children: state.network
+                            children: selectedNetwork?.name || ""
                         })
                     }),
                     " ",
@@ -530,16 +724,28 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
                 className: "flex flex-col dark:text-white",
                 children: $d752ec9124ef7f1d$export$e13b82b2b0368a6a.map((method)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
+                        className: `flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${method.enabled ? "" : "!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900"}`,
                         onClick: ()=>{
-                            dispatch({
-                                payload: method.name,
-                                type: "SET_PAYMENT_METHOD"
-                            });
-                            dispatch({
-                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).EnterAmount,
-                                type: "SET_STEP"
-                            });
+                            if (!method.enabled) return;
+                            if (method.name === (0, $68c68372be4a9678$export$31bb55db0b3e4187).qr) {
+                                dispatch({
+                                    payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).QRCode,
+                                    type: "SET_STEP"
+                                });
+                                dispatch({
+                                    payload: method.name,
+                                    type: "SET_PAYMENT_METHOD"
+                                });
+                            } else {
+                                dispatch({
+                                    payload: method.name,
+                                    type: "SET_PAYMENT_METHOD"
+                                });
+                                dispatch({
+                                    payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).EnterAmount,
+                                    type: "SET_STEP"
+                                });
+                            }
                         },
                         role: "button",
                         children: [
@@ -549,6 +755,10 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
                                     method.icon,
                                     /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
                                         children: method.label
+                                    }),
+                                    !method.enabled && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                                        color: "yellow",
+                                        children: "Coming Soon"
                                     })
                                 ]
                             }),
@@ -624,9 +834,16 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                 }));
         }
     };
-    if (!state.coin || !state.network || !state.method) return null;
-    const method = (0, $d752ec9124ef7f1d$export$e13b82b2b0368a6a).find((method)=>method.name === state.method);
-    if (!method) return null;
+    const selectedMethod = (0, $d752ec9124ef7f1d$export$e13b82b2b0368a6a).find((method)=>method.name === state.method);
+    const selectedCoin = (0, $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8).find((coin)=>coin.name === state.coin);
+    const selectedNetwork = (0, $e9fc485e32047442$export$f09b1917886389c3).find((network)=>network.name === state.network);
+    if (!selectedCoin || !selectedNetwork || !selectedMethod) {
+        dispatch({
+            payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+            type: "SET_STEP"
+        });
+        return null;
+    }
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
             /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
@@ -636,7 +853,7 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                 })
             }),
             /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                className: "w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
+                className: "w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
                 children: [
                     "Deposit",
                     " ",
@@ -652,7 +869,7 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
                             color: "blue",
                             size: "large",
-                            children: state.coin
+                            children: selectedCoin.label
                         })
                     }),
                     " ",
@@ -670,7 +887,7 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
                             color: "blue",
                             size: "large",
-                            children: state.network
+                            children: selectedNetwork.name
                         })
                     }),
                     " ",
@@ -691,9 +908,9 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                             children: /*#__PURE__*/ (0, $4MPRY$jsxs)("span", {
                                 className: "flex items-center gap-1",
                                 children: [
-                                    method.icon,
+                                    selectedMethod.icon,
                                     " ",
-                                    method?.label
+                                    selectedMethod.label
                                 ]
                             })
                         })
@@ -795,70 +1012,65 @@ var $389c6829553d16e1$export$2e2bcd8739ae039 = $389c6829553d16e1$var$EnterAmount
 
 
 
-const $e9fc485e32047442$var$networks = [
-    {
-        code: "BTC",
-        name: "BTC"
-    },
-    {
-        code: "ETH",
-        name: "ETH"
-    },
-    {
-        code: "LTC",
-        name: "LTC"
-    },
-    {
-        code: "BCH",
-        name: "BCH"
-    },
-    {
-        code: "XRP",
-        name: "XRP"
-    },
-    {
-        code: "MATIC",
-        name: "MATIC"
-    },
-    {
-        code: "ADA",
-        name: "ADA"
-    },
-    {
-        code: "DOT",
-        name: "DOT"
-    },
-    {
-        code: "UNI",
-        name: "UNI"
-    }, 
-];
-const $e9fc485e32047442$var$NetworkSelection = ()=>{
-    const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
-    if (!state.coin) return null;
-    const selectedNetwork = $e9fc485e32047442$var$networks.find((network)=>network.code === state.network);
-    return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
+
+
+
+
+
+
+const $194171c89e26756c$var$QRCode = ()=>{
+    const [state, dispatch, { generateDepositAddress: generateDepositAddress  }] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
+    if (!state.coin || !state.network || !state.method) {
+        dispatch({
+            payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+            type: "SET_STEP"
+        });
+        return null;
+    }
+    const selectedCoin = (0, $d8f5e4867dc7bbaa$export$6150bd9ed04f9da8).find((coin)=>coin.name === state.coin);
+    const selectedNetwork = (0, $e9fc485e32047442$export$f09b1917886389c3).find((network)=>network.name === state.network);
+    const selectedMethod = (0, $d752ec9124ef7f1d$export$e13b82b2b0368a6a).find((method)=>method.name === state.method);
+    if (!selectedCoin || !selectedNetwork || !selectedMethod) {
+        dispatch({
+            payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).AssetSelection,
+            type: "SET_STEP"
+        });
+        return null;
+    }
+    (0, $4MPRY$useEffect)(()=>{
+        const run = async ()=>{
+            try {
+                dispatch({
+                    type: "GENERATE_DEPOSIT_ADDRESS_LOADING"
+                });
+                const address = await generateDepositAddress(selectedCoin.name, selectedNetwork.code);
+                dispatch({
+                    payload: address,
+                    type: "GENERATE_DEPOSIT_ADDRESS_SUCCESS"
+                });
+            } catch (e) {
+                dispatch({
+                    type: "GENERATE_DEPOSIT_ADDRESS_ERROR"
+                });
+            }
+        };
+        run();
+        return ()=>{
+            dispatch({
+                type: "GENERATE_DEPOSIT_ADDRESS_IDLE"
+            });
+        };
+    }, []);
+    return /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
         children: [
-            /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
-                children: [
-                    /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
-                        className: "text-lg font-semibold dark:text-white",
-                        children: "Select Network"
-                    }),
-                    /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
-                        className: "text-xs text-neutral-400",
-                        children: [
-                            "Select the Network to deposit ",
-                            /*#__PURE__*/ (0, $4MPRY$jsx)("b", {
-                                children: state.coin
-                            }),
-                            " on."
-                        ]
-                    })
-                ]
+            /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
+                    className: "text-lg font-semibold dark:text-white",
+                    children: "Scan QR Code"
+                })
             }),
             /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                className: "w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
+                className: "w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white",
                 children: [
                     "Deposit",
                     " ",
@@ -874,45 +1086,147 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
                             color: "blue",
                             size: "large",
-                            children: state.coin
+                            children: selectedCoin.label
                         })
                     }),
                     " ",
-                    "on"
-                ]
-            }),
-            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                className: "flex flex-col dark:text-white",
-                children: $e9fc485e32047442$var$networks.map((network)=>/*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
+                    "on",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
                         onClick: ()=>{
                             dispatch({
-                                payload: network.code,
-                                type: "SET_NETWORK"
+                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection,
+                                type: "SET_STEP"
                             });
+                        },
+                        role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: selectedNetwork.name
+                        })
+                    }),
+                    " ",
+                    "via",
+                    " ",
+                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                        className: "text-blue-600 underline",
+                        onClick: ()=>{
                             dispatch({
                                 payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).PaymentMethod,
                                 type: "SET_STEP"
                             });
                         },
                         role: "button",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Badge), {
+                            color: "blue",
+                            size: "large",
+                            children: /*#__PURE__*/ (0, $4MPRY$jsxs)("span", {
+                                className: "flex items-center gap-1",
+                                children: [
+                                    selectedMethod.icon,
+                                    " ",
+                                    selectedMethod?.label
+                                ]
+                            })
+                        })
+                    })
+                ]
+            }),
+            /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                children: [
+                    state.depositAddress.status === "loading" && /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                        className: "flex h-64 items-center justify-center text-sm",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                            className: "flex flex-col items-center gap-2 font-semibold",
+                            children: [
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                    className: "animate-spin dark:text-white",
+                                    children: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                        className: "fa fa-gear"
+                                    })
+                                }),
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                    className: "dark:text-white",
+                                    children: "Generating Address..."
+                                })
+                            ]
+                        })
+                    }),
+                    state.depositAddress.status === "error" && /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                        className: "flex h-64 items-center justify-center text-sm",
+                        children: /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                            className: "flex flex-col items-center gap-2 font-semibold",
+                            children: [
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                    className: "animate-spin font-semibold text-red-600",
+                                    children: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                        className: "fa fa-circle-xmark"
+                                    })
+                                }),
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                    className: "text-red-600",
+                                    children: "Error generating deposit address."
+                                })
+                            ]
+                        })
+                    }),
+                    state.depositAddress.status === "success" && state.depositAddress.data && /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex w-full flex-col items-center justify-center gap-4 text-sm",
                         children: [
-                            /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
-                                children: network.code
+                            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                className: "text-xs text-neutral-400",
+                                children: [
+                                    "Only send ",
+                                    selectedCoin.label,
+                                    " on the ",
+                                    selectedNetwork.name,
+                                    " ",
+                                    "Network to this address."
+                                ]
                             }),
-                            selectedNetwork?.code === network.code ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
-                                className: "fa fa-check-circle text-green-400"
-                            }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
-                                className: "fa fa-chevron-right text-xxs"
+                            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                className: "flex w-full justify-center",
+                                children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$QRCodeSVG), {
+                                    bgColor: state.theme === "dark" ? "#262626" : "#FFFFFF",
+                                    className: "rounded-lg",
+                                    fgColor: state.theme === "dark" ? "#FFFFFF" : "#000000",
+                                    imageSettings: {
+                                        excavate: true,
+                                        height: 40,
+                                        src: selectedCoin.logo.svg || selectedCoin.logo.png || "",
+                                        width: 40
+                                    },
+                                    includeMargin: true,
+                                    size: 256,
+                                    style: {
+                                        border: state.theme === "dark" ? "1px solid #404040" : "1px solid #e5e5e5"
+                                    },
+                                    value: state.depositAddress.data
+                                })
+                            }),
+                            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                className: "w-full",
+                                children: [
+                                    /*#__PURE__*/ (0, $4MPRY$jsx)("label", {
+                                        className: "text-xs dark:text-white",
+                                        children: "Deposit Address"
+                                    }),
+                                    /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$ReadOnlyText), {
+                                        copyButton: true,
+                                        value: state.depositAddress.data
+                                    })
+                                ]
                             })
                         ]
-                    }, network.code))
+                    })
+                ]
             })
         ]
     });
 };
-var $e9fc485e32047442$export$2e2bcd8739ae039 = $e9fc485e32047442$var$NetworkSelection;
-
+var $194171c89e26756c$export$2e2bcd8739ae039 = $194171c89e26756c$var$QRCode;
 
 
 const $090815f5086f7f29$var$TRANSITION = 300;
@@ -1023,6 +1337,18 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
                                     opacity: 0
                                 },
                                 children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $389c6829553d16e1$export$2e2bcd8739ae039), {})
+                            }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step]),
+                            step === (0, $68c68372be4a9678$export$fb587a27d5a722e7).QRCode && /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$motion).div, {
+                                animate: {
+                                    opacity: 1
+                                },
+                                exit: {
+                                    opacity: 0
+                                },
+                                initial: {
+                                    opacity: 0
+                                },
+                                children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $194171c89e26756c$export$2e2bcd8739ae039), {})
                             }, (0, $68c68372be4a9678$export$fb587a27d5a722e7)[step])
                         ]
                     })
@@ -1067,6 +1393,8 @@ const $090815f5086f7f29$var$Map3Sdk = ({ onClose: onClose  })=>{
 };
 class $090815f5086f7f29$export$c06370d2ab5297a3 {
     constructor(config){
+        if (!config.generateDepositAddress) throw new Error("generateDepositAddress is required");
+        if (!config.theme) config.theme = "light";
         this.config = config;
         this.onClose = ()=>{
             this.root.unmount();
