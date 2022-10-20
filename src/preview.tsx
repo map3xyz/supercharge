@@ -10,7 +10,12 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
-          theme: 'dark',
+          generateDepositAddress: async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            return '0x0000000000000000000000000000000000000000';
+          },
+          theme: 'light',
         });
         map3.open();
       }}

@@ -3,8 +3,9 @@ import React, { useContext } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import { Context, Steps } from '../../providers/Store';
+import { coins } from '../AssetSelection';
 
-const networks = [
+export const networks = [
   { code: 'BTC', name: 'BTC' },
   { code: 'ETH', name: 'ETH' },
   { code: 'LTC', name: 'LTC' },
@@ -19,13 +20,15 @@ const networks = [
 const NetworkSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
 
-  if (!state.coin) {
-    return null;
-  }
-
   const selectedNetwork = networks.find(
     (network) => network.code === state.network
   );
+  const selectedCoin = coins.find((coin) => coin.name === state.coin);
+
+  if (!selectedCoin) {
+    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    return null;
+  }
 
   return (
     <>
@@ -34,7 +37,7 @@ const NetworkSelection: React.FC<Props> = () => {
           Select Network
         </h3>
         <h5 className="text-xs text-neutral-400">
-          Select the Network to deposit <b>{state.coin}</b> on.
+          Select the Network to deposit <b>{selectedCoin.label}</b> on.
         </h5>
       </InnerWrapper>
       <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
@@ -50,7 +53,7 @@ const NetworkSelection: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.coin}
+            {selectedCoin.label}
           </Badge>
         </span>{' '}
         on

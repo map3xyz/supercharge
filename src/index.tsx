@@ -15,9 +15,11 @@ import AssetSelection from './steps/AssetSelection';
 import EnterAmount from './steps/EnterAmount';
 import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
+import QRCode from './steps/QRCode';
 
 interface Map3InitConfig {
   coin?: string;
+  generateDepositAddress: (coin: string, network: string) => Promise<string>;
   network?: string;
   theme?: 'dark' | 'light';
 }
@@ -116,6 +118,16 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <EnterAmount />
               </motion.div>
             )}
+            {step === Steps.QRCode && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <QRCode />
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
         <div className="!mt-0 w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800">
@@ -159,6 +171,14 @@ export class Map3 {
   private config: Map3InitConfig;
 
   constructor(config: Map3InitConfig) {
+    if (!config.generateDepositAddress) {
+      throw new Error('generateDepositAddress is required');
+    }
+
+    if (!config.theme) {
+      config.theme = 'light';
+    }
+
     this.config = config;
 
     this.onClose = () => {

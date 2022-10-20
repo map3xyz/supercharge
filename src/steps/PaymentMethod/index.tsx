@@ -4,14 +4,18 @@ import React, { useContext } from 'react';
 import MetaMaskLogo from '../../assets/platforms/metamask.svg';
 import InnerWrapper from '../../components/InnerWrapper';
 import { Context, Method, Steps } from '../../providers/Store';
+import { coins } from '../AssetSelection';
+import { networks } from '../NetworkSelection';
 
 export const methods = [
   {
+    enabled: true,
     icon: <i className="fa fa-qrcode h-4 w-4" />,
     label: 'QR Code',
     name: Method.qr,
   },
   {
+    enabled: false,
     icon: (
       <div className="h-4 w-4">
         <MetaMaskLogo />
@@ -25,11 +29,16 @@ export const methods = [
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
 
-  if (!state.coin || !state.network) {
+  const selectedMethod = methods.find((method) => method.name === state.method);
+  const selectedCoin = coins.find((coin) => coin.name === state.coin);
+  const selectedNetwork = networks.find(
+    (network) => network.name === state.network
+  );
+
+  if (!selectedCoin || !selectedNetwork) {
+    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
-
-  const selectedMethod = methods.find((method) => method.name === state.method);
 
   return (
     <>
@@ -54,7 +63,7 @@ const PaymentMethod: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.coin}
+            {selectedCoin?.label || ''}
           </Badge>
         </span>{' '}
         on{' '}
@@ -66,7 +75,7 @@ const PaymentMethod: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.network}
+            {selectedNetwork?.name || ''}
           </Badge>
         </span>{' '}
         via
@@ -74,17 +83,30 @@ const PaymentMethod: React.FC<Props> = () => {
       <div className="flex flex-col dark:text-white">
         {methods.map((method) => (
           <div
-            className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+            className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+              method.enabled
+                ? ''
+                : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
+            }`}
             key={method.label}
             onClick={() => {
-              dispatch({ payload: method.name, type: 'SET_PAYMENT_METHOD' });
-              dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+              if (!method.enabled) {
+                return;
+              }
+              if (method.name === Method.qr) {
+                dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                dispatch({ payload: method.name, type: 'SET_PAYMENT_METHOD' });
+              } else {
+                dispatch({ payload: method.name, type: 'SET_PAYMENT_METHOD' });
+                dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+              }
             }}
             role="button"
           >
             <div className="flex items-center gap-2">
               {method.icon}
               <span>{method.label}</span>
+              {!method.enabled && <Badge color="yellow">Coming Soon</Badge>}
             </div>
             {selectedMethod?.label === method.label ? (
               <i className="fa fa-check-circle text-green-400" />

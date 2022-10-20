@@ -3,6 +3,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import { Context, Steps } from '../../providers/Store';
+import { coins } from '../AssetSelection';
+import { networks } from '../NetworkSelection';
 import { methods } from '../PaymentMethod';
 
 const BASE_FONT_SIZE = 48;
@@ -74,13 +76,14 @@ const EnterAmount: React.FC<Props> = () => {
     }
   };
 
-  if (!state.coin || !state.network || !state.method) {
-    return null;
-  }
+  const selectedMethod = methods.find((method) => method.name === state.method);
+  const selectedCoin = coins.find((coin) => coin.name === state.coin);
+  const selectedNetwork = networks.find(
+    (network) => network.name === state.network
+  );
 
-  const method = methods.find((method) => method.name === state.method);
-
-  if (!method) {
+  if (!selectedCoin || !selectedNetwork || !selectedMethod) {
+    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
 
@@ -89,7 +92,7 @@ const EnterAmount: React.FC<Props> = () => {
       <InnerWrapper>
         <h3 className="text-lg font-semibold dark:text-white">Enter Amount</h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Deposit{' '}
         <span
           className="text-blue-600 underline"
@@ -102,7 +105,7 @@ const EnterAmount: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.coin}
+            {selectedCoin.label}
           </Badge>
         </span>{' '}
         on{' '}
@@ -114,7 +117,7 @@ const EnterAmount: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.network}
+            {selectedNetwork.name}
           </Badge>
         </span>{' '}
         via{' '}
@@ -132,7 +135,7 @@ const EnterAmount: React.FC<Props> = () => {
           <Badge color="blue" size="large">
             {/* @ts-ignore */}
             <span className="flex items-center gap-1">
-              {method.icon} {method?.label}
+              {selectedMethod.icon} {selectedMethod.label}
             </span>
           </Badge>
         </span>

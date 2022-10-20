@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import InnerWrapper from '../../components/InnerWrapper';
 import { Context } from '../../providers/Store';
 
-const coins = [
+export const coins = [
   {
     label: 'Bitcoin',
     logo: {
