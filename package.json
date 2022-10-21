@@ -20,13 +20,18 @@
   "scripts": {
     "build": "parcel build",
     "start": "parcel src/index.html",
-    "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix"
+    "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "resolutions": {
     "typescript": "~4.7",
     "typescript:comment": "see https://github.com/parcel-bundler/parcel/issues/8419"
   },
   "devDependencies": {
+    "@apollo/client": "^3.7.0",
+    "@graphql-codegen/cli": "2.13.7",
+    "@graphql-codegen/client-preset": "1.1.0",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.5",
     "@parcel/packager-ts": "2.7.0",
     "@parcel/transformer-inline-string": "2.7.0",
     "@parcel/transformer-svg-react": "^2.7.0",
@@ -44,6 +49,7 @@
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-tailwindcss": "^3.6.1",
     "eslint-plugin-typescript-sort-keys": "^2.1.0",
+    "graphql": "^16.6.0",
     "parcel": "^2.7.0",
     "postcss": "^8.4.16",
     "prettier": "^2.2.1",

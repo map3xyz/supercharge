@@ -2,6 +2,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import '@map3xyz/components/dist/index.css';
 import './index.css';
 
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { Button, Modal } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useState } from 'react';
@@ -17,10 +18,14 @@ import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
 import QRCode from './steps/QRCode';
 
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: 'http://localhost:3001/api/graphql',
+});
+
 interface Map3InitConfig {
-  coin?: string;
-  generateDepositAddress: (coin: string, network: string) => Promise<string>;
-  network?: string;
+  generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
+  slug?: string;
   theme?: 'dark' | 'light';
 }
 
@@ -199,9 +204,11 @@ export class Map3 {
 
   public open() {
     this.root.render(
-      <Store {...this.config}>
-        <Map3Sdk onClose={this.onClose} />
-      </Store>
+      <ApolloProvider client={client}>
+        <Store {...this.config}>
+          <Map3Sdk onClose={this.onClose} />
+        </Store>
+      </ApolloProvider>
     );
   }
 

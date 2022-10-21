@@ -1,41 +1,28 @@
 import { Badge } from '@map3xyz/components';
 import React, { useContext } from 'react';
 
-import MetaMaskLogo from '../../assets/platforms/metamask.svg';
+import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
-import { Context, Method, Steps } from '../../providers/Store';
-import { coins } from '../AssetSelection';
-import { networks } from '../NetworkSelection';
-
-export const methods = [
-  {
-    enabled: true,
-    icon: <i className="fa fa-qrcode h-4 w-4" />,
-    label: 'QR Code',
-    name: Method.qr,
-  },
-  {
-    enabled: false,
-    icon: (
-      <div className="h-4 w-4">
-        <MetaMaskLogo />
-      </div>
-    ),
-    label: 'MetaMask',
-    name: Method.metamask,
-  },
-];
+import LoadingWrapper from '../../components/LoadingWrapper';
+import MethodIcon from '../../components/MethodIcon';
+import { useGetPaymentMethodsQuery } from '../../generated/apollo-gql';
+import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const { data, error, loading, refetch } = useGetPaymentMethodsQuery();
 
-  const selectedMethod = methods.find((method) => method.name === state.method);
-  const selectedCoin = coins.find((coin) => coin.name === state.coin);
-  const selectedNetwork = networks.find(
-    (network) => network.name === state.network
-  );
+  if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
+  if (error)
+    return (
+      <ErrorWrapper
+        description="We couldn't get a list of payment methods to select."
+        header="Error Fetching Payment Methods"
+        retry={refetch}
+      />
+    );
 
-  if (!selectedCoin || !selectedNetwork) {
+  if (!state.asset || !state.network) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
@@ -63,7 +50,7 @@ const PaymentMethod: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {selectedCoin?.label || ''}
+            {state.asset?.name || ''}
           </Badge>
         </span>{' '}
         on{' '}
@@ -75,46 +62,54 @@ const PaymentMethod: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {selectedNetwork?.name || ''}
+            {state.network?.name || ''}
           </Badge>
         </span>{' '}
         via
       </div>
       <div className="flex flex-col dark:text-white">
-        {methods.map((method) => (
-          <div
-            className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
-              method.enabled
-                ? ''
-                : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
-            }`}
-            key={method.label}
-            onClick={() => {
-              if (!method.enabled) {
-                return;
-              }
-              if (method.name === Method.qr) {
-                dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
-                dispatch({ payload: method.name, type: 'SET_PAYMENT_METHOD' });
-              } else {
-                dispatch({ payload: method.name, type: 'SET_PAYMENT_METHOD' });
-                dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
-              }
-            }}
-            role="button"
-          >
-            <div className="flex items-center gap-2">
-              {method.icon}
-              <span>{method.label}</span>
-              {!method.enabled && <Badge color="yellow">Coming Soon</Badge>}
+        {data?.methods?.map((method) =>
+          method ? (
+            <div
+              className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+                method.enabled
+                  ? ''
+                  : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
+              }`}
+              key={method.value}
+              onClick={() => {
+                if (!method.enabled) {
+                  return;
+                }
+                if (method.value === 'qr') {
+                  dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                  dispatch({
+                    payload: method,
+                    type: 'SET_PAYMENT_METHOD',
+                  });
+                } else {
+                  dispatch({
+                    payload: method,
+                    type: 'SET_PAYMENT_METHOD',
+                  });
+                  dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+                }
+              }}
+              role="button"
+            >
+              <div className="flex items-center gap-2">
+                <MethodIcon method={method} />
+                <span>{method.name}</span>
+                {!method.enabled && <Badge color="yellow">Coming Soon</Badge>}
+              </div>
+              {state.method?.value === method.value ? (
+                <i className="fa fa-check-circle text-green-400" />
+              ) : (
+                <i className="fa fa-chevron-right text-xxs" />
+              )}
             </div>
-            {selectedMethod?.label === method.label ? (
-              <i className="fa fa-check-circle text-green-400" />
-            ) : (
-              <i className="fa fa-chevron-right text-xxs" />
-            )}
-          </div>
-        ))}
+          ) : null
+        )}
       </div>
     </>
   );

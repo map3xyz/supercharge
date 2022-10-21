@@ -1,0 +1,9 @@
+query GetPaymentMethods {
+  methods {
+    name
+    icon
+    logo
+    value
+    enabled
+  }
+}
