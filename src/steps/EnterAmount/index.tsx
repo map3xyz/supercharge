@@ -2,10 +2,8 @@ import { Badge } from '@map3xyz/components';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
+import MethodIcon from '../../components/MethodIcon';
 import { Context, Steps } from '../../providers/Store';
-import { coins } from '../AssetSelection';
-import { networks } from '../NetworkSelection';
-import { methods } from '../PaymentMethod';
 
 const BASE_FONT_SIZE = 48;
 
@@ -76,13 +74,7 @@ const EnterAmount: React.FC<Props> = () => {
     }
   };
 
-  const selectedMethod = methods.find((method) => method.name === state.method);
-  const selectedCoin = coins.find((coin) => coin.name === state.coin);
-  const selectedNetwork = networks.find(
-    (network) => network.name === state.network
-  );
-
-  if (!selectedCoin || !selectedNetwork || !selectedMethod) {
+  if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
@@ -105,7 +97,7 @@ const EnterAmount: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {selectedCoin.label}
+            {state.asset.name || ''}
           </Badge>
         </span>{' '}
         on{' '}
@@ -117,7 +109,7 @@ const EnterAmount: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {selectedNetwork.name}
+            {state.network.name || ''}
           </Badge>
         </span>{' '}
         via{' '}
@@ -135,7 +127,7 @@ const EnterAmount: React.FC<Props> = () => {
           <Badge color="blue" size="large">
             {/* @ts-ignore */}
             <span className="flex items-center gap-1">
-              {selectedMethod.icon} {selectedMethod.label}
+              <MethodIcon method={state.method} /> {state.method.name}
             </span>
           </Badge>
         </span>
