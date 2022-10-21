@@ -81,19 +81,20 @@ const PaymentMethod: React.FC<Props> = () => {
                 if (!method.enabled) {
                   return;
                 }
+                dispatch({
+                  payload: method,
+                  type: 'SET_PAYMENT_METHOD',
+                });
                 if (method.value === 'qr') {
-                  dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
-                  dispatch({
-                    payload: method,
-                    type: 'SET_PAYMENT_METHOD',
-                  });
-                } else {
-                  dispatch({
-                    payload: method,
-                    type: 'SET_PAYMENT_METHOD',
-                  });
-                  dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+                  dispatch({ payload: Steps.Summary, type: 'SET_STEP' });
                 }
+                // else {
+                //   dispatch({
+                //     payload: method,
+                //     type: 'SET_PAYMENT_METHOD',
+                //   });
+                //   dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+                // }
               }}
               role="button"
             >

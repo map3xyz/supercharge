@@ -3,7 +3,7 @@ import '@map3xyz/components/dist/index.css';
 import './index.css';
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
-import { Button, Modal } from '@map3xyz/components';
+import { Modal } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useState } from 'react';
 import { createRoot, Root } from 'react-dom/client';
@@ -13,7 +13,7 @@ import InnerWrapper from './components/InnerWrapper';
 import ProgressBar from './components/ProgressBar';
 import { Context, Steps, Store } from './providers/Store';
 import AssetSelection from './steps/AssetSelection';
-import EnterAmount from './steps/EnterAmount';
+// import EnterAmount from './steps/EnterAmount';
 import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
 import QRCode from './steps/QRCode';
@@ -113,7 +113,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <PaymentMethod />
               </motion.div>
             )}
-            {step === Steps.EnterAmount && (
+            {/* {step === Steps.EnterAmount && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -122,24 +122,24 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
               >
                 <EnterAmount />
               </motion.div>
-            )}
-            {step === Steps.QRCode && (
+            )} */}
+            {step === Steps.Summary && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
               >
-                <QRCode />
+                {state.method?.value === 'qr' ? <QRCode /> : null}
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-        <div className="!mt-0 w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800">
-          <div className="flex items-end justify-between">
+        <div className="!mt-0 w-full border-t border-neutral-200 bg-neutral-100 py-2 text-center dark:border-neutral-700 dark:bg-neutral-800">
+          <div className="flex items-center justify-center">
             <a
               aria-label="Map3.xyz"
-              className="flex items-end gap-1 text-xxs text-neutral-400"
+              className="flex gap-1 text-xxs text-neutral-400"
               href="https://map3.xyz"
               target="_blank"
             >
@@ -148,17 +148,6 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <Logo className="h-3" />
               </div>
             </a>
-            <Button
-              onClick={() => {
-                if (isLastStep) {
-                  handleClose();
-                } else {
-                  dispatch({ payload: step + 1, type: 'SET_STEP' });
-                }
-              }}
-            >
-              {isLastStep ? 'Close' : 'Next'}
-            </Button>
           </div>
         </div>
       </Modal>
