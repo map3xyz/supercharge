@@ -13,7 +13,7 @@ const AssetSelection: React.FC<Props> = () => {
 
   if (loading) return <LoadingWrapper />;
 
-  if (error)
+  if (error) {
     return (
       <ErrorWrapper
         description="We couldn't get a list of assets to select."
@@ -21,6 +21,7 @@ const AssetSelection: React.FC<Props> = () => {
         retry={() => refetch()}
       />
     );
+  }
 
   return (
     <>
