@@ -26,7 +26,12 @@ const AssetSelection: React.FC<Props> = () => {
   return (
     <>
       <InnerWrapper>
-        <h3 className="text-lg font-semibold dark:text-white">Select Asset</h3>
+        <h3
+          className="text-lg font-semibold dark:text-white"
+          data-testid="select-asset"
+        >
+          Select Asset
+        </h3>
         <h5 className="text-xs text-neutral-400">
           Select the Asset you want to deposit.
         </h5>

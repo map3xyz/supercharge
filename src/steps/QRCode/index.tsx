@@ -38,9 +38,14 @@ const QRCode: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div data-testid="qrcode-method">
+    <div>
       <InnerWrapper>
-        <h3 className="text-lg font-semibold dark:text-white">Scan QR Code</h3>
+        <h3
+          className="text-lg font-semibold dark:text-white"
+          data-testid="qrcode-method"
+        >
+          Scan QR Code
+        </h3>
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Deposit{' '}

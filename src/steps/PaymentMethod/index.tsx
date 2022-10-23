@@ -89,15 +89,29 @@ const PaymentMethod: React.FC<Props> = () => {
                   type: 'SET_PAYMENT_METHOD',
                 });
                 if (method.value === 'qr') {
+                  dispatch({
+                    payload: [
+                      'AssetSelection',
+                      'NetworkSelection',
+                      'PaymentMethod',
+                      'Summary',
+                    ],
+                    type: 'SET_STEPS',
+                  });
                   dispatch({ payload: Steps.Summary, type: 'SET_STEP' });
+                } else {
+                  dispatch({
+                    payload: [
+                      'AssetSelection',
+                      'NetworkSelection',
+                      'PaymentMethod',
+                      'EnterAmount',
+                      'Summary',
+                    ],
+                    type: 'SET_STEPS',
+                  });
+                  dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
                 }
-                // else {
-                //   dispatch({
-                //     payload: method,
-                //     type: 'SET_PAYMENT_METHOD',
-                //   });
-                //   dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
-                // }
               }}
               role="button"
             >

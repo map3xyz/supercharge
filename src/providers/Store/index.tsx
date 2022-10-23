@@ -21,6 +21,7 @@ type State = {
   network?: Network;
   slug?: string;
   step: number;
+  steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
 };
 
@@ -29,6 +30,7 @@ type Action =
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
+  | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
   | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
@@ -44,6 +46,13 @@ const initialState: State = {
   network: undefined,
   slug: undefined,
   step: Steps.AssetSelection,
+  steps: [
+    'AssetSelection',
+    'NetworkSelection',
+    'PaymentMethod',
+    'EnterAmount',
+    'Summary',
+  ],
   theme: undefined,
 };
 
@@ -76,7 +85,16 @@ export const Store: React.FC<
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
         case 'SET_STEP':
-          return { ...state, step: action.payload };
+          console.log(state.steps);
+          return {
+            ...state,
+            step: state.steps.indexOf(
+              Steps[action.payload] as keyof typeof Steps
+            ),
+          };
+        case 'SET_STEPS': {
+          return { ...state, steps: action.payload };
+        }
         case 'SET_PAYMENT_METHOD':
           return { ...state, method: action.payload };
         case 'GENERATE_DEPOSIT_ADDRESS_SUCCESS':

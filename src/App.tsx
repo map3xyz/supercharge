@@ -19,7 +19,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
   const [open, setOpen] = useState(false);
   const [state, dispatch] = useContext(Context);
 
-  const { step } = state;
+  const { step, steps } = state;
 
   useEffect(() => {
     setOpen(true);
@@ -58,7 +58,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
             >
               <i className="fa transition-color fa-long-arrow-left duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
             </button>
-            <ProgressBar progress={step / (Steps.__LENGTH - 1)} />
+            <ProgressBar progress={step / (steps.length - 1)} />
             <div>
               <button onClick={handleClose}>
                 <i className="fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
@@ -68,7 +68,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
         </InnerWrapper>
         <div className="!mt-0 w-full">
           <AnimatePresence mode="wait">
-            {step === Steps.AssetSelection && (
+            {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -78,7 +78,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <AssetSelection />
               </motion.div>
             )}
-            {step === Steps.NetworkSelection && (
+            {steps[step] === Steps[Steps.NetworkSelection] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -88,7 +88,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <NetworkSelection />
               </motion.div>
             )}
-            {step === Steps.PaymentMethod && (
+            {steps[step] === Steps[Steps.PaymentMethod] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -98,7 +98,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <PaymentMethod />
               </motion.div>
             )}
-            {step === Steps.EnterAmount && (
+            {steps[step] === Steps[Steps.EnterAmount] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -108,7 +108,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <EnterAmount />
               </motion.div>
             )}
-            {step === Steps.Summary && (
+            {steps[step] === Steps[Steps.Summary] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
