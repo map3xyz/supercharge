@@ -30,7 +30,10 @@ const PaymentMethod: React.FC<Props> = () => {
   return (
     <>
       <InnerWrapper>
-        <h3 className="text-lg font-semibold dark:text-white">
+        <h3
+          className="text-lg font-semibold dark:text-white"
+          data-testid="payment-method"
+        >
           Payment Method
         </h3>
         <h5 className="text-xs text-neutral-400">

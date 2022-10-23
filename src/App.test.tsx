@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 
 import App from './App';
 import {
@@ -130,8 +131,14 @@ describe('App', () => {
       fireEvent.click(ethereum);
       const qrCode = await screen.findByText('Scan QR Code');
       fireEvent.click(qrCode);
-      const qrCodeModal = await screen.findByText('Scan QR Code');
-      expect(qrCodeModal).toBeInTheDocument();
+      const qrCodeMethod = await screen.findByTestId('qrcode-method');
+      expect(qrCodeMethod).toBeInTheDocument();
+      const back = await screen.findByLabelText('Back');
+      await act(async () => {
+        await fireEvent.click(back);
+      });
+      const paymentSelection = await screen.findByTestId('payment-method');
+      expect(paymentSelection).toBeInTheDocument();
     });
   });
 });

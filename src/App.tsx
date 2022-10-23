@@ -8,6 +8,7 @@ import InnerWrapper from './components/InnerWrapper';
 import ProgressBar from './components/ProgressBar';
 import { Context, Steps, Store } from './providers/Store';
 import AssetSelection from './steps/AssetSelection';
+import EnterAmount from './steps/EnterAmount';
 import NetworkSelection from './steps/NetworkSelection';
 import PaymentMethod from './steps/PaymentMethod';
 import QRCode from './steps/QRCode';
@@ -51,6 +52,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
         <InnerWrapper>
           <div className="flex w-full items-center justify-between gap-4">
             <button
+              aria-label="Back"
               className={step === 0 ? 'invisible' : 'visible'}
               onClick={() => dispatch({ payload: step - 1, type: 'SET_STEP' })}
             >
@@ -96,7 +98,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
                 <PaymentMethod />
               </motion.div>
             )}
-            {/* {step === Steps.EnterAmount && (
+            {step === Steps.EnterAmount && (
               <motion.div
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -105,7 +107,7 @@ const Map3Sdk: React.FC<Props> = ({ onClose }) => {
               >
                 <EnterAmount />
               </motion.div>
-            )} */}
+            )}
             {step === Steps.Summary && (
               <motion.div
                 animate={{ opacity: 1 }}
