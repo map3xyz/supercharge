@@ -23,7 +23,6 @@ jobs:
           echo "Summary Html - ${{ steps.coverageComment.outputs.summaryHtml }}"
 
       - name: Create the Badge
-            if: ${{ github.ref == 'refs/heads/gql-setup' }}
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
           filename: jest-coverage-comment__main.json
