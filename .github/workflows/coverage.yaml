@@ -2,7 +2,7 @@
 # For more information see: https://github.com/MishaKav/jest-coverage-comment/
 name: Jest coverage comment
 on:
-  pull_request:
+  push:
 jobs:
   build:
     runs-on: ubuntu-latest
