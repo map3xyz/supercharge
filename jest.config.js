@@ -1,6 +1,11 @@
 module.exports = {
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.test.{ts,tsx}'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/preview.tsx',
+    '!src/custom.d.ts',
+    '!src/generated/*.{ts,tsx}',
+  ],
   coverageDirectory: 'coverage',
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/jest/__mocks__/styleMock.js',

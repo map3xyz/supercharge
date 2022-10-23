@@ -1,0 +1,2 @@
+- name: Jest coverage comment
+  uses: MishaKav/jest-coverage-comment@main

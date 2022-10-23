@@ -85,7 +85,6 @@ export const Store: React.FC<
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
         case 'SET_STEP':
-          console.log(state.steps);
           return {
             ...state,
             step: state.steps.indexOf(
