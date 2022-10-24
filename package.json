@@ -22,7 +22,8 @@
     "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
-    "test": "DEBUG_PRINT_LIMIT=10000 jest"
+    "test": "DEBUG_PRINT_LIMIT=10000 jest",
+    "test:ci": "jest --ci --coverage"
   },
   "resolutions": {
     "typescript": "~4.7",
