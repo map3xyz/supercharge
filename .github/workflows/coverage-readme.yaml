@@ -26,7 +26,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
           auth: ${{ secrets.JEST_COVERAGE_COMMENT }}
-          gistID: MishaKav/5e90d640f8c212ab7bbac38f72323f80
+          gistID: 2da5e67f3cbf57ce3e9367e9f62bd4fb
           filename: jest-coverage-comment__main.json
           label: Coverage
           message: ${{ steps.coverageComment.outputs.coverage }}%
