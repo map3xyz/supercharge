@@ -58,22 +58,23 @@ const initialState: State = {
 
 export const Store: React.FC<
   PropsWithChildren<{
+    asset?: Asset;
     generateDepositAddress: (
       asset?: string,
       network?: string
     ) => Promise<string>;
+    network?: Network;
     slug?: string;
     theme?: 'dark' | 'light';
   }>
-> = ({ children, generateDepositAddress, slug, theme }) => {
+> = ({ asset, children, generateDepositAddress, network, slug, theme }) => {
   let step = 0;
-  const [coin, network] = slug?.split(':') ?? [];
 
-  if (coin) {
+  if (asset) {
     step = Steps.NetworkSelection;
   }
 
-  if (coin && network) {
+  if (asset && network) {
     step = Steps.PaymentMethod;
   }
 
@@ -132,7 +133,7 @@ export const Store: React.FC<
           return state;
       }
     },
-    { ...initialState, slug, step, theme }
+    { ...initialState, asset, network, slug, step, theme }
   );
 
   return (

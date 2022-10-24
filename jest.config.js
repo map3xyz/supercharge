@@ -11,6 +11,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/jest/__mocks__/styleMock.js',
     '^.+\\.svg$': '<rootDir>/jest/__mocks__/svgMock.js',
+    '^~/jest/(.*)$': '<rootDir>/jest/$1',
   },
   setupFiles: ['<rootDir>/jest/setupTests.js'],
   testEnvironment: 'jsdom',
