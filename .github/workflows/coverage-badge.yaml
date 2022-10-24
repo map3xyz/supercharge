@@ -14,4 +14,4 @@ jobs:
     - name: Generating coverage badges
       uses: jpb06/jest-badges-action@latest
         with:
-          branches: gql-setup
+          branches: master,gql-setup
