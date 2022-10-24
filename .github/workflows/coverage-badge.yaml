@@ -5,10 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out repo
-        uses: actions/checkout@v2
+      uses: actions/checkout@v2
     - name: Install dependencies
-        run: npm install
+      run: npm install
     - name: Run tests
-        run: yarn test:ci
+      run: yarn test:ci
     - name: Generating coverage badges
-        uses: jpb06/jest-badges-action@latest
+      uses: jpb06/jest-badges-action@latest
