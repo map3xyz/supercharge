@@ -4,8 +4,8 @@ import { AppProps } from './App';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import { useGetAssetsQuery, useGetNetworksQuery } from './generated/apollo-gql';
-import Map3Sdk from './modal';
 import { Store } from './providers/Store';
+import Map3SdkSteps from './steps';
 
 const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
   const [networkString, assetString] = config?.slug?.split(':') ?? [];
@@ -38,7 +38,7 @@ const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     );
   return (
     <Store {...config} asset={asset} network={network}>
-      <Map3Sdk onClose={onClose} />
+      <Map3SdkSteps onClose={onClose} />
     </Store>
   );
 };

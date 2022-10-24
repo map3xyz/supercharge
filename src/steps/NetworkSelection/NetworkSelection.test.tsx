@@ -28,6 +28,7 @@ describe('Network Selection', () => {
   it('handles errors', async () => {
     RTLRender(
       <MockedProvider
+        addTypename={false}
         mocks={[
           {
             request: {

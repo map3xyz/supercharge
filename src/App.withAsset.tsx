@@ -4,8 +4,8 @@ import { AppProps } from './App';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import { useGetAssetsQuery } from './generated/apollo-gql';
-import Map3Sdk from './modal';
 import { Store } from './providers/Store';
+import Map3SdkSteps from './steps';
 
 const AppWithAsset: React.FC<AppProps> = ({ config, onClose }) => {
   const [_, assetString] = config?.slug?.split(':') ?? [];
@@ -27,7 +27,7 @@ const AppWithAsset: React.FC<AppProps> = ({ config, onClose }) => {
 
   return (
     <Store {...config} asset={asset}>
-      <Map3Sdk onClose={onClose} />
+      <Map3SdkSteps onClose={onClose} />
     </Store>
   );
 };

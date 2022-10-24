@@ -11,7 +11,7 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import QRCode from '../steps/QRCode';
 
-const Map3Sdk: React.FC<Props> = ({ onClose }) => {
+const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   const [state, dispatch] = useContext(Context);
 
   const { step, steps } = state;
@@ -109,4 +109,4 @@ type Props = {
   onClose: () => void;
 };
 
-export default Map3Sdk;
+export default Map3SdkSteps;

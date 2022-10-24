@@ -4,8 +4,8 @@ import React from 'react';
 import { Map3InitConfig } from '.';
 import AppWithAsset from './App.withAsset';
 import AppWithAssetAndNetwork from './App.withAssetAndNetwork';
-import Map3Sdk from './modal';
 import { Store } from './providers/Store';
+import Map3SdkSteps from './steps';
 
 const TRANSITION = 300;
 
@@ -28,7 +28,7 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
           <AppWithAsset config={config} onClose={onClose} />
         ) : (
           <Store {...config}>
-            <Map3Sdk onClose={onClose} />
+            <Map3SdkSteps onClose={onClose} />
           </Store>
         )}
       </Modal>
