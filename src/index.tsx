@@ -11,13 +11,11 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   uri: 'http://localhost:3001/api/graphql',
 });
-
 export interface Map3InitConfig {
   generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
   slug?: string;
   theme?: 'dark' | 'light';
 }
-
 export class Map3 {
   private onClose: () => void;
   private root: Root;

@@ -7,7 +7,7 @@ module.exports = {
     '!src/generated/*.{ts,tsx}',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['json-summary'],
+  coverageReporters: ['lcov', 'json-summary', 'text', 'text-summary'],
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/jest/__mocks__/styleMock.js',
     '^.+\\.svg$': '<rootDir>/jest/__mocks__/svgMock.js',

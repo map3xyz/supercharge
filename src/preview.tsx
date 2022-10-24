@@ -15,7 +15,7 @@ root.render(
 
             return '0x0000000000000000000000000000000000000000';
           },
-          slug: ':bitcoin',
+          slug: ':Bitcoin',
           theme: 'dark',
         });
         map3.open();

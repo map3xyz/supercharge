@@ -1,4 +1,3 @@
-// import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { act, screen } from '@testing-library/react';

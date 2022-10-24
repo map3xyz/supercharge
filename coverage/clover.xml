@@ -1,41 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1666559603859" clover="3.2.0">
-  <project timestamp="1666559603860" name="All files">
-    <metrics statements="252" coveredstatements="181" conditionals="234" coveredconditionals="135" methods="55" coveredmethods="31" elements="541" coveredelements="347" complexity="0" loc="252" ncloc="252" packages="12" files="13" classes="13"/>
+<coverage generated="1666624876769" clover="3.2.0">
+  <project timestamp="1666624876769" name="All files">
+    <metrics statements="281" coveredstatements="201" conditionals="310" coveredconditionals="164" methods="57" coveredmethods="32" elements="648" coveredelements="397" complexity="0" loc="281" ncloc="281" packages="13" files="16" classes="16"/>
     <package name="src">
-      <metrics statements="57" coveredstatements="51" conditionals="23" coveredconditionals="16" methods="12" coveredmethods="9"/>
+      <metrics statements="70" coveredstatements="55" conditionals="89" coveredconditionals="35" methods="12" coveredmethods="8"/>
       <file name="App.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/App.tsx">
-        <metrics statements="30" coveredstatements="26" conditionals="20" coveredconditionals="15" methods="7" coveredmethods="4"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
-        <line num="11" count="2" type="stmt"/>
-        <line num="12" count="2" type="stmt"/>
+        <metrics statements="10" coveredstatements="10" conditionals="14" coveredconditionals="13" methods="1" coveredmethods="1"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="12" count="6" type="stmt"/>
+        <line num="13" count="7" type="cond" truecount="8" falsecount="0"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="44" count="6" type="stmt"/>
+      </file>
+      <file name="App.withAsset.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/App.withAsset.tsx">
+        <metrics statements="14" coveredstatements="13" conditionals="28" coveredconditionals="21" methods="2" coveredmethods="2"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="2" type="cond" truecount="9" falsecount="3"/>
         <line num="13" count="2" type="stmt"/>
-        <line num="14" count="2" type="stmt"/>
-        <line num="16" count="2" type="stmt"/>
-        <line num="18" count="2" type="stmt"/>
-        <line num="19" count="20" type="stmt"/>
-        <line num="20" count="20" type="stmt"/>
-        <line num="22" count="20" type="stmt"/>
-        <line num="24" count="20" type="stmt"/>
-        <line num="25" count="5" type="stmt"/>
-        <line num="28" count="20" type="stmt"/>
+        <line num="15" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="17" count="1" type="cond" truecount="9" falsecount="3"/>
+        <line num="19" count="1" type="cond" truecount="2" falsecount="1"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="35" count="6" type="stmt"/>
+      </file>
+      <file name="App.withAssetAndNetwork.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/App.withAssetAndNetwork.tsx">
+        <metrics statements="19" coveredstatements="7" conditionals="44" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="12"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="8"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="12"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="5"/>
         <line num="29" count="0" type="stmt"/>
-        <line num="30" count="0" type="stmt"/>
-        <line num="31" count="0" type="stmt"/>
-        <line num="35" count="20" type="stmt"/>
-        <line num="37" count="20" type="stmt"/>
-        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="57" count="1" type="stmt"/>
-        <line num="140" count="2" type="stmt"/>
-        <line num="141" count="5" type="stmt"/>
-        <line num="157" count="2" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="45" count="6" type="stmt"/>
       </file>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/index.tsx">
         <metrics statements="27" coveredstatements="25" conditionals="3" coveredconditionals="1" methods="5" coveredmethods="5"/>
@@ -46,150 +65,172 @@
         <line num="6" count="1" type="stmt"/>
         <line num="8" count="1" type="stmt"/>
         <line num="10" count="1" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="27" count="1" type="cond" truecount="0" falsecount="1"/>
-        <line num="28" count="0" type="stmt"/>
-        <line num="31" count="1" type="cond" truecount="1" falsecount="0"/>
-        <line num="32" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="25" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="29" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
         <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
         <line num="37" count="1" type="stmt"/>
-        <line num="38" count="1" type="stmt"/>
-        <line num="39" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
         <line num="42" count="1" type="stmt"/>
-        <line num="43" count="1" type="stmt"/>
-        <line num="44" count="1" type="stmt"/>
-        <line num="46" count="1" type="cond" truecount="0" falsecount="1"/>
-        <line num="47" count="0" type="stmt"/>
-        <line num="50" count="1" type="stmt"/>
-        <line num="54" count="1" type="stmt"/>
-        <line num="62" count="1" type="stmt"/>
-        <line num="66" count="1" type="stmt"/>
-        <line num="67" count="1" type="stmt"/>
-        <line num="71" count="1" type="stmt"/>
+        <line num="44" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.components.ErrorWrapper">
       <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/components/ErrorWrapper/index.tsx">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
         <line num="10" count="1" type="stmt"/>
-        <line num="33" count="2" type="stmt"/>
+        <line num="33" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.components.InnerWrapper">
       <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/components/InnerWrapper/index.tsx">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="41" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="4" count="43" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.components.LoadingWrapper">
       <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/components/LoadingWrapper/index.tsx">
         <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="10" type="stmt"/>
-        <line num="20" count="2" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="4" count="13" type="stmt"/>
+        <line num="20" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.components.MethodIcon">
       <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="1" methods="1" coveredmethods="1"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/components/MethodIcon/index.tsx">
         <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="1" methods="1" coveredmethods="1"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="9" type="stmt"/>
-        <line num="21" count="2" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="8" type="stmt"/>
+        <line num="21" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.components.ProgressBar">
       <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/components/ProgressBar/index.tsx">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="15" type="stmt"/>
-        <line num="18" count="2" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="18" count="6" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.modal">
+      <metrics statements="17" coveredstatements="17" conditionals="18" coveredconditionals="15" methods="2" coveredmethods="2"/>
+      <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/modal/index.tsx">
+        <metrics statements="17" coveredstatements="17" conditionals="18" coveredconditionals="15" methods="2" coveredmethods="2"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="2" count="6" type="stmt"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="6" type="stmt"/>
+        <line num="12" count="6" type="stmt"/>
+        <line num="14" count="6" type="stmt"/>
+        <line num="15" count="16" type="stmt"/>
+        <line num="17" count="16" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="112" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.providers.Store">
-      <metrics statements="33" coveredstatements="27" conditionals="24" coveredconditionals="17" methods="6" coveredmethods="3"/>
+      <metrics statements="32" coveredstatements="26" conditionals="16" coveredconditionals="12" methods="6" coveredmethods="3"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/providers/Store/index.tsx">
-        <metrics statements="33" coveredstatements="27" conditionals="24" coveredconditionals="17" methods="6" coveredmethods="3"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="5" count="2" type="cond" truecount="2" falsecount="0"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
-        <line num="11" count="2" type="stmt"/>
-        <line num="39" count="2" type="stmt"/>
-        <line num="59" count="2" type="stmt"/>
-        <line num="68" count="2" type="stmt"/>
-        <line num="69" count="15" type="stmt"/>
-        <line num="70" count="15" type="cond" truecount="6" falsecount="2"/>
-        <line num="72" count="15" type="cond" truecount="0" falsecount="1"/>
-        <line num="73" count="0" type="stmt"/>
-        <line num="76" count="15" type="cond" truecount="1" falsecount="2"/>
-        <line num="77" count="0" type="stmt"/>
-        <line num="80" count="15" type="stmt"/>
-        <line num="82" count="18" type="cond" truecount="8" falsecount="2"/>
-        <line num="84" count="3" type="stmt"/>
-        <line num="86" count="2" type="stmt"/>
-        <line num="88" count="8" type="stmt"/>
-        <line num="95" count="1" type="stmt"/>
-        <line num="98" count="1" type="stmt"/>
-        <line num="100" count="1" type="stmt"/>
-        <line num="108" count="0" type="stmt"/>
-        <line num="116" count="1" type="stmt"/>
-        <line num="124" count="1" type="stmt"/>
-        <line num="132" count="0" type="stmt"/>
-        <line num="138" count="15" type="stmt"/>
-        <line num="145" count="2" type="stmt"/>
-        <line num="158" count="0" type="stmt"/>
+        <metrics statements="32" coveredstatements="26" conditionals="16" coveredconditionals="12" methods="6" coveredmethods="3"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="5" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="6" type="stmt"/>
+        <line num="39" count="6" type="stmt"/>
+        <line num="59" count="6" type="stmt"/>
+        <line num="70" count="6" type="stmt"/>
+        <line num="71" count="16" type="stmt"/>
+        <line num="73" count="16" type="cond" truecount="1" falsecount="0"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="77" count="16" type="cond" truecount="2" falsecount="1"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="81" count="16" type="stmt"/>
+        <line num="83" count="17" type="cond" truecount="7" falsecount="3"/>
+        <line num="85" count="3" type="stmt"/>
+        <line num="87" count="2" type="stmt"/>
+        <line num="89" count="8" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="101" count="1" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="139" count="16" type="stmt"/>
+        <line num="146" count="6" type="stmt"/>
         <line num="159" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.steps.AssetSelection">
       <metrics statements="19" coveredstatements="18" conditionals="36" coveredconditionals="24" methods="4" coveredmethods="3"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/steps/AssetSelection/index.tsx">
         <metrics statements="19" coveredstatements="18" conditionals="36" coveredconditionals="24" methods="4" coveredmethods="3"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="10" count="13" type="stmt"/>
-        <line num="12" count="13" type="stmt"/>
-        <line num="14" count="13" type="cond" truecount="1" falsecount="0"/>
-        <line num="16" count="8" type="cond" truecount="1" falsecount="0"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="10" count="15" type="stmt"/>
+        <line num="12" count="15" type="stmt"/>
+        <line num="14" count="15" type="cond" truecount="1" falsecount="0"/>
+        <line num="16" count="9" type="cond" truecount="1" falsecount="0"/>
         <line num="17" count="1" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
-        <line num="26" count="7" type="stmt"/>
-        <line num="41" count="7" type="cond" truecount="0" falsecount="1"/>
-        <line num="43" count="7" type="stmt"/>
+        <line num="26" count="8" type="stmt"/>
+        <line num="41" count="8" type="cond" truecount="0" falsecount="1"/>
+        <line num="43" count="8" type="stmt"/>
         <line num="48" count="3" type="stmt"/>
         <line num="49" count="3" type="stmt"/>
-        <line num="77" count="2" type="stmt"/>
+        <line num="77" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.steps.EnterAmount">
       <metrics statements="49" coveredstatements="9" conditionals="32" coveredconditionals="0" methods="11" coveredmethods="0"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/steps/EnterAmount/index.tsx">
         <metrics statements="49" coveredstatements="9" conditionals="32" coveredconditionals="0" methods="11" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
-        <line num="14" count="2" type="stmt"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="2" count="6" type="stmt"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="14" count="6" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
@@ -230,62 +271,62 @@
         <line num="124" count="0" type="stmt"/>
         <line num="144" count="0" type="stmt"/>
         <line num="145" count="0" type="stmt"/>
-        <line num="208" count="2" type="stmt"/>
+        <line num="208" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.steps.NetworkSelection">
       <metrics statements="22" coveredstatements="18" conditionals="21" coveredconditionals="15" methods="4" coveredmethods="3"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/steps/NetworkSelection/index.tsx">
         <metrics statements="22" coveredstatements="18" conditionals="21" coveredconditionals="15" methods="4" coveredmethods="3"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
-        <line num="11" count="8" type="stmt"/>
-        <line num="13" count="8" type="stmt"/>
-        <line num="15" count="8" type="cond" truecount="1" falsecount="0"/>
-        <line num="17" count="5" type="cond" truecount="0" falsecount="1"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="2" count="6" type="stmt"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="10" type="stmt"/>
+        <line num="13" count="10" type="stmt"/>
+        <line num="15" count="10" type="cond" truecount="1" falsecount="0"/>
+        <line num="17" count="6" type="cond" truecount="0" falsecount="1"/>
         <line num="18" count="0" type="stmt"/>
-        <line num="26" count="5" type="cond" truecount="0" falsecount="1"/>
+        <line num="26" count="6" type="cond" truecount="0" falsecount="1"/>
         <line num="27" count="0" type="stmt"/>
         <line num="28" count="0" type="stmt"/>
-        <line num="31" count="5" type="stmt"/>
+        <line num="31" count="6" type="stmt"/>
         <line num="49" count="0" type="stmt"/>
-        <line num="64" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="64" count="12" type="cond" truecount="1" falsecount="1"/>
         <line num="69" count="2" type="stmt"/>
         <line num="70" count="2" type="stmt"/>
-        <line num="90" count="2" type="stmt"/>
+        <line num="90" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.steps.PaymentMethod">
       <metrics statements="30" coveredstatements="22" conditionals="40" coveredconditionals="27" methods="5" coveredmethods="3"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/steps/PaymentMethod/index.tsx">
         <metrics statements="30" coveredstatements="22" conditionals="40" coveredconditionals="27" methods="5" coveredmethods="3"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="11" count="2" type="stmt"/>
-        <line num="12" count="7" type="stmt"/>
-        <line num="13" count="7" type="stmt"/>
-        <line num="15" count="7" type="cond" truecount="1" falsecount="0"/>
-        <line num="16" count="5" type="cond" truecount="0" falsecount="1"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="2" count="6" type="stmt"/>
+        <line num="4" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="8" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="11" count="6" type="stmt"/>
+        <line num="12" count="6" type="stmt"/>
+        <line num="13" count="6" type="stmt"/>
+        <line num="15" count="6" type="cond" truecount="1" falsecount="0"/>
+        <line num="16" count="4" type="cond" truecount="0" falsecount="1"/>
         <line num="17" count="0" type="stmt"/>
-        <line num="25" count="5" type="cond" truecount="2" falsecount="1"/>
+        <line num="25" count="4" type="cond" truecount="2" falsecount="1"/>
         <line num="26" count="0" type="stmt"/>
         <line num="27" count="0" type="stmt"/>
-        <line num="30" count="5" type="stmt"/>
+        <line num="30" count="4" type="stmt"/>
         <line num="48" count="0" type="stmt"/>
         <line num="63" count="0" type="stmt"/>
-        <line num="75" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="75" count="4" type="cond" truecount="1" falsecount="1"/>
         <line num="84" count="1" type="cond" truecount="0" falsecount="1"/>
         <line num="85" count="0" type="stmt"/>
         <line num="87" count="1" type="stmt"/>
@@ -294,20 +335,20 @@
         <line num="101" count="1" type="stmt"/>
         <line num="103" count="0" type="stmt"/>
         <line num="113" count="0" type="stmt"/>
-        <line num="138" count="2" type="stmt"/>
+        <line num="138" count="6" type="stmt"/>
       </file>
     </package>
     <package name="src.steps.QRCode">
       <metrics statements="26" coveredstatements="20" conditionals="52" coveredconditionals="33" methods="8" coveredmethods="5"/>
       <file name="index.tsx" path="/Users/philiplondon/Projects/map3/sdk/src/steps/QRCode/index.tsx">
         <metrics statements="26" coveredstatements="20" conditionals="52" coveredconditionals="33" methods="8" coveredmethods="5"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
+        <line num="1" count="6" type="stmt"/>
+        <line num="2" count="6" type="stmt"/>
+        <line num="3" count="6" type="stmt"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="6" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
         <line num="10" count="4" type="stmt"/>
         <line num="12" count="4" type="cond" truecount="3" falsecount="1"/>
         <line num="13" count="0" type="stmt"/>
@@ -326,7 +367,7 @@
         <line num="55" count="0" type="stmt"/>
         <line num="70" count="0" type="stmt"/>
         <line num="82" count="0" type="stmt"/>
-        <line num="165" count="2" type="stmt"/>
+        <line num="165" count="6" type="stmt"/>
       </file>
     </package>
   </project>
