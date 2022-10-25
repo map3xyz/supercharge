@@ -14,7 +14,6 @@ const NetworkSelection: React.FC<Props> = () => {
 
   if (loading) return <LoadingWrapper message="Fetching Networks..." />;
 
-  console.log(error);
   if (error)
     return (
       <ErrorWrapper
@@ -23,8 +22,6 @@ const NetworkSelection: React.FC<Props> = () => {
         retry={refetch}
       />
     );
-
-  console.log(state);
 
   if (!state.asset) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
