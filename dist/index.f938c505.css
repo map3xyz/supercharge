@@ -10167,11 +10167,6 @@
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.dark .dark\:text-neutral-700 {
-  --tw-text-opacity: 1;
-  color: rgb(64 64 64 / var(--tw-text-opacity));
-}
-
 .dark .hover\:dark\:bg-neutral-800:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(38 38 38 / var(--tw-bg-opacity));

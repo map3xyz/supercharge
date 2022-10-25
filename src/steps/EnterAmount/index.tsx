@@ -156,6 +156,7 @@ const EnterAmount: React.FC<Props> = () => {
             <input
               autoFocus
               className="flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
+              data-testid="input"
               name="base"
               placeholder="0"
               ref={inputRef}
@@ -181,7 +182,9 @@ const EnterAmount: React.FC<Props> = () => {
               {formValue.inputSelected === 'crypto' ? (
                 <span>$&nbsp;</span>
               ) : null}
-              <span ref={quoteRef}>{formValue.quote}</span>
+              <span data-testid="quote" ref={quoteRef}>
+                {formValue.quote}
+              </span>
               {formValue.inputSelected === 'fiat' ? (
                 <span>&nbsp;BTC</span>
               ) : null}
@@ -189,6 +192,7 @@ const EnterAmount: React.FC<Props> = () => {
             <div className="ml-4 flex items-center justify-center">
               <div
                 className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
+                data-testid="toggle-base"
                 onClick={toggleBase}
                 role="button"
               >

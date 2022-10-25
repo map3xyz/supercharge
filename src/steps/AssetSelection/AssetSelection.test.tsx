@@ -10,6 +10,7 @@ describe('Asset Selection', () => {
     render(
       <App
         config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return '0x0000000000000000000000000000000000000000';
           },
@@ -27,6 +28,7 @@ describe('Asset Selection', () => {
       <MockedProvider addTypename={false} mocks={[]}>
         <App
           config={{
+            anonKey: process.env.CONSOLE_ANON_KEY || '',
             generateDepositAddress: async () => {
               return '0x0000000000000000000000000000000000000000';
             },

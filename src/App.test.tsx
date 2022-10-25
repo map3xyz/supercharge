@@ -7,6 +7,7 @@ describe('App', () => {
     render(
       <App
         config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return '0x0000000000000000000000000000000000000000';
           },
@@ -25,6 +26,7 @@ describe('App', () => {
     render(
       <App
         config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return '0x0000000000000000000000000000000000000000';
           },
@@ -44,6 +46,7 @@ describe('App', () => {
     render(
       <App
         config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return '0x0000000000000000000000000000000000000000';
           },

@@ -7,11 +7,8 @@ import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  uri: 'http://localhost:3001/api/graphql',
-});
 export interface Map3InitConfig {
+  anonKey: string;
   generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
   slug?: string;
   theme?: 'dark' | 'light';
@@ -49,6 +46,13 @@ export class Map3 {
   }
 
   public open() {
+    const client = new ApolloClient({
+      cache: new InMemoryCache(),
+      headers: {
+        Authorization: 'Bearer ' + this.config.anonKey,
+      },
+      uri: 'http://localhost:3001/api/graphql',
+    });
     this.root.render(
       <ApolloProvider client={client}>
         <App config={this.config} onClose={this.onClose} />

@@ -11,6 +11,7 @@ describe('Network Selection', () => {
     render(
       <App
         config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return '0x0000000000000000000000000000000000000000';
           },
@@ -53,6 +54,7 @@ describe('Network Selection', () => {
       >
         <App
           config={{
+            anonKey: process.env.CONSOLE_ANON_KEY || '',
             generateDepositAddress: async () => {
               return '0x0000000000000000000000000000000000000000';
             },

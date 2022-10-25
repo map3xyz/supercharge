@@ -13,7 +13,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
         <i className="fa fa-circle-xmark text-red-600"></i>{' '}
         <h3 className=" dark:text-white">{header}</h3>
       </div>
-      <div className="mt-1 text-xs text-neutral-500 dark:text-neutral-700">
+      <div className="mt-1 text-xs text-neutral-500">
         {description} Please{' '}
         <a className="cursor-pointer text-blue-600 underline" onClick={retry}>
           click here

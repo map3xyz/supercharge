@@ -10,12 +10,12 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async (coin, network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             return '0x0000000000000000000000000000000000000000';
           },
-          slug: ':Bitcoin',
           theme: 'dark',
         });
         map3.open();
