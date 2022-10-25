@@ -51,7 +51,7 @@ export class Map3 {
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
       },
-      uri: 'http://localhost:3001/api/graphql',
+      uri: 'https://console.map3.xyz/api/graphql',
     });
     this.root.render(
       <ApolloProvider client={client}>

@@ -1504,7 +1504,7 @@ class $090815f5086f7f29$export$c06370d2ab5297a3 {
             headers: {
                 Authorization: "Bearer " + this.config.anonKey
             },
-            uri: "http://localhost:3001/api/graphql"
+            uri: "https://console.map3.xyz/api/graphql"
         });
         this.root.render(/*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$ApolloProvider), {
             client: client,
