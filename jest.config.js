@@ -1,10 +1,11 @@
 module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/preview.tsx',
-    '!src/custom.d.ts',
-    '!src/generated/*.{ts,tsx}',
+    'src/steps/**/*.{ts,tsx}',
+    'src/steps/index.tsx',
+    'src/providers/Store/index.tsx',
+    'src/index.tsx',
+    'src/App.tsx',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'json-summary', 'text', 'text-summary'],
