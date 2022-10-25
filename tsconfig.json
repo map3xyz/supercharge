@@ -7,7 +7,7 @@
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist/esm",
     "strict": true,
     "noImplicitReturns": true,
@@ -16,6 +16,9 @@
     "noUnusedParameters": true,
     "moduleResolution": "node",
     "jsx": "react-jsx",
+    "paths": {
+      "~/jest/*": ["./jest/*"]
+    },
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true

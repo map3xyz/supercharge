@@ -1,6 +1,7 @@
 import React from "react";
 interface Map3InitConfig {
     coin?: string;
+    generateDepositAddress: (coin: string, network: string) => Promise<string>;
     network?: string;
     theme?: 'dark' | 'light';
 }

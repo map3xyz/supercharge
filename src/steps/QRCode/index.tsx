@@ -3,26 +3,13 @@ import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
+import MethodIcon from '../../components/MethodIcon';
 import { Context, Steps } from '../../providers/Store';
-import { coins } from '../AssetSelection';
-import { networks } from '../NetworkSelection';
-import { methods } from '../PaymentMethod';
 
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch, { generateDepositAddress }] = useContext(Context);
 
-  if (!state.coin || !state.network || !state.method) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
-    return null;
-  }
-
-  const selectedCoin = coins.find((coin) => coin.name === state.coin);
-  const selectedNetwork = networks.find(
-    (network) => network.name === state.network
-  );
-  const selectedMethod = methods.find((method) => method.name === state.method);
-
-  if (!selectedCoin || !selectedNetwork || !selectedMethod) {
+  if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
@@ -32,8 +19,8 @@ const QRCode: React.FC<Props> = () => {
       try {
         dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
         const address = await generateDepositAddress(
-          selectedCoin.name,
-          selectedNetwork.code
+          state.asset?.symbol as string,
+          state.network?.symbol as string
         );
         dispatch({
           payload: address,
@@ -53,7 +40,12 @@ const QRCode: React.FC<Props> = () => {
   return (
     <div>
       <InnerWrapper>
-        <h3 className="text-lg font-semibold dark:text-white">Scan QR Code</h3>
+        <h3
+          className="text-lg font-semibold dark:text-white"
+          data-testid="qrcode-method"
+        >
+          Scan QR Code
+        </h3>
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Deposit{' '}
@@ -68,7 +60,7 @@ const QRCode: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {selectedCoin.label}
+            {state.asset?.name || ''}
           </Badge>
         </span>{' '}
         on{' '}
@@ -80,7 +72,7 @@ const QRCode: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {selectedNetwork.name}
+            {state.network?.symbol || ''}
           </Badge>
         </span>{' '}
         via{' '}
@@ -98,7 +90,7 @@ const QRCode: React.FC<Props> = () => {
           <Badge color="blue" size="large">
             {/* @ts-ignore */}
             <span className="flex items-center gap-1">
-              {selectedMethod.icon} {selectedMethod?.label}
+              <MethodIcon method={state.method} /> {state.method.name}
             </span>
           </Badge>
         </span>
@@ -130,7 +122,7 @@ const QRCode: React.FC<Props> = () => {
           state.depositAddress.data && (
             <div className="flex w-full flex-col items-center justify-center gap-4 text-sm">
               <div className="text-xs text-neutral-400">
-                Only send {selectedCoin.label} on the {selectedNetwork.name}{' '}
+                Only send {state.asset.name} on the {state.network?.symbol}{' '}
                 Network to this address.
               </div>
               <div className="flex w-full justify-center">
@@ -141,7 +133,7 @@ const QRCode: React.FC<Props> = () => {
                   imageSettings={{
                     excavate: true,
                     height: 40,
-                    src: selectedCoin.logo.svg || selectedCoin.logo.png || '',
+                    src: state.asset.logo?.svg || state.asset.logo?.png || '',
                     width: 40,
                   }}
                   includeMargin={true}

@@ -4,12 +4,14 @@
   "root": true,
 
   "plugins": [
+    "jest-dom",
     "prettier",
     "react",
     "simple-import-sort",
     "sort-destructure-keys",
     "sort-keys-fix",
     "tailwindcss",
+    "testing-library",
     "typescript-sort-keys"
   ],
 

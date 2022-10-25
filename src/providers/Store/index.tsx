@@ -1,86 +1,100 @@
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
+import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
+
 export enum Steps {
   'AssetSelection' = 0,
   'NetworkSelection' = 1,
   'PaymentMethod' = 2,
   'EnterAmount' = 3,
-  'QRCode' = 4,
+  'Summary' = 4,
   __LENGTH,
 }
 
-export enum Method {
-  'binance' = 'binance',
-  'cb-pay' = 'cb-pay',
-  'metamask' = 'metamask',
-  'qr' = 'qr',
-}
-
 type State = {
-  coin: string | undefined;
+  asset?: Asset;
   depositAddress: {
     data: string | undefined;
     status: 'loading' | 'success' | 'error' | 'idle';
   };
-  method?: Method;
-  network: string | undefined;
+  method?: PaymentMethod;
+  network?: Network;
+  slug?: string;
   step: number;
+  steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
 };
 
 type Action =
-  | { payload: string; type: 'SET_COIN' }
-  | { payload: string; type: 'SET_NETWORK' }
-  | { payload: State['method']; type: 'SET_PAYMENT_METHOD' }
+  | { payload: Asset; type: 'SET_ASSET' }
+  | { payload: Network; type: 'SET_NETWORK' }
+  | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
+  | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
   | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' };
 
 const initialState: State = {
-  coin: undefined,
+  asset: undefined,
   depositAddress: {
     data: undefined,
     status: 'idle',
   },
   method: undefined,
   network: undefined,
+  slug: undefined,
   step: Steps.AssetSelection,
+  steps: [
+    'AssetSelection',
+    'NetworkSelection',
+    'PaymentMethod',
+    'EnterAmount',
+    'Summary',
+  ],
   theme: undefined,
 };
 
 export const Store: React.FC<
   PropsWithChildren<{
-    coin?: string;
-    generateDepositAddress: (coin: string, network: string) => Promise<string>;
-    network?: string;
+    asset?: Asset;
+    generateDepositAddress: (
+      asset?: string,
+      network?: string
+    ) => Promise<string>;
+    network?: Network;
+    slug?: string;
     theme?: 'dark' | 'light';
   }>
-> = ({ children, coin, generateDepositAddress, network, theme }) => {
+> = ({ asset, children, generateDepositAddress, network, slug, theme }) => {
   let step = 0;
 
-  if (coin) {
-    step = 1;
+  if (asset) {
+    step = Steps.NetworkSelection;
   }
 
-  if (coin && network) {
-    step = 2;
-  }
-
-  if (coin && network) {
-    step = 3;
+  if (asset && network) {
+    step = Steps.PaymentMethod;
   }
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
       switch (action.type) {
-        case 'SET_COIN':
-          return { ...state, coin: action.payload };
+        case 'SET_ASSET':
+          return { ...state, asset: action.payload };
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
         case 'SET_STEP':
-          return { ...state, step: action.payload };
+          return {
+            ...state,
+            step: state.steps.indexOf(
+              Steps[action.payload] as keyof typeof Steps
+            ),
+          };
+        case 'SET_STEPS': {
+          return { ...state, steps: action.payload };
+        }
         case 'SET_PAYMENT_METHOD':
           return { ...state, method: action.payload };
         case 'GENERATE_DEPOSIT_ADDRESS_SUCCESS':
@@ -119,7 +133,7 @@ export const Store: React.FC<
           return state;
       }
     },
-    { ...initialState, coin, network, step, theme }
+    { ...initialState, asset, network, slug, step, theme }
   );
 
   return (
@@ -135,8 +149,8 @@ export const Context = createContext<
     React.Dispatch<Action>,
     {
       generateDepositAddress: (
-        coin: string,
-        network: string
+        asset?: string,
+        network?: string
       ) => Promise<string>;
     }
   ]
