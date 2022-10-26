@@ -1,4 +1,4 @@
-# Map3 Client Deposit SDK
+# Map3 Payments SDK
 
 ![Jest coverage](./badges/coverage-jest%20coverage.svg)
 
