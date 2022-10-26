@@ -5,18 +5,18 @@
 ## Getting Started
 
 ```
-npm install @map3xyz/client-deposit-sdk
+npm install @map3xyz/payments-sdk
 ```
 
 or
 
 ```
-yarn add @map3xyz/client-deposit-sdk
+yarn add @map3xyz/payments-sdk
 ```
 
 ```js
-import { initMap3Sdk } from '@map3xyz/client-deposit-sdk';
-import '@map3xyz/client-deposit-sdk/dist/index.css';
+import { initMap3Sdk } from '@map3xyz/payments-sdk';
+import '@map3xyz/payments-sdk/dist/index.css';
 
 const map3 = initMap3Sdk({
   theme: 'dark',
@@ -39,8 +39,8 @@ You can also include a normal script and link tag if your app doesn't support mo
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/npm/@map3xyz/client-deposit-sdk/dist/index.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@map3xyz/client-deposit-sdk/dist/index.css"></link>
+        <script src="https://cdn.jsdelivr.net/npm/@map3xyz/payments-sdk/dist/index.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@map3xyz/payments-sdk/dist/index.css"></link>
     </head>
 
     <body>
