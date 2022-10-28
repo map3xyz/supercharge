@@ -9,6 +9,7 @@ import App from './App';
 
 export interface Map3InitConfig {
   anonKey: string;
+  fiat?: string;
   generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
   slug?: string;
   theme?: 'dark' | 'light';
@@ -22,9 +23,16 @@ export class Map3 {
     if (!config.generateDepositAddress) {
       throw new Error('generateDepositAddress is required');
     }
+    if (!config.anonKey) {
+      throw new Error('anonKey is required');
+    }
 
     if (!config.theme) {
       config.theme = 'light';
+    }
+
+    if (!config.fiat) {
+      config.fiat = 'USD';
     }
 
     this.config = config;

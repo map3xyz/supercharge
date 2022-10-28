@@ -14,9 +14,9 @@ root.render(
           generateDepositAddress: async (coin, network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return '0x0000000000000000000000000000000000000000';
+            return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
           },
-          theme: 'dark',
+          theme: 'light',
         });
         map3.open();
       }}
