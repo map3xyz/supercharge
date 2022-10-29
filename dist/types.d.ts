@@ -1,5 +1,6 @@
 export interface Map3InitConfig {
     anonKey: string;
+    fiat?: string;
     generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
     slug?: string;
     theme?: 'dark' | 'light';

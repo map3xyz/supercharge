@@ -1486,7 +1486,9 @@ var $17889e507a6ca289$export$2e2bcd8739ae039 = $17889e507a6ca289$var$App;
 class $090815f5086f7f29$export$c06370d2ab5297a3 {
     constructor(config){
         if (!config.generateDepositAddress) throw new Error("generateDepositAddress is required");
+        if (!config.anonKey) throw new Error("anonKey is required");
         if (!config.theme) config.theme = "light";
+        if (!config.fiat) config.fiat = "USD";
         this.config = config;
         this.onClose = ()=>{
             this.root.unmount();
