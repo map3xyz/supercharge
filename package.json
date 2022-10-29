@@ -1,6 +1,6 @@
 {
   "name": "@map3xyz/payments-sdk",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "main": "dist/index.esm.js",
   "module": "dist/index.esm.js",
   "global": "dist/index.js",
