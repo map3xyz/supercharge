@@ -63,7 +63,7 @@ const NetworkSelection: React.FC<Props> = () => {
         {data?.networks?.map((network) =>
           network ? (
             <div
-              className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+              className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
               key={network.symbol}
               onClick={() => {
                 dispatch({ payload: network, type: 'SET_NETWORK' });

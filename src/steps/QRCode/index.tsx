@@ -131,13 +131,13 @@ const QRCode: React.FC<Props> = () => {
                   className="rounded-lg"
                   fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
                   imageSettings={{
-                    excavate: true,
+                    excavate: false,
                     height: 40,
                     src: state.asset.logo?.svg || state.asset.logo?.png || '',
                     width: 40,
                   }}
                   includeMargin={true}
-                  size={256}
+                  size={150}
                   style={{
                     border:
                       state.theme === 'dark'

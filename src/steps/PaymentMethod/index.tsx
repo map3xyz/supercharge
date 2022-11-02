@@ -74,7 +74,7 @@ const PaymentMethod: React.FC<Props> = () => {
         {data?.methods?.map((method) =>
           method ? (
             <div
-              className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+              className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
                 method.enabled
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
