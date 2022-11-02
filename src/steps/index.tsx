@@ -21,7 +21,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
       className="flex w-full flex-col justify-between"
       style={{ height: '500px' }}
     >
-      <div>
+      <>
         <InnerWrapper>
           <div className="flex w-full items-center justify-between gap-4">
             <button
@@ -39,7 +39,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             </div>
           </div>
         </InnerWrapper>
-        <div className="!mt-0 w-full">
+        <div className="!mt-0 h-full w-full">
           <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
@@ -74,6 +74,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             {steps[step] === Steps[Steps.EnterAmount] && (
               <motion.div
                 animate={{ opacity: 1 }}
+                className="h-full"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
@@ -93,7 +94,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </>
       <div className="!mt-0 w-full border-t border-neutral-200 bg-neutral-100 py-2 text-center dark:border-neutral-700 dark:bg-neutral-800">
         <div className="flex items-center justify-center">
           <a

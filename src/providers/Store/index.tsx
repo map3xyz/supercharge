@@ -1,3 +1,4 @@
+import { providers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
@@ -12,6 +13,7 @@ export enum Steps {
 }
 
 type State = {
+  account?: string;
   asset?: Asset;
   depositAddress: {
     data: string | undefined;
@@ -27,6 +29,7 @@ type State = {
 
 type Action =
   | { payload: Asset; type: 'SET_ASSET' }
+  | { payload: string; type: 'SET_ACCOUNT' }
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
@@ -81,6 +84,8 @@ export const Store: React.FC<
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
       switch (action.type) {
+        case 'SET_ACCOUNT':
+          return { ...state, account: action.payload };
         case 'SET_ASSET':
           return { ...state, asset: action.payload };
         case 'SET_NETWORK':

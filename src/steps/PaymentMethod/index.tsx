@@ -74,16 +74,17 @@ const PaymentMethod: React.FC<Props> = () => {
         {data?.methods?.map((method) =>
           method ? (
             <div
-              className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
-                method.enabled
+              className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm leading-8 last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+                // method.enabled
+                true
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
               }`}
               key={method.value}
               onClick={() => {
-                if (!method.enabled) {
-                  return;
-                }
+                // if (!method.enabled) {
+                //   return;
+                // }
                 dispatch({
                   payload: method,
                   type: 'SET_PAYMENT_METHOD',
@@ -118,7 +119,6 @@ const PaymentMethod: React.FC<Props> = () => {
               <div className="flex items-center gap-2">
                 <MethodIcon method={method} />
                 <span>{method.name}</span>
-                {!method.enabled && <Badge color="yellow">Coming Soon</Badge>}
               </div>
               {state.method?.value === method.value ? (
                 <i className="fa fa-check-circle text-green-400" />

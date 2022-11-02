@@ -1,8 +1,10 @@
 import { Badge } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import MetaMask from '../../methods/MetaMask';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
@@ -24,6 +26,7 @@ const EnterAmount: React.FC<Props> = () => {
     inputSelected: 'crypto' | 'fiat';
     quote: string;
   }>({ base: '0', inputSelected: 'fiat', quote: '0' });
+  const [amount, setAmount] = useState<number>(0);
 
   useEffect(() => {
     dummyInputRef.current!.innerText = formValue.base;
@@ -59,6 +62,7 @@ const EnterAmount: React.FC<Props> = () => {
           ? quote.toFixed(2)
           : quote.toFixed(8),
     }));
+    setAmount(formValue.inputSelected === 'crypto' ? base : quote);
   }, [formValue.base]);
 
   const toggleBase = () => {
@@ -80,7 +84,7 @@ const EnterAmount: React.FC<Props> = () => {
   }
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <InnerWrapper>
         <h3
           className="text-lg font-semibold dark:text-white"
@@ -89,7 +93,7 @@ const EnterAmount: React.FC<Props> = () => {
           Enter Amount
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-8 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Deposit{' '}
         <span
           className="text-blue-600 underline"
@@ -137,9 +141,9 @@ const EnterAmount: React.FC<Props> = () => {
           </Badge>
         </span>
       </div>
-      <InnerWrapper>
+      <InnerWrapper className="h-full">
         <form
-          className="flex flex-col items-center justify-center py-8 text-5xl font-semibold dark:text-white"
+          className="flex h-full flex-col items-center justify-between text-5xl font-semibold dark:text-white"
           onChange={(event) => {
             const target = event.target as HTMLInputElement;
             setFormValue((formValue) => ({
@@ -147,63 +151,91 @@ const EnterAmount: React.FC<Props> = () => {
               [target.name]: target.value,
             }));
           }}
+          onSubmit={async (event) => {
+            try {
+              event.preventDefault();
+
+              if (state.method?.value === 'metamask') {
+                if (!state.account) throw new Error('MetaMask not connected.');
+
+                const transactionParameters = {
+                  from: state.account,
+                  to: '0x0000000000000000000000000000000000000000',
+                  value: ethers.utils
+                    .parseEther(amount.toString())
+                    .toHexString(),
+                };
+
+                const txHash = await window.ethereum.request({
+                  method: 'eth_sendTransaction',
+                  params: [transactionParameters],
+                });
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          }}
           ref={formRef}
         >
-          <div className="relative box-border flex max-w-full items-center justify-center">
-            {formValue.inputSelected === 'fiat' ? (
-              <span className="text-inherit">$</span>
-            ) : null}
-            <input
-              autoFocus
-              className="flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
-              data-testid="input"
-              name="base"
-              placeholder="0"
-              ref={inputRef}
-              style={{ minWidth: `${BASE_FONT_SIZE}px` }}
-              type="number"
-            />
-            <span
-              className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
-              ref={dummyInputRef}
-            />
-            <span
-              className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
-              ref={dummySymbolRef}
-            >
-              {formValue.inputSelected === 'crypto' ? 'BTC' : '$'}
-            </span>
-            {formValue.inputSelected === 'crypto' ? (
-              <span className="text-inherit">BTC</span>
-            ) : null}
-          </div>
-          <div className="mt-8 flex items-center justify-center text-neutral-400">
-            <div className="text-xs">
-              {formValue.inputSelected === 'crypto' ? (
-                <span>$&nbsp;</span>
-              ) : null}
-              <span data-testid="quote" ref={quoteRef}>
-                {formValue.quote}
-              </span>
+          <div />
+          <div>
+            <div className="relative box-border flex max-w-full items-center justify-center">
               {formValue.inputSelected === 'fiat' ? (
-                <span>&nbsp;BTC</span>
+                <span className="text-inherit">$</span>
+              ) : null}
+              <input
+                autoFocus
+                className="flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
+                data-testid="input"
+                name="base"
+                placeholder="0"
+                ref={inputRef}
+                style={{ minWidth: `${BASE_FONT_SIZE}px` }}
+                type="number"
+              />
+              <span
+                className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
+                ref={dummyInputRef}
+              />
+              <span
+                className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
+                ref={dummySymbolRef}
+              >
+                {formValue.inputSelected === 'crypto' ? 'BTC' : '$'}
+              </span>
+              {formValue.inputSelected === 'crypto' ? (
+                <span className="text-inherit">BTC</span>
               ) : null}
             </div>
-            <div className="ml-4 flex items-center justify-center">
-              <div
-                className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
-                data-testid="toggle-base"
-                onClick={toggleBase}
-                role="button"
-              >
-                <i className="fa fa-chevron-up" />
-                <i className="fa fa-chevron-down" />
+            <div className="mt-8 flex items-center justify-center text-neutral-400">
+              <div className="text-xs">
+                {formValue.inputSelected === 'crypto' ? (
+                  <span>$&nbsp;</span>
+                ) : null}
+                <span data-testid="quote" ref={quoteRef}>
+                  {formValue.quote}
+                </span>
+                {formValue.inputSelected === 'fiat' ? (
+                  <span>&nbsp;BTC</span>
+                ) : null}
+              </div>
+              <div className="ml-4 flex items-center justify-center">
+                <div
+                  className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
+                  data-testid="toggle-base"
+                  onClick={toggleBase}
+                  role="button"
+                >
+                  <i className="fa fa-chevron-up" />
+                  <i className="fa fa-chevron-down" />
+                </div>
               </div>
             </div>
           </div>
+          <MetaMask amount={amount} />
         </form>
       </InnerWrapper>
-    </>
+    </div>
   );
 };
 
