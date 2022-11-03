@@ -1,55 +1,96 @@
 import { Button } from '@map3xyz/components';
 import { ethers } from 'ethers';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import MethodIcon from '../../components/MethodIcon';
 import { Context } from '../../providers/Store';
 
-type MetaMaskStatusType = 'success' | 'loading' | 'error' | 'idle';
-
 const MetaMask: React.FC<Props> = ({ amount }) => {
   const [state, dispatch] = useContext(Context);
-  const [account, setAccount] = useState<{
-    data?: string;
-    status: MetaMaskStatusType;
-  }>({ status: 'idle' });
 
   if (!state.method) return null;
 
-  useEffect(() => {
-    const connect = async () => {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const connect = async () => {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-        let accounts = await provider.listAccounts();
+      let accounts = await provider.listAccounts();
 
-        if (!accounts.length) {
-          try {
-            setAccount({ status: 'loading' });
-            await provider.send('eth_requestAccounts', []);
-            accounts = await provider.listAccounts();
-          } catch (e: any) {
-            setAccount({ data: e.message, status: 'error' });
-            return;
-          }
+      if (!accounts.length) {
+        try {
+          dispatch({ type: 'SET_ACCOUNT_LOADING' });
+          await provider.send('eth_requestAccounts', []);
+        } catch (e: any) {
+          if (e.message !== 'User rejected the request.') return;
+
+          dispatch({
+            payload: {
+              message: e.message,
+              title: 'MetaMask Connection Error',
+              variant: 'danger',
+            },
+            type: 'DISPLAY_ALERT',
+          });
+
+          dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
         }
+      } else {
+        dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+      }
+    }
+  };
 
-        setAccount({ data: accounts[0], status: 'success' });
-        dispatch({ payload: accounts[0], type: 'SET_ACCOUNT' });
+  useEffect(() => {
+    const listen = async () => {
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', async (accounts: string[]) => {
+          if (accounts[0]) {
+            dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+          } else {
+            dispatch({ type: 'SET_ACCOUNT_IDLE' });
+          }
+        });
       }
     };
-
-    connect();
+    listen();
   }, []);
 
-  console.log(account);
+  useEffect(() => {
+    connect();
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'mm_connect') {
+        connect();
+      }
+    });
+
+    return () => {
+      window.removeEventListener('message', (event) => {
+        if (event.data && event.data.type === 'mm_connect') {
+          connect();
+        }
+      });
+    };
+  }, []);
+
+  let cta = 'Confirm Payment';
+
+  switch (state.account.status) {
+    case 'loading':
+      cta = 'Connecting...';
+      break;
+    case 'error':
+    case 'idle':
+      cta = 'Connect Wallet';
+      break;
+  }
 
   return (
     <Button
-      additionalTypes={account.status === 'error' ? 'warning' : undefined}
       block
       disabled={
-        account.status === 'success' && Number(amount) > 0 ? false : true
+        (state.account.status === 'success' && Number(amount) === 0) ||
+        state.account.status === 'loading'
       }
       htmlType="submit"
       size="medium"
@@ -57,11 +98,7 @@ const MetaMask: React.FC<Props> = ({ amount }) => {
     >
       <span className="flex items-center gap-2">
         <MethodIcon method={state.method} />
-        {account.status === 'loading'
-          ? 'Connecting...'
-          : account.status === 'error'
-          ? 'Error Connecting to MetaMask'
-          : 'Confirm Payment'}
+        {cta}
       </span>
     </Button>
   );

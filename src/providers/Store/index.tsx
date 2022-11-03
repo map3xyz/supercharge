@@ -1,4 +1,3 @@
-import { providers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
@@ -12,12 +11,25 @@ export enum Steps {
   __LENGTH,
 }
 
+type RemoteType = 'loading' | 'success' | 'error' | 'idle';
+
+export type AlertType = {
+  id: number;
+  message: string;
+  title: string;
+  variant?: 'success' | 'danger' | 'warning' | 'info';
+};
+
 type State = {
-  account?: string;
+  account: {
+    data: string | undefined;
+    status: RemoteType;
+  };
+  alerts: AlertType[];
   asset?: Asset;
   depositAddress: {
     data: string | undefined;
-    status: 'loading' | 'success' | 'error' | 'idle';
+    status: RemoteType;
   };
   method?: PaymentMethod;
   network?: Network;
@@ -29,7 +41,6 @@ type State = {
 
 type Action =
   | { payload: Asset; type: 'SET_ASSET' }
-  | { payload: string; type: 'SET_ACCOUNT' }
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
@@ -37,9 +48,20 @@ type Action =
   | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
-  | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' };
+  | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' }
+  | { type: 'SET_ACCOUNT_IDLE' }
+  | { type: 'SET_ACCOUNT_LOADING' }
+  | { payload: string; type: 'SET_ACCOUNT_SUCCESS' }
+  | { payload: string; type: 'SET_ACCOUNT_ERROR' }
+  | { payload: Omit<AlertType, 'id'>; type: 'DISPLAY_ALERT' }
+  | { payload: number; type: 'REMOVE_ALERT' };
 
 const initialState: State = {
+  account: {
+    data: undefined,
+    status: 'idle',
+  },
+  alerts: [],
   asset: undefined,
   depositAddress: {
     data: undefined,
@@ -84,8 +106,6 @@ export const Store: React.FC<
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
       switch (action.type) {
-        case 'SET_ACCOUNT':
-          return { ...state, account: action.payload };
         case 'SET_ASSET':
           return { ...state, asset: action.payload };
         case 'SET_NETWORK':
@@ -133,6 +153,51 @@ export const Store: React.FC<
               data: undefined,
               status: 'idle',
             },
+          };
+        case 'SET_ACCOUNT_SUCCESS':
+          return {
+            ...state,
+            account: {
+              data: action.payload,
+              status: 'success',
+            },
+          };
+        case 'SET_ACCOUNT_ERROR':
+          return {
+            ...state,
+            account: {
+              data: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_ACCOUNT_LOADING':
+          return {
+            ...state,
+            account: {
+              data: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_ACCOUNT_IDLE':
+          return {
+            ...state,
+            account: {
+              data: undefined,
+              status: 'idle',
+            },
+          };
+        case 'DISPLAY_ALERT':
+          return {
+            ...state,
+            alerts: [
+              ...state.alerts,
+              { ...action.payload, id: state.alerts.length },
+            ],
+          };
+        case 'REMOVE_ALERT':
+          return {
+            ...state,
+            alerts: state.alerts.filter((alert) => alert.id !== action.payload),
           };
         default:
           return state;

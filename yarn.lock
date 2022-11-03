@@ -2652,14 +2652,14 @@
     shelljs "^0.8.5"
     uuid "^8.3.2"
 
-"@map3xyz/components@^0.1.38":
-  version "0.1.38"
-  resolved "https://registry.npmjs.org/@map3xyz/components/-/components-0.1.38.tgz#c67445109bcc7032c92180a711dac7e3761f312e"
-  integrity sha512-ket3dUdFEy5MzTursZ+3LblM02L5ZqT0v/jAbsEL3nBnA+G/XtKfxuTDuEUIe6szbGjwo8E+q4p6RMu1P1BsLQ==
+"@map3xyz/components@^0.1.41":
+  version "0.1.41"
+  resolved "https://registry.npmjs.org/@map3xyz/components/-/components-0.1.41.tgz#4933085a8f44c5485815d0fc919e542106ed4f69"
+  integrity sha512-oQRXDeDOyIJwJ5uy/Al9lWWf46q6qs4pxiqbk2ByvCw8InVZtBH+Aq6fdWOajGn6Mm63AEDjJkJlD0hIzysurg==
   dependencies:
     "@fortawesome/fontawesome-free" "6.1.2"
     "@map3xyz/assets-helper" "^1.0.136"
-    "@supabase/ui" "^0.36.5"
+    "@supabase/ui" latest
     react "^18.2.0"
     react-dom "^18.2.0"
     react-scripts "5.0.0"
@@ -3507,7 +3507,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@supabase/ui@^0.36.5":
+"@supabase/ui@latest":
   version "0.36.5"
   resolved "https://registry.npmjs.org/@supabase/ui/-/ui-0.36.5.tgz#10ee6925bd6e529dbd5678bc457bff26ee71120a"
   integrity sha512-SdjUf20sCVw0Ap+x4YfGmjMunUz9ZEipc0bwGxj2f5pEWf12qrDQyhhMcoWCWgjWneITfrjFcejV0jA9zTuiEw==

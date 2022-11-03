@@ -1,4 +1,4 @@
-import { Badge } from '@map3xyz/components';
+import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
@@ -78,6 +78,46 @@ const EnterAmount: React.FC<Props> = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+
+      if (state.method?.value === 'metamask') {
+        if (
+          state.account.status === 'idle' ||
+          state.account.status === 'error'
+        ) {
+          window.postMessage({ type: 'mm_connect' }, '*');
+          return;
+        }
+
+        const transactionParameters = {
+          from: state.account.data,
+          to: '0x0000000000000000000000000000000000000000',
+          value: ethers.utils.parseEther(amount.toString()).toHexString(),
+        };
+
+        try {
+          await window.ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParameters],
+          });
+        } catch (e: any) {
+          dispatch({
+            payload: {
+              message: e.message,
+              title: 'MetaMask Transaction Error',
+              variant: 'danger',
+            },
+            type: 'DISPLAY_ALERT',
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
@@ -123,20 +163,39 @@ const EnterAmount: React.FC<Props> = () => {
         </span>{' '}
         via{' '}
         <span
-          className="text-blue-600 underline"
           onClick={() => {
-            dispatch({
-              payload: Steps.PaymentMethod,
-              type: 'SET_STEP',
-            });
+            if (state.account.status === 'success') {
+              dispatch({
+                payload: Steps.PaymentMethod,
+                type: 'SET_STEP',
+              });
+            } else {
+              window.postMessage({ type: 'mm_connect' }, '*');
+            }
           }}
           role="button"
         >
           {/* @ts-ignore */}
-          <Badge color="blue" size="large">
+          <Badge
+            color={
+              state.account.status === 'loading' ||
+              state.account.status === 'idle'
+                ? 'yellow'
+                : state.account.status === 'error'
+                ? 'red'
+                : 'green'
+            }
+            dot
+            size="large"
+          >
             {/* @ts-ignore */}
             <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}
+              <MethodIcon method={state.method} /> {state.method.name}{' '}
+              {state.account.status === 'success' && state.account.data ? (
+                <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
+              ) : (
+                ''
+              )}
             </span>
           </Badge>
         </span>
@@ -151,34 +210,11 @@ const EnterAmount: React.FC<Props> = () => {
               [target.name]: target.value,
             }));
           }}
-          onSubmit={async (event) => {
-            try {
-              event.preventDefault();
-
-              if (state.method?.value === 'metamask') {
-                if (!state.account) throw new Error('MetaMask not connected.');
-
-                const transactionParameters = {
-                  from: state.account,
-                  to: '0x0000000000000000000000000000000000000000',
-                  value: ethers.utils
-                    .parseEther(amount.toString())
-                    .toHexString(),
-                };
-
-                const txHash = await window.ethereum.request({
-                  method: 'eth_sendTransaction',
-                  params: [transactionParameters],
-                });
-              }
-            } catch (e) {
-              console.error(e);
-            }
-          }}
+          onSubmit={handleSubmit}
           ref={formRef}
         >
           <div />
-          <div>
+          <div className="w-full">
             <div className="relative box-border flex max-w-full items-center justify-center">
               {formValue.inputSelected === 'fiat' ? (
                 <span className="text-inherit">$</span>
@@ -190,6 +226,9 @@ const EnterAmount: React.FC<Props> = () => {
                 name="base"
                 placeholder="0"
                 ref={inputRef}
+                step={
+                  formValue.inputSelected === 'fiat' ? '0.01' : '0.00000001'
+                }
                 style={{ minWidth: `${BASE_FONT_SIZE}px` }}
                 type="number"
               />
@@ -201,10 +240,12 @@ const EnterAmount: React.FC<Props> = () => {
                 className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
                 ref={dummySymbolRef}
               >
-                {formValue.inputSelected === 'crypto' ? 'BTC' : '$'}
+                {formValue.inputSelected === 'crypto'
+                  ? state.network.symbol
+                  : '$'}
               </span>
               {formValue.inputSelected === 'crypto' ? (
-                <span className="text-inherit">BTC</span>
+                <span className="text-inherit">{state.network.symbol}</span>
               ) : null}
             </div>
             <div className="mt-8 flex items-center justify-center text-neutral-400">
@@ -216,7 +257,7 @@ const EnterAmount: React.FC<Props> = () => {
                   {formValue.quote}
                 </span>
                 {formValue.inputSelected === 'fiat' ? (
-                  <span>&nbsp;BTC</span>
+                  <span>&nbsp;{state.network.symbol}</span>
                 ) : null}
               </div>
               <div className="ml-4 flex items-center justify-center">
