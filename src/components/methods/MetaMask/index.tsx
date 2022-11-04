@@ -1,44 +1,53 @@
 import { Button } from '@map3xyz/components';
-import { ethers } from 'ethers';
 import React, { useContext, useEffect } from 'react';
 
-import MethodIcon from '../../components/MethodIcon';
-import { Context } from '../../providers/Store';
+import { Context } from '../../../providers/Store';
+import MethodIcon from '../../MethodIcon';
 
-const MetaMask: React.FC<Props> = ({ amount }) => {
+const MetaMask: React.FC<Props> = ({ amount, disabled, setFormError }) => {
   const [state, dispatch] = useContext(Context);
 
   if (!state.method) return null;
 
   const connect = async () => {
     if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      dispatch({ type: 'SET_ACCOUNT_LOADING' });
+      const accounts: string[] | undefined = await window.ethereum.request({
+        method: 'eth_accounts',
+      });
 
-      let accounts = await provider.listAccounts();
-
-      if (!accounts.length) {
+      if (accounts && accounts[0]) {
+        dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+      } else {
         try {
-          dispatch({ type: 'SET_ACCOUNT_LOADING' });
-          await provider.send('eth_requestAccounts', []);
+          await window.ethereum.request({
+            method: 'eth_requestAccounts',
+          });
         } catch (e: any) {
           if (e.message !== 'User rejected the request.') return;
 
-          dispatch({
-            payload: {
-              message: e.message,
-              title: 'MetaMask Connection Error',
-              variant: 'danger',
-            },
-            type: 'DISPLAY_ALERT',
-          });
-
           dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
+          setFormError(e.message);
         }
-      } else {
-        dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
       }
     }
   };
+
+  useEffect(() => {
+    connect();
+
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'mm_connect') {
+        connect();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   useEffect(() => {
     const listen = async () => {
@@ -53,24 +62,6 @@ const MetaMask: React.FC<Props> = ({ amount }) => {
       }
     };
     listen();
-  }, []);
-
-  useEffect(() => {
-    connect();
-
-    window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'mm_connect') {
-        connect();
-      }
-    });
-
-    return () => {
-      window.removeEventListener('message', (event) => {
-        if (event.data && event.data.type === 'mm_connect') {
-          connect();
-        }
-      });
-    };
   }, []);
 
   let cta = 'Confirm Payment';
@@ -89,10 +80,15 @@ const MetaMask: React.FC<Props> = ({ amount }) => {
     <Button
       block
       disabled={
+        disabled ||
         (state.account.status === 'success' && Number(amount) === 0) ||
         state.account.status === 'loading'
       }
       htmlType="submit"
+      loading={
+        state.account.status === 'loading' ||
+        state.depositAddress.status === 'loading'
+      }
       size="medium"
       type={'default'}
     >
@@ -106,6 +102,8 @@ const MetaMask: React.FC<Props> = ({ amount }) => {
 
 type Props = {
   amount: number;
+  disabled: boolean;
+  setFormError: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 export default MetaMask;

@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import MetaMask from '../../methods/MetaMask';
+import MetaMask from '../../components/methods/MetaMask';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
@@ -20,16 +20,19 @@ const EnterAmount: React.FC<Props> = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
 
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
     quote: string;
   }>({ base: '0', inputSelected: 'fiat', quote: '0' });
   const [amount, setAmount] = useState<number>(0);
+  const [formError, setFormError] = useState<string | undefined>('');
 
   useEffect(() => {
-    dummyInputRef.current!.innerText = formValue.base;
+    if (!dummyInputRef.current || !dummySymbolRef.current) return;
+
+    dummyInputRef.current.innerText = formValue.base;
     let nextInputWidth = dummyInputRef.current!.getBoundingClientRect().width;
     const symbolWidth = dummySymbolRef.current!.getBoundingClientRect().width;
     const formWidth = formRef.current!.getBoundingClientRect().width;
@@ -48,7 +51,7 @@ const EnterAmount: React.FC<Props> = () => {
         formRef.current.style.fontSize = `${BASE_FONT_SIZE}px`;
       }
     }
-  }, [formValue]);
+  }, [formValue, state.depositAddress.data]);
 
   useEffect(() => {
     const rate = rates['BTC/USD'];
@@ -64,6 +67,12 @@ const EnterAmount: React.FC<Props> = () => {
     }));
     setAmount(formValue.inputSelected === 'crypto' ? base : quote);
   }, [formValue.base]);
+
+  useEffect(() => {
+    if (state.account.status === 'success') {
+      setFormError(undefined);
+    }
+  }, [state.account.status]);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -81,6 +90,7 @@ const EnterAmount: React.FC<Props> = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
+      setFormError(undefined);
 
       if (state.method?.value === 'metamask') {
         if (
@@ -91,9 +101,44 @@ const EnterAmount: React.FC<Props> = () => {
           return;
         }
 
+        // TODO: request switchEthereumChain
+        // const currentChainId = await window.ethereum.request({
+        //   method: 'eth_chainId',
+        // });
+
+        // if (currentChainId !== 137) {
+        //   try {
+        //     await window.ethereum.request({
+        //       method: 'wallet_switchEthereumChain',
+        //       params: [{ chainId: ethers.utils.hexlify(137) }],
+        //     });
+        //   } catch (e: any) {
+        //     setFormError(
+        //       `Please switch to ${state.network?.name} network in ${state.method.name}`
+        //     );
+        //     return;
+        //   }
+        // }
+
+        let address = '';
+        try {
+          dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
+          address = await generateDepositAddress(
+            state.asset?.symbol as string,
+            state.network?.symbol as string
+          );
+          dispatch({
+            payload: address,
+            type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
+          });
+        } catch (e) {
+          dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
+          throw new Error('Error generating a deposit address.');
+        }
+
         const transactionParameters = {
           from: state.account.data,
-          to: '0x0000000000000000000000000000000000000000',
+          to: address,
           value: ethers.utils.parseEther(amount.toString()).toHexString(),
         };
 
@@ -103,14 +148,7 @@ const EnterAmount: React.FC<Props> = () => {
             params: [transactionParameters],
           });
         } catch (e: any) {
-          dispatch({
-            payload: {
-              message: e.message,
-              title: 'MetaMask Transaction Error',
-              variant: 'danger',
-            },
-            type: 'DISPLAY_ALERT',
-          });
+          setFormError(e.message);
         }
       }
     } catch (e) {
@@ -146,7 +184,7 @@ const EnterAmount: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.asset.name || ''}
+            {state.asset.symbol || ''}
           </Badge>
         </span>{' '}
         on{' '}
@@ -158,7 +196,7 @@ const EnterAmount: React.FC<Props> = () => {
           role="button"
         >
           <Badge color="blue" size="large">
-            {state.network.name || ''}
+            {state.network.symbol || ''}
           </Badge>
         </span>{' '}
         via{' '}
@@ -273,7 +311,20 @@ const EnterAmount: React.FC<Props> = () => {
               </div>
             </div>
           </div>
-          <MetaMask amount={amount} />
+          <div className="relative w-full">
+            {formError ? (
+              <span className="absolute -top-2 flex w-full -translate-y-full">
+                <Badge color="red" dot>
+                  {formError}
+                </Badge>
+              </span>
+            ) : null}
+            <MetaMask
+              amount={amount}
+              disabled={state.depositAddress.status === 'loading'}
+              setFormError={setFormError}
+            />
+          </div>
         </form>
       </InnerWrapper>
     </div>

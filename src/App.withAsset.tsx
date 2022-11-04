@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { AppProps } from './App';
-import Alerts from './components/Alerts';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import { useGetAssetsQuery } from './generated/apollo-gql';
@@ -28,7 +27,6 @@ const AppWithAsset: React.FC<AppProps> = ({ config, onClose }) => {
 
   return (
     <Store {...config} asset={asset}>
-      <Alerts />
       <Map3SdkSteps onClose={onClose} />
     </Store>
   );
