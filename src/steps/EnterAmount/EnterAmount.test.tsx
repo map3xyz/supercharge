@@ -116,6 +116,18 @@ describe('Enter Amount - MetaMask', () => {
       const connectWallet = await screen.findByText('Connect Wallet');
       expect(connectWallet).toBeInTheDocument();
     });
+    it('should listen for connection requests', async () => {
+      act(() => {
+        fireEvent(
+          window,
+          new MessageEvent('message', {
+            data: { type: 'mm_connect' },
+            origin: '*',
+          })
+        );
+      });
+      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
+    });
   });
 
   describe('Previous Connection', () => {
