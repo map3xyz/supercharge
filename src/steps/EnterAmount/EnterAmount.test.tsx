@@ -55,9 +55,37 @@ describe('Enter Amount', () => {
       expect(quote.textContent).toBe('1.00');
     });
   });
+  describe('submit', () => {
+    const testingUtils = generateTestingUtils({ verbose: true });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    it('handles submission', async () => {
+      await screen.findByText('Connecting...');
+      await act(() => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
+      const confirmPayment = await screen.findByText('Confirm Payment');
+      expect(confirmPayment).toBeInTheDocument();
+      const input = await screen.findByTestId('input');
+      act(() => {
+        fireEvent.change(input, { target: { value: '1' } });
+      });
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(confirmPayment.parentElement?.parentElement).toBeDisabled();
+    });
+  });
 });
 
-describe('Enter Amount - MetaMask', () => {
+describe('MetaMask', () => {
   beforeEach(async () => {
     render(
       <App
@@ -87,7 +115,7 @@ describe('Enter Amount - MetaMask', () => {
   });
 
   describe('Connection', () => {
-    const testingUtils = generateTestingUtils({ verbose: true });
+    const testingUtils = generateTestingUtils();
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
     });
@@ -131,7 +159,7 @@ describe('Enter Amount - MetaMask', () => {
   });
 
   describe('Previous Connection', () => {
-    const testingUtils = generateTestingUtils({ verbose: true });
+    const testingUtils = generateTestingUtils();
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
       testingUtils.mockConnectedWallet([
@@ -149,7 +177,7 @@ describe('Enter Amount - MetaMask', () => {
   });
 
   describe('Error', () => {
-    const testingUtils = generateTestingUtils({ verbose: true });
+    const testingUtils = generateTestingUtils();
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
       testingUtils.lowLevel.mockRequest(

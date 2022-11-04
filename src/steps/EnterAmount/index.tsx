@@ -241,6 +241,7 @@ const EnterAmount: React.FC<Props> = () => {
       <InnerWrapper className="h-full">
         <form
           className="flex h-full flex-col items-center justify-between text-5xl font-semibold dark:text-white"
+          data-testid="enter-amount-form"
           onChange={(event) => {
             const target = event.target as HTMLInputElement;
             setFormValue((formValue) => ({
