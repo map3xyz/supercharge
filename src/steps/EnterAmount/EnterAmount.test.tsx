@@ -21,8 +21,10 @@ describe('Enter Amount', () => {
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('ETH');
+    await screen.findByText('Fetching Networks...');
+    const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
+    await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
   });
@@ -56,15 +58,19 @@ describe('Enter Amount', () => {
     });
   });
   describe('submit', () => {
-    const testingUtils = generateTestingUtils({ verbose: true });
+    const testingUtils = generateTestingUtils({
+      providerType: 'MetaMask',
+      verbose: true,
+    });
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('handles submission', async () => {
-      await screen.findByText('Connecting...');
+      await screen.findAllByText('Connect Wallet');
       await act(() => {
         testingUtils.mockAccountsChanged([
           '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
@@ -85,7 +91,7 @@ describe('Enter Amount', () => {
   });
 });
 
-describe('MetaMask', () => {
+describe('Web3', () => {
   beforeEach(async () => {
     render(
       <App
@@ -103,7 +109,7 @@ describe('MetaMask', () => {
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('ETH');
+    const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
@@ -115,31 +121,33 @@ describe('MetaMask', () => {
   });
 
   describe('Connection', () => {
-    const testingUtils = generateTestingUtils();
+    const testingUtils = generateTestingUtils({
+      providerType: 'MetaMask',
+      verbose: true,
+    });
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
 
-    it('should connect wallet', async () => {
-      const connecting = await screen.findByText('Connecting...');
-      expect(connecting).toBeInTheDocument();
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
-      const confirmPayment = await screen.findByText('Confirm Payment');
-      expect(confirmPayment).toBeInTheDocument();
-    });
-    it('should handle no accounts connected', async () => {
+    it('should handle accounts disconnecting', async () => {
       testingUtils.mockNotConnectedWallet();
-      const connecting = await screen.findByText('Connecting...');
-      expect(connecting).toBeInTheDocument();
+      act(() => {
+        testingUtils.mockAccountsChanged(['0x123willDisconnect']);
+      });
+      act(() => {
+        global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
+      });
+      const confirm = await screen.findByText('Confirm Payment');
+      expect(confirm).toBeInTheDocument();
       act(() => {
         testingUtils.mockAccountsChanged([]);
+      });
+      act(() => {
+        global.window.ethereum.emit('accountsChanged', []);
       });
       const connectWallet = await screen.findByText('Connect Wallet');
       expect(connectWallet).toBeInTheDocument();
@@ -149,7 +157,7 @@ describe('MetaMask', () => {
         fireEvent(
           window,
           new MessageEvent('message', {
-            data: { type: 'mm_connect' },
+            data: { type: 'web3_connect' },
             origin: '*',
           })
         );
@@ -159,9 +167,10 @@ describe('MetaMask', () => {
   });
 
   describe('Previous Connection', () => {
-    const testingUtils = generateTestingUtils();
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
@@ -177,9 +186,10 @@ describe('MetaMask', () => {
   });
 
   describe('Error', () => {
-    const testingUtils = generateTestingUtils();
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.lowLevel.mockRequest(
         'eth_requestAccounts',
         { message: 'User rejected the request.' },

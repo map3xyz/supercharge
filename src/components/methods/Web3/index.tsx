@@ -11,36 +11,48 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
   if (!state.method || !state.method.value) return null;
 
   const connect = async () => {
-    const currentProvider = window.ethereum.providers.find(
+    const currentProvider = window.ethereum?.providers.find(
       (x: any) => x[state.method!.value || 'isMetaMask']
     );
-    const provider = new ethers.providers.Web3Provider(currentProvider);
+    // TODO: handle no provider installed
+    if (!currentProvider) return;
 
-    if (provider) {
-      dispatch({ type: 'SET_ACCOUNT_LOADING' });
-      const accounts = await provider.send('eth_accounts', []);
+    const eth = new ethers.providers.Web3Provider(currentProvider);
 
-      if (accounts && accounts[0]) {
-        dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
-      } else {
-        try {
-          const accounts = await provider.send('eth_requestAccounts', []);
-          dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
-        } catch (e: any) {
-          if (e.message !== 'User rejected the request.') return;
-
-          dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
-          setFormError(e.message);
-        }
-      }
-
-      currentProvider.on('accountsChanged', async (accounts: string[]) => {
-        if (accounts[0]) {
+    if (eth.provider) {
+      // @ts-ignore
+      eth.provider.on('accountsChanged', async (accounts: string[]) => {
+        if (accounts && accounts[0]) {
           dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
         } else {
           dispatch({ type: 'SET_ACCOUNT_IDLE' });
         }
       });
+
+      dispatch({ type: 'SET_ACCOUNT_LOADING' });
+      const accounts = await eth.send('eth_accounts', []);
+
+      console.log('accounts', accounts);
+      if (accounts && accounts[0]) {
+        dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+      } else {
+        try {
+          const requestedAccounts = await eth.send('eth_requestAccounts', []);
+          if (requestedAccounts && requestedAccounts[0]) {
+            dispatch({
+              payload: requestedAccounts[0],
+              type: 'SET_ACCOUNT_SUCCESS',
+            });
+          }
+        } catch (e: any) {
+          if (e.message === 'User rejected the request.') {
+            dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
+            setFormError(e.message);
+          } else {
+            console.log(e);
+          }
+        }
+      }
     }
   };
 

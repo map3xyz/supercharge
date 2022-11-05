@@ -205,7 +205,7 @@ const EnterAmount: React.FC<Props> = () => {
                 type: 'SET_STEP',
               });
             } else {
-              window.postMessage({ type: 'mm_connect' }, '*');
+              window.postMessage({ type: 'web3_connect' }, '*');
             }
           }}
           role="button"
