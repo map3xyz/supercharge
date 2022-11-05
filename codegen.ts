@@ -1,3 +1,4 @@
+require('dotenv/config');
 import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
@@ -12,7 +13,13 @@ const config: CodegenConfig = {
     },
   },
   overwrite: true,
-  schema: 'http://localhost:3001/api/graphql',
+  schema: {
+    'http://localhost:3001/api/graphql': {
+      headers: {
+        Authorization: 'Bearer ' + process.env.CONSOLE_ANON_KEY,
+      },
+    },
+  },
 };
 
 export default config;

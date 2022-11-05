@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import MetaMask from '../../components/methods/MetaMask';
+import Web3 from '../../components/methods/Web3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
@@ -92,64 +92,61 @@ const EnterAmount: React.FC<Props> = () => {
       e.preventDefault();
       setFormError(undefined);
 
-      if (state.method?.value === 'metamask') {
-        if (
-          state.account.status === 'idle' ||
-          state.account.status === 'error'
-        ) {
-          window.postMessage({ type: 'mm_connect' }, '*');
-          return;
-        }
+      if (state.account.status === 'idle' || state.account.status === 'error') {
+        window.postMessage({ type: 'web3_connect' }, '*');
+        return;
+      }
 
-        // TODO: request switchEthereumChain
-        // const currentChainId = await window.ethereum.request({
-        //   method: 'eth_chainId',
-        // });
+      // TODO: request switchEthereumChain
+      // const currentChainId = await window.ethereum.request({
+      //   method: 'eth_chainId',
+      // });
 
-        // if (currentChainId !== 137) {
-        //   try {
-        //     await window.ethereum.request({
-        //       method: 'wallet_switchEthereumChain',
-        //       params: [{ chainId: ethers.utils.hexlify(137) }],
-        //     });
-        //   } catch (e: any) {
-        //     setFormError(
-        //       `Please switch to ${state.network?.name} network in ${state.method.name}`
-        //     );
-        //     return;
-        //   }
-        // }
+      // if (currentChainId !== 137) {
+      //   try {
+      //     await window.ethereum.request({
+      //       method: 'wallet_switchEthereumChain',
+      //       params: [{ chainId: ethers.utils.hexlify(137) }],
+      //     });
+      //   } catch (e: any) {
+      //     setFormError(
+      //       `Please switch to ${state.network?.name} network in ${state.method.name}`
+      //     );
+      //     return;
+      //   }
+      // }
 
-        let address = '';
-        try {
-          dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-          address = await generateDepositAddress(
-            state.asset?.symbol as string,
-            state.network?.symbol as string
-          );
-          dispatch({
-            payload: address,
-            type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
-          });
-        } catch (e) {
-          dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
-          throw new Error('Error generating a deposit address.');
-        }
+      let address = '';
+      try {
+        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
+        address = await generateDepositAddress(
+          state.asset?.symbol as string,
+          state.network?.symbol as string
+        );
+        dispatch({
+          payload: address,
+          type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
+        });
+      } catch (e) {
+        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
+        throw new Error('Error generating a deposit address.');
+      }
 
-        const transactionParameters = {
-          from: state.account.data,
-          to: address,
-          value: ethers.utils.parseEther(amount.toString()).toHexString(),
-        };
+      const transactionParameters = {
+        from: state.account.data,
+        to: address,
+        value: ethers.utils.parseEther(amount.toString()).toHexString(),
+      };
 
-        try {
-          await window.ethereum.request({
-            method: 'eth_sendTransaction',
-            params: [transactionParameters],
-          });
-        } catch (e: any) {
-          setFormError(e.message);
-        }
+      try {
+        const currentProvider = window.ethereum.providers.find(
+          (x: any) => x[state.method!.value || 'isMetaMask']
+        );
+        await currentProvider.send('eth_sendTransaction', [
+          transactionParameters,
+        ]);
+      } catch (e: any) {
+        setFormError(e.message);
       }
     } catch (e) {
       console.error(e);
@@ -320,7 +317,7 @@ const EnterAmount: React.FC<Props> = () => {
                 </Badge>
               </span>
             ) : null}
-            <MetaMask
+            <Web3
               amount={amount}
               disabled={state.depositAddress.status === 'loading'}
               setFormError={setFormError}

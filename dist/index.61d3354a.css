@@ -60,16 +60,16 @@
   visibility: hidden;
 }
 
-.map3 .fixed {
-  position: fixed;
-}
-
 .map3 .absolute {
   position: absolute;
 }
 
 .map3 .relative {
   position: relative;
+}
+
+.map3 .sticky {
+  position: sticky;
 }
 
 .map3 .inset-y-0 {
@@ -89,16 +89,16 @@
   top: -24rem;
 }
 
+.map3 .-top-2 {
+  top: -.5rem;
+}
+
 .map3 .-top-2\.5 {
   top: -.625rem;
 }
 
 .map3 .-right-2\.5 {
   right: -.625rem;
-}
-
-.map3 .-top-2 {
-  top: -.5rem;
 }
 
 .map3 .-right-2 {
@@ -127,26 +127,6 @@
 
 .map3 .right-2 {
   right: .5rem;
-}
-
-.map3 .right-4 {
-  right: 1rem;
-}
-
-.map3 .top-4 {
-  top: 1rem;
-}
-
-.map3 .-top-10 {
-  top: -2.5rem;
-}
-
-.map3 .-top-16 {
-  top: -4rem;
-}
-
-.map3 .z-50 {
-  z-index: 50;
 }
 
 .map3 .mx-3 {
@@ -192,10 +172,6 @@
 
 .map3 .-ml-3 {
   margin-left: -.75rem;
-}
-
-.map3 .mb-2 {
-  margin-bottom: .5rem;
 }
 
 .map3 .box-border {
@@ -320,6 +296,11 @@
   flex-shrink: 0;
 }
 
+.map3 .-translate-y-full {
+  --tw-translate-y: -100%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .map3 .-translate-y-1\/2 {
   --tw-translate-y: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -332,11 +313,6 @@
 
 .map3 .translate-x-0 {
   --tw-translate-x: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.map3 .-translate-y-full {
-  --tw-translate-y: -100%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -406,6 +382,10 @@
   overflow: hidden;
 }
 
+.map3 .overflow-scroll {
+  overflow: scroll;
+}
+
 .map3 .whitespace-nowrap {
   white-space: nowrap;
 }
@@ -441,6 +421,10 @@
 
 .map3 .border-t {
   border-top-width: 1px;
+}
+
+.map3 .border-b {
+  border-bottom-width: 1px;
 }
 
 .map3 .border-neutral-200 {
@@ -1171,8 +1155,20 @@
   margin-left: -.25rem;
 }
 
+.first\:border-t-0:first-child {
+  border-top-width: 0;
+}
+
+.last\:border-0:last-child {
+  border-width: 0;
+}
+
 .last\:border-b:last-child {
   border-bottom-width: 1px;
+}
+
+.last\:border-b-0:last-child {
+  border-bottom-width: 0;
 }
 
 .hover\:bg-neutral-100:hover {

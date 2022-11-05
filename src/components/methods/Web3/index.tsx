@@ -1,28 +1,31 @@
 import { Button } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import React, { useContext, useEffect } from 'react';
 
 import { Context } from '../../../providers/Store';
 import MethodIcon from '../../MethodIcon';
 
-const MetaMask: React.FC<Props> = ({ amount, disabled, setFormError }) => {
+const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
   const [state, dispatch] = useContext(Context);
 
-  if (!state.method) return null;
+  if (!state.method || !state.method.value) return null;
 
   const connect = async () => {
-    if (window.ethereum) {
+    const currentProvider = window.ethereum.providers.find(
+      (x: any) => x[state.method!.value || 'isMetaMask']
+    );
+    const provider = new ethers.providers.Web3Provider(currentProvider);
+
+    if (provider) {
       dispatch({ type: 'SET_ACCOUNT_LOADING' });
-      const accounts: string[] | undefined = await window.ethereum.request({
-        method: 'eth_accounts',
-      });
+      const accounts = await provider.send('eth_accounts', []);
 
       if (accounts && accounts[0]) {
         dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
       } else {
         try {
-          await window.ethereum.request({
-            method: 'eth_requestAccounts',
-          });
+          const accounts = await provider.send('eth_requestAccounts', []);
+          dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
         } catch (e: any) {
           if (e.message !== 'User rejected the request.') return;
 
@@ -30,6 +33,14 @@ const MetaMask: React.FC<Props> = ({ amount, disabled, setFormError }) => {
           setFormError(e.message);
         }
       }
+
+      currentProvider.on('accountsChanged', async (accounts: string[]) => {
+        if (accounts[0]) {
+          dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+        } else {
+          dispatch({ type: 'SET_ACCOUNT_IDLE' });
+        }
+      });
     }
   };
 
@@ -37,7 +48,7 @@ const MetaMask: React.FC<Props> = ({ amount, disabled, setFormError }) => {
     connect();
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === 'mm_connect') {
+      if (event.data && event.data.type === 'web3_connect') {
         connect();
       }
     };
@@ -47,21 +58,6 @@ const MetaMask: React.FC<Props> = ({ amount, disabled, setFormError }) => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, []);
-
-  useEffect(() => {
-    const listen = async () => {
-      if (window.ethereum) {
-        window.ethereum.on('accountsChanged', async (accounts: string[]) => {
-          if (accounts[0]) {
-            dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
-          } else {
-            dispatch({ type: 'SET_ACCOUNT_IDLE' });
-          }
-        });
-      }
-    };
-    listen();
   }, []);
 
   let cta = 'Confirm Payment';
@@ -106,4 +102,4 @@ type Props = {
   setFormError: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
-export default MetaMask;
+export default Web3;
