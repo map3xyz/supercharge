@@ -60,7 +60,6 @@ describe('Enter Amount', () => {
   describe('submit', () => {
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
-      verbose: true,
     });
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
@@ -88,6 +87,24 @@ describe('Enter Amount', () => {
       });
       expect(confirmPayment.parentElement?.parentElement).toBeDisabled();
     });
+    it('attempts reconnection', async () => {
+      testingUtils.lowLevel.mockRequest(
+        'eth_requestAccounts',
+        { message: 'User rejected the request.' },
+        {
+          shouldThrow: true,
+        }
+      );
+      const connecting = await screen.findByText('Connecting...');
+      expect(connecting).toBeInTheDocument();
+      const error = await screen.findByText('User rejected the request.');
+      expect(error).toBeInTheDocument();
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
+    });
   });
 });
 
@@ -98,7 +115,7 @@ describe('Web3', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            throw 'error';
+            throw 'Error generating deposit address.';
           },
           theme: 'dark',
         }}
@@ -123,7 +140,6 @@ describe('Web3', () => {
   describe('Connection', () => {
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
-      verbose: true,
     });
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
@@ -208,6 +224,37 @@ describe('Web3', () => {
       const connectWallet = await screen.findByText('Connect Wallet');
       const error = await screen.findByText('User rejected the request.');
       expect(connectWallet).toBeInTheDocument();
+      expect(error).toBeInTheDocument();
+    });
+  });
+
+  describe('Address generation error', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+
+    it('should handle previous connection', async () => {
+      const confirmPayment = await screen.findByText('Confirm Payment');
+      expect(confirmPayment).toBeInTheDocument();
+      const input = await screen.findByTestId('input');
+      act(() => {
+        fireEvent.change(input, { target: { value: '1' } });
+      });
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      const error = await screen.findByText(
+        'Error generating a deposit address.'
+      );
       expect(error).toBeInTheDocument();
     });
   });

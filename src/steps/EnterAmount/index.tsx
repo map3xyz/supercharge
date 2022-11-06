@@ -148,7 +148,10 @@ const EnterAmount: React.FC<Props> = () => {
       } catch (e: any) {
         setFormError(e.message);
       }
-    } catch (e) {
+    } catch (e: any) {
+      if (e.message) {
+        setFormError(e.message);
+      }
       console.error(e);
     }
   };
