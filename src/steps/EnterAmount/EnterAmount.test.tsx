@@ -85,6 +85,7 @@ describe('Enter Amount', () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
+      expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
       expect(confirmPayment.parentElement?.parentElement).toBeDisabled();
     });
     it('attempts reconnection', async () => {
@@ -178,7 +179,12 @@ describe('Web3', () => {
           })
         );
       });
+      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
+        '0x123willConnect',
+      ]);
       expect(await screen.findByText('Connecting...')).toBeInTheDocument();
+      await screen.findByText('Confirm Payment');
+      expect(await screen.findByText(/0x12/)).toBeInTheDocument();
     });
   });
 
