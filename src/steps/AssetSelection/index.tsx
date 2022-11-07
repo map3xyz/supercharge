@@ -1,5 +1,6 @@
-import { Coin, CoinLogo } from '@map3xyz/components';
+import { CoinLogo, Input } from '@map3xyz/components';
 import React, { useContext } from 'react';
+import { InView } from 'react-intersection-observer';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -10,9 +11,16 @@ import { Context, Steps } from '../../providers/Store';
 const AssetSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
 
-  const { data, error, loading, refetch } = useGetAssetsQuery();
+  const { data, error, fetchMore, loading, refetch } = useGetAssetsQuery({
+    variables: {
+      limit: 10,
+      offset: 0,
+    },
+  });
 
-  if (loading) return <LoadingWrapper />;
+  console.log(data?.assets);
+
+  if (loading && !data?.assets?.length) return <LoadingWrapper />;
 
   if (error) {
     return (
@@ -27,7 +35,7 @@ const AssetSelection: React.FC<Props> = () => {
   return (
     <>
       <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
-        <InnerWrapper>
+        <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="select-asset"
@@ -35,8 +43,16 @@ const AssetSelection: React.FC<Props> = () => {
             Select Asset
           </h3>
           <h5 className="text-xs text-neutral-400">
-            Select the Asset you want to deposit.
+            Select the <b>Asset</b> you want to deposit.
           </h5>
+          <form className="mt-2">
+            <Input
+              icon={<i className="fa fa-search" />}
+              name="asset-search"
+              placeholder="Search for an asset..."
+              rounded
+            />
+          </form>
         </InnerWrapper>
       </div>
       <div className="flex flex-col dark:text-white">
@@ -73,6 +89,27 @@ const AssetSelection: React.FC<Props> = () => {
             </div>
           );
         })}
+        {/* TODO: check if we're at the limit */}
+        {data?.assets?.length ? (
+          <InView
+            onChange={async (inView) => {
+              console.log(inView);
+              const currentLength = data.assets?.length || 0;
+              if (inView) {
+                await fetchMore({
+                  variables: {
+                    limit: currentLength * 2,
+                    offset: currentLength,
+                  },
+                });
+              }
+            }}
+          >
+            <div className="flex w-full items-center justify-center py-2">
+              <i className="fa fa-gear animate-spin text-neutral-500" />
+            </div>
+          </InView>
+        ) : null}
       </div>
     </>
   );

@@ -633,6 +633,10 @@
   padding-right: 5rem;
 }
 
+.map3 .\!pt-0 {
+  padding-top: 0 !important;
+}
+
 .map3 .text-center {
   text-align: center;
 }

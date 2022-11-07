@@ -31,7 +31,7 @@ const NetworkSelection: React.FC<Props> = () => {
   return (
     <>
       <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
-        <InnerWrapper>
+        <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="network-select"

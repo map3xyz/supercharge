@@ -1,5 +1,5 @@
-query GetAssets {
-  assets {
+query GetAssets($limit: Int, $offset: Int) {
+  assets(limit: $limit, offset: $offset) {
     name
     logo {
       png
