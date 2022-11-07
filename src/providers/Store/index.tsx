@@ -25,7 +25,6 @@ type State = {
     data: string | undefined;
     status: RemoteType;
   };
-  alerts: AlertType[];
   asset?: Asset;
   depositAddress: {
     data: string | undefined;
@@ -52,16 +51,13 @@ type Action =
   | { type: 'SET_ACCOUNT_IDLE' }
   | { type: 'SET_ACCOUNT_LOADING' }
   | { payload: string; type: 'SET_ACCOUNT_SUCCESS' }
-  | { payload: string; type: 'SET_ACCOUNT_ERROR' }
-  | { payload: Omit<AlertType, 'id'>; type: 'DISPLAY_ALERT' }
-  | { payload: number; type: 'REMOVE_ALERT' };
+  | { payload: string; type: 'SET_ACCOUNT_ERROR' };
 
 const initialState: State = {
   account: {
     data: undefined,
     status: 'idle',
   },
-  alerts: [],
   asset: undefined,
   depositAddress: {
     data: undefined,
@@ -185,19 +181,6 @@ export const Store: React.FC<
               data: undefined,
               status: 'idle',
             },
-          };
-        case 'DISPLAY_ALERT':
-          return {
-            ...state,
-            alerts: [
-              ...state.alerts,
-              { ...action.payload, id: state.alerts.length },
-            ],
-          };
-        case 'REMOVE_ALERT':
-          return {
-            ...state,
-            alerts: state.alerts.filter((alert) => alert.id !== action.payload),
           };
         default:
           return state;
