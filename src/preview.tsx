@@ -14,9 +14,10 @@ root.render(
           generateDepositAddress: async (coin, network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
+            return '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
           },
-          theme: 'light',
+          slug: 'Ethereum:',
+          theme: 'dark',
         });
         map3.open();
       }}

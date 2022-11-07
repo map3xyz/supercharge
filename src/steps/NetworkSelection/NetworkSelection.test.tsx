@@ -23,6 +23,7 @@ describe('Network Selection', () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
+    await screen.findByText('Fetching Networks...');
     const networkSelection = await screen.findByText('Select Network');
     expect(networkSelection).toBeInTheDocument();
   });

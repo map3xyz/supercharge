@@ -22,7 +22,7 @@ describe('Payment Selection', () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('ETH');
+    const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     const paymentSelection = await screen.findByText('Payment Method');
     expect(paymentSelection).toBeInTheDocument();

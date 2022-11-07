@@ -11,6 +11,7 @@ const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
   const [networkString, assetString] = config?.slug?.split(':') ?? [];
   // TODO: use network search
   const { data, error, loading, refetch } = useGetNetworksQuery();
+  // TODO: use asset search
   const {
     data: assetData,
     error: assetError,

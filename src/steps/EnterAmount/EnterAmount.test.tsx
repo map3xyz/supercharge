@@ -1,30 +1,34 @@
+import { generateTestingUtils } from 'eth-testing';
+
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 
-beforeEach(async () => {
-  render(
-    <App
-      config={{
-        anonKey: process.env.CONSOLE_ANON_KEY || '',
-        generateDepositAddress: async () => {
-          return '0x0000000000000000000000000000000000000000';
-        },
-        theme: 'dark',
-      }}
-      onClose={() => {}}
-    />
-  );
-  await screen.findByText('Loading...');
-  const bitcoin = await screen.findByText('Bitcoin');
-  fireEvent.click(bitcoin);
-  const ethereum = await screen.findByText('ETH');
-  fireEvent.click(ethereum);
-  const metaMask = await screen.findByText('MetaMask');
-  fireEvent.click(metaMask);
-});
-
 describe('Enter Amount', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            return '0x0000000000000000000000000000000000000000';
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+    await screen.findByText('Loading...');
+    const bitcoin = await screen.findByText('Bitcoin');
+    fireEvent.click(bitcoin);
+    await screen.findByText('Fetching Networks...');
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    await screen.findByText('Fetching Payment Methods...');
+    const metaMask = await screen.findByText('MetaMask');
+    fireEvent.click(metaMask);
+  });
+
   it('renders', async () => {
     const enterAmount = await screen.findByTestId('enter-amount');
     expect(enterAmount).toBeInTheDocument();
@@ -51,6 +55,213 @@ describe('Enter Amount', () => {
       });
       const quote = await screen.findByTestId('quote');
       expect(quote.textContent).toBe('1.00');
+    });
+  });
+  describe('submit', () => {
+    const testingUtils = generateTestingUtils({
+      providerType: 'MetaMask',
+    });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    it('handles submission', async () => {
+      await screen.findAllByText('Connect Wallet');
+      await act(() => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
+      const confirmPayment = await screen.findByText('Confirm Payment');
+      expect(confirmPayment).toBeInTheDocument();
+      const input = await screen.findByTestId('input');
+      act(() => {
+        fireEvent.change(input, { target: { value: '1' } });
+      });
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
+      expect(confirmPayment.parentElement?.parentElement).toBeDisabled();
+    });
+    it('attempts reconnection', async () => {
+      testingUtils.lowLevel.mockRequest(
+        'eth_requestAccounts',
+        { message: 'User rejected the request.' },
+        {
+          shouldThrow: true,
+        }
+      );
+      const connecting = await screen.findByText('Connecting...');
+      expect(connecting).toBeInTheDocument();
+      const error = await screen.findByText('User rejected the request.');
+      expect(error).toBeInTheDocument();
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('Web3', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            throw 'Error generating deposit address.';
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const bitcoin = await screen.findByText('Bitcoin');
+    fireEvent.click(bitcoin);
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = await screen.findByText('MetaMask');
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+
+  describe('Connection', () => {
+    const testingUtils = generateTestingUtils({
+      providerType: 'MetaMask',
+    });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+
+    it('should handle accounts disconnecting', async () => {
+      testingUtils.mockNotConnectedWallet();
+      act(() => {
+        testingUtils.mockAccountsChanged(['0x123willDisconnect']);
+      });
+      act(() => {
+        global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
+      });
+      const confirm = await screen.findByText('Confirm Payment');
+      expect(confirm).toBeInTheDocument();
+      act(() => {
+        testingUtils.mockAccountsChanged([]);
+      });
+      act(() => {
+        global.window.ethereum.emit('accountsChanged', []);
+      });
+      const connectWallet = await screen.findByText('Connect Wallet');
+      expect(connectWallet).toBeInTheDocument();
+    });
+    it('should listen for connection requests', async () => {
+      act(() => {
+        fireEvent(
+          window,
+          new MessageEvent('message', {
+            data: { type: 'web3_connect' },
+            origin: '*',
+          })
+        );
+      });
+      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
+        '0x123willConnect',
+      ]);
+      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
+      await screen.findByText('Confirm Payment');
+      expect(await screen.findByText(/0x12/)).toBeInTheDocument();
+    });
+  });
+
+  describe('Previous Connection', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+
+    it('should handle previous connection', async () => {
+      const confirmPayment = await screen.findByText('Confirm Payment');
+      expect(confirmPayment).toBeInTheDocument();
+    });
+  });
+
+  describe('Error', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.lowLevel.mockRequest(
+        'eth_requestAccounts',
+        { message: 'User rejected the request.' },
+        {
+          shouldThrow: true,
+        }
+      );
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+
+    it('should handle connection error', async () => {
+      const connecting = await screen.findByText('Connecting...');
+      expect(connecting).toBeInTheDocument();
+      const connectWallet = await screen.findByText('Connect Wallet');
+      const error = await screen.findByText('User rejected the request.');
+      expect(connectWallet).toBeInTheDocument();
+      expect(error).toBeInTheDocument();
+    });
+  });
+
+  describe('Address generation error', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+
+    it('should handle previous connection', async () => {
+      const confirmPayment = await screen.findByText('Confirm Payment');
+      expect(confirmPayment).toBeInTheDocument();
+      const input = await screen.findByTestId('input');
+      act(() => {
+        fireEvent.change(input, { target: { value: '1' } });
+      });
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      const error = await screen.findByText(
+        'Error generating a deposit address.'
+      );
+      expect(error).toBeInTheDocument();
     });
   });
 });
