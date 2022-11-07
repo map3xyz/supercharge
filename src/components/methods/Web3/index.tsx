@@ -20,7 +20,6 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
       (!window.ethereum || !window.ethereum[state.method!.value!]) &&
       !selectedProvider
     ) {
-      console.log('HERE');
       dispatch({ payload: 'No provider found.', type: 'SET_ACCOUNT_ERROR' });
       setFormError(`Please download the ${state.method!.name} extension.`);
 
