@@ -25,24 +25,26 @@ const AssetSelection: React.FC<Props> = () => {
 
   return (
     <>
-      <InnerWrapper>
-        <h3
-          className="text-lg font-semibold dark:text-white"
-          data-testid="select-asset"
-        >
-          Select Asset
-        </h3>
-        <h5 className="text-xs text-neutral-400">
-          Select the Asset you want to deposit.
-        </h5>
-      </InnerWrapper>
+      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+        <InnerWrapper>
+          <h3
+            className="text-lg font-semibold dark:text-white"
+            data-testid="select-asset"
+          >
+            Select Asset
+          </h3>
+          <h5 className="text-xs text-neutral-400">
+            Select the Asset you want to deposit.
+          </h5>
+        </InnerWrapper>
+      </div>
       <div className="flex flex-col dark:text-white">
         {data?.assets?.map((asset) => {
           if (!asset) return null;
 
           return (
             <div
-              className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+              className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
               key={asset?.name}
               onClick={() => {
                 dispatch({ payload: asset, type: 'SET_ASSET' });

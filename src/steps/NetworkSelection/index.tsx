@@ -1,4 +1,4 @@
-import { Badge } from '@map3xyz/components';
+import { Badge, CoinLogo } from '@map3xyz/components';
 import React, { useContext } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -30,49 +30,61 @@ const NetworkSelection: React.FC<Props> = () => {
 
   return (
     <>
-      <InnerWrapper>
-        <h3
-          className="text-lg font-semibold dark:text-white"
-          data-testid="network-select"
-        >
-          Select Network
-        </h3>
-        <h5 className="text-xs text-neutral-400">
-          Select the Network to deposit <b>{state.asset.name}</b> on.
-        </h5>
-      </InnerWrapper>
-      <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Deposit{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.AssetSelection,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          <Badge color="blue" size="large">
-            {state.asset.name || ''}
-          </Badge>
-        </span>{' '}
-        on
+      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+        <InnerWrapper>
+          <h3
+            className="text-lg font-semibold dark:text-white"
+            data-testid="network-select"
+          >
+            Select Network
+          </h3>
+          <h5 className="text-xs text-neutral-400">
+            Select the Network to deposit <b>{state.asset.name}</b> on.
+          </h5>
+        </InnerWrapper>
+        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+          Deposit{' '}
+          <span
+            className="text-blue-600 underline"
+            onClick={() => {
+              dispatch({
+                payload: Steps.AssetSelection,
+                type: 'SET_STEP',
+              });
+            }}
+            role="button"
+          >
+            <Badge color="blue" size="large">
+              {state.asset.name || ''}
+            </Badge>
+          </span>{' '}
+          on
+        </div>
       </div>
       <div className="flex flex-col dark:text-white">
         {data?.networks?.map((network) =>
           network ? (
             <div
-              className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
-              key={network.symbol}
+              className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+              key={network.name}
               onClick={() => {
                 dispatch({ payload: network, type: 'SET_NETWORK' });
                 dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
               }}
               role="button"
             >
-              <span>{network.symbol}</span>
-              {state.network?.symbol === network.symbol ? (
+              <div className="flex items-center gap-2">
+                <div className="flex w-4 justify-center">
+                  <CoinLogo
+                    height="h-4"
+                    // @ts-ignore
+                    logo={network?.logo}
+                    width="w-4"
+                  />
+                </div>
+                <span>{network.name}</span>
+              </div>
+              {state.network?.name === network.name ? (
                 <i className="fa fa-check-circle text-green-400" />
               ) : (
                 <i className="fa fa-chevron-right text-xxs" />

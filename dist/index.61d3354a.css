@@ -609,11 +609,6 @@
   padding-bottom: .25rem;
 }
 
-.map3 .py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .map3 .pl-6 {
   padding-left: 1.5rem;
 }
@@ -754,10 +749,6 @@
 
 .map3 .leading-4 {
   line-height: 1rem;
-}
-
-.map3 .leading-6 {
-  line-height: 1.5rem;
 }
 
 .map3 .text-neutral-400 {
@@ -1166,10 +1157,6 @@
 
 .last\:border-b-0:last-child {
   border-bottom-width: 0;
-}
-
-.last\:border-b:last-child {
-  border-bottom-width: 1px;
 }
 
 .hover\:bg-neutral-100:hover {

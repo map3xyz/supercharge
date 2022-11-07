@@ -29,52 +29,55 @@ const PaymentMethod: React.FC<Props> = () => {
 
   return (
     <>
-      <InnerWrapper>
-        <h3
-          className="text-lg font-semibold dark:text-white"
-          data-testid="payment-method"
-        >
-          Payment Method
-        </h3>
-        <h5 className="text-xs text-neutral-400">
-          How do you want to deposit?
-        </h5>
-      </InnerWrapper>
-      <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Deposit{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.AssetSelection,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          <Badge color="blue" size="large">
-            {state.asset?.name || ''}
-          </Badge>
-        </span>{' '}
-        on{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
-          }}
-          role="button"
-        >
-          <Badge color="blue" size="large">
-            {state.network?.name || ''}
-          </Badge>
-        </span>{' '}
-        via
+      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+        <InnerWrapper>
+          <h3
+            className="text-lg font-semibold dark:text-white"
+            data-testid="payment-method"
+          >
+            Payment Method
+          </h3>
+          <h5 className="text-xs text-neutral-400">
+            How do you want to deposit?
+          </h5>
+        </InnerWrapper>
+
+        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+          Deposit{' '}
+          <span
+            className="text-blue-600 underline"
+            onClick={() => {
+              dispatch({
+                payload: Steps.AssetSelection,
+                type: 'SET_STEP',
+              });
+            }}
+            role="button"
+          >
+            <Badge color="blue" size="large">
+              {state.asset?.symbol || ''}
+            </Badge>
+          </span>{' '}
+          on{' '}
+          <span
+            className="text-blue-600 underline"
+            onClick={() => {
+              dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
+            }}
+            role="button"
+          >
+            <Badge color="blue" size="large">
+              {state.network?.symbol || ''}
+            </Badge>
+          </span>{' '}
+          via
+        </div>
       </div>
       <div className="flex flex-col dark:text-white">
         {data?.methods?.map((method) =>
           method ? (
             <div
-              className={`flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-sm last:border-b hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+              className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm leading-8 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
                 method.enabled
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
@@ -118,7 +121,6 @@ const PaymentMethod: React.FC<Props> = () => {
               <div className="flex items-center gap-2">
                 <MethodIcon method={method} />
                 <span>{method.name}</span>
-                {!method.enabled && <Badge color="yellow">Coming Soon</Badge>}
               </div>
               {state.method?.value === method.value ? (
                 <i className="fa fa-check-circle text-green-400" />

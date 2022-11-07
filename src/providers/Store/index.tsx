@@ -11,11 +11,24 @@ export enum Steps {
   __LENGTH,
 }
 
+type RemoteType = 'loading' | 'success' | 'error' | 'idle';
+
+export type AlertType = {
+  id: number;
+  message: string;
+  title: string;
+  variant?: 'success' | 'danger' | 'warning' | 'info';
+};
+
 type State = {
+  account: {
+    data: string | undefined;
+    status: RemoteType;
+  };
   asset?: Asset;
   depositAddress: {
     data: string | undefined;
-    status: 'loading' | 'success' | 'error' | 'idle';
+    status: RemoteType;
   };
   method?: PaymentMethod;
   network?: Network;
@@ -34,9 +47,17 @@ type Action =
   | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
-  | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' };
+  | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' }
+  | { type: 'SET_ACCOUNT_IDLE' }
+  | { type: 'SET_ACCOUNT_LOADING' }
+  | { payload: string; type: 'SET_ACCOUNT_SUCCESS' }
+  | { payload: string; type: 'SET_ACCOUNT_ERROR' };
 
 const initialState: State = {
+  account: {
+    data: undefined,
+    status: 'idle',
+  },
   asset: undefined,
   depositAddress: {
     data: undefined,
@@ -125,6 +146,38 @@ export const Store: React.FC<
           return {
             ...state,
             depositAddress: {
+              data: undefined,
+              status: 'idle',
+            },
+          };
+        case 'SET_ACCOUNT_SUCCESS':
+          return {
+            ...state,
+            account: {
+              data: action.payload,
+              status: 'success',
+            },
+          };
+        case 'SET_ACCOUNT_ERROR':
+          return {
+            ...state,
+            account: {
+              data: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_ACCOUNT_LOADING':
+          return {
+            ...state,
+            account: {
+              data: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_ACCOUNT_IDLE':
+          return {
+            ...state,
+            account: {
               data: undefined,
               status: 'idle',
             },

@@ -17,6 +17,7 @@ export type Scalars = {
 
 export type Asset = {
   __typename?: 'Asset';
+  id?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
   symbol?: Maybe<Scalars['String']>;
@@ -46,9 +47,48 @@ export type PaymentMethod = {
 
 export type Query = {
   __typename?: 'Query';
+  assetByAddressAndNetworkCode?: Maybe<Asset>;
+  assetById?: Maybe<Asset>;
   assets?: Maybe<Array<Maybe<Asset>>>;
+  assetsCount?: Maybe<Scalars['Int']>;
+  assetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
+  networkByCode?: Maybe<Network>;
   networks?: Maybe<Array<Maybe<Network>>>;
+  networksCount?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryAssetByAddressAndNetworkCodeArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  networkCode?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryAssetByIdArgs = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryAssetsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryAssetsForOrganizationArgs = {
+  organizationId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryNetworkByCodeArgs = {
+  code?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryNetworksArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type GetAssetsQueryVariables = Exact<{ [key: string]: never; }>;

@@ -1,6 +1,8 @@
 module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
+    'src/components/**/**/*.{ts,tsx}',
+    'src/components/**/*.{ts,tsx}',
     'src/steps/**/*.{ts,tsx}',
     'src/steps/index.tsx',
     'src/providers/Store/index.tsx',
