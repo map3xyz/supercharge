@@ -2652,15 +2652,16 @@
     shelljs "^0.8.5"
     uuid "^8.3.2"
 
-"@map3xyz/components@^0.1.41":
-  version "0.1.41"
-  resolved "https://registry.npmjs.org/@map3xyz/components/-/components-0.1.41.tgz#4933085a8f44c5485815d0fc919e542106ed4f69"
-  integrity sha512-oQRXDeDOyIJwJ5uy/Al9lWWf46q6qs4pxiqbk2ByvCw8InVZtBH+Aq6fdWOajGn6Mm63AEDjJkJlD0hIzysurg==
+"@map3xyz/components@^0.1.44":
+  version "0.1.44"
+  resolved "https://registry.npmjs.org/@map3xyz/components/-/components-0.1.44.tgz#9afd76ce8842bdd5f48d889bc2ec616c11dd84bf"
+  integrity sha512-V8tiCxV9uIrQxJ9sbD9fJy+NgVfF+6+LSOYYGEobEs0OJifp+hGafQ8VKSEFW5S6hn1KbQErUTh05swM+Hmg4Q==
   dependencies:
     "@fortawesome/fontawesome-free" "6.1.2"
     "@map3xyz/assets-helper" "^1.0.136"
     "@supabase/ui" latest
     react "^18.2.0"
+    react-blockies "^1.4.1"
     react-dom "^18.2.0"
     react-scripts "5.0.0"
     tailwindcss "^3.1.8"
@@ -11172,7 +11173,7 @@ prompts@^2.0.1, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@^15.5.10, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -11283,6 +11284,13 @@ react-app-polyfill@^3.0.0:
     raf "^3.4.1"
     regenerator-runtime "^0.13.9"
     whatwg-fetch "^3.6.2"
+
+react-blockies@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.npmjs.org/react-blockies/-/react-blockies-1.4.1.tgz#d4f0faf95ac197213a297a370a4d7f77ea3d0b08"
+  integrity sha512-4N015X5oPNnD3xQPsiqolOFzPZSSWyc5mJhJUZShUCHtiGUxVN+1qsWTcglkHMNySux9hUofaispqcw9QkWP5Q==
+  dependencies:
+    prop-types "^15.5.10"
 
 react-dev-utils@^12.0.0:
   version "12.0.1"

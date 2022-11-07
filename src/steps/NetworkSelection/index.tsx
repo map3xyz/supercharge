@@ -77,8 +77,9 @@ const NetworkSelection: React.FC<Props> = () => {
                 <div className="flex w-4 justify-center">
                   <CoinLogo
                     height="h-4"
-                    // @ts-ignore
-                    logo={network?.logo}
+                    name={network.name || ''}
+                    png={network.logo?.png || undefined}
+                    svg={network.logo?.svg || undefined}
                     width="w-4"
                   />
                 </div>

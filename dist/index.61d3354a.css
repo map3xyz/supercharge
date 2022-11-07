@@ -231,6 +231,10 @@
   height: 1.5rem;
 }
 
+.map3 .h-10 {
+  height: 2.5rem;
+}
+
 .map3 .h-9 {
   height: 2.25rem;
 }
@@ -270,6 +274,10 @@
 
 .map3 .w-6 {
   width: 1.5rem;
+}
+
+.map3 .w-10 {
+  width: 2.5rem;
 }
 
 .map3 .w-2 {
@@ -9690,6 +9698,10 @@
   height: 1.5rem;
 }
 
+.map3 .h-10 {
+  height: 2.5rem;
+}
+
 .map3 .h-9 {
   height: 2.25rem;
 }
@@ -9726,6 +9738,10 @@
 
 .map3 .w-6 {
   width: 1.5rem;
+}
+
+.map3 .w-10 {
+  width: 2.5rem;
 }
 
 .map3 .w-2 {

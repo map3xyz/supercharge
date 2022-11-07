@@ -1,3 +1,4 @@
+import { Coin, CoinLogo } from '@map3xyz/components';
 import React, { useContext } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -54,9 +55,12 @@ const AssetSelection: React.FC<Props> = () => {
             >
               <div className="flex items-center gap-2">
                 <div className="flex w-4 justify-center">
-                  <img
-                    className="h-4"
-                    src={asset?.logo!.svg || asset?.logo!.png || ''}
+                  <CoinLogo
+                    height="h-4"
+                    name={asset.name || ''}
+                    png={asset.logo?.png || undefined}
+                    svg={asset.logo?.svg || undefined}
+                    width="w-4"
                   />
                 </div>
                 <span>{asset?.name}</span>
