@@ -32,7 +32,6 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
       dispatch({ type: 'SET_ACCOUNT_LOADING' });
       const accounts = await eth.send('eth_accounts', []);
 
-      console.log('accounts', accounts);
       if (accounts && accounts[0]) {
         dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
       } else {
