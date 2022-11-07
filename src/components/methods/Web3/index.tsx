@@ -11,13 +11,25 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
   if (!state.method || !state.method.value) return null;
 
   const connect = async () => {
-    const currentProvider = window.ethereum?.providers.find(
-      (x: any) => x[state.method!.value || 'isMetaMask']
+    const providers = window.ethereum?.providers;
+    const selectedProvider = providers?.find(
+      (x: any) => x[state.method!.value!]
     );
-    // TODO: handle no provider installed
-    if (!currentProvider) return;
 
-    const eth = new ethers.providers.Web3Provider(currentProvider);
+    if (
+      (!window.ethereum || !window.ethereum[state.method!.value!]) &&
+      !selectedProvider
+    ) {
+      console.log('HERE');
+      dispatch({ payload: 'No provider found.', type: 'SET_ACCOUNT_ERROR' });
+      setFormError(`Please download the ${state.method!.name} extension.`);
+
+      return;
+    }
+
+    const eth = new ethers.providers.Web3Provider(
+      selectedProvider || window.ethereum
+    );
 
     if (eth.provider) {
       // @ts-ignore
@@ -44,7 +56,10 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
             });
           }
         } catch (e: any) {
-          if (e.message === 'User rejected the request.') {
+          if (
+            e.message === 'User rejected the request.' ||
+            e.message === 'User denied account authorization'
+          ) {
             dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
             setFormError(e.message);
           } else {
@@ -88,6 +103,8 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
       block
       disabled={
         disabled ||
+        (state.account.status === 'error' &&
+          state.account.data === 'No provider found.') ||
         (state.account.status === 'success' && Number(amount) === 0) ||
         state.account.status === 'loading'
       }
