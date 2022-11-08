@@ -91,7 +91,10 @@ export type QueryNetworksArgs = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
-export type GetAssetsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAssetsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+}>;
 
 
 export type GetAssetsQuery = { __typename?: 'Query', assets?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
@@ -108,8 +111,8 @@ export type GetPaymentMethodsQuery = { __typename?: 'Query', methods?: Array<{ _
 
 
 export const GetAssetsDocument = gql`
-    query GetAssets {
-  assets {
+    query GetAssets($limit: Int, $offset: Int) {
+  assets(limit: $limit, offset: $offset) {
     name
     logo {
       png
@@ -132,6 +135,8 @@ export const GetAssetsDocument = gql`
  * @example
  * const { data, loading, error } = useGetAssetsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
  *   },
  * });
  */

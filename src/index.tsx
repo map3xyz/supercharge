@@ -3,6 +3,7 @@ import '@map3xyz/components/dist/index.css';
 import './index.css';
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { offsetLimitPagination } from '@apollo/client/utilities';
 import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
@@ -55,7 +56,15 @@ export class Map3 {
 
   public open() {
     const client = new ApolloClient({
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache({
+        typePolicies: {
+          Query: {
+            fields: {
+              assets: offsetLimitPagination(),
+            },
+          },
+        },
+      }),
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
       },

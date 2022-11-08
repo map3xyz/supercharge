@@ -10,6 +10,10 @@ export const mocks: MockedResponse[] = [
   {
     request: {
       query: GetAssetsDocument,
+      variables: {
+        limit: 10,
+        offset: 0,
+      },
     },
     result: {
       data: {

@@ -163,7 +163,7 @@ const EnterAmount: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <InnerWrapper>
+      <InnerWrapper className="!pt-0">
         <h3
           className="text-lg font-semibold dark:text-white"
           data-testid="enter-amount"

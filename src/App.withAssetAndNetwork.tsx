@@ -17,7 +17,12 @@ const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     error: assetError,
     loading: assetLoading,
     refetch: assetRefetch,
-  } = useGetAssetsQuery();
+  } = useGetAssetsQuery({
+    variables: {
+      limit: 10,
+      offset: 0,
+    },
+  });
 
   if (loading || assetLoading) return <LoadingWrapper />;
 

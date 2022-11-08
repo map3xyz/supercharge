@@ -37,7 +37,7 @@ const QRCode: React.FC<Props> = () => {
 
   return (
     <div>
-      <InnerWrapper>
+      <InnerWrapper className="!pt-0">
         <h3
           className="text-lg font-semibold dark:text-white"
           data-testid="qrcode-method"

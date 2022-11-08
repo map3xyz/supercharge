@@ -142,6 +142,10 @@
   margin-top: .25rem;
 }
 
+.map3 .mt-2 {
+  margin-top: .5rem;
+}
+
 .map3 .mt-8 {
   margin-top: 2rem;
 }
@@ -156,10 +160,6 @@
 
 .map3 .mb-4 {
   margin-bottom: 1rem;
-}
-
-.map3 .mt-2 {
-  margin-top: .5rem;
 }
 
 .map3 .mb-0\.5 {
@@ -615,6 +615,10 @@
 .map3 .py-1 {
   padding-top: .25rem;
   padding-bottom: .25rem;
+}
+
+.map3 .\!pt-0 {
+  padding-top: 0 !important;
 }
 
 .map3 .pl-6 {
