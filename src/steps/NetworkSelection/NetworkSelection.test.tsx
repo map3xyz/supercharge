@@ -35,6 +35,10 @@ describe('Network Selection', () => {
           {
             request: {
               query: GetAssetsDocument,
+              variables: {
+                limit: 10,
+                offset: 0,
+              },
             },
             result: {
               data: {

@@ -18,9 +18,7 @@ const AssetSelection: React.FC<Props> = () => {
     },
   });
 
-  console.log(data?.assets);
-
-  if (loading && !data?.assets?.length) return <LoadingWrapper />;
+  if (loading) return <LoadingWrapper />;
 
   if (error) {
     return (
@@ -93,7 +91,6 @@ const AssetSelection: React.FC<Props> = () => {
         {data?.assets?.length ? (
           <InView
             onChange={async (inView) => {
-              console.log(inView);
               const currentLength = data.assets?.length || 0;
               if (inView) {
                 await fetchMore({

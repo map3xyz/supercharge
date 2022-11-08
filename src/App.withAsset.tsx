@@ -10,7 +10,9 @@ import Map3SdkSteps from './steps';
 const AppWithAsset: React.FC<AppProps> = ({ config, onClose }) => {
   const [_, assetString] = config?.slug?.split(':') ?? [];
   // TODO: use asset search
-  const { data, error, loading, refetch } = useGetAssetsQuery();
+  const { data, error, loading, refetch } = useGetAssetsQuery({
+    variables: { limit: 10, offset: 0 },
+  });
 
   if (loading) return <LoadingWrapper />;
 

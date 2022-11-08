@@ -142,6 +142,10 @@
   margin-top: .25rem;
 }
 
+.map3 .mt-2 {
+  margin-top: .5rem;
+}
+
 .map3 .mt-8 {
   margin-top: 2rem;
 }
@@ -156,10 +160,6 @@
 
 .map3 .mb-4 {
   margin-bottom: 1rem;
-}
-
-.map3 .mt-2 {
-  margin-top: .5rem;
 }
 
 .map3 .mb-0\.5 {
@@ -617,6 +617,10 @@
   padding-bottom: .25rem;
 }
 
+.map3 .\!pt-0 {
+  padding-top: 0 !important;
+}
+
 .map3 .pl-6 {
   padding-left: 1.5rem;
 }
@@ -631,10 +635,6 @@
 
 .map3 .pr-20 {
   padding-right: 5rem;
-}
-
-.map3 .\!pt-0 {
-  padding-top: 0 !important;
 }
 
 .map3 .text-center {
