@@ -4,7 +4,7 @@ import { render as RTLRender } from '@testing-library/react';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import { GetAssetsDocument } from '../../generated/apollo-gql';
+import { GetAssetsForOrgDocument } from '../../generated/apollo-gql';
 
 describe('Network Selection', () => {
   it('renders', async () => {
@@ -34,7 +34,7 @@ describe('Network Selection', () => {
         mocks={[
           {
             request: {
-              query: GetAssetsDocument,
+              query: GetAssetsForOrgDocument,
               variables: {
                 limit: 10,
                 offset: 0,
@@ -42,7 +42,7 @@ describe('Network Selection', () => {
             },
             result: {
               data: {
-                assets: [
+                assetsForOrganization: [
                   {
                     logo: {
                       png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',

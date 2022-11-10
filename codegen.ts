@@ -1,7 +1,6 @@
 require('dotenv/config');
-import type { CodegenConfig } from '@graphql-codegen/cli';
 
-const config: CodegenConfig = {
+const config = {
   documents: 'src/graphql/**/*.gql',
   generates: {
     'src/generated/apollo-gql.tsx': {

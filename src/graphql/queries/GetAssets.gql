@@ -1,5 +1,5 @@
-query GetAssets($limit: Int, $offset: Int) {
-  assets(limit: $limit, offset: $offset) {
+query GetAssetsForOrg($limit: Int, $offset: Int) {
+  assetsForOrganization(limit: $limit, offset: $offset) {
     name
     logo {
       png

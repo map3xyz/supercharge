@@ -20,6 +20,8 @@ export type Asset = {
   id?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
+  networkCode?: Maybe<Scalars['String']>;
+  networks?: Maybe<Array<Maybe<Network>>>;
   symbol?: Maybe<Scalars['String']>;
 };
 
@@ -29,11 +31,46 @@ export type Logo = {
   svg?: Maybe<Scalars['String']>;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  createOrganization?: Maybe<Organization>;
+  createSdkConfigForOrganization?: Maybe<SdkConfigField>;
+  updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
+};
+
+
+export type MutationCreateOrganizationArgs = {
+  name: Scalars['String'];
+};
+
+
+export type MutationCreateSdkConfigForOrganizationArgs = {
+  assetId: Scalars['ID'];
+  networkCode: Scalars['String'];
+};
+
+
+export type MutationUpdateSdkConfigForOrganizationArgs = {
+  assetId: Scalars['ID'];
+  enabled: Scalars['Boolean'];
+  networkCode: Scalars['String'];
+};
+
 export type Network = {
   __typename?: 'Network';
+  address?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
+  networkCode?: Maybe<Scalars['String']>;
   symbol?: Maybe<Scalars['String']>;
+};
+
+export type Organization = {
+  __typename?: 'Organization';
+  created?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
+  updated?: Maybe<Scalars['Int']>;
 };
 
 export type PaymentMethod = {
@@ -56,6 +93,9 @@ export type Query = {
   networkByCode?: Maybe<Network>;
   networks?: Maybe<Array<Maybe<Network>>>;
   networksCount?: Maybe<Scalars['Int']>;
+  organizationById?: Maybe<Organization>;
+  sdkConfigForOrganization?: Maybe<Array<Maybe<SdkConfigField>>>;
+  searchAssetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
 };
 
 
@@ -77,6 +117,8 @@ export type QueryAssetsArgs = {
 
 
 export type QueryAssetsForOrganizationArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
   organizationId?: InputMaybe<Scalars['String']>;
 };
 
@@ -91,13 +133,35 @@ export type QueryNetworksArgs = {
   offset?: InputMaybe<Scalars['Int']>;
 };
 
-export type GetAssetsQueryVariables = Exact<{
+
+export type QueryOrganizationByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QuerySearchAssetsForOrganizationArgs = {
+  organizationId?: InputMaybe<Scalars['String']>;
+  query?: InputMaybe<Scalars['String']>;
+};
+
+export type SdkConfigField = {
+  __typename?: 'SdkConfigField';
+  assetId?: Maybe<Scalars['String']>;
+  created?: Maybe<Scalars['Int']>;
+  enabled?: Maybe<Scalars['Boolean']>;
+  id?: Maybe<Scalars['ID']>;
+  networkCode?: Maybe<Scalars['String']>;
+  organizationId?: Maybe<Scalars['String']>;
+  updated?: Maybe<Scalars['Int']>;
+};
+
+export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetAssetsQuery = { __typename?: 'Query', assets?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+export type GetAssetsForOrgQuery = { __typename?: 'Query', assetsForOrganization?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
 
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -109,10 +173,17 @@ export type GetPaymentMethodsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetPaymentMethodsQuery = { __typename?: 'Query', methods?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, enabled?: boolean | null } | null> | null };
 
+export type SearchAssetsQueryVariables = Exact<{
+  query?: InputMaybe<Scalars['String']>;
+}>;
 
-export const GetAssetsDocument = gql`
-    query GetAssets($limit: Int, $offset: Int) {
-  assets(limit: $limit, offset: $offset) {
+
+export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+
+
+export const GetAssetsForOrgDocument = gql`
+    query GetAssetsForOrg($limit: Int, $offset: Int) {
+  assetsForOrganization(limit: $limit, offset: $offset) {
     name
     logo {
       png
@@ -124,33 +195,33 @@ export const GetAssetsDocument = gql`
     `;
 
 /**
- * __useGetAssetsQuery__
+ * __useGetAssetsForOrgQuery__
  *
- * To run a query within a React component, call `useGetAssetsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAssetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAssetsForOrgQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAssetsForOrgQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAssetsQuery({
+ * const { data, loading, error } = useGetAssetsForOrgQuery({
  *   variables: {
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
  *   },
  * });
  */
-export function useGetAssetsQuery(baseOptions?: Apollo.QueryHookOptions<GetAssetsQuery, GetAssetsQueryVariables>) {
+export function useGetAssetsForOrgQuery(baseOptions?: Apollo.QueryHookOptions<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAssetsQuery, GetAssetsQueryVariables>(GetAssetsDocument, options);
+        return Apollo.useQuery<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>(GetAssetsForOrgDocument, options);
       }
-export function useGetAssetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAssetsQuery, GetAssetsQueryVariables>) {
+export function useGetAssetsForOrgLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAssetsQuery, GetAssetsQueryVariables>(GetAssetsDocument, options);
+          return Apollo.useLazyQuery<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>(GetAssetsForOrgDocument, options);
         }
-export type GetAssetsQueryHookResult = ReturnType<typeof useGetAssetsQuery>;
-export type GetAssetsLazyQueryHookResult = ReturnType<typeof useGetAssetsLazyQuery>;
-export type GetAssetsQueryResult = Apollo.QueryResult<GetAssetsQuery, GetAssetsQueryVariables>;
+export type GetAssetsForOrgQueryHookResult = ReturnType<typeof useGetAssetsForOrgQuery>;
+export type GetAssetsForOrgLazyQueryHookResult = ReturnType<typeof useGetAssetsForOrgLazyQuery>;
+export type GetAssetsForOrgQueryResult = Apollo.QueryResult<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>;
 export const GetNetworksDocument = gql`
     query GetNetworks {
   networks {
@@ -228,3 +299,43 @@ export function useGetPaymentMethodsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetPaymentMethodsQueryHookResult = ReturnType<typeof useGetPaymentMethodsQuery>;
 export type GetPaymentMethodsLazyQueryHookResult = ReturnType<typeof useGetPaymentMethodsLazyQuery>;
 export type GetPaymentMethodsQueryResult = Apollo.QueryResult<GetPaymentMethodsQuery, GetPaymentMethodsQueryVariables>;
+export const SearchAssetsDocument = gql`
+    query SearchAssets($query: String) {
+  searchAssetsForOrganization(query: $query) {
+    name
+    logo {
+      png
+      svg
+    }
+    symbol
+  }
+}
+    `;
+
+/**
+ * __useSearchAssetsQuery__
+ *
+ * To run a query within a React component, call `useSearchAssetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchAssetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchAssetsQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *   },
+ * });
+ */
+export function useSearchAssetsQuery(baseOptions?: Apollo.QueryHookOptions<SearchAssetsQuery, SearchAssetsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchAssetsQuery, SearchAssetsQueryVariables>(SearchAssetsDocument, options);
+      }
+export function useSearchAssetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchAssetsQuery, SearchAssetsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchAssetsQuery, SearchAssetsQueryVariables>(SearchAssetsDocument, options);
+        }
+export type SearchAssetsQueryHookResult = ReturnType<typeof useSearchAssetsQuery>;
+export type SearchAssetsLazyQueryHookResult = ReturnType<typeof useSearchAssetsLazyQuery>;
+export type SearchAssetsQueryResult = Apollo.QueryResult<SearchAssetsQuery, SearchAssetsQueryVariables>;

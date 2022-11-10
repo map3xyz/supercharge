@@ -1,0 +1,10 @@
+query SearchAssets($query: String) {
+  searchAssetsForOrganization(query: $query) {
+    name
+    logo {
+      png
+      svg
+    }
+    symbol
+  }
+}

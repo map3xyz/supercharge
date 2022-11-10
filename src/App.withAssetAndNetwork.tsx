@@ -3,7 +3,10 @@ import React from 'react';
 import { AppProps } from './App';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
-import { useGetAssetsQuery, useGetNetworksQuery } from './generated/apollo-gql';
+import {
+  useGetAssetsForOrgQuery,
+  useGetNetworksQuery,
+} from './generated/apollo-gql';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
@@ -17,7 +20,7 @@ const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     error: assetError,
     loading: assetLoading,
     refetch: assetRefetch,
-  } = useGetAssetsQuery({
+  } = useGetAssetsForOrgQuery({
     variables: {
       limit: 10,
       offset: 0,
@@ -29,7 +32,9 @@ const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
   const network = data?.networks?.find(
     (network) => network?.name === networkString
   );
-  const asset = assetData?.assets?.find((asset) => asset?.name === assetString);
+  const asset = assetData?.assetsForOrganization?.find(
+    (asset) => asset?.name === assetString
+  );
 
   if (error || assetError || !network || !asset)
     return (

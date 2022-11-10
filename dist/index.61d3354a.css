@@ -402,16 +402,16 @@
   border-radius: .5rem;
 }
 
+.map3 .rounded {
+  border-radius: .25rem;
+}
+
 .map3 .rounded-md {
   border-radius: .375rem;
 }
 
 .map3 .rounded-full {
   border-radius: 9999px;
-}
-
-.map3 .rounded {
-  border-radius: .25rem;
 }
 
 .map3 .border {

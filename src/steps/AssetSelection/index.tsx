@@ -1,22 +1,32 @@
 import { CoinLogo, Input } from '@map3xyz/components';
-import React, { useContext } from 'react';
+import React, { ChangeEvent, useCallback, useContext, useState } from 'react';
 import { InView } from 'react-intersection-observer';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import { useGetAssetsQuery } from '../../generated/apollo-gql';
+import {
+  useGetAssetsForOrgQuery,
+  useSearchAssetsLazyQuery,
+} from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
+import { debounce } from '../../utils';
 
 const AssetSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const [formValue, setFormValue] = useState<FormData>();
 
-  const { data, error, fetchMore, loading, refetch } = useGetAssetsQuery({
+  const { data, error, fetchMore, loading, refetch } = useGetAssetsForOrgQuery({
     variables: {
       limit: 10,
       offset: 0,
     },
   });
+
+  const [search, { data: searchData, loading: searching }] =
+    useSearchAssetsLazyQuery();
+
+  const debouncedSearch = useCallback(debounce(search, 100), []);
 
   if (loading) return <LoadingWrapper />;
 
@@ -29,6 +39,10 @@ const AssetSelection: React.FC<Props> = () => {
       />
     );
   }
+
+  const assets = searchData?.searchAssetsForOrganization?.length
+    ? searchData.searchAssetsForOrganization
+    : data?.assetsForOrganization;
 
   return (
     <>
@@ -43,10 +57,20 @@ const AssetSelection: React.FC<Props> = () => {
           <h5 className="text-xs text-neutral-400">
             Select the <b>Asset</b> you want to deposit.
           </h5>
-          <form className="mt-2">
+          <form
+            className="mt-2"
+            onChange={(e) => setFormValue(new FormData(e.currentTarget))}
+          >
             <Input
               icon={<i className="fa fa-search" />}
               name="asset-search"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                debouncedSearch({
+                  variables: {
+                    query: e.target.value,
+                  },
+                })
+              }
               placeholder="Search for an asset..."
               rounded
             />
@@ -54,44 +78,62 @@ const AssetSelection: React.FC<Props> = () => {
         </InnerWrapper>
       </div>
       <div className="flex flex-col dark:text-white">
-        {data?.assets?.map((asset) => {
-          if (!asset) return null;
+        {searching ? (
+          <LoadingWrapper />
+        ) : formValue?.get('asset-search') &&
+          !searchData?.searchAssetsForOrganization?.length ? (
+          <ErrorWrapper
+            description="We couldn't find any assets that matched your search."
+            header="No Assets Found"
+            retry={() =>
+              search({
+                variables: { query: formValue.get('asset-search') as string },
+              })
+            }
+          />
+        ) : (
+          assets?.map((asset) => {
+            if (!asset) return null;
 
-          return (
-            <div
-              className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
-              key={asset?.name}
-              onClick={() => {
-                dispatch({ payload: asset, type: 'SET_ASSET' });
-                dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
-              }}
-              role="button"
-            >
-              <div className="flex items-center gap-2">
-                <div className="flex w-4 justify-center">
-                  <CoinLogo
-                    height="h-4"
-                    name={asset.name || ''}
-                    png={asset.logo?.png || undefined}
-                    svg={asset.logo?.svg || undefined}
-                    width="w-4"
-                  />
+            return (
+              <div
+                className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+                key={asset?.name}
+                onClick={() => {
+                  dispatch({ payload: asset, type: 'SET_ASSET' });
+                  dispatch({
+                    payload: Steps.NetworkSelection,
+                    type: 'SET_STEP',
+                  });
+                }}
+                role="button"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex w-4 justify-center">
+                    <CoinLogo
+                      height="h-4"
+                      name={asset.name || ''}
+                      png={asset.logo?.png || undefined}
+                      svg={asset.logo?.svg || undefined}
+                      width="w-4"
+                    />
+                  </div>
+                  <span>{asset?.name}</span>
                 </div>
-                <span>{asset?.name}</span>
+                {asset.symbol === state.asset?.symbol ? (
+                  <i className="fa fa-check-circle text-green-400" />
+                ) : (
+                  <i className="fa fa-chevron-right text-xxs" />
+                )}
               </div>
-              {asset.symbol === state.asset?.symbol ? (
-                <i className="fa fa-check-circle text-green-400" />
-              ) : (
-                <i className="fa fa-chevron-right text-xxs" />
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
         {/* TODO: check if we're at the limit */}
-        {data?.assets?.length ? (
+        {assets?.length ? (
           <InView
             onChange={async (inView) => {
-              const currentLength = data.assets?.length || 0;
+              const currentLength = assets?.length || 0;
               if (inView) {
                 await fetchMore({
                   variables: {
@@ -102,9 +144,9 @@ const AssetSelection: React.FC<Props> = () => {
               }
             }}
           >
-            <div className="flex w-full items-center justify-center py-2">
+            {/* <div className="flex w-full items-center justify-center py-2">
               <i className="fa fa-gear animate-spin text-neutral-500" />
-            </div>
+            </div> */}
           </InView>
         ) : null}
       </div>

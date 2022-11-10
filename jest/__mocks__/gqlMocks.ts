@@ -1,7 +1,7 @@
 import { MockedResponse } from '@apollo/client/testing';
 
 import {
-  GetAssetsDocument,
+  GetAssetsForOrgDocument,
   GetNetworksDocument,
   GetPaymentMethodsDocument,
 } from '../../src/generated/apollo-gql';
@@ -9,7 +9,7 @@ import {
 export const mocks: MockedResponse[] = [
   {
     request: {
-      query: GetAssetsDocument,
+      query: GetAssetsForOrgDocument,
       variables: {
         limit: 10,
         offset: 0,
@@ -17,7 +17,7 @@ export const mocks: MockedResponse[] = [
     },
     result: {
       data: {
-        assets: [
+        assetsForOrganization: [
           {
             logo: {
               png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
