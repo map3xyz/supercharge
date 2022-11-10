@@ -3,10 +3,12 @@ import {jsx as $4MPRY$jsx, jsxs as $4MPRY$jsxs, Fragment as $4MPRY$Fragment} fro
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@map3xyz/components/dist/index.css";
 import {ApolloClient as $4MPRY$ApolloClient, InMemoryCache as $4MPRY$InMemoryCache, ApolloProvider as $4MPRY$ApolloProvider, gql as $4MPRY$gql, useQuery as $4MPRY$useQuery, useLazyQuery as $4MPRY$useLazyQuery} from "@apollo/client";
+import {offsetLimitPagination as $4MPRY$offsetLimitPagination} from "@apollo/client/utilities";
 import {createRoot as $4MPRY$createRoot} from "react-dom/client";
-import {Modal as $4MPRY$Modal, Badge as $4MPRY$Badge, CryptoAddress as $4MPRY$CryptoAddress, Button as $4MPRY$Button, CoinLogo as $4MPRY$CoinLogo, ReadOnlyText as $4MPRY$ReadOnlyText} from "@map3xyz/components";
-import {useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext, useContext as $4MPRY$useContext, useRef as $4MPRY$useRef, useState as $4MPRY$useState, useEffect as $4MPRY$useEffect} from "react";
+import {Modal as $4MPRY$Modal, Input as $4MPRY$Input, CoinLogo as $4MPRY$CoinLogo, Badge as $4MPRY$Badge, CryptoAddress as $4MPRY$CryptoAddress, Button as $4MPRY$Button, ReadOnlyText as $4MPRY$ReadOnlyText} from "@map3xyz/components";
+import {useReducer as $4MPRY$useReducer, createContext as $4MPRY$createContext, useContext as $4MPRY$useContext, useState as $4MPRY$useState, useCallback as $4MPRY$useCallback, useRef as $4MPRY$useRef, useEffect as $4MPRY$useEffect} from "react";
 import {AnimatePresence as $4MPRY$AnimatePresence, motion as $4MPRY$motion} from "framer-motion";
+import {InView as $4MPRY$InView} from "react-intersection-observer";
 import {ethers as $4MPRY$ethers} from "ethers";
 import {QRCodeSVG as $4MPRY$QRCodeSVG} from "qrcode.react";
 
@@ -25,9 +27,10 @@ import {QRCodeSVG as $4MPRY$QRCodeSVG} from "qrcode.react";
 
 
 
+
 const $bdbf379108fa6dba$var$InnerWrapper = ({ children: children , className: className ,  })=>{
     return /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-        className: `w-full px-4 py-3 ${className}`,
+        className: `w-full px-4 py-3 ${className || ""}`,
         children: children
     });
 };
@@ -98,10 +101,16 @@ var $b2b2deb69a511bef$export$2e2bcd8739ae039 = $b2b2deb69a511bef$var$LoadingWrap
 
 
 const $772a74d0db3291da$var$defaultOptions = {};
-const $772a74d0db3291da$export$73dce7652ec876fa = (0, $4MPRY$gql)`
-    query GetAssets {
-  assets {
+const $772a74d0db3291da$export$df6092085ddedfe9 = (0, $4MPRY$gql)`
+    query GetAssetsForOrg($limit: Int, $offset: Int) {
+  assetsForOrganization(limit: $limit, offset: $offset) {
+    id
     name
+    networkCode
+    networks {
+      name
+      networkCode
+    }
     logo {
       png
       svg
@@ -110,19 +119,19 @@ const $772a74d0db3291da$export$73dce7652ec876fa = (0, $4MPRY$gql)`
   }
 }
     `;
-function $772a74d0db3291da$export$af48792e7f08132b(baseOptions) {
+function $772a74d0db3291da$export$a37f4959db8e73ec(baseOptions) {
     const options = {
         ...$772a74d0db3291da$var$defaultOptions,
         ...baseOptions
     };
-    return $4MPRY$useQuery($772a74d0db3291da$export$73dce7652ec876fa, options);
+    return $4MPRY$useQuery($772a74d0db3291da$export$df6092085ddedfe9, options);
 }
-function $772a74d0db3291da$export$ba39f3d57190c729(baseOptions) {
+function $772a74d0db3291da$export$a93693127bf761f9(baseOptions) {
     const options = {
         ...$772a74d0db3291da$var$defaultOptions,
         ...baseOptions
     };
-    return $4MPRY$useLazyQuery($772a74d0db3291da$export$73dce7652ec876fa, options);
+    return $4MPRY$useLazyQuery($772a74d0db3291da$export$df6092085ddedfe9, options);
 }
 const $772a74d0db3291da$export$52b242cb86690a9e = (0, $4MPRY$gql)`
     query GetNetworks {
@@ -150,9 +159,39 @@ function $772a74d0db3291da$export$67f813ea1df47787(baseOptions) {
     };
     return $4MPRY$useLazyQuery($772a74d0db3291da$export$52b242cb86690a9e, options);
 }
+const $772a74d0db3291da$export$48c4fb575991a4d5 = (0, $4MPRY$gql)`
+    query GetNetworksForAsset($assetId: String) {
+  networksForAssetByOrg(assetId: $assetId) {
+    name
+    networkCode
+    logo {
+      png
+      svg
+    }
+    identifiers {
+      chainId
+    }
+    symbol
+  }
+}
+    `;
+function $772a74d0db3291da$export$4c6676fad490424(baseOptions) {
+    const options = {
+        ...$772a74d0db3291da$var$defaultOptions,
+        ...baseOptions
+    };
+    return $4MPRY$useQuery($772a74d0db3291da$export$48c4fb575991a4d5, options);
+}
+function $772a74d0db3291da$export$94696387b621bf08(baseOptions) {
+    const options = {
+        ...$772a74d0db3291da$var$defaultOptions,
+        ...baseOptions
+    };
+    return $4MPRY$useLazyQuery($772a74d0db3291da$export$48c4fb575991a4d5, options);
+}
 const $772a74d0db3291da$export$ddd700e599a7f647 = (0, $4MPRY$gql)`
-    query GetPaymentMethods {
-  methods {
+    query GetPaymentMethods($chainId: Int) {
+  methodsForNetwork(chainId: $chainId) {
     name
     icon
     logo
@@ -174,6 +213,32 @@ function $772a74d0db3291da$export$f594b80de5a5a199(baseOptions) {
         ...baseOptions
     };
     return $4MPRY$useLazyQuery($772a74d0db3291da$export$ddd700e599a7f647, options);
+}
+const $772a74d0db3291da$export$296263c4ea03d9b1 = (0, $4MPRY$gql)`
+    query SearchAssets($query: String) {
+  searchAssetsForOrganization(query: $query) {
+    name
+    logo {
+      png
+      svg
+    }
+    symbol
+  }
+}
+    `;
+function $772a74d0db3291da$export$f1c68938e0cf3c98(baseOptions) {
+    const options = {
+        ...$772a74d0db3291da$var$defaultOptions,
+        ...baseOptions
+    };
+    return $4MPRY$useQuery($772a74d0db3291da$export$296263c4ea03d9b1, options);
+}
+function $772a74d0db3291da$export$7baf74c492ae3189(baseOptions) {
+    const options = {
+        ...$772a74d0db3291da$var$defaultOptions,
+        ...baseOptions
+    };
+    return $4MPRY$useLazyQuery($772a74d0db3291da$export$296263c4ea03d9b1, options);
 }
 
 
@@ -505,74 +570,148 @@ var $44e8e929fd5cdf17$export$2e2bcd8739ae039 = $44e8e929fd5cdf17$var$ProgressBar
 
 
 
+
+
+const $db92928978b16895$export$61fc7d43ac8f84b0 = (func, duration)=>{
+    let timeout;
+    // @ts-ignore
+    return function(...args) {
+        const effect = ()=>{
+            timeout = null;
+            // @ts-ignore
+            return func.apply(this, args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(effect, duration);
+    };
+};
+
+
 const $d8f5e4867dc7bbaa$var$AssetSelection = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
-    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$af48792e7f08132b)();
+    const [formValue, setFormValue] = (0, $4MPRY$useState)();
+    const { data: data , error: error , fetchMore: fetchMore , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$a37f4959db8e73ec)({
+        variables: {
+            limit: 10,
+            offset: 0
+        }
+    });
+    const [search, { data: searchData , loading: searching  }] = (0, $772a74d0db3291da$export$7baf74c492ae3189)();
+    const debouncedSearch = (0, $4MPRY$useCallback)((0, $db92928978b16895$export$61fc7d43ac8f84b0)(search, 100), []);
     if (loading) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $b2b2deb69a511bef$export$2e2bcd8739ae039), {});
     if (error) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $5f70ae3cf4fa56a2$export$2e2bcd8739ae039), {
         description: "We couldn't get a list of assets to select.",
         header: "Error Fetching Assets",
         retry: ()=>refetch()
     });
+    const assets = searchData?.searchAssetsForOrganization?.length ? searchData.searchAssetsForOrganization : data?.assetsForOrganization;
     return /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $4MPRY$Fragment), {
         children: [
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
                 className: "sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900",
                 children: /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                    className: "!pt-0",
                     children: [
                         /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
                             className: "text-lg font-semibold dark:text-white",
                             "data-testid": "select-asset",
                             children: "Select Asset"
                         }),
-                        /*#__PURE__*/ (0, $4MPRY$jsx)("h5", {
+                        /*#__PURE__*/ (0, $4MPRY$jsxs)("h5", {
                             className: "text-xs text-neutral-400",
-                            children: "Select the Asset you want to deposit."
+                            children: [
+                                "Select the ",
+                                /*#__PURE__*/ (0, $4MPRY$jsx)("b", {
+                                    children: "Asset"
+                                }),
+                                " you want to deposit."
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, $4MPRY$jsx)("form", {
+                            className: "mt-2",
+                            onChange: (e)=>setFormValue(new FormData(e.currentTarget)),
+                            children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$Input), {
+                                icon: /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                    className: "fa fa-search"
+                                }),
+                                name: "asset-search",
+                                onChange: (e)=>debouncedSearch({
+                                        variables: {
+                                            query: e.target.value
+                                        }
+                                    }),
+                                placeholder: "Search for an asset...",
+                                rounded: true
+                            })
                         })
                     ]
                 })
             }),
-            /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
                 className: "flex flex-col dark:text-white",
-                children: data?.assets?.map((asset)=>{
-                    if (!asset) return null;
-                    return /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
-                        onClick: ()=>{
-                            dispatch({
-                                payload: asset,
-                                type: "SET_ASSET"
-                            });
-                            dispatch({
-                                payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection,
-                                type: "SET_STEP"
-                            });
-                        },
-                        role: "button",
-                        children: [
-                            /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                                className: "flex items-center gap-2",
-                                children: [
-                                    /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
-                                        className: "flex w-4 justify-center",
-                                        children: /*#__PURE__*/ (0, $4MPRY$jsx)("img", {
-                                            className: "h-4",
-                                            src: asset?.logo.svg || asset?.logo.png || ""
-                                        })
-                                    }),
-                                    /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
-                                        children: asset?.name
-                                    })
-                                ]
-                            }),
-                            asset.symbol === state.asset?.symbol ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
-                                className: "fa fa-check-circle text-green-400"
-                            }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
-                                className: "fa fa-chevron-right text-xxs"
+                children: [
+                    searching ? /*#__PURE__*/ (0, $4MPRY$jsx)((0, $b2b2deb69a511bef$export$2e2bcd8739ae039), {}) : formValue?.get("asset-search") && !searchData?.searchAssetsForOrganization?.length ? /*#__PURE__*/ (0, $4MPRY$jsx)((0, $5f70ae3cf4fa56a2$export$2e2bcd8739ae039), {
+                        description: "We couldn't find any assets that matched your search.",
+                        header: "No Assets Found",
+                        retry: ()=>search({
+                                variables: {
+                                    query: formValue.get("asset-search")
+                                }
                             })
-                        ]
-                    }, asset?.name);
-                })
+                    }) : assets?.map((asset)=>{
+                        if (!asset) return null;
+                        return /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                            className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
+                            onClick: ()=>{
+                                dispatch({
+                                    payload: asset,
+                                    type: "SET_ASSET"
+                                });
+                                dispatch({
+                                    payload: (0, $68c68372be4a9678$export$fb587a27d5a722e7).NetworkSelection,
+                                    type: "SET_STEP"
+                                });
+                            },
+                            role: "button",
+                            children: [
+                                /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                                    className: "flex items-center gap-2",
+                                    children: [
+                                        /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
+                                            className: "flex w-4 justify-center",
+                                            children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$CoinLogo), {
+                                                height: "h-4",
+                                                name: asset.name || "",
+                                                png: asset.logo?.png || undefined,
+                                                svg: asset.logo?.svg || undefined,
+                                                width: "w-4"
+                                            })
+                                        }),
+                                        /*#__PURE__*/ (0, $4MPRY$jsx)("span", {
+                                            children: asset?.name
+                                        })
+                                    ]
+                                }),
+                                asset.symbol === state.asset?.symbol ? /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                    className: "fa fa-check-circle text-green-400"
+                                }) : /*#__PURE__*/ (0, $4MPRY$jsx)("i", {
+                                    className: "fa fa-chevron-right text-xxs"
+                                })
+                            ]
+                        }, asset?.name);
+                    }),
+                    assets?.length ? /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$InView), {
+                        onChange: async (inView)=>{
+                            const currentLength = assets?.length || 0;
+                            if (inView) await fetchMore({
+                                variables: {
+                                    limit: currentLength * 2,
+                                    offset: currentLength
+                                }
+                            });
+                        }
+                    }) : null
+                ]
             })
         ]
     });
@@ -613,7 +752,6 @@ const $37902b78d3962e66$var$Web3 = ({ amount: amount , disabled: disabled , setF
         const providers = window.ethereum?.providers;
         const selectedProvider = providers?.find((x)=>x[state.method.value]);
         if ((!window.ethereum || !window.ethereum[state.method.value]) && !selectedProvider) {
-            console.log("HERE");
             dispatch({
                 payload: "No provider found.",
                 type: "SET_ACCOUNT_ERROR"
@@ -778,23 +916,32 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                 }, "*");
                 return;
             }
-            // TODO: request switchEthereumChain
-            // const currentChainId = await window.ethereum.request({
-            //   method: 'eth_chainId',
-            // });
-            // if (currentChainId !== 137) {
-            //   try {
-            //     await window.ethereum.request({
-            //       method: 'wallet_switchEthereumChain',
-            //       params: [{ chainId: ethers.utils.hexlify(137) }],
-            //     });
-            //   } catch (e: any) {
-            //     setFormError(
-            //       `Please switch to ${state.network?.name} network in ${state.method.name}`
-            //     );
-            //     return;
-            //   }
-            // }
+            let currentChainId;
+            let provider = window.ethereum;
+            try {
+                currentChainId = await window.ethereum.request({
+                    method: "eth_chainId"
+                });
+            } catch (e1) {
+                provider = window.ethereum.providers.find((provider)=>provider[state.method?.value] === true).request;
+                currentChainId = await provider({
+                    method: "eth_chainId"
+                });
+            }
+            if (state.network?.identifiers?.chainId && Number(currentChainId) !== state.network?.identifiers?.chainId) try {
+                await provider({
+                    method: "wallet_switchEthereumChain",
+                    params: [
+                        {
+                            chainId: (0, $4MPRY$ethers).utils.hexlify(state.network?.identifiers?.chainId)
+                        }, 
+                    ]
+                });
+            } catch (e2) {
+                console.log(e2);
+                setFormError(`Please switch to ${state.network?.name} network in ${state.method?.name}`);
+                return;
+            }
             let address = "";
             try {
                 dispatch({
@@ -805,7 +952,7 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                     payload: address,
                     type: "GENERATE_DEPOSIT_ADDRESS_SUCCESS"
                 });
-            } catch (e1) {
+            } catch (e3) {
                 dispatch({
                     type: "GENERATE_DEPOSIT_ADDRESS_ERROR"
                 });
@@ -821,12 +968,12 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
                 await currentProvider.send("eth_sendTransaction", [
                     transactionParameters, 
                 ]);
-            } catch (e2) {
-                setFormError(e2.message);
+            } catch (e4) {
+                setFormError(e4.message);
             }
-        } catch (e3) {
-            if (e3.message) setFormError(e3.message);
-            console.error(e3);
+        } catch (e5) {
+            if (e5.message) setFormError(e5.message);
+            console.error(e5);
         }
     };
     if (!state.asset || !state.network || !state.method) {
@@ -840,6 +987,7 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
         className: "flex h-full flex-col",
         children: [
             /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                className: "!pt-0",
                 children: /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
                     className: "text-lg font-semibold dark:text-white",
                     "data-testid": "enter-amount",
@@ -1055,7 +1203,12 @@ var $389c6829553d16e1$export$2e2bcd8739ae039 = $389c6829553d16e1$var$EnterAmount
 
 const $e9fc485e32047442$var$NetworkSelection = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
-    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$bc283edcabd99e20)();
+    console.log(state.asset?.id);
+    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$4c6676fad490424)({
+        variables: {
+            assetId: state.asset?.id
+        }
+    });
     if (loading) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $b2b2deb69a511bef$export$2e2bcd8739ae039), {
         message: "Fetching Networks..."
     });
@@ -1077,6 +1230,7 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
                 className: "sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900",
                 children: [
                     /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                        className: "!pt-0",
                         children: [
                             /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
                                 className: "text-lg font-semibold dark:text-white",
@@ -1123,8 +1277,8 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
                 className: "flex flex-col dark:text-white",
-                children: data?.networks?.map((network)=>network ? /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
-                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
+                children: data?.networksForAssetByOrg?.map((network)=>network ? /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                        className: "flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800",
                         onClick: ()=>{
                             dispatch({
                                 payload: network,
@@ -1144,8 +1298,9 @@ const $e9fc485e32047442$var$NetworkSelection = ()=>{
                                         className: "flex w-4 justify-center",
                                         children: /*#__PURE__*/ (0, $4MPRY$jsx)((0, $4MPRY$CoinLogo), {
                                             height: "h-4",
-                                            // @ts-ignore
-                                            logo: network?.logo,
+                                            name: network.name || "",
+                                            png: network.logo?.png || undefined,
+                                            svg: network.logo?.svg || undefined,
                                             width: "w-4"
                                         })
                                     }),
@@ -1179,7 +1334,11 @@ var $e9fc485e32047442$export$2e2bcd8739ae039 = $e9fc485e32047442$var$NetworkSele
 
 const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
     const [state, dispatch] = (0, $4MPRY$useContext)((0, $68c68372be4a9678$export$841858b892ce1f4c));
-    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$9dcd3655219d0936)();
+    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$9dcd3655219d0936)({
+        variables: {
+            chainId: state.network?.identifiers?.chainId
+        }
+    });
     if (loading) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $b2b2deb69a511bef$export$2e2bcd8739ae039), {
         message: "Fetching Payment Methods..."
     });
@@ -1201,6 +1360,7 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
                 className: "sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900",
                 children: [
                     /*#__PURE__*/ (0, $4MPRY$jsxs)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                        className: "!pt-0",
                         children: [
                             /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
                                 className: "text-lg font-semibold dark:text-white",
@@ -1259,7 +1419,7 @@ const $d752ec9124ef7f1d$var$PaymentMethod = ()=>{
             }),
             /*#__PURE__*/ (0, $4MPRY$jsx)("div", {
                 className: "flex flex-col dark:text-white",
-                children: data?.methods?.map((method)=>method ? /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
+                children: data?.methodsForNetwork?.map((method)=>method ? /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
                         className: `flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm leading-8 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${method.enabled ? "" : "!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900"}`,
                         onClick: ()=>{
                             if (!method.enabled) return;
@@ -1366,6 +1526,7 @@ const $194171c89e26756c$var$QRCode = ()=>{
     return /*#__PURE__*/ (0, $4MPRY$jsxs)("div", {
         children: [
             /*#__PURE__*/ (0, $4MPRY$jsx)((0, $bdbf379108fa6dba$export$2e2bcd8739ae039), {
+                className: "!pt-0",
                 children: /*#__PURE__*/ (0, $4MPRY$jsx)("h3", {
                     className: "text-lg font-semibold dark:text-white",
                     "data-testid": "qrcode-method",
@@ -1675,9 +1836,14 @@ var $9a95d74070ec74d1$export$2e2bcd8739ae039 = $9a95d74070ec74d1$var$Map3SdkStep
 const $ddec68c329991042$var$AppWithAsset = ({ config: config , onClose: onClose  })=>{
     const [_, assetString] = config?.slug?.split(":") ?? [];
     // TODO: use asset search
-    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$af48792e7f08132b)();
+    const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$a37f4959db8e73ec)({
+        variables: {
+            limit: 10,
+            offset: 0
+        }
+    });
     if (loading) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $b2b2deb69a511bef$export$2e2bcd8739ae039), {});
-    const asset = data?.assets?.find((asset)=>asset?.name === assetString);
+    const asset = data?.assetsForOrganization?.find((asset)=>asset?.name === assetString);
     if (error || !asset) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $5f70ae3cf4fa56a2$export$2e2bcd8739ae039), {
         description: "We had trouble finding that asset.",
         header: "Failed to initialize the SDK",
@@ -1706,10 +1872,15 @@ const $b8b35d1d31929ab9$var$AppWithAssetAndNetwork = ({ config: config , onClose
     // TODO: use network search
     const { data: data , error: error , loading: loading , refetch: refetch  } = (0, $772a74d0db3291da$export$bc283edcabd99e20)();
     // TODO: use asset search
-    const { data: assetData , error: assetError , loading: assetLoading , refetch: assetRefetch ,  } = (0, $772a74d0db3291da$export$af48792e7f08132b)();
+    const { data: assetData , error: assetError , loading: assetLoading , refetch: assetRefetch ,  } = (0, $772a74d0db3291da$export$a37f4959db8e73ec)({
+        variables: {
+            limit: 10,
+            offset: 0
+        }
+    });
     if (loading || assetLoading) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $b2b2deb69a511bef$export$2e2bcd8739ae039), {});
     const network = data?.networks?.find((network)=>network?.name === networkString);
-    const asset = assetData?.assets?.find((asset)=>asset?.name === assetString);
+    const asset = assetData?.assetsForOrganization?.find((asset)=>asset?.name === assetString);
     if (error || assetError || !network || !asset) return /*#__PURE__*/ (0, $4MPRY$jsx)((0, $5f70ae3cf4fa56a2$export$2e2bcd8739ae039), {
         description: "We had trouble loading the asset or network selected.",
         header: "Failed to initialize the SDK",
@@ -1781,7 +1952,15 @@ class $090815f5086f7f29$export$c06370d2ab5297a3 {
     }
     open() {
         const client = new (0, $4MPRY$ApolloClient)({
-            cache: new (0, $4MPRY$InMemoryCache)(),
+            cache: new (0, $4MPRY$InMemoryCache)({
+                typePolicies: {
+                    Query: {
+                        fields: {
+                            assets: (0, $4MPRY$offsetLimitPagination)()
+                        }
+                    }
+                }
+            }),
             headers: {
                 Authorization: "Bearer " + this.config.anonKey
             },
