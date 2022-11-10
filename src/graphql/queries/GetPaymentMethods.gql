@@ -1,5 +1,5 @@
-query GetPaymentMethods {
-  methods {
+query GetPaymentMethods($chainId: Int) {
+  methodsForNetwork(chainId: $chainId) {
     name
     icon
     logo

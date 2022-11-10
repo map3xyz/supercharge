@@ -97,24 +97,42 @@ const EnterAmount: React.FC<Props> = () => {
         return;
       }
 
-      // TODO: request switchEthereumChain
-      // const currentChainId = await window.ethereum.request({
-      //   method: 'eth_chainId',
-      // });
+      let currentChainId;
+      let provider = window.ethereum;
+      try {
+        currentChainId = await window.ethereum.request({
+          method: 'eth_chainId',
+        });
+      } catch (e) {
+        provider = window.ethereum.providers.find(
+          (provider: any) => provider[state.method?.value!] === true
+        ).request;
+        currentChainId = await provider({ method: 'eth_chainId' });
+      }
 
-      // if (currentChainId !== 137) {
-      //   try {
-      //     await window.ethereum.request({
-      //       method: 'wallet_switchEthereumChain',
-      //       params: [{ chainId: ethers.utils.hexlify(137) }],
-      //     });
-      //   } catch (e: any) {
-      //     setFormError(
-      //       `Please switch to ${state.network?.name} network in ${state.method.name}`
-      //     );
-      //     return;
-      //   }
-      // }
+      if (
+        state.network?.identifiers?.chainId &&
+        Number(currentChainId) !== state.network?.identifiers?.chainId
+      ) {
+        try {
+          await provider({
+            method: 'wallet_switchEthereumChain',
+            params: [
+              {
+                chainId: ethers.utils.hexlify(
+                  state.network?.identifiers?.chainId
+                ),
+              },
+            ],
+          });
+        } catch (e: any) {
+          console.log(e);
+          setFormError(
+            `Please switch to ${state.network?.name} network in ${state.method?.name}`
+          );
+          return;
+        }
+      }
 
       let address = '';
       try {

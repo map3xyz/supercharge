@@ -4,13 +4,19 @@ import React, { useContext } from 'react';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import { useGetNetworksQuery } from '../../generated/apollo-gql';
+import { useGetNetworksForAssetQuery } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
 
 const NetworkSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
 
-  const { data, error, loading, refetch } = useGetNetworksQuery();
+  console.log(state.asset?.id);
+
+  const { data, error, loading, refetch } = useGetNetworksForAssetQuery({
+    variables: {
+      assetId: state.asset?.id,
+    },
+  });
 
   if (loading) return <LoadingWrapper message="Fetching Networks..." />;
 
@@ -62,10 +68,10 @@ const NetworkSelection: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex flex-col dark:text-white">
-        {data?.networks?.map((network) =>
+        {data?.networksForAssetByOrg?.map((network) =>
           network ? (
             <div
-              className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm last:border-b-0 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+              className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
               key={network.name}
               onClick={() => {
                 dispatch({ payload: network, type: 'SET_NETWORK' });

@@ -10,7 +10,9 @@ import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
-  const { data, error, loading, refetch } = useGetPaymentMethodsQuery();
+  const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
+    variables: { chainId: state.network?.identifiers?.chainId },
+  });
 
   if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
   if (error)
@@ -74,7 +76,7 @@ const PaymentMethod: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex flex-col dark:text-white">
-        {data?.methods?.map((method) =>
+        {data?.methodsForNetwork?.map((method) =>
           method ? (
             <div
               className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm leading-8 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${

@@ -1,6 +1,12 @@
 query GetAssetsForOrg($limit: Int, $offset: Int) {
   assetsForOrganization(limit: $limit, offset: $offset) {
+    id
     name
+    networkCode
+    networks {
+      name
+      networkCode
+    }
     logo {
       png
       svg
