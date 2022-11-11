@@ -1976,7 +1976,7 @@ const $090815f5086f7f29$export$421c3119381668 = (args)=>{
     return new $090815f5086f7f29$export$c06370d2ab5297a3(args);
 };
 // @ts-ignore
-window.initMap3Sdk = $090815f5086f7f29$export$421c3119381668;
+if (twindow) window.initMap3Sdk = $090815f5086f7f29$export$421c3119381668;
 
 
 export {$090815f5086f7f29$export$c06370d2ab5297a3 as Map3, $090815f5086f7f29$export$421c3119381668 as initMap3Sdk};

@@ -82,5 +82,7 @@ export const initMap3Sdk = (args: Map3InitConfig) => {
   return new Map3(args);
 };
 
-// @ts-ignore
-window.initMap3Sdk = initMap3Sdk;
+if (typeof window !== 'undefined') {
+  // @ts-ignore
+  window.initMap3Sdk = initMap3Sdk;
+}
