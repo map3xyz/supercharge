@@ -2,9 +2,15 @@
   "name": "@map3xyz/payments-sdk",
   "version": "0.0.32",
   "private": false,
-  "main": "dist/module/index.js",
+  "main": "dist/libary/index.js",
   "types": "dist/types.d.ts",
   "targets": {
+    "library": {
+      "source": [
+        "src/index.tsx",
+        "src/index.scss"
+      ]
+    },
     "module": {
       "source": [
         "src/index.tsx",

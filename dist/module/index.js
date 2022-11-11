@@ -955,9 +955,9 @@ const $389c6829553d16e1$var$EnterAmount = ()=>{
             const transactionParameters = {
                 from: state.account.data,
                 to: address,
-                data: "0x666f6f",
+                // data: '0x666f6f',
                 // 16 * # of bytes of data
-                gas: (0, $g5tXh$ethers).utils.hexlify(21048),
+                // gas: ethers.utils.hexlify(21000 + 48),
                 value: (0, $g5tXh$ethers).utils.parseEther(amount.toString()).toHexString()
             };
             try {
