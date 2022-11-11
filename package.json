@@ -1,6 +1,6 @@
 {
   "name": "@map3xyz/payments-sdk",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "private": false,
   "main": "dist/module/index.js",
   "types": "dist/types.d.ts",
