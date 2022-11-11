@@ -1167,10 +1167,6 @@
   margin-left: -.25rem;
 }
 
-.last\:border-b-0:last-child {
-  border-bottom-width: 0;
-}
-
 .hover\:bg-neutral-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));
