@@ -1,15 +1,21 @@
 {
   "name": "@map3xyz/payments-sdk",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "private": false,
   "main": "dist/module/index.js",
   "types": "dist/types.d.ts",
   "targets": {
     "module": {
-      "source": ["src/index.tsx", "src/index.scss"]
+      "source": [
+        "src/index.tsx",
+        "src/index.scss"
+      ]
     },
     "global": {
-      "source": ["src/index.tsx", "src/index.scss"],
+      "source": [
+        "src/index.tsx",
+        "src/index.scss"
+      ],
       "outputFormat": "global"
     },
     "types": {
