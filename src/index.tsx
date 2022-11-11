@@ -1,7 +1,3 @@
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import '@map3xyz/components/dist/index.css';
-import './index.css';
-
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
 import { createRoot, Root } from 'react-dom/client';

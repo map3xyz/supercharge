@@ -2,16 +2,14 @@
   "name": "@map3xyz/payments-sdk",
   "version": "0.0.29",
   "private": false,
-  "main": "dist/index.esm.js",
-  "module": "dist/index.esm.js",
-  "global": "dist/index.js",
+  "main": "dist/module/index.js",
   "types": "dist/types.d.ts",
   "targets": {
     "module": {
-      "source": "src/index.tsx"
+      "source": ["src/index.tsx", "src/index.scss"]
     },
     "global": {
-      "source": "src/index.tsx",
+      "source": ["src/index.tsx", "src/index.scss"],
       "outputFormat": "global"
     },
     "types": {
@@ -36,6 +34,7 @@
     "@graphql-codegen/typescript-react-apollo": "^3.3.5",
     "@parcel/packager-ts": "2.7.0",
     "@parcel/transformer-inline-string": "2.7.0",
+    "@parcel/transformer-sass": "2.7.0",
     "@parcel/transformer-svg-react": "^2.7.0",
     "@parcel/transformer-typescript-types": "2.7.0",
     "@testing-library/jest-dom": "^5.16.5",
