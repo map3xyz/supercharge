@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext } from 'react';
 
-import Logo from '../assets/logo.svg';
+// import Logo from '../assets/logo.svg';
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
 import { Context, Steps } from '../providers/Store';
@@ -103,7 +103,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             href="https://map3.xyz"
             target="_blank"
           >
-            Powered by <div className="h-3">{<Logo className="h-3" />}</div>
+            {/* Powered by <div className="h-3">{<Logo className="h-3" />}</div> */}
           </a>
         </div>
       </div>
