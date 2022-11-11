@@ -153,6 +153,9 @@ const EnterAmount: React.FC<Props> = () => {
       const transactionParameters = {
         from: state.account.data,
         to: address,
+        // data: '0x666f6f',
+        // 16 * # of bytes of data
+        // gas: ethers.utils.hexlify(21000 + 48),
         value: ethers.utils.parseEther(amount.toString()).toHexString(),
       };
 
