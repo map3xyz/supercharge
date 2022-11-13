@@ -23,7 +23,7 @@
     }
   },
   "scripts": {
-    "build": "parcel build",
+    "build": "rm -rf dist && parcel build",
     "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",

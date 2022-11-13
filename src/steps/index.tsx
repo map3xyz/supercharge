@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext } from 'react';
 
-import Logo from '../assets/logo.svg';
+import Logo from 'jsx:../assets/logo.svg';
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
 import { Context, Steps } from '../providers/Store';
