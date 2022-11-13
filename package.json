@@ -2,16 +2,26 @@
   "name": "@map3xyz/payments-sdk",
   "version": "0.0.36",
   "private": false,
-  "main": "dist/index.js",
   "types": "dist/types.d.ts",
+  "main": "dist/index.js",
+  "css": "dist/index.css",
+  "files": ["dist"],
   "targets": {
     "main": {
+      "source": "./src/index.tsx",
       "optimize": true,
       "includeNodeModules": true
+    },
+    "css": {
+      "source": "./src/index.css",
+      "optimize": true
+    },
+    "types": {
+      "source": "src/index.tsx"
     }
   },
   "scripts": {
-    "build": "parcel build src/index.tsx",
+    "build": "parcel build",
     "start": "parcel src/index.html",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
