@@ -39,7 +39,7 @@ You can also include a normal script and link tag if your app doesn't support mo
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/npm/@map3xyz/payments-sdk/dist/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@map3xyz/payments-sdk/dist/global/index.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@map3xyz/payments-sdk/dist/index.css"></link>
     </head>
 

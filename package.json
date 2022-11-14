@@ -18,6 +18,10 @@
       "source": "./src/index.css",
       "optimize": true
     },
+    "global": {
+      "source": "./src/index.tsx",
+      "outputFormat": "global"
+    },
     "types": {
       "source": "src/index.tsx"
     }
