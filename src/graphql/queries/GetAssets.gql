@@ -1,5 +1,5 @@
-query GetAssetsForOrg($limit: Int, $offset: Int) {
-  assetsForOrganization(limit: $limit, offset: $offset) {
+query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
+  assetsForOrganization(limit: $limit, offset: $offset, currency: $currency) {
     id
     name
     networkCode

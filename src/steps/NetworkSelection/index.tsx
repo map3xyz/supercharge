@@ -10,8 +10,6 @@ import { Context, Steps } from '../../providers/Store';
 const NetworkSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
 
-  console.log(state.asset?.id);
-
   const { data, error, loading, refetch } = useGetNetworksForAssetQuery({
     variables: {
       assetId: state.asset?.id,

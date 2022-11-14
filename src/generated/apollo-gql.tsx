@@ -126,9 +126,9 @@ export type QueryAssetsArgs = {
 
 
 export type QueryAssetsForOrganizationArgs = {
+  currency?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-  organizationId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -182,6 +182,7 @@ export type SdkConfigField = {
 export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+  currency?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -215,8 +216,8 @@ export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganizat
 
 
 export const GetAssetsForOrgDocument = gql`
-    query GetAssetsForOrg($limit: Int, $offset: Int) {
-  assetsForOrganization(limit: $limit, offset: $offset) {
+    query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
+  assetsForOrganization(limit: $limit, offset: $offset, currency: $currency) {
     id
     name
     networkCode
@@ -247,6 +248,7 @@ export const GetAssetsForOrgDocument = gql`
  *   variables: {
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
+ *      currency: // value for 'currency'
  *   },
  * });
  */

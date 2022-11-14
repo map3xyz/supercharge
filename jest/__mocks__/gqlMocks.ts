@@ -3,6 +3,7 @@ import { MockedResponse } from '@apollo/client/testing';
 import {
   GetAssetsForOrgDocument,
   GetNetworksDocument,
+  GetNetworksForAssetDocument,
   GetPaymentMethodsDocument,
 } from '../../src/generated/apollo-gql';
 
@@ -19,11 +20,17 @@ export const mocks: MockedResponse[] = [
       data: {
         assetsForOrganization: [
           {
+            id: 'satoshi123',
             logo: {
               png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
               svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
             },
             name: 'Bitcoin',
+            networkCode: 'bitcoin',
+            networks: {
+              name: 'Bitcoin',
+              networkCode: 'bitcoin',
+            },
             symbol: 'BTC',
           },
         ],
@@ -45,12 +52,42 @@ export const mocks: MockedResponse[] = [
             name: 'Bitcoin',
             symbol: 'BTC',
           },
+        ],
+      },
+    },
+  },
+  {
+    request: {
+      query: GetNetworksForAssetDocument,
+      variables: {
+        assetId: 'satoshi123',
+      },
+    },
+    result: {
+      data: {
+        networksForAssetByOrg: [
           {
+            identifiers: {
+              chainId: null,
+            },
+            logo: {
+              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+            },
+            name: 'Bitcoin',
+            networkCode: 'bitcoin',
+            symbol: 'BTC',
+          },
+          {
+            identifiers: {
+              chainId: 1,
+            },
             logo: {
               png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
               svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
             },
             name: 'Ethereum',
+            networkCode: 'ethereum',
             symbol: 'ETH',
           },
         ],
@@ -63,7 +100,26 @@ export const mocks: MockedResponse[] = [
     },
     result: {
       data: {
-        methods: [
+        methodsFornetwork: [
+          {
+            enabled: true,
+            icon: 'fa fa-qrcode',
+            logo: '',
+            name: 'Scan QR Code',
+            value: 'qr',
+          },
+        ],
+      },
+    },
+  },
+  {
+    request: {
+      query: GetPaymentMethodsDocument,
+      variables: { chainId: 1 },
+    },
+    result: {
+      data: {
+        methodsForNetwork: [
           {
             enabled: true,
             icon: 'fa fa-qrcode',

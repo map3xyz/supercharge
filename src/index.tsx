@@ -56,7 +56,7 @@ export class Map3 {
         typePolicies: {
           Query: {
             fields: {
-              assets: offsetLimitPagination(),
+              assetsForOrganization: offsetLimitPagination(),
             },
           },
         },

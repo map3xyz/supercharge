@@ -44,11 +44,17 @@ describe('Network Selection', () => {
               data: {
                 assetsForOrganization: [
                   {
+                    id: 'satoshi123',
                     logo: {
                       png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
                       svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
                     },
                     name: 'Bitcoin',
+                    networkCode: 'bitcoin',
+                    networks: {
+                      name: 'Bitcoin',
+                      networkCode: 'bitcoin',
+                    },
                     symbol: 'BTC',
                   },
                 ],
