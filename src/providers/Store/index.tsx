@@ -25,11 +25,12 @@ type State = {
     data: string | undefined;
     status: RemoteType;
   };
-  asset?: Asset;
+  asset?: Asset & { price?: { price?: number } };
   depositAddress: {
     data: string | undefined;
     status: RemoteType;
   };
+  fiat?: string;
   method?: PaymentMethod;
   network?: Network;
   slug?: string;
@@ -63,6 +64,7 @@ const initialState: State = {
     data: undefined,
     status: 'idle',
   },
+  fiat: undefined,
   method: undefined,
   network: undefined,
   slug: undefined,
@@ -80,6 +82,7 @@ const initialState: State = {
 export const Store: React.FC<
   PropsWithChildren<{
     asset?: Asset;
+    fiat?: string;
     generateDepositAddress: (
       asset?: string,
       network?: string
@@ -88,7 +91,15 @@ export const Store: React.FC<
     slug?: string;
     theme?: 'dark' | 'light';
   }>
-> = ({ asset, children, generateDepositAddress, network, slug, theme }) => {
+> = ({
+  asset,
+  children,
+  fiat,
+  generateDepositAddress,
+  network,
+  slug,
+  theme,
+}) => {
   let step = 0;
 
   if (asset) {
@@ -186,7 +197,7 @@ export const Store: React.FC<
           return state;
       }
     },
-    { ...initialState, asset, network, slug, step, theme }
+    { ...initialState, asset, fiat, network, slug, step, theme }
   );
 
   return (

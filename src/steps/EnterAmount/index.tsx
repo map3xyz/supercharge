@@ -9,10 +9,6 @@ import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
 
-const rates = {
-  'BTC/USD': 20_000,
-};
-
 const EnterAmount: React.FC<Props> = () => {
   const dummyInputRef = useRef<HTMLSpanElement>(null);
   const dummySymbolRef = useRef<HTMLSpanElement>(null);
@@ -54,7 +50,8 @@ const EnterAmount: React.FC<Props> = () => {
   }, [formValue, state.depositAddress.data]);
 
   useEffect(() => {
-    const rate = rates['BTC/USD'];
+    // TODO: show warning if no price can be found
+    const rate = state.asset?.price?.price || 1;
     const base = parseFloat(formValue.base || '0');
     const quote =
       formValue.inputSelected === 'crypto' ? base * rate : base / rate;
@@ -301,11 +298,11 @@ const EnterAmount: React.FC<Props> = () => {
                 ref={dummySymbolRef}
               >
                 {formValue.inputSelected === 'crypto'
-                  ? state.network.symbol
+                  ? state.asset.symbol
                   : '$'}
               </span>
               {formValue.inputSelected === 'crypto' ? (
-                <span className="text-inherit">{state.network.symbol}</span>
+                <span className="text-inherit">{state.asset.symbol}</span>
               ) : null}
             </div>
             <div className="mt-8 flex items-center justify-center text-neutral-400">
@@ -317,7 +314,7 @@ const EnterAmount: React.FC<Props> = () => {
                   {formValue.quote}
                 </span>
                 {formValue.inputSelected === 'fiat' ? (
-                  <span>&nbsp;{state.network.symbol}</span>
+                  <span>&nbsp;{state.asset.symbol}</span>
                 ) : null}
               </div>
               <div className="ml-4 flex items-center justify-center">

@@ -18,6 +18,7 @@ const AssetSelection: React.FC<Props> = () => {
 
   const { data, error, fetchMore, loading, refetch } = useGetAssetsForOrgQuery({
     variables: {
+      currency: state.fiat,
       limit: 10,
       offset: 0,
     },

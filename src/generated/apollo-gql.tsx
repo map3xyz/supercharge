@@ -16,12 +16,22 @@ export type Scalars = {
 };
 
 export type Asset = {
-  __typename?: 'Asset';
   id?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
   networks?: Maybe<Array<Maybe<Network>>>;
+  symbol?: Maybe<Scalars['String']>;
+};
+
+export type AssetWithPrice = Asset & {
+  __typename?: 'AssetWithPrice';
+  id?: Maybe<Scalars['String']>;
+  logo?: Maybe<Logo>;
+  name?: Maybe<Scalars['String']>;
+  networkCode?: Maybe<Scalars['String']>;
+  networks?: Maybe<Array<Maybe<Network>>>;
+  price?: Maybe<Price>;
   symbol?: Maybe<Scalars['String']>;
 };
 
@@ -88,13 +98,22 @@ export type PaymentMethod = {
   value?: Maybe<Scalars['String']>;
 };
 
+export type Price = {
+  __typename?: 'Price';
+  id?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['Float']>;
+  rank?: Maybe<Scalars['Int']>;
+  symbol?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   assetByAddressAndNetworkCode?: Maybe<Asset>;
   assetById?: Maybe<Asset>;
   assets?: Maybe<Array<Maybe<Asset>>>;
   assetsCount?: Maybe<Scalars['Int']>;
-  assetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
+  assetsForOrganization?: Maybe<Array<Maybe<AssetWithPrice>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
   methodsForNetwork?: Maybe<Array<Maybe<PaymentMethod>>>;
   networkByCode?: Maybe<Network>;
@@ -186,7 +205,7 @@ export type GetAssetsForOrgQueryVariables = Exact<{
 }>;
 
 
-export type GetAssetsForOrgQuery = { __typename?: 'Query', assetsForOrganization?: Array<{ __typename?: 'Asset', id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+export type GetAssetsForOrgQuery = { __typename?: 'Query', assetsForOrganization?: Array<{ __typename?: 'AssetWithPrice', id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null } | null> | null };
 
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -212,7 +231,7 @@ export type SearchAssetsQueryVariables = Exact<{
 }>;
 
 
-export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'AssetWithPrice', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
 
 
 export const GetAssetsForOrgDocument = gql`
@@ -230,6 +249,9 @@ export const GetAssetsForOrgDocument = gql`
       svg
     }
     symbol
+    price {
+      price
+    }
   }
 }
     `;

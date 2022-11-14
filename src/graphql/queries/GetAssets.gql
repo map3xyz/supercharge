@@ -12,5 +12,8 @@ query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
       svg
     }
     symbol
+    price {
+      price
+    }
   }
 }
