@@ -31,7 +31,25 @@ export const mocks: MockedResponse[] = [
               name: 'Bitcoin',
               networkCode: 'bitcoin',
             },
+            price: {
+              price: 20_000,
+            },
             symbol: 'BTC',
+          },
+          {
+            id: 'elon123',
+            logo: {
+              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+            },
+            name: 'ElonCoin',
+            networkCode: 'ethereum',
+            networks: {
+              name: 'Ethereum',
+              networkCode: 'ethereum',
+            },
+            price: null,
+            symbol: 'ELON',
           },
         ],
       },
@@ -51,6 +69,32 @@ export const mocks: MockedResponse[] = [
             },
             name: 'Bitcoin',
             symbol: 'BTC',
+          },
+        ],
+      },
+    },
+  },
+  {
+    request: {
+      query: GetNetworksForAssetDocument,
+      variables: {
+        assetId: 'elon123',
+      },
+    },
+    result: {
+      data: {
+        networksForAssetByOrg: [
+          {
+            identifiers: {
+              chainId: 1,
+            },
+            logo: {
+              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+            },
+            name: 'Ethereum',
+            networkCode: 'ethereum',
+            symbol: 'ETH',
           },
         ],
       },
@@ -100,7 +144,7 @@ export const mocks: MockedResponse[] = [
     },
     result: {
       data: {
-        methodsFornetwork: [
+        methodsForNetwork: [
           {
             enabled: true,
             icon: 'fa fa-qrcode',

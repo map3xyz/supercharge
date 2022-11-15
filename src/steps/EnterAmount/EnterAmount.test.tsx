@@ -33,6 +33,22 @@ describe('Enter Amount', () => {
     const enterAmount = await screen.findByTestId('enter-amount');
     expect(enterAmount).toBeInTheDocument();
   });
+  it('handles no pricing available', async () => {
+    const back = await screen.findByLabelText('Back');
+    fireEvent.click(back);
+    fireEvent.click(back);
+    fireEvent.click(back);
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = await screen.findByText('MetaMask');
+    fireEvent.click(metaMask);
+    const warning = await screen.findByText(
+      'No pricing available for this asset.'
+    );
+    expect(warning).toBeInTheDocument();
+  });
   describe('input', () => {
     beforeEach(async () => {
       const input = await screen.findByTestId('input');

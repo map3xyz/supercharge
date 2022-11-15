@@ -15,10 +15,10 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
   return (
     <div data-testid="map3-modal">
       <Modal
-        className="map3 w-80"
+        className="map3"
         footerBackground
         onCancel={onClose}
-        size="small"
+        size="tiny"
         transition={TRANSITION}
         visible
       >

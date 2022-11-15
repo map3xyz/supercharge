@@ -10435,6 +10435,10 @@
   line-height: 1rem;
 }
 
+.map3 .leading-6 {
+  line-height: 1.5rem;
+}
+
 .map3 .text-neutral-400 {
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));

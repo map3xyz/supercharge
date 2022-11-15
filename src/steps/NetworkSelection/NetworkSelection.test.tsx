@@ -55,6 +55,9 @@ describe('Network Selection', () => {
                       name: 'Bitcoin',
                       networkCode: 'bitcoin',
                     },
+                    price: {
+                      price: 20_000,
+                    },
                     symbol: 'BTC',
                   },
                 ],

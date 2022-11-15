@@ -39,13 +39,11 @@ const PaymentMethod: React.FC<Props> = () => {
           >
             Payment Method
           </h3>
-          <h5 className="text-xs text-neutral-400">
-            How do you want to deposit?
-          </h5>
+          <h5 className="text-xs text-neutral-400">How do you want to send?</h5>
         </InnerWrapper>
 
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-          Deposit{' '}
+        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+          Send{' '}
           <span
             className="text-blue-600 underline"
             onClick={() => {
@@ -60,7 +58,7 @@ const PaymentMethod: React.FC<Props> = () => {
               {state.asset?.symbol || ''}
             </Badge>
           </span>{' '}
-          on{' '}
+          on the{' '}
           <span
             className="text-blue-600 underline"
             onClick={() => {
@@ -68,8 +66,9 @@ const PaymentMethod: React.FC<Props> = () => {
             }}
             role="button"
           >
+            {/* @ts-ignore */}
             <Badge color="blue" size="large">
-              {state.network?.symbol || ''}
+              {state.network?.name || ''} Network
             </Badge>
           </span>{' '}
           via
@@ -79,7 +78,7 @@ const PaymentMethod: React.FC<Props> = () => {
         {data?.methodsForNetwork?.map((method) =>
           method ? (
             <div
-              className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm leading-8 hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+              className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
                 method.enabled
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'

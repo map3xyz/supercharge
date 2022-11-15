@@ -43,11 +43,11 @@ const NetworkSelection: React.FC<Props> = () => {
             Select Network
           </h3>
           <h5 className="text-xs text-neutral-400">
-            Select the Network to deposit <b>{state.asset.name}</b> on.
+            Select the Network to send <b>{state.asset.name}</b> on.
           </h5>
         </InnerWrapper>
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-          Deposit{' '}
+        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+          Send{' '}
           <span
             className="text-blue-600 underline"
             onClick={() => {
@@ -59,7 +59,7 @@ const NetworkSelection: React.FC<Props> = () => {
             role="button"
           >
             <Badge color="blue" size="large">
-              {state.asset.name || ''}
+              {state.asset.symbol || ''}
             </Badge>
           </span>{' '}
           on

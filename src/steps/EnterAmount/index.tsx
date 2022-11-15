@@ -17,13 +17,16 @@ const EnterAmount: React.FC<Props> = () => {
   const quoteRef = useRef<HTMLSpanElement>(null);
 
   const [state, dispatch, { generateDepositAddress }] = useContext(Context);
+  const [formError, setFormError] = useState<string | undefined>('');
+
+  const rate = state.asset?.price?.price;
+
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
     quote: string;
-  }>({ base: '0', inputSelected: 'fiat', quote: '0' });
+  }>({ base: '0', inputSelected: rate ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<number>(0);
-  const [formError, setFormError] = useState<string | undefined>('');
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -50,11 +53,11 @@ const EnterAmount: React.FC<Props> = () => {
   }, [formValue, state.depositAddress.data]);
 
   useEffect(() => {
-    // TODO: show warning if no price can be found
-    const rate = state.asset?.price?.price || 1;
     const base = parseFloat(formValue.base || '0');
     const quote =
-      formValue.inputSelected === 'crypto' ? base * rate : base / rate;
+      formValue.inputSelected === 'crypto'
+        ? base * (rate || 0)
+        : base / (rate || 0);
     setFormValue((formValue) => ({
       ...formValue,
       quote:
@@ -189,8 +192,8 @@ const EnterAmount: React.FC<Props> = () => {
           Enter Amount
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-8 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Deposit{' '}
+      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        Send{' '}
         <span
           className="text-blue-600 underline"
           onClick={() => {
@@ -205,7 +208,7 @@ const EnterAmount: React.FC<Props> = () => {
             {state.asset.symbol || ''}
           </Badge>
         </span>{' '}
-        on{' '}
+        on the{' '}
         <span
           className="text-blue-600 underline"
           onClick={() => {
@@ -213,8 +216,9 @@ const EnterAmount: React.FC<Props> = () => {
           }}
           role="button"
         >
+          {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network.symbol || ''}
+            {state.network.name || ''} Network
           </Badge>
         </span>{' '}
         via{' '}
@@ -306,28 +310,36 @@ const EnterAmount: React.FC<Props> = () => {
               ) : null}
             </div>
             <div className="mt-8 flex items-center justify-center text-neutral-400">
-              <div className="text-xs">
-                {formValue.inputSelected === 'crypto' ? (
-                  <span>$&nbsp;</span>
-                ) : null}
-                <span data-testid="quote" ref={quoteRef}>
-                  {formValue.quote}
-                </span>
-                {formValue.inputSelected === 'fiat' ? (
-                  <span>&nbsp;{state.asset.symbol}</span>
-                ) : null}
-              </div>
-              <div className="ml-4 flex items-center justify-center">
-                <div
-                  className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
-                  data-testid="toggle-base"
-                  onClick={toggleBase}
-                  role="button"
-                >
-                  <i className="fa fa-chevron-up" />
-                  <i className="fa fa-chevron-down" />
-                </div>
-              </div>
+              {rate ? (
+                <>
+                  <div className="text-xs">
+                    {formValue.inputSelected === 'crypto' ? (
+                      <span>$&nbsp;</span>
+                    ) : null}
+                    <span data-testid="quote" ref={quoteRef}>
+                      {formValue.quote}
+                    </span>
+                    {formValue.inputSelected === 'fiat' ? (
+                      <span>&nbsp;{state.asset.symbol}</span>
+                    ) : null}
+                  </div>
+                  <div className="ml-4 flex items-center justify-center">
+                    <div
+                      className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
+                      data-testid="toggle-base"
+                      onClick={toggleBase}
+                      role="button"
+                    >
+                      <i className="fa fa-chevron-up" />
+                      <i className="fa fa-chevron-down" />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <Badge color="yellow">
+                  No pricing available for this asset.
+                </Badge>
+              )}
             </div>
           </div>
           <div className="relative w-full">

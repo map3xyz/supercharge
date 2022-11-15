@@ -36,7 +36,7 @@ const QRCode: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <InnerWrapper className="!pt-0">
         <h3
           className="text-lg font-semibold dark:text-white"
@@ -45,8 +45,8 @@ const QRCode: React.FC<Props> = () => {
           Scan QR Code
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-8 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Deposit{' '}
+      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        Send{' '}
         <span
           className="text-blue-600 underline"
           onClick={() => {
@@ -61,7 +61,7 @@ const QRCode: React.FC<Props> = () => {
             {state.asset?.name || ''}
           </Badge>
         </span>{' '}
-        on{' '}
+        on the{' '}
         <span
           className="text-blue-600 underline"
           onClick={() => {
@@ -69,8 +69,9 @@ const QRCode: React.FC<Props> = () => {
           }}
           role="button"
         >
+          {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.symbol || ''}
+            {state.network?.symbol || ''} Network
           </Badge>
         </span>{' '}
         via{' '}
@@ -93,7 +94,7 @@ const QRCode: React.FC<Props> = () => {
           </Badge>
         </span>
       </div>
-      <InnerWrapper>
+      <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
           <div className="flex h-64 items-center justify-center text-sm">
             <div className="flex flex-col items-center gap-2 font-semibold">
@@ -118,7 +119,7 @@ const QRCode: React.FC<Props> = () => {
         )}
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
-            <div className="flex w-full flex-col items-center justify-center gap-4 text-sm">
+            <div className="flex h-full w-full flex-col items-center justify-between gap-4 text-sm">
               <div className="text-xs text-neutral-400">
                 Only send {state.asset.name} on the {state.network?.symbol}{' '}
                 Network to this address.

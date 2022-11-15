@@ -85,6 +85,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             {steps[step] === Steps[Steps.Summary] && (
               <motion.div
                 animate={{ opacity: 1 }}
+                className="h-full"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
