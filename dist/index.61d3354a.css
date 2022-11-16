@@ -9919,10 +9919,6 @@
   height: 1.25rem;
 }
 
-.map3 .w-80 {
-  width: 20rem;
-}
-
 .map3 .w-full {
   width: 100%;
 }
@@ -10427,16 +10423,12 @@
   text-transform: capitalize;
 }
 
-.map3 .leading-8 {
-  line-height: 2rem;
+.map3 .leading-6 {
+  line-height: 1.5rem;
 }
 
 .map3 .leading-4 {
   line-height: 1rem;
-}
-
-.map3 .leading-6 {
-  line-height: 1.5rem;
 }
 
 .map3 .text-neutral-400 {
