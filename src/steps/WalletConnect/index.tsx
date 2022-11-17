@@ -1,0 +1,108 @@
+import { ReadOnlyText } from '@map3xyz/components';
+import WalletConnectClient from '@walletconnect/client';
+import { QRCodeSVG } from 'qrcode.react';
+import React, { useContext, useEffect, useState } from 'react';
+
+import InnerWrapper from '../../components/InnerWrapper';
+import LoadingWrapper from '../../components/LoadingWrapper';
+import { Context, Steps } from '../../providers/Store';
+
+const WalletConnect: React.FC<Props> = () => {
+  const [uri, setUri] = useState<string | undefined>();
+  const [state, dispatch] = useContext(Context);
+
+  const handleConnected = (account: string) => {
+    dispatch({
+      payload: account,
+      type: 'SET_ACCOUNT_SUCCESS',
+    });
+    dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+  };
+
+  useEffect(() => {
+    const run = async () => {
+      dispatch({ type: 'SET_ACCOUNT_LOADING' });
+      try {
+        const connector = new WalletConnectClient({
+          bridge: 'https://bridge.walletconnect.org', // Required
+        });
+
+        if (!connector.connected) {
+          await connector.createSession();
+        } else {
+          handleConnected(connector.accounts[0]);
+          return;
+        }
+
+        setUri(connector.uri);
+
+        connector.on('connect', (error, payload) => {
+          if (error) {
+            throw error;
+          }
+
+          const { accounts, chainId } = payload.params[0];
+          handleConnected(accounts[0]);
+        });
+      } catch (e: any) {
+        dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
+      }
+    };
+
+    run();
+  }, []);
+
+  return uri ? (
+    <div className="flex h-full flex-col items-center justify-between py-2">
+      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        <div>
+          <div className="flex items-center gap-2">
+            <img className="h-4" src={state.method?.logo || ''} />
+            <div className="font-bold">{state.method?.name}</div>
+          </div>
+          <div className="text-xs text-neutral-500">
+            {state.method?.walletConnect?.description}
+          </div>
+        </div>
+      </div>
+      <div className="flex w-full flex-col items-center">
+        <InnerWrapper className="flex items-center gap-2 dark:text-white">
+          <i className="fa fa-mobile" />{' '}
+          <div className="text-xs font-bold leading-3">
+            Open <b>{state.method?.name}</b> on your mobile device and scan the
+            QR Code to connect.
+          </div>
+        </InnerWrapper>
+        <QRCodeSVG
+          bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
+          className="rounded-lg"
+          fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
+          imageSettings={{
+            excavate: false,
+            height: 40,
+            src: state.method?.logo || '',
+            width: 40,
+          }}
+          includeMargin={true}
+          size={200}
+          style={{
+            border:
+              state.theme === 'dark'
+                ? '1px solid #404040'
+                : '1px solid #e5e5e5',
+          }}
+          value={uri}
+        />
+      </div>
+      <InnerWrapper>
+        <ReadOnlyText copyButton value={uri} />
+      </InnerWrapper>
+    </div>
+  ) : (
+    <LoadingWrapper />
+  );
+};
+
+type Props = {};
+
+export default WalletConnect;

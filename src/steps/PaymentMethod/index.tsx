@@ -103,6 +103,19 @@ const PaymentMethod: React.FC<Props> = () => {
                     type: 'SET_STEPS',
                   });
                   dispatch({ payload: Steps.Summary, type: 'SET_STEP' });
+                } else if (method.value === 'isWalletConnect') {
+                  dispatch({
+                    payload: [
+                      'AssetSelection',
+                      'NetworkSelection',
+                      'PaymentMethod',
+                      'WalletConnect',
+                      'EnterAmount',
+                      'Summary',
+                    ],
+                    type: 'SET_STEPS',
+                  });
+                  dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
                 } else {
                   dispatch({
                     payload: [

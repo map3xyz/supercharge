@@ -5,5 +5,8 @@ query GetPaymentMethods($chainId: Int) {
     logo
     value
     enabled
+    walletConnect {
+      description
+    }
   }
 }

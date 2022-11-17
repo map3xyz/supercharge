@@ -7,7 +7,8 @@ export enum Steps {
   'NetworkSelection' = 1,
   'PaymentMethod' = 2,
   'EnterAmount' = 3,
-  'Summary' = 4,
+  'WalletConnect' = 4,
+  'Summary' = 5,
   __LENGTH,
 }
 

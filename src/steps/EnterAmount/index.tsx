@@ -1,4 +1,4 @@
-import { Badge, CryptoAddress } from '@map3xyz/components';
+import { Badge, Button, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
@@ -20,6 +20,8 @@ const EnterAmount: React.FC<Props> = () => {
   const [formError, setFormError] = useState<string | undefined>('');
 
   const rate = state.asset?.price?.price;
+
+  console.log(state.account);
 
   const [formValue, setFormValue] = useState<{
     base: string;
@@ -350,11 +352,27 @@ const EnterAmount: React.FC<Props> = () => {
                 </Badge>
               </span>
             ) : null}
-            <Web3
-              amount={amount}
-              disabled={state.depositAddress.status === 'loading'}
-              setFormError={setFormError}
-            />
+            {state.method.value === 'isMetaMask' ||
+            state.method.value === 'isCoinbaseWallet' ? (
+              <Web3
+                amount={amount}
+                disabled={state.depositAddress.status === 'loading'}
+                setFormError={setFormError}
+              />
+            ) : (
+              <Button
+                block
+                disabled={
+                  state.depositAddress.status === 'loading' ||
+                  Number(amount) <= 0
+                }
+                htmlType="submit"
+                size="medium"
+                type={'default'}
+              >
+                Confirm Payment
+              </Button>
+            )}
           </div>
         </form>
       </InnerWrapper>
