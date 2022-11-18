@@ -15,7 +15,8 @@ export type Scalars = {
   Float: number;
 };
 
-export type Asset = {
+export type Asset = IAsset & {
+  __typename?: 'Asset';
   id?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
@@ -24,7 +25,7 @@ export type Asset = {
   symbol?: Maybe<Scalars['String']>;
 };
 
-export type AssetWithPrice = Asset & {
+export type AssetWithPrice = IAsset & {
   __typename?: 'AssetWithPrice';
   id?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
@@ -32,6 +33,15 @@ export type AssetWithPrice = Asset & {
   networkCode?: Maybe<Scalars['String']>;
   networks?: Maybe<Array<Maybe<Network>>>;
   price?: Maybe<Price>;
+  symbol?: Maybe<Scalars['String']>;
+};
+
+export type IAsset = {
+  id?: Maybe<Scalars['String']>;
+  logo?: Maybe<Logo>;
+  name?: Maybe<Scalars['String']>;
+  networkCode?: Maybe<Scalars['String']>;
+  networks?: Maybe<Array<Maybe<Network>>>;
   symbol?: Maybe<Scalars['String']>;
 };
 
@@ -96,6 +106,7 @@ export type PaymentMethod = {
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
+  walletConnect?: Maybe<WalletConnect>;
 };
 
 export type Price = {
@@ -198,6 +209,59 @@ export type SdkConfigField = {
   updated?: Maybe<Scalars['Int']>;
 };
 
+export type WalletConnect = {
+  __typename?: 'WalletConnect';
+  app?: Maybe<WalletConnectAppType>;
+  app_type?: Maybe<Scalars['String']>;
+  chains?: Maybe<Array<Maybe<Scalars['String']>>>;
+  description?: Maybe<Scalars['String']>;
+  desktop?: Maybe<WalletConnectPlatformType>;
+  homepage?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  image_id?: Maybe<Scalars['String']>;
+  image_url?: Maybe<WalletConnectImageUrlType>;
+  metadata?: Maybe<WalletConnectMetadataType>;
+  mobile?: Maybe<WalletConnectPlatformType>;
+  name?: Maybe<Scalars['String']>;
+  sdks?: Maybe<Array<Maybe<Scalars['String']>>>;
+  versions?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
+export type WalletConnectAppType = {
+  __typename?: 'WalletConnectAppType';
+  android?: Maybe<Scalars['String']>;
+  browser?: Maybe<Scalars['String']>;
+  ios?: Maybe<Scalars['String']>;
+  linux?: Maybe<Scalars['String']>;
+  mac?: Maybe<Scalars['String']>;
+  windows?: Maybe<Scalars['String']>;
+};
+
+export type WalletConnectImageUrlType = {
+  __typename?: 'WalletConnectImageURLType';
+  lg?: Maybe<Scalars['String']>;
+  md?: Maybe<Scalars['String']>;
+  sm?: Maybe<Scalars['String']>;
+};
+
+export type WalletConnectMetadataColorsType = {
+  __typename?: 'WalletConnectMetadataColorsType';
+  primary?: Maybe<Scalars['String']>;
+  secondary?: Maybe<Scalars['String']>;
+};
+
+export type WalletConnectMetadataType = {
+  __typename?: 'WalletConnectMetadataType';
+  colors?: Maybe<WalletConnectMetadataColorsType>;
+  shortName?: Maybe<Scalars['String']>;
+};
+
+export type WalletConnectPlatformType = {
+  __typename?: 'WalletConnectPlatformType';
+  native?: Maybe<Scalars['String']>;
+  universal?: Maybe<Scalars['String']>;
+};
+
 export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -231,7 +295,7 @@ export type SearchAssetsQueryVariables = Exact<{
 }>;
 
 
-export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'AssetWithPrice', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
 
 
 export const GetAssetsForOrgDocument = gql`

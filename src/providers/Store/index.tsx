@@ -1,6 +1,10 @@
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
-import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
+import {
+  AssetWithPrice,
+  Network,
+  PaymentMethod,
+} from '../../generated/apollo-gql';
 
 export enum Steps {
   'AssetSelection' = 0,
@@ -25,7 +29,7 @@ type State = {
     data: string | undefined;
     status: RemoteType;
   };
-  asset?: Asset & { price?: { price?: number } };
+  asset?: AssetWithPrice;
   depositAddress: {
     data: string | undefined;
     status: RemoteType;
@@ -40,7 +44,7 @@ type State = {
 };
 
 type Action =
-  | { payload: Asset; type: 'SET_ASSET' }
+  | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
@@ -81,7 +85,7 @@ const initialState: State = {
 
 export const Store: React.FC<
   PropsWithChildren<{
-    asset?: Asset;
+    asset?: AssetWithPrice;
     fiat?: string;
     generateDepositAddress: (
       asset?: string,
