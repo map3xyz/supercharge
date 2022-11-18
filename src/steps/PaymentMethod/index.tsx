@@ -136,7 +136,7 @@ const PaymentMethod: React.FC<Props> = () => {
                 <MethodIcon method={method} />
                 <span>{method.name}</span>
               </div>
-              {state.method?.value === method.value ? (
+              {state.method?.name === method.name ? (
                 <i className="fa fa-check-circle text-green-400" />
               ) : (
                 <i className="fa fa-chevron-right text-xxs" />

@@ -1,3 +1,5 @@
+import WalletConnect from '@walletconnect/client';
+import { ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
@@ -27,6 +29,11 @@ type State = {
     status: RemoteType;
   };
   asset?: Asset & { price?: { price?: number } };
+  connector?: {
+    data?: WalletConnect;
+    error?: string;
+    status: RemoteType;
+  };
   depositAddress: {
     data: string | undefined;
     status: RemoteType;
@@ -34,6 +41,11 @@ type State = {
   fiat?: string;
   method?: PaymentMethod;
   network?: Network;
+  provider?: {
+    data?: ethers.providers.Web3Provider;
+    error?: string;
+    status: RemoteType;
+  };
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
@@ -53,7 +65,15 @@ type Action =
   | { type: 'SET_ACCOUNT_IDLE' }
   | { type: 'SET_ACCOUNT_LOADING' }
   | { payload: string; type: 'SET_ACCOUNT_SUCCESS' }
-  | { payload: string; type: 'SET_ACCOUNT_ERROR' };
+  | { payload: string; type: 'SET_ACCOUNT_ERROR' }
+  | { type: 'SET_CONNECTOR_IDLE' }
+  | { type: 'SET_CONNECTOR_LOADING' }
+  | { payload: any; type: 'SET_CONNECTOR_SUCCESS' }
+  | { payload: string; type: 'SET_CONNECTOR_ERROR' }
+  | { type: 'SET_PROVIDER_IDLE' }
+  | { type: 'SET_PROVIDER_LOADING' }
+  | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
+  | { payload: string; type: 'SET_PROVIDER_ERROR' };
 
 const initialState: State = {
   account: {
@@ -61,6 +81,11 @@ const initialState: State = {
     status: 'idle',
   },
   asset: undefined,
+  connector: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+  },
   depositAddress: {
     data: undefined,
     status: 'idle',
@@ -68,6 +93,11 @@ const initialState: State = {
   fiat: undefined,
   method: undefined,
   network: undefined,
+  provider: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+  },
   slug: undefined,
   step: Steps.AssetSelection,
   steps: [
@@ -191,6 +221,78 @@ export const Store: React.FC<
             ...state,
             account: {
               data: undefined,
+              status: 'idle',
+            },
+          };
+        case 'SET_CONNECTOR_SUCCESS':
+          return {
+            ...state,
+            connector: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+            },
+          };
+        case 'SET_CONNECTOR_ERROR':
+          return {
+            ...state,
+            connector: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_CONNECTOR_LOADING':
+          return {
+            ...state,
+            connector: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_CONNECTOR_IDLE':
+          return {
+            ...state,
+            connector: {
+              data: undefined,
+              error: undefined,
+              status: 'idle',
+            },
+          };
+        case 'SET_PROVIDER_SUCCESS':
+          return {
+            ...state,
+            provider: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+            },
+          };
+        case 'SET_PROVIDER_ERROR':
+          return {
+            ...state,
+            provider: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_PROVIDER_LOADING':
+          return {
+            ...state,
+            provider: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_PROVIDER_IDLE':
+          return {
+            ...state,
+            provider: {
+              data: undefined,
+              error: undefined,
               status: 'idle',
             },
           };

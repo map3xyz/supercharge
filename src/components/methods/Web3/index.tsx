@@ -5,10 +5,8 @@ import React, { useContext, useEffect } from 'react';
 import { Context } from '../../../providers/Store';
 import MethodIcon from '../../MethodIcon';
 
-const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
+const Web3: React.FC<Props> = ({ amount, disabled }) => {
   const [state, dispatch] = useContext(Context);
-
-  if (!state.method || !state.method.value) return null;
 
   const connect = async () => {
     const providers = window.ethereum?.providers;
@@ -20,50 +18,44 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
       (!window.ethereum || !window.ethereum[state.method!.value!]) &&
       !selectedProvider
     ) {
-      dispatch({ payload: 'No provider found.', type: 'SET_ACCOUNT_ERROR' });
-      setFormError(`Please download the ${state.method!.name} extension.`);
-
-      return;
+      const error = 'No provider found.';
+      dispatch({ payload: error, type: 'SET_PROVIDER_ERROR' });
+      throw new Error(error);
     }
 
-    const eth = new ethers.providers.Web3Provider(
+    const web3Provider = new ethers.providers.Web3Provider(
       selectedProvider || window.ethereum
     );
 
-    if (eth.provider) {
+    if (web3Provider?.provider) {
+      dispatch({ payload: web3Provider, type: 'SET_PROVIDER_SUCCESS' });
       // @ts-ignore
-      eth.provider.on('accountsChanged', async (accounts: string[]) => {
-        if (accounts && accounts[0]) {
-          dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
-        } else {
-          dispatch({ type: 'SET_ACCOUNT_IDLE' });
+      web3Provider.provider.on(
+        'accountsChanged',
+        async (accounts: string[]) => {
+          if (accounts && accounts[0]) {
+            dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+          } else {
+            dispatch({ type: 'SET_ACCOUNT_IDLE' });
+          }
         }
-      });
+      );
 
       dispatch({ type: 'SET_ACCOUNT_LOADING' });
-      const accounts = await eth.send('eth_accounts', []);
+      const accounts = await web3Provider.send('eth_accounts', []);
 
       if (accounts && accounts[0]) {
         dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
       } else {
-        try {
-          const requestedAccounts = await eth.send('eth_requestAccounts', []);
-          if (requestedAccounts && requestedAccounts[0]) {
-            dispatch({
-              payload: requestedAccounts[0],
-              type: 'SET_ACCOUNT_SUCCESS',
-            });
-          }
-        } catch (e: any) {
-          if (
-            e.message === 'User rejected the request.' ||
-            e.message === 'User denied account authorization'
-          ) {
-            dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
-            setFormError(e.message);
-          } else {
-            console.log(e);
-          }
+        const requestedAccounts = await web3Provider.send(
+          'eth_requestAccounts',
+          []
+        );
+        if (requestedAccounts && requestedAccounts[0]) {
+          dispatch({
+            payload: requestedAccounts[0],
+            type: 'SET_ACCOUNT_SUCCESS',
+          });
         }
       }
     }
@@ -73,7 +65,7 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
     connect();
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === 'web3_connect') {
+      if (event.data && event.data.type === 'window.eth_connect') {
         connect();
       }
     };
@@ -84,6 +76,8 @@ const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
       window.removeEventListener('message', handleMessage);
     };
   }, []);
+
+  if (!state.method || !state.method.value) return null;
 
   let cta = 'Confirm Payment';
 

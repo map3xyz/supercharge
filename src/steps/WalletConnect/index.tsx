@@ -11,41 +11,66 @@ const WalletConnect: React.FC<Props> = () => {
   const [uri, setUri] = useState<string | undefined>();
   const [state, dispatch] = useContext(Context);
 
-  const handleConnected = (account: string) => {
+  const handleConnected = (connector: WalletConnectClient) => {
     dispatch({
-      payload: account,
-      type: 'SET_ACCOUNT_SUCCESS',
+      payload: [
+        'AssetSelection',
+        'NetworkSelection',
+        'PaymentMethod',
+        'EnterAmount',
+        'Summary',
+      ],
+      type: 'SET_STEPS',
     });
+
+    dispatch({ payload: connector, type: 'SET_CONNECTOR_SUCCESS' });
+    dispatch({ payload: connector.accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
     dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
   };
 
   useEffect(() => {
     const run = async () => {
-      dispatch({ type: 'SET_ACCOUNT_LOADING' });
+      dispatch({ type: 'SET_CONNECTOR_LOADING' });
       try {
         const connector = new WalletConnectClient({
           bridge: 'https://bridge.walletconnect.org', // Required
         });
 
-        if (!connector.connected) {
-          await connector.createSession();
-        } else {
-          handleConnected(connector.accounts[0]);
-          return;
-        }
-
-        setUri(connector.uri);
-
-        connector.on('connect', (error, payload) => {
+        connector.on('connect', (error) => {
           if (error) {
             throw error;
           }
 
-          const { accounts, chainId } = payload.params[0];
-          handleConnected(accounts[0]);
+          handleConnected(connector);
         });
+
+        connector.on('disconnect', (error) => {
+          if (error) {
+            throw error;
+          }
+
+          dispatch({ type: 'SET_CONNECTOR_IDLE' });
+          dispatch({ type: 'SET_ACCOUNT_IDLE' });
+          dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+        });
+
+        if (!connector.connected) {
+          await connector.createSession({
+            chainId: state.network?.identifiers?.chainId || 1,
+          });
+        } else {
+          if (state.method?.name !== connector.peerMeta?.name) {
+            await connector.killSession();
+            run();
+          } else {
+            handleConnected(connector);
+            return;
+          }
+        }
+
+        setUri(connector.uri);
       } catch (e: any) {
-        dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
+        dispatch({ payload: e.message, type: 'SET_CONNECTOR_ERROR' });
       }
     };
 
@@ -65,7 +90,7 @@ const WalletConnect: React.FC<Props> = () => {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center">
+      <div className="flex h-full w-full flex-col items-center justify-between">
         <InnerWrapper className="flex items-center gap-2 dark:text-white">
           <i className="fa fa-mobile" />{' '}
           <div className="text-xs font-bold leading-3">
@@ -93,10 +118,10 @@ const WalletConnect: React.FC<Props> = () => {
           }}
           value={uri}
         />
+        <InnerWrapper>
+          <ReadOnlyText copyButton value={uri} />
+        </InnerWrapper>
       </div>
-      <InnerWrapper>
-        <ReadOnlyText copyButton value={uri} />
-      </InnerWrapper>
     </div>
   ) : (
     <LoadingWrapper />

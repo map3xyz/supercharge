@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import Web3 from '../../components/methods/Web3';
+import { useWeb3 } from '../../hooks/web3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
@@ -21,14 +22,14 @@ const EnterAmount: React.FC<Props> = () => {
 
   const rate = state.asset?.price?.price;
 
-  console.log(state.account);
-
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
     quote: string;
   }>({ base: '0', inputSelected: rate ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<number>(0);
+
+  const { getChainID, sendTransaction, switchChain } = useWeb3();
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -70,12 +71,6 @@ const EnterAmount: React.FC<Props> = () => {
     setAmount(formValue.inputSelected === 'crypto' ? base : quote);
   }, [formValue.base]);
 
-  useEffect(() => {
-    if (state.account.status === 'success') {
-      setFormError(undefined);
-    }
-  }, [state.account.status]);
-
   const toggleBase = () => {
     if (inputRef.current) {
       inputRef.current.value = quoteRef.current!.innerText;
@@ -95,45 +90,17 @@ const EnterAmount: React.FC<Props> = () => {
       setFormError(undefined);
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
-        window.postMessage({ type: 'web3_connect' }, '*');
+        window.postMessage({ type: 'window.eth_connect' }, '*');
         return;
       }
 
-      let currentChainId;
-      let provider = window.ethereum;
-      try {
-        currentChainId = await window.ethereum.request({
-          method: 'eth_chainId',
-        });
-      } catch (e) {
-        provider = window.ethereum.providers.find(
-          (provider: any) => provider[state.method?.value!] === true
-        ).request;
-        currentChainId = await provider({ method: 'eth_chainId' });
-      }
+      const currentChainId = await getChainID();
 
       if (
         state.network?.identifiers?.chainId &&
         Number(currentChainId) !== state.network?.identifiers?.chainId
       ) {
-        try {
-          await provider({
-            method: 'wallet_switchEthereumChain',
-            params: [
-              {
-                chainId: ethers.utils.hexlify(
-                  state.network?.identifiers?.chainId
-                ),
-              },
-            ],
-          });
-        } catch (e: any) {
-          console.log(e);
-          setFormError(
-            `Please switch to ${state.network?.name} network in ${state.method?.name}`
-          );
-          return;
-        }
+        await switchChain(state.network?.identifiers?.chainId);
       }
 
       let address = '';
@@ -161,16 +128,7 @@ const EnterAmount: React.FC<Props> = () => {
         value: ethers.utils.parseEther(amount.toString()).toHexString(),
       };
 
-      try {
-        const currentProvider = window.ethereum.providers.find(
-          (x: any) => x[state.method!.value || 'isMetaMask']
-        );
-        await currentProvider.send('eth_sendTransaction', [
-          transactionParameters,
-        ]);
-      } catch (e: any) {
-        setFormError(e.message);
-      }
+      await sendTransaction(transactionParameters);
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
@@ -232,7 +190,7 @@ const EnterAmount: React.FC<Props> = () => {
                 type: 'SET_STEP',
               });
             } else {
-              window.postMessage({ type: 'web3_connect' }, '*');
+              window.postMessage({ type: 'window.eth_connect' }, '*');
             }
           }}
           role="button"
@@ -360,6 +318,7 @@ const EnterAmount: React.FC<Props> = () => {
                 setFormError={setFormError}
               />
             ) : (
+              // TODO: walletconnect
               <Button
                 block
                 disabled={
