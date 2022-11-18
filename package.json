@@ -1,6 +1,6 @@
 {
   "name": "@map3xyz/payments-sdk",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "private": false,
   "types": "dist/types.d.ts",
   "main": "dist/index.js",
@@ -28,7 +28,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && parcel build",
-    "start": "parcel src/index.html",
+    "start": "parcel src/index.html --dist-dir output",
     "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
     "test": "jest",
