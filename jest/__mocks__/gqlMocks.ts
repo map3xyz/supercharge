@@ -151,6 +151,7 @@ export const mocks: MockedResponse[] = [
             logo: '',
             name: 'Scan QR Code',
             value: 'qr',
+            walletConnect: null,
           },
         ],
       },
@@ -170,6 +171,7 @@ export const mocks: MockedResponse[] = [
             logo: '',
             name: 'Scan QR Code',
             value: 'qr',
+            walletConnect: null,
           },
           {
             enabled: true,
@@ -177,6 +179,7 @@ export const mocks: MockedResponse[] = [
             logo: '',
             name: 'MetaMask',
             value: 'isMetaMask',
+            walletConnect: null,
           },
           {
             enabled: true,
@@ -184,6 +187,7 @@ export const mocks: MockedResponse[] = [
             logo: '',
             name: 'Coinbase Wallet',
             value: 'isCoinbaseWallet',
+            walletConnect: null,
           },
         ],
       },

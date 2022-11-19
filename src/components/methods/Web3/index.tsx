@@ -5,7 +5,7 @@ import React, { useContext, useEffect } from 'react';
 import { Context } from '../../../providers/Store';
 import MethodIcon from '../../MethodIcon';
 
-const Web3: React.FC<Props> = ({ amount, disabled }) => {
+const Web3: React.FC<Props> = ({ amount, disabled, setFormError }) => {
   const [state, dispatch] = useContext(Context);
 
   const connect = async () => {
@@ -18,17 +18,20 @@ const Web3: React.FC<Props> = ({ amount, disabled }) => {
       (!window.ethereum || !window.ethereum[state.method!.value!]) &&
       !selectedProvider
     ) {
-      const error = 'No provider found.';
-      dispatch({ payload: error, type: 'SET_PROVIDER_ERROR' });
-      throw new Error(error);
+      dispatch({ payload: 'No provider found.', type: 'SET_ACCOUNT_ERROR' });
+      dispatch({ payload: 'No provider found.', type: 'SET_PROVIDER_ERROR' });
+      setFormError(`Please download the ${state.method!.name} extension.`);
+
+      return;
     }
 
     const web3Provider = new ethers.providers.Web3Provider(
       selectedProvider || window.ethereum
     );
+    dispatch({ payload: web3Provider, type: 'SET_PROVIDER_SUCCESS' });
 
     if (web3Provider?.provider) {
-      dispatch({ payload: web3Provider, type: 'SET_PROVIDER_SUCCESS' });
+      dispatch({ type: 'SET_ACCOUNT_LOADING' });
       // @ts-ignore
       web3Provider.provider.on(
         'accountsChanged',
@@ -41,21 +44,32 @@ const Web3: React.FC<Props> = ({ amount, disabled }) => {
         }
       );
 
-      dispatch({ type: 'SET_ACCOUNT_LOADING' });
       const accounts = await web3Provider.send('eth_accounts', []);
 
       if (accounts && accounts[0]) {
         dispatch({ payload: accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
       } else {
-        const requestedAccounts = await web3Provider.send(
-          'eth_requestAccounts',
-          []
-        );
-        if (requestedAccounts && requestedAccounts[0]) {
-          dispatch({
-            payload: requestedAccounts[0],
-            type: 'SET_ACCOUNT_SUCCESS',
-          });
+        try {
+          const requestedAccounts = await web3Provider.send(
+            'eth_requestAccounts',
+            []
+          );
+          if (requestedAccounts && requestedAccounts[0]) {
+            dispatch({
+              payload: requestedAccounts[0],
+              type: 'SET_ACCOUNT_SUCCESS',
+            });
+          }
+        } catch (e: any) {
+          if (
+            e.message === 'User rejected the request.' ||
+            e.message === 'User denied account authorization'
+          ) {
+            dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
+            setFormError(e.message);
+          } else {
+            console.log(e);
+          }
         }
       }
     }

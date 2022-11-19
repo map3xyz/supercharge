@@ -190,7 +190,7 @@ describe('Web3', () => {
         fireEvent(
           window,
           new MessageEvent('message', {
-            data: { type: 'web3_connect' },
+            data: { type: 'window.eth_connect' },
             origin: '*',
           })
         );
