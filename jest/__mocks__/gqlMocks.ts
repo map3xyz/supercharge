@@ -189,6 +189,54 @@ export const mocks: MockedResponse[] = [
             value: 'isCoinbaseWallet',
             walletConnect: null,
           },
+          {
+            enabled: true,
+            icon: '',
+            logo: 'https://explorer-api.walletconnect.com/v3/logo/md/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
+            name: 'Rainbow',
+            value: 'isWalletConnect',
+            walletConnect: {
+              app: {
+                android:
+                  'https://play.google.com/store/apps/details?id=me.rainbow',
+                browser: null,
+                ios: 'https://apps.apple.com/app/rainbow-ethereum-wallet/id1457119021',
+                linux: null,
+                mac: null,
+                windows: null,
+              },
+              app_type: 'wallet',
+              chains: ['eip155:1', 'eip155:10', 'eip155:137', 'eip155:42161'],
+              description:
+                'Rainbow is a fun, simple, and secure way to get started with crypto and explore the new world of Ethereum',
+              desktop: {
+                native: null,
+                universal: null,
+              },
+              homepage: 'https://rainbow.me/',
+              id: '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
+              image_id: '6089655c-cb7e-414b-f742-01fdc154be00',
+              image_url: {
+                lg: 'https://explorer-api.walletconnect.com/v3/logo/lg/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
+                md: 'https://explorer-api.walletconnect.com/v3/logo/md/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
+                sm: 'https://explorer-api.walletconnect.com/v3/logo/sm/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
+              },
+              metadata: {
+                colors: {
+                  primary: '#001e59',
+                  secondary: null,
+                },
+                shortName: 'Rainbow',
+              },
+              mobile: {
+                native: 'rainbow:',
+                universal: 'https://rnbwapp.com',
+              },
+              name: 'Rainbow',
+              sdks: ['sign_v1'],
+              versions: ['1'],
+            },
+          },
         ],
       },
     },

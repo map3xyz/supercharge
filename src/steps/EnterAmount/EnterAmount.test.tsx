@@ -125,7 +125,7 @@ describe('Enter Amount', () => {
   });
 });
 
-describe('Web3', () => {
+describe('window.ethereum', () => {
   beforeEach(async () => {
     render(
       <App
@@ -184,23 +184,6 @@ describe('Web3', () => {
       });
       const connectWallet = await screen.findByText('Connect Wallet');
       expect(connectWallet).toBeInTheDocument();
-    });
-    it('should listen for connection requests', async () => {
-      act(() => {
-        fireEvent(
-          window,
-          new MessageEvent('message', {
-            data: { type: 'window.eth_connect' },
-            origin: '*',
-          })
-        );
-      });
-      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
-        '0x123willConnect',
-      ]);
-      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
-      await screen.findByText('Confirm Payment');
-      expect(await screen.findByText(/0x12/)).toBeInTheDocument();
     });
   });
 

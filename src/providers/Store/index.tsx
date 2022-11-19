@@ -37,6 +37,7 @@ type State = {
     data?: WalletConnect;
     error?: string;
     status: RemoteType;
+    waiting: boolean;
   };
   depositAddress: {
     data: string | undefined;
@@ -74,6 +75,7 @@ type Action =
   | { type: 'SET_CONNECTOR_LOADING' }
   | { payload: any; type: 'SET_CONNECTOR_SUCCESS' }
   | { payload: string; type: 'SET_CONNECTOR_ERROR' }
+  | { payload: boolean; type: 'SET_CONNECTOR_WAITING' }
   | { type: 'SET_PROVIDER_IDLE' }
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
@@ -89,6 +91,7 @@ const initialState: State = {
     data: undefined,
     error: undefined,
     status: 'idle',
+    waiting: false,
   },
   depositAddress: {
     data: undefined,
@@ -235,6 +238,7 @@ export const Store: React.FC<
               data: action.payload,
               error: undefined,
               status: 'success',
+              waiting: false,
             },
           };
         case 'SET_CONNECTOR_ERROR':
@@ -244,6 +248,7 @@ export const Store: React.FC<
               data: undefined,
               error: action.payload,
               status: 'error',
+              waiting: false,
             },
           };
         case 'SET_CONNECTOR_LOADING':
@@ -253,6 +258,7 @@ export const Store: React.FC<
               data: undefined,
               error: undefined,
               status: 'loading',
+              waiting: false,
             },
           };
         case 'SET_CONNECTOR_IDLE':
@@ -262,6 +268,15 @@ export const Store: React.FC<
               data: undefined,
               error: undefined,
               status: 'idle',
+              waiting: false,
+            },
+          };
+        case 'SET_CONNECTOR_WAITING':
+          return {
+            ...state,
+            connector: {
+              ...state.connector!,
+              waiting: action.payload,
             },
           };
         case 'SET_PROVIDER_SUCCESS':

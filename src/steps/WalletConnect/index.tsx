@@ -33,7 +33,7 @@ const WalletConnect: React.FC<Props> = () => {
       dispatch({ type: 'SET_CONNECTOR_LOADING' });
       try {
         const connector = new WalletConnectClient({
-          bridge: 'https://bridge.walletconnect.org', // Required
+          bridge: 'https://bridge.walletconnect.org',
         });
 
         connector.on('connect', (error) => {
@@ -59,7 +59,7 @@ const WalletConnect: React.FC<Props> = () => {
             chainId: state.network?.identifiers?.chainId || 1,
           });
         } else {
-          if (state.method?.name !== connector.peerMeta?.name) {
+          if (!connector.peerMeta?.name.includes(state.method?.name || '')) {
             await connector.killSession();
             run();
           } else {

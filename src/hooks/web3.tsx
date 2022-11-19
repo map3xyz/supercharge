@@ -3,6 +3,9 @@ import { useContext } from 'react';
 
 import { Context, Steps } from '../providers/Store';
 
+const NO_CONNECTOR = 'No connector found.';
+const NO_PROVIDER = 'No provider found.';
+
 export const useWeb3 = () => {
   const [state, dispatch] = useContext(Context);
 
@@ -13,12 +16,12 @@ export const useWeb3 = () => {
     }
     if (state.method.value === 'isWalletConnect') {
       if (!state.connector?.data) {
-        throw new Error('No connector found.');
+        throw new Error(NO_CONNECTOR);
       }
       return state.connector.data.chainId;
     } else {
       if (!state.provider?.data) {
-        throw new Error('No web3 provider found');
+        throw new Error(NO_PROVIDER);
       }
       return await state.provider.data.send('eth_chainId', []);
     }
@@ -31,7 +34,7 @@ export const useWeb3 = () => {
     }
     if (state.method.value === 'isWalletConnect') {
       if (!state.connector?.data) {
-        throw new Error('   No connector found.');
+        throw new Error(NO_CONNECTOR);
       }
       await state.connector.data.sendCustomRequest({
         jsonrpc: '2.0',
@@ -44,7 +47,7 @@ export const useWeb3 = () => {
       });
     } else {
       if (!state.provider?.data) {
-        throw new Error('No web3 provider found');
+        throw new Error(NO_PROVIDER);
       }
       await state.provider.data.send('wallet_switchEthereumChain', [
         {
@@ -61,12 +64,12 @@ export const useWeb3 = () => {
     }
     if (state.method.value === 'isWalletConnect') {
       if (!state.connector?.data) {
-        throw new Error('No connector found.');
+        throw new Error(NO_CONNECTOR);
       }
       await state.connector.data.sendTransaction(txParams);
     } else {
       if (!state.provider?.data) {
-        throw new Error('No web3 provider found');
+        throw new Error(NO_PROVIDER);
       }
       await state.provider.data.send('eth_sendTransaction', [txParams]);
     }

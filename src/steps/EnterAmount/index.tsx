@@ -1,10 +1,14 @@
-import { Badge, Button, CryptoAddress } from '@map3xyz/components';
+import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import Web3 from '../../components/methods/Web3';
+import WalletConnect from '../../components/methods/WalletConnect';
+import WindowEthereum, {
+  ConnectHandler,
+} from '../../components/methods/WindowEthereum';
+import { useGetDepositAddress } from '../../hooks/depositAddress';
 import { useWeb3 } from '../../hooks/web3';
 import { Context, Steps } from '../../providers/Store';
 
@@ -16,8 +20,9 @@ const EnterAmount: React.FC<Props> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
+  const connectRef = useRef<ConnectHandler>(null);
 
-  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
+  const [state, dispatch] = useContext(Context);
   const [formError, setFormError] = useState<string | undefined>('');
 
   const rate = state.asset?.price?.price;
@@ -30,6 +35,7 @@ const EnterAmount: React.FC<Props> = () => {
   const [amount, setAmount] = useState<number>(0);
 
   const { getChainID, sendTransaction, switchChain } = useWeb3();
+  const { getDepositAddress } = useGetDepositAddress();
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -90,7 +96,7 @@ const EnterAmount: React.FC<Props> = () => {
       setFormError(undefined);
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
-        window.postMessage({ type: 'window.eth_connect' }, '*');
+        connectRef.current?.connect();
         return;
       }
 
@@ -103,28 +109,14 @@ const EnterAmount: React.FC<Props> = () => {
         await switchChain(state.network?.identifiers?.chainId);
       }
 
-      let address = '';
-      try {
-        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-        address = await generateDepositAddress(
-          state.asset?.symbol as string,
-          state.network?.symbol as string
-        );
-        dispatch({
-          payload: address,
-          type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
-        });
-      } catch (e) {
-        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
-        throw new Error('Error generating a deposit address.');
-      }
+      const address = await getDepositAddress();
 
       const transactionParameters = {
+        data: '0x666f6f',
         from: state.account.data,
-        to: address,
-        // data: '0x666f6f',
         // 16 * # of bytes of data
-        // gas: ethers.utils.hexlify(21000 + 48),
+        gas: ethers.utils.hexlify(21000 + 48),
+        to: address,
         value: ethers.utils.parseEther(amount.toString()).toHexString(),
       };
 
@@ -190,7 +182,7 @@ const EnterAmount: React.FC<Props> = () => {
                 type: 'SET_STEP',
               });
             } else {
-              window.postMessage({ type: 'window.eth_connect' }, '*');
+              connectRef.current?.connect();
             }
           }}
           role="button"
@@ -310,27 +302,18 @@ const EnterAmount: React.FC<Props> = () => {
                 </Badge>
               </span>
             ) : null}
-            {state.method.value === 'isMetaMask' ||
-            state.method.value === 'isCoinbaseWallet' ? (
-              <Web3
+            {state.method.value !== 'isWalletConnect' ? (
+              <WindowEthereum
                 amount={amount}
                 disabled={state.depositAddress.status === 'loading'}
+                ref={connectRef}
                 setFormError={setFormError}
               />
             ) : (
-              // TODO: walletconnect
-              <Button
-                block
-                disabled={
-                  state.depositAddress.status === 'loading' ||
-                  Number(amount) <= 0
-                }
-                htmlType="submit"
-                size="medium"
-                type={'default'}
-              >
-                Confirm Payment
-              </Button>
+              <WalletConnect
+                amount={amount}
+                disabled={state.depositAddress.status === 'loading'}
+              />
             )}
           </div>
         </form>
