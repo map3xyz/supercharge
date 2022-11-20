@@ -75,7 +75,7 @@ type Action =
   | { type: 'SET_CONNECTOR_LOADING' }
   | { payload: any; type: 'SET_CONNECTOR_SUCCESS' }
   | { payload: string; type: 'SET_CONNECTOR_ERROR' }
-  | { payload: boolean; type: 'SET_CONNECTOR_WAITING' }
+  // | { payload: boolean; type: 'SET_CONNECTOR_WAITING' }
   | { type: 'SET_PROVIDER_IDLE' }
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
@@ -271,14 +271,14 @@ export const Store: React.FC<
               waiting: false,
             },
           };
-        case 'SET_CONNECTOR_WAITING':
-          return {
-            ...state,
-            connector: {
-              ...state.connector!,
-              waiting: action.payload,
-            },
-          };
+        // case 'SET_CONNECTOR_WAITING':
+        //   return {
+        //     ...state,
+        //     connector: {
+        //       ...state.connector!,
+        //       waiting: action.payload,
+        //     },
+        //   };
         case 'SET_PROVIDER_SUCCESS':
           return {
             ...state,

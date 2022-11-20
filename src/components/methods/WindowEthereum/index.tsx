@@ -19,6 +19,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
     const [state, dispatch] = useContext(Context);
 
     const connect = async () => {
+      dispatch({ type: 'SET_PROVIDER_LOADING' });
       const providers = window.ethereum?.providers;
       const selectedProvider = providers?.find(
         (x: any) => x[state.method!.value!]
@@ -93,6 +94,8 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
 
     useEffect(() => {
       connect();
+
+      return () => dispatch({ type: 'SET_PROVIDER_IDLE' });
     }, []);
 
     if (!state.method || !state.method.value) return null;
