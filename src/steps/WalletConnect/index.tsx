@@ -3,6 +3,7 @@ import WalletConnectClient from '@walletconnect/client';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
 
+import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import { Context, Steps } from '../../providers/Store';
@@ -28,54 +29,64 @@ const WalletConnect: React.FC<Props> = () => {
     dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
   };
 
-  useEffect(() => {
-    const run = async () => {
-      dispatch({ type: 'SET_CONNECTOR_LOADING' });
-      try {
-        const connector = new WalletConnectClient({
-          bridge: 'https://bridge.walletconnect.org',
-        });
+  const run = async () => {
+    dispatch({ type: 'SET_CONNECTOR_LOADING' });
+    try {
+      const connector = new WalletConnectClient({
+        bridge: 'https://bridge.walletconnect.org',
+      });
 
-        connector.on('connect', (error) => {
-          if (error) {
-            throw error;
-          }
-
-          handleConnected(connector);
-        });
-
-        connector.on('disconnect', (error) => {
-          if (error) {
-            throw error;
-          }
-
-          dispatch({ type: 'SET_CONNECTOR_IDLE' });
-          dispatch({ type: 'SET_ACCOUNT_IDLE' });
-          dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
-        });
-
-        if (!connector.connected) {
-          await connector.createSession({
-            chainId: state.network?.identifiers?.chainId || 1,
-          });
-        } else {
-          if (!connector.peerMeta?.name.includes(state.method?.name || '')) {
-            await connector.killSession();
-            run();
-          } else {
-            handleConnected(connector);
-            return;
-          }
+      connector.on('connect', (error) => {
+        if (error) {
+          throw error;
         }
 
-        setUri(connector.uri);
-      } catch (e: any) {
-        dispatch({ payload: e.message, type: 'SET_CONNECTOR_ERROR' });
-      }
-    };
+        handleConnected(connector);
+      });
 
+      connector.on('disconnect', (error) => {
+        if (error) {
+          throw error;
+        }
+
+        dispatch({ type: 'SET_CONNECTOR_IDLE' });
+        dispatch({ type: 'SET_ACCOUNT_IDLE' });
+        dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+      });
+
+      if (!connector.connected) {
+        await connector.createSession({
+          chainId: state.network?.identifiers?.chainId || 1,
+        });
+      } else {
+        if (!connector.peerMeta?.name.includes(state.method?.name || '')) {
+          await connector.killSession();
+          run();
+        } else {
+          handleConnected(connector);
+          return;
+        }
+      }
+
+      setUri(connector.uri);
+    } catch (e: any) {
+      dispatch({ payload: e.message, type: 'SET_CONNECTOR_ERROR' });
+    }
+  };
+
+  useEffect(() => {
     run();
   }, []);
+
+  if (state.connector?.error) {
+    return (
+      <ErrorWrapper
+        description="Error starting a WalletConnect session."
+        header="WalletConnect Error"
+        retry={run}
+      />
+    );
+  }
 
   return uri ? (
     <div className="flex h-full flex-col items-center justify-between py-2">
@@ -93,7 +104,10 @@ const WalletConnect: React.FC<Props> = () => {
       <div className="flex h-full w-full flex-col items-center justify-between">
         <InnerWrapper className="flex items-center gap-2 dark:text-white">
           <i className="fa fa-mobile" />{' '}
-          <div className="text-xs font-bold leading-3">
+          <div
+            className="text-xs font-bold leading-3"
+            data-testid="scan-wallet-connect"
+          >
             Open <b>{state.method?.name}</b> on your mobile device and scan the
             QR Code to connect.
           </div>
