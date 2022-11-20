@@ -9,18 +9,6 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
 
   if (!state.method || !state.method.value) return null;
 
-  let cta = 'Confirm Payment';
-
-  switch (state.account.status) {
-    case 'loading':
-      cta = 'Connecting...';
-      break;
-    case 'error':
-    case 'idle':
-      cta = 'Connect Wallet';
-      break;
-  }
-
   return (
     <Button
       block
@@ -42,7 +30,7 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
     >
       <span className="flex items-center gap-2">
         <MethodIcon method={state.method} />
-        {cta}
+        Confirm Payment
       </span>
     </Button>
   );

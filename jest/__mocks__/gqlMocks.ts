@@ -5,6 +5,7 @@ import {
   GetNetworksDocument,
   GetNetworksForAssetDocument,
   GetPaymentMethodsDocument,
+  SearchAssetsDocument,
 } from '../../src/generated/apollo-gql';
 
 export const mocks: MockedResponse[] = [
@@ -50,6 +51,28 @@ export const mocks: MockedResponse[] = [
             },
             price: null,
             symbol: 'ELON',
+          },
+        ],
+      },
+    },
+  },
+  {
+    request: {
+      query: SearchAssetsDocument,
+      variables: {
+        query: 'Bitcoin',
+      },
+    },
+    result: {
+      data: {
+        searchAssetsForOrganization: [
+          {
+            logo: {
+              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+            },
+            name: 'Bitcoin',
+            symbol: 'BTC',
           },
         ],
       },

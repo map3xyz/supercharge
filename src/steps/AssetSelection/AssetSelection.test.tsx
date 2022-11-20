@@ -23,6 +23,24 @@ describe('Asset Selection', () => {
     const assetSelection = await screen.findByText('Select Asset');
     expect(assetSelection).toBeInTheDocument();
   });
+  it('searches', async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            return '0x0000000000000000000000000000000000000000';
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+    await screen.findByText('Loading...');
+    const search = await screen.findByPlaceholderText('Search for an asset...');
+    fireEvent.change(search, { target: { value: 'Bitcoin' } });
+    expect(await screen.findByText('Bitcoin')).toBeInTheDocument();
+  });
   it('handles errors', async () => {
     RTLRender(
       <MockedProvider addTypename={false} mocks={[]}>
