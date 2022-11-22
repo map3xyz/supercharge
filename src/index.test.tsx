@@ -10,7 +10,7 @@ describe('Map3Sdk', () => {
       anonKey: 'test',
       generateDepositAddress: async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return '0x0000000000000000000000000000000000000000';
+        return { address: '0x0000000000000000000000000000000000000000' };
       },
     });
     await act(async () => {
@@ -28,7 +28,7 @@ describe('Map3Sdk', () => {
       anonKey: 'test',
       generateDepositAddress: async () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return '0x0000000000000000000000000000000000000000';
+        return { address: '0x0000000000000000000000000000000000000000' };
       },
       theme: 'dark',
     });
@@ -44,7 +44,7 @@ describe('Map3Sdk', () => {
         fiat: 'USD',
         generateDepositAddress: async () => {
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          return '0x0000000000000000000000000000000000000000';
+          return { address: '0x0000000000000000000000000000000000000000' };
         },
       });
     expect(initFn).not.toThrow();
@@ -60,7 +60,7 @@ describe('Map3Sdk', () => {
       initMap3Sdk({
         generateDepositAddress: async () => {
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          return '0x0000000000000000000000000000000000000000';
+          return { address: '0x0000000000000000000000000000000000000000' };
         },
       });
     expect(initFn).toThrow('anonKey is required');

@@ -9,7 +9,7 @@ describe('App', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            return '0x0000000000000000000000000000000000000000';
+            return { address: '0x0000000000000000000000000000000000000000' };
           },
           theme: 'dark',
         }}
@@ -28,7 +28,7 @@ describe('App', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            return '0x0000000000000000000000000000000000000000';
+            return { address: '0x0000000000000000000000000000000000000000' };
           },
           slug: ':Bitcoin',
           theme: 'dark',
@@ -48,7 +48,7 @@ describe('App', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            return '0x0000000000000000000000000000000000000000';
+            return { address: '0x0000000000000000000000000000000000000000' };
           },
           slug: 'Bitcoin:Bitcoin',
           theme: 'dark',

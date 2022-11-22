@@ -169,11 +169,15 @@ export const mocks: MockedResponse[] = [
       data: {
         methodsForNetwork: [
           {
-            enabled: true,
+            flags: {
+              enabled: true,
+              memo: false,
+            },
             icon: 'fa fa-qrcode',
             logo: '',
             name: 'Scan QR Code',
             value: 'qr',
+            walletConnect: null,
           },
         ],
       },
@@ -188,7 +192,10 @@ export const mocks: MockedResponse[] = [
       data: {
         methodsForNetwork: [
           {
-            enabled: true,
+            flags: {
+              enabled: true,
+              memo: false,
+            },
             icon: 'fa fa-qrcode',
             logo: '',
             name: 'Scan QR Code',
@@ -196,7 +203,10 @@ export const mocks: MockedResponse[] = [
             walletConnect: null,
           },
           {
-            enabled: true,
+            flags: {
+              enabled: true,
+              memo: true,
+            },
             icon: 'metamask',
             logo: '',
             name: 'MetaMask',
@@ -204,7 +214,10 @@ export const mocks: MockedResponse[] = [
             walletConnect: null,
           },
           {
-            enabled: true,
+            flags: {
+              enabled: true,
+              memo: true,
+            },
             icon: 'coinbase',
             logo: '',
             name: 'Coinbase Wallet',
@@ -212,7 +225,10 @@ export const mocks: MockedResponse[] = [
             walletConnect: null,
           },
           {
-            enabled: true,
+            flags: {
+              enabled: true,
+              memo: true,
+            },
             icon: '',
             logo: 'https://explorer-api.walletconnect.com/v3/logo/md/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
             name: 'Rainbow',

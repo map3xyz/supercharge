@@ -33,8 +33,9 @@ const PaymentMethod: React.FC<Props> = () => {
   const methodsForNetwork = data?.methodsForNetwork?.filter(
     (method) =>
       !method?.walletConnect ||
-      method?.walletConnect?.chains?.length === 0 ||
-      method?.walletConnect?.chains?.includes('eip155:' + chainId)
+      ((method?.walletConnect?.chains?.length === 0 ||
+        method?.walletConnect?.chains?.includes('eip155:' + chainId)) &&
+        method?.walletConnect?.mobile?.native)
   );
 
   return (
@@ -87,13 +88,13 @@ const PaymentMethod: React.FC<Props> = () => {
           method ? (
             <div
               className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
-                method.enabled
+                method.flags?.enabled
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
               }`}
               key={method.name + '-' + method.value}
               onClick={() => {
-                if (!method.enabled) {
+                if (!method.flags?.enabled) {
                   return;
                 }
                 dispatch({

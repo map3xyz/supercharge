@@ -51,7 +51,9 @@ const WalletConnect: React.FC<Props> = () => {
 
         dispatch({ type: 'SET_CONNECTOR_IDLE' });
         dispatch({ type: 'SET_ACCOUNT_IDLE' });
-        dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+        if (connector.peerMeta?.name.includes(state.method?.name || '')) {
+          dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+        }
       });
 
       if (!connector.connected) {
@@ -103,13 +105,25 @@ const WalletConnect: React.FC<Props> = () => {
       </div>
       <div className="flex h-full w-full flex-col items-center justify-between">
         <InnerWrapper className="flex items-center gap-2 dark:text-white">
-          <i className="fa fa-mobile" />{' '}
+          <i className="fa fa-handshake" />{' '}
           <div
-            className="text-xs font-bold leading-3"
+            className="text-xs font-bold leading-4"
             data-testid="scan-wallet-connect"
           >
             Open <b>{state.method?.name}</b> on your mobile device and scan the
-            QR Code to connect.
+            QR Code to connect.{' '}
+            {state.method?.walletConnect?.desktop?.native ? (
+              <>
+                Or click{' '}
+                <a
+                  className="text-blue-500"
+                  href={state.method.walletConnect.desktop.native + uri}
+                >
+                  here
+                </a>{' '}
+                to connect with the desktop app.
+              </>
+            ) : null}
           </div>
         </InnerWrapper>
         <QRCodeSVG

@@ -11,7 +11,7 @@ describe('Enter Amount', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            return '0x0000000000000000000000000000000000000000';
+            return { address: '0x0000000000000000000000000000000000000000' };
           },
           theme: 'dark',
         }}
@@ -132,7 +132,7 @@ describe('window.ethereum', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            throw 'Error generating deposit address.';
+            throw { address: 'Error generating deposit address.' };
           },
           theme: 'dark',
         }}

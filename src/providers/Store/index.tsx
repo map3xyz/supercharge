@@ -124,7 +124,7 @@ export const Store: React.FC<
     generateDepositAddress: (
       asset?: string,
       network?: string
-    ) => Promise<string>;
+    ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
     slug?: string;
     theme?: 'dark' | 'light';
@@ -336,12 +336,16 @@ export const Context = createContext<
     {
       generateDepositAddress: (
         asset?: string,
-        network?: string
-      ) => Promise<string>;
+        network?: string,
+        memoEnabled?: boolean
+      ) => Promise<{ address: string; memo?: string }>;
     }
   ]
 >([
   initialState,
   () => null,
-  { generateDepositAddress: () => new Promise((resolve) => resolve('')) },
+  {
+    generateDepositAddress: () =>
+      new Promise((resolve) => resolve({ address: '' })),
+  },
 ]);

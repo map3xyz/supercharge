@@ -99,12 +99,18 @@ export type Organization = {
 
 export type PaymentMethod = {
   __typename?: 'PaymentMethod';
-  enabled?: Maybe<Scalars['Boolean']>;
+  flags?: Maybe<PaymentMethodFlags>;
   icon?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
   walletConnect?: Maybe<WalletConnectWallet>;
+};
+
+export type PaymentMethodFlags = {
+  __typename?: 'PaymentMethodFlags';
+  enabled?: Maybe<Scalars['Boolean']>;
+  memo?: Maybe<Scalars['Boolean']>;
 };
 
 export type Price = {
@@ -285,7 +291,7 @@ export type GetPaymentMethodsQueryVariables = Exact<{
 }>;
 
 
-export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, enabled?: boolean | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null } | null } | null> | null };
+export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -436,10 +442,19 @@ export const GetPaymentMethodsDocument = gql`
     icon
     logo
     value
-    enabled
+    flags {
+      enabled
+      memo
+    }
     walletConnect {
       description
       chains
+      mobile {
+        native
+      }
+      desktop {
+        native
+      }
     }
   }
 }

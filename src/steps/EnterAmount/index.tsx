@@ -109,13 +109,16 @@ const EnterAmount: React.FC<Props> = () => {
         await switchChain(state.network?.identifiers?.chainId);
       }
 
-      const address = await getDepositAddress();
+      const { address, memo } = await getDepositAddress(
+        state.method?.flags?.memo || false
+      );
+
+      const extraGas = memo ? (memo.length / 2) * 16 : 0;
 
       const transactionParameters = {
-        data: '0x666f6f',
+        data: memo,
         from: state.account.data,
-        // 16 * # of bytes of data
-        gas: ethers.utils.hexlify(21000 + 48),
+        gas: ethers.utils.hexlify(21000 + extraGas),
         to: address,
         value: ethers.utils.parseEther(amount.toString()).toHexString(),
       };
