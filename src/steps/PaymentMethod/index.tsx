@@ -1,5 +1,4 @@
 import { Badge } from '@map3xyz/components';
-import { useQuery } from '@tanstack/react-query';
 import React, { useContext } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -8,31 +7,16 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { useGetPaymentMethodsQuery } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
-import { WalletConnectWallet } from '../../types/walletConnect';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
-  console.log(state.network);
   const chainId = state.network?.identifiers?.chainId;
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
     variables: { chainId },
   });
-  const {
-    data: WCWallets,
-    isError,
-    isLoading,
-  } = useQuery({
-    enabled: !!chainId,
-    queryFn: () =>
-      fetch(process.env.CONSOLE_API_URL + '/walletConnectWallets').then((res) =>
-        res.json()
-      ),
-    queryKey: ['WCWallets'],
-  });
 
-  if (loading || isLoading)
-    return <LoadingWrapper message="Fetching Payment Methods..." />;
-  if (error || isError)
+  if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
+  if (error)
     return (
       <ErrorWrapper
         description="We couldn't get a list of payment methods to select."
@@ -46,13 +30,11 @@ const PaymentMethod: React.FC<Props> = () => {
     return null;
   }
 
-  const methodsForNetwork = data?.methodsForNetwork?.concat(
-    WCWallets.filter((wallet: WalletConnectWallet) => {
-      return (
-        wallet.chains.length === 0 ||
-        wallet.chains.includes('eip155:' + chainId)
-      );
-    })
+  const methodsForNetwork = data?.methodsForNetwork?.filter(
+    (method) =>
+      !method?.walletConnect ||
+      method?.walletConnect?.chains?.length === 0 ||
+      method?.walletConnect?.chains?.includes('eip155:' + chainId)
   );
 
   return (

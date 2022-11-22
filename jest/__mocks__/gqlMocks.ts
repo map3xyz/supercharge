@@ -174,7 +174,6 @@ export const mocks: MockedResponse[] = [
             logo: '',
             name: 'Scan QR Code',
             value: 'qr',
-            walletConnect: null,
           },
         ],
       },
