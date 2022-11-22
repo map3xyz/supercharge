@@ -44,7 +44,7 @@ type State = {
     status: RemoteType;
   };
   fiat?: string;
-  method?: PaymentMethod;
+  method?: PaymentMethod & { description?: string };
   network?: Network;
   provider?: {
     data?: ethers.providers.Web3Provider;
@@ -60,7 +60,7 @@ type State = {
 type Action =
   | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
-  | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
+  | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
   | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }

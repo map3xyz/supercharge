@@ -97,7 +97,7 @@ const WalletConnect: React.FC<Props> = () => {
             <div className="font-bold">{state.method?.name}</div>
           </div>
           <div className="text-xs text-neutral-500">
-            {state.method?.walletConnect?.description}
+            {state.method?.description}
           </div>
         </div>
       </div>

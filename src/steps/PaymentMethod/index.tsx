@@ -1,4 +1,5 @@
 import { Badge } from '@map3xyz/components';
+import { useQuery } from '@tanstack/react-query';
 import React, { useContext } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -7,15 +8,31 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { useGetPaymentMethodsQuery } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
+import { WalletConnectWallet } from '../../types/walletConnect';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  console.log(state.network);
+  const chainId = state.network?.identifiers?.chainId;
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
-    variables: { chainId: state.network?.identifiers?.chainId },
+    variables: { chainId },
+  });
+  const {
+    data: WCWallets,
+    isError,
+    isLoading,
+  } = useQuery({
+    enabled: !!chainId,
+    queryFn: () =>
+      fetch(process.env.CONSOLE_API_URL + '/walletConnectWallets').then((res) =>
+        res.json()
+      ),
+    queryKey: ['WCWallets'],
   });
 
-  if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
-  if (error)
+  if (loading || isLoading)
+    return <LoadingWrapper message="Fetching Payment Methods..." />;
+  if (error || isError)
     return (
       <ErrorWrapper
         description="We couldn't get a list of payment methods to select."
@@ -28,6 +45,15 @@ const PaymentMethod: React.FC<Props> = () => {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
+
+  const methodsForNetwork = data?.methodsForNetwork?.concat(
+    WCWallets.filter((wallet: WalletConnectWallet) => {
+      return (
+        wallet.chains.length === 0 ||
+        wallet.chains.includes('eip155:' + chainId)
+      );
+    })
+  );
 
   return (
     <>
@@ -75,7 +101,7 @@ const PaymentMethod: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex flex-col dark:text-white">
-        {data?.methodsForNetwork?.map((method) =>
+        {methodsForNetwork?.map((method) =>
           method ? (
             <div
               className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
@@ -83,7 +109,7 @@ const PaymentMethod: React.FC<Props> = () => {
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
               }`}
-              key={method.value}
+              key={method.name + '-' + method.value}
               onClick={() => {
                 if (!method.enabled) {
                   return;
@@ -136,7 +162,8 @@ const PaymentMethod: React.FC<Props> = () => {
                 <MethodIcon method={method} />
                 <span>{method.name}</span>
               </div>
-              {state.method?.name === method.name ? (
+              {`${state.method?.name}-${state.method?.value}` ===
+              `${method.name}-${method.value}` ? (
                 <i className="fa fa-check-circle text-green-400" />
               ) : (
                 <i className="fa fa-chevron-right text-xxs" />

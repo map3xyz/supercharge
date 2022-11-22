@@ -71,14 +71,12 @@ export type MutationCreateOrganizationArgs = {
 
 export type MutationCreateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
-  networkCode: Scalars['String'];
 };
 
 
 export type MutationUpdateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
   enabled: Scalars['Boolean'];
-  networkCode: Scalars['String'];
 };
 
 export type Network = {
@@ -106,7 +104,6 @@ export type PaymentMethod = {
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
-  walletConnect?: Maybe<WalletConnect>;
 };
 
 export type Price = {
@@ -204,62 +201,8 @@ export type SdkConfigField = {
   created?: Maybe<Scalars['Int']>;
   enabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['ID']>;
-  networkCode?: Maybe<Scalars['String']>;
   organizationId?: Maybe<Scalars['String']>;
   updated?: Maybe<Scalars['Int']>;
-};
-
-export type WalletConnect = {
-  __typename?: 'WalletConnect';
-  app?: Maybe<WalletConnectAppType>;
-  app_type?: Maybe<Scalars['String']>;
-  chains?: Maybe<Array<Maybe<Scalars['String']>>>;
-  description?: Maybe<Scalars['String']>;
-  desktop?: Maybe<WalletConnectPlatformType>;
-  homepage?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  image_id?: Maybe<Scalars['String']>;
-  image_url?: Maybe<WalletConnectImageUrlType>;
-  metadata?: Maybe<WalletConnectMetadataType>;
-  mobile?: Maybe<WalletConnectPlatformType>;
-  name?: Maybe<Scalars['String']>;
-  sdks?: Maybe<Array<Maybe<Scalars['String']>>>;
-  versions?: Maybe<Array<Maybe<Scalars['String']>>>;
-};
-
-export type WalletConnectAppType = {
-  __typename?: 'WalletConnectAppType';
-  android?: Maybe<Scalars['String']>;
-  browser?: Maybe<Scalars['String']>;
-  ios?: Maybe<Scalars['String']>;
-  linux?: Maybe<Scalars['String']>;
-  mac?: Maybe<Scalars['String']>;
-  windows?: Maybe<Scalars['String']>;
-};
-
-export type WalletConnectImageUrlType = {
-  __typename?: 'WalletConnectImageURLType';
-  lg?: Maybe<Scalars['String']>;
-  md?: Maybe<Scalars['String']>;
-  sm?: Maybe<Scalars['String']>;
-};
-
-export type WalletConnectMetadataColorsType = {
-  __typename?: 'WalletConnectMetadataColorsType';
-  primary?: Maybe<Scalars['String']>;
-  secondary?: Maybe<Scalars['String']>;
-};
-
-export type WalletConnectMetadataType = {
-  __typename?: 'WalletConnectMetadataType';
-  colors?: Maybe<WalletConnectMetadataColorsType>;
-  shortName?: Maybe<Scalars['String']>;
-};
-
-export type WalletConnectPlatformType = {
-  __typename?: 'WalletConnectPlatformType';
-  native?: Maybe<Scalars['String']>;
-  universal?: Maybe<Scalars['String']>;
 };
 
 export type GetAssetsForOrgQueryVariables = Exact<{
@@ -288,7 +231,7 @@ export type GetPaymentMethodsQueryVariables = Exact<{
 }>;
 
 
-export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, enabled?: boolean | null, walletConnect?: { __typename?: 'WalletConnect', description?: string | null } | null } | null> | null };
+export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, enabled?: boolean | null } | null> | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -440,9 +383,6 @@ export const GetPaymentMethodsDocument = gql`
     logo
     value
     enabled
-    walletConnect {
-      description
-    }
   }
 }
     `;
