@@ -84,6 +84,10 @@ describe('WalletConnect', () => {
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
   });
   it('handles disconnection', async () => {
+    mockDefault.mockImplementationOnce(() => ({
+      ...defaults,
+      peerMeta: { name: 'Rainbow' },
+    }));
     mockConnect.mockImplementation((event: string, callback: () => void) => {
       if (event === 'connect') {
         setTimeout(() => {
