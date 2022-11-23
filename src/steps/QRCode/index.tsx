@@ -4,12 +4,12 @@ import React, { useContext, useEffect } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import { useGetDepositAddress } from '../../hooks/depositAddress';
+import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { Context, Steps } from '../../providers/Store';
 
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
-  const { getDepositAddress } = useGetDepositAddress();
+  const { getDepositAddress } = useDepositAddress();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });

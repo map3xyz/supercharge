@@ -8,8 +8,8 @@ import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum, {
   ConnectHandler,
 } from '../../components/methods/WindowEthereum';
-import { useGetDepositAddress } from '../../hooks/depositAddress';
-import { useWeb3 } from '../../hooks/web3';
+import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
@@ -35,7 +35,7 @@ const EnterAmount: React.FC<Props> = () => {
   const [amount, setAmount] = useState<number>(0);
 
   const { getChainID, sendTransaction, switchChain } = useWeb3();
-  const { getDepositAddress } = useGetDepositAddress();
+  const { getDepositAddress } = useDepositAddress();
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;

@@ -40,7 +40,7 @@ const PaymentMethod: React.FC<Props> = () => {
 
   return (
     <>
-      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="sticky top-0 z-20 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -83,7 +83,7 @@ const PaymentMethod: React.FC<Props> = () => {
           via
         </div>
       </div>
-      <div className="flex flex-col dark:text-white">
+      <div className="relative z-10 flex flex-col dark:text-white">
         {methodsForNetwork?.map((method) =>
           method ? (
             <div

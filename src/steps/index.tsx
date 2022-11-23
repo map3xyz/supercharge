@@ -18,10 +18,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   const { step, steps } = state;
 
   return (
-    <div
-      className="flex w-full flex-col justify-between"
-      style={{ height: '500px' }}
-    >
+    <div className="flex h-full w-full flex-col justify-between sm:!h-[500px]">
       <>
         <InnerWrapper>
           <div className="flex w-full items-center justify-between gap-4">

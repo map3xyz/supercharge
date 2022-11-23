@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { Context } from '../providers/Store';
 
-export const useGetDepositAddress = () => {
+export const useDepositAddress = () => {
   const [state, dispatch, { generateDepositAddress }] = useContext(Context);
 
   const getDepositAddress = async (memoEnabled: boolean) => {
