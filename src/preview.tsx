@@ -11,10 +11,16 @@ root.render(
       onClick={() => {
         const map3 = initMap3Sdk({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async (coin, network) => {
+          generateDepositAddress: async (coin, network, memoEnabled) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
+            if (memoEnabled) {
+              return {
+                address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+                memo: '123456',
+              };
+            }
+            return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
           },
           slug: 'Ethereum:',
           theme: 'dark',

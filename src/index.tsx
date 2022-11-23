@@ -7,7 +7,11 @@ import App from './App';
 export interface Map3InitConfig {
   anonKey: string;
   fiat?: string;
-  generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
+  generateDepositAddress: (
+    asset?: string,
+    network?: string,
+    memoEnabled?: boolean
+  ) => Promise<{ address: string; memo?: string }>;
   slug?: string;
   theme?: 'dark' | 'light';
 }
@@ -64,7 +68,7 @@ export class Map3 {
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
       },
-      uri: process.env.CONSOLE_API_URL,
+      uri: process.env.CONSOLE_API_URL + '/graphql',
     });
     this.root.render(
       <ApolloProvider client={client}>

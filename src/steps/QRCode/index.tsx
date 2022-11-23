@@ -4,10 +4,12 @@ import React, { useContext, useEffect } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { Context, Steps } from '../../providers/Store';
 
 const QRCode: React.FC<Props> = () => {
-  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
+  const [state, dispatch] = useContext(Context);
+  const { getDepositAddress } = useDepositAddress();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
@@ -17,17 +19,9 @@ const QRCode: React.FC<Props> = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-        const address = await generateDepositAddress(
-          state.asset?.symbol as string,
-          state.network?.symbol as string
-        );
-        dispatch({
-          payload: address,
-          type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
-        });
+        await getDepositAddress(false);
       } catch (e) {
-        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
+        console.error(e);
       }
     };
     run();

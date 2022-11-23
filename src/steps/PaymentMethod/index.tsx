@@ -6,12 +6,15 @@ import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { useGetPaymentMethodsQuery } from '../../generated/apollo-gql';
+import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const chainId = state.network?.identifiers?.chainId;
+  const { providers } = useWeb3();
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
-    variables: { chainId: state.network?.identifiers?.chainId },
+    variables: { chainId },
   });
 
   if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
@@ -29,9 +32,19 @@ const PaymentMethod: React.FC<Props> = () => {
     return null;
   }
 
+  const methodsForNetwork = data?.methodsForNetwork?.filter(
+    (method) =>
+      !method?.walletConnect ||
+      ((method?.walletConnect?.chains?.length === 0 ||
+        method?.walletConnect?.chains?.includes('eip155:' + chainId)) &&
+        method?.walletConnect?.mobile?.native &&
+        // TODO: Add better support for window.ethereum and WalletConnect overlaps
+        method.name !== 'MetaMask')
+  );
+
   return (
     <>
-      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="sticky top-0 z-20 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -74,18 +87,18 @@ const PaymentMethod: React.FC<Props> = () => {
           via
         </div>
       </div>
-      <div className="flex flex-col dark:text-white">
-        {data?.methodsForNetwork?.map((method) =>
+      <div className="relative z-10 flex flex-col dark:text-white">
+        {methodsForNetwork?.map((method) =>
           method ? (
             <div
               className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
-                method.enabled
+                method.flags?.enabled
                   ? ''
                   : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
               }`}
-              key={method.value}
+              key={method.name + '-' + method.value}
               onClick={() => {
-                if (!method.enabled) {
+                if (!method.flags?.enabled) {
                   return;
                 }
                 dispatch({
@@ -103,6 +116,19 @@ const PaymentMethod: React.FC<Props> = () => {
                     type: 'SET_STEPS',
                   });
                   dispatch({ payload: Steps.Summary, type: 'SET_STEP' });
+                } else if (method.value === 'isWalletConnect') {
+                  dispatch({
+                    payload: [
+                      'AssetSelection',
+                      'NetworkSelection',
+                      'PaymentMethod',
+                      'WalletConnect',
+                      'EnterAmount',
+                      'Summary',
+                    ],
+                    type: 'SET_STEPS',
+                  });
+                  dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
                 } else {
                   dispatch({
                     payload: [
@@ -122,8 +148,14 @@ const PaymentMethod: React.FC<Props> = () => {
               <div className="flex items-center gap-2">
                 <MethodIcon method={method} />
                 <span>{method.name}</span>
+                {providers[method.name || ''] ? (
+                  <Badge color="green">Installed</Badge>
+                ) : (
+                  <Badge color="red">Uninstalled</Badge>
+                )}
               </div>
-              {state.method?.value === method.value ? (
+              {`${state.method?.name}-${state.method?.value}` ===
+              `${method.name}-${method.value}` ? (
                 <i className="fa fa-check-circle text-green-400" />
               ) : (
                 <i className="fa fa-chevron-right text-xxs" />

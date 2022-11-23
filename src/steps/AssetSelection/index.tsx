@@ -11,7 +11,7 @@ import {
   useSearchAssetsLazyQuery,
 } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
-import { debounce } from '../../utils';
+import { debounce } from '../../utils/debounce';
 
 const AssetSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);

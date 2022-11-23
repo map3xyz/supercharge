@@ -71,14 +71,12 @@ export type MutationCreateOrganizationArgs = {
 
 export type MutationCreateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
-  networkCode: Scalars['String'];
 };
 
 
 export type MutationUpdateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
   enabled: Scalars['Boolean'];
-  networkCode: Scalars['String'];
 };
 
 export type Network = {
@@ -101,12 +99,18 @@ export type Organization = {
 
 export type PaymentMethod = {
   __typename?: 'PaymentMethod';
-  enabled?: Maybe<Scalars['Boolean']>;
+  flags?: Maybe<PaymentMethodFlags>;
   icon?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
-  walletConnect?: Maybe<WalletConnect>;
+  walletConnect?: Maybe<WalletConnectWallet>;
+};
+
+export type PaymentMethodFlags = {
+  __typename?: 'PaymentMethodFlags';
+  enabled?: Maybe<Scalars['Boolean']>;
+  memo?: Maybe<Scalars['Boolean']>;
 };
 
 export type Price = {
@@ -204,27 +208,8 @@ export type SdkConfigField = {
   created?: Maybe<Scalars['Int']>;
   enabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['ID']>;
-  networkCode?: Maybe<Scalars['String']>;
   organizationId?: Maybe<Scalars['String']>;
   updated?: Maybe<Scalars['Int']>;
-};
-
-export type WalletConnect = {
-  __typename?: 'WalletConnect';
-  app?: Maybe<WalletConnectAppType>;
-  app_type?: Maybe<Scalars['String']>;
-  chains?: Maybe<Array<Maybe<Scalars['String']>>>;
-  description?: Maybe<Scalars['String']>;
-  desktop?: Maybe<WalletConnectPlatformType>;
-  homepage?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  image_id?: Maybe<Scalars['String']>;
-  image_url?: Maybe<WalletConnectImageUrlType>;
-  metadata?: Maybe<WalletConnectMetadataType>;
-  mobile?: Maybe<WalletConnectPlatformType>;
-  name?: Maybe<Scalars['String']>;
-  sdks?: Maybe<Array<Maybe<Scalars['String']>>>;
-  versions?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type WalletConnectAppType = {
@@ -262,6 +247,24 @@ export type WalletConnectPlatformType = {
   universal?: Maybe<Scalars['String']>;
 };
 
+export type WalletConnectWallet = {
+  __typename?: 'WalletConnectWallet';
+  app?: Maybe<WalletConnectAppType>;
+  app_type?: Maybe<Scalars['String']>;
+  chains?: Maybe<Array<Maybe<Scalars['String']>>>;
+  description?: Maybe<Scalars['String']>;
+  desktop?: Maybe<WalletConnectPlatformType>;
+  homepage?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  image_id?: Maybe<Scalars['String']>;
+  image_url?: Maybe<WalletConnectImageUrlType>;
+  metadata?: Maybe<WalletConnectMetadataType>;
+  mobile?: Maybe<WalletConnectPlatformType>;
+  name?: Maybe<Scalars['String']>;
+  sdks?: Maybe<Array<Maybe<Scalars['String']>>>;
+  versions?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
 export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -288,7 +291,7 @@ export type GetPaymentMethodsQueryVariables = Exact<{
 }>;
 
 
-export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, enabled?: boolean | null } | null> | null };
+export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -439,7 +442,20 @@ export const GetPaymentMethodsDocument = gql`
     icon
     logo
     value
-    enabled
+    flags {
+      enabled
+      memo
+    }
+    walletConnect {
+      description
+      chains
+      mobile {
+        native
+      }
+      desktop {
+        native
+      }
+    }
   }
 }
     `;

@@ -10,6 +10,7 @@ import EnterAmount from '../steps/EnterAmount';
 import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import QRCode from '../steps/QRCode';
+import WalletConnect from './WalletConnect';
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   const [state, dispatch] = useContext(Context);
@@ -17,10 +18,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   const { step, steps } = state;
 
   return (
-    <div
-      className="flex w-full flex-col justify-between"
-      style={{ height: '500px' }}
-    >
+    <div className="flex h-full w-full flex-col justify-between sm:!h-[500px]">
       <>
         <InnerWrapper>
           <div className="flex w-full items-center justify-between gap-4">
@@ -80,6 +78,17 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 key={Steps[step]}
               >
                 <EnterAmount />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.WalletConnect] && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="h-full"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <WalletConnect />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.Summary] && (

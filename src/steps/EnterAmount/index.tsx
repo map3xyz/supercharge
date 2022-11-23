@@ -4,7 +4,12 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import Web3 from '../../components/methods/Web3';
+import WalletConnect from '../../components/methods/WalletConnect';
+import WindowEthereum, {
+  ConnectHandler,
+} from '../../components/methods/WindowEthereum';
+import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
@@ -15,8 +20,9 @@ const EnterAmount: React.FC<Props> = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
+  const connectRef = useRef<ConnectHandler>(null);
 
-  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
+  const [state, dispatch] = useContext(Context);
   const [formError, setFormError] = useState<string | undefined>('');
 
   const rate = state.asset?.price?.price;
@@ -27,6 +33,9 @@ const EnterAmount: React.FC<Props> = () => {
     quote: string;
   }>({ base: '0', inputSelected: rate ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<number>(0);
+
+  const { getChainID, sendTransaction, switchChain } = useWeb3();
+  const { getDepositAddress } = useDepositAddress();
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -68,12 +77,6 @@ const EnterAmount: React.FC<Props> = () => {
     setAmount(formValue.inputSelected === 'crypto' ? base : quote);
   }, [formValue.base]);
 
-  useEffect(() => {
-    if (state.account.status === 'success') {
-      setFormError(undefined);
-    }
-  }, [state.account.status]);
-
   const toggleBase = () => {
     if (inputRef.current) {
       inputRef.current.value = quoteRef.current!.innerText;
@@ -93,82 +96,34 @@ const EnterAmount: React.FC<Props> = () => {
       setFormError(undefined);
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
-        window.postMessage({ type: 'web3_connect' }, '*');
+        connectRef.current?.connect();
         return;
       }
 
-      let currentChainId;
-      let provider = window.ethereum;
-      try {
-        currentChainId = await window.ethereum.request({
-          method: 'eth_chainId',
-        });
-      } catch (e) {
-        provider = window.ethereum.providers.find(
-          (provider: any) => provider[state.method?.value!] === true
-        ).request;
-        currentChainId = await provider({ method: 'eth_chainId' });
-      }
+      const currentChainId = await getChainID();
 
       if (
         state.network?.identifiers?.chainId &&
         Number(currentChainId) !== state.network?.identifiers?.chainId
       ) {
-        try {
-          await provider({
-            method: 'wallet_switchEthereumChain',
-            params: [
-              {
-                chainId: ethers.utils.hexlify(
-                  state.network?.identifiers?.chainId
-                ),
-              },
-            ],
-          });
-        } catch (e: any) {
-          console.log(e);
-          setFormError(
-            `Please switch to ${state.network?.name} network in ${state.method?.name}`
-          );
-          return;
-        }
+        await switchChain(state.network?.identifiers?.chainId);
       }
 
-      let address = '';
-      try {
-        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-        address = await generateDepositAddress(
-          state.asset?.symbol as string,
-          state.network?.symbol as string
-        );
-        dispatch({
-          payload: address,
-          type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
-        });
-      } catch (e) {
-        dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
-        throw new Error('Error generating a deposit address.');
-      }
+      const { address, memo } = await getDepositAddress(
+        state.method?.flags?.memo || false
+      );
+
+      const extraGas = memo ? (memo.length / 2) * 16 : 0;
 
       const transactionParameters = {
+        data: memo || '0x',
         from: state.account.data,
+        gas: ethers.utils.hexlify(21000 + extraGas),
         to: address,
-        // data: '0x666f6f',
-        // 16 * # of bytes of data
-        // gas: ethers.utils.hexlify(21000 + 48),
         value: ethers.utils.parseEther(amount.toString()).toHexString(),
       };
 
-      try {
-        const currentProvider = window.ethereum.providers.find(
-          (x: any) => x[state.method!.value || 'isMetaMask']
-        );
-        await currentProvider.send('eth_sendTransaction', [
-          transactionParameters,
-        ]);
-      } catch (e: any) {
-        setFormError(e.message);
-      }
+      await sendTransaction(transactionParameters);
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
@@ -230,7 +185,7 @@ const EnterAmount: React.FC<Props> = () => {
                 type: 'SET_STEP',
               });
             } else {
-              window.postMessage({ type: 'web3_connect' }, '*');
+              connectRef.current?.connect();
             }
           }}
           role="button"
@@ -350,11 +305,19 @@ const EnterAmount: React.FC<Props> = () => {
                 </Badge>
               </span>
             ) : null}
-            <Web3
-              amount={amount}
-              disabled={state.depositAddress.status === 'loading'}
-              setFormError={setFormError}
-            />
+            {state.method.value !== 'isWalletConnect' ? (
+              <WindowEthereum
+                amount={amount}
+                disabled={state.depositAddress.status === 'loading'}
+                ref={connectRef}
+                setFormError={setFormError}
+              />
+            ) : (
+              <WalletConnect
+                amount={amount}
+                disabled={state.depositAddress.status === 'loading'}
+              />
+            )}
           </div>
         </form>
       </InnerWrapper>

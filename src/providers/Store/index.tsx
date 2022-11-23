@@ -1,3 +1,5 @@
+import WalletConnect from '@walletconnect/client';
+import { ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import {
@@ -11,7 +13,8 @@ export enum Steps {
   'NetworkSelection' = 1,
   'PaymentMethod' = 2,
   'EnterAmount' = 3,
-  'Summary' = 4,
+  'WalletConnect' = 4,
+  'Summary' = 5,
   __LENGTH,
 }
 
@@ -30,13 +33,24 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
+  connector?: {
+    data?: WalletConnect;
+    error?: string;
+    status: RemoteType;
+    waiting: boolean;
+  };
   depositAddress: {
     data: string | undefined;
     status: RemoteType;
   };
   fiat?: string;
-  method?: PaymentMethod;
+  method?: PaymentMethod & { description?: string };
   network?: Network;
+  provider?: {
+    data?: ethers.providers.Web3Provider;
+    error?: string;
+    status: RemoteType;
+  };
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
@@ -46,7 +60,7 @@ type State = {
 type Action =
   | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
-  | { payload: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
+  | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
   | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
@@ -56,7 +70,16 @@ type Action =
   | { type: 'SET_ACCOUNT_IDLE' }
   | { type: 'SET_ACCOUNT_LOADING' }
   | { payload: string; type: 'SET_ACCOUNT_SUCCESS' }
-  | { payload: string; type: 'SET_ACCOUNT_ERROR' };
+  | { payload: string; type: 'SET_ACCOUNT_ERROR' }
+  | { type: 'SET_CONNECTOR_IDLE' }
+  | { type: 'SET_CONNECTOR_LOADING' }
+  | { payload: any; type: 'SET_CONNECTOR_SUCCESS' }
+  | { payload: string; type: 'SET_CONNECTOR_ERROR' }
+  // | { payload: boolean; type: 'SET_CONNECTOR_WAITING' }
+  | { type: 'SET_PROVIDER_IDLE' }
+  | { type: 'SET_PROVIDER_LOADING' }
+  | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
+  | { payload: string; type: 'SET_PROVIDER_ERROR' };
 
 const initialState: State = {
   account: {
@@ -64,6 +87,12 @@ const initialState: State = {
     status: 'idle',
   },
   asset: undefined,
+  connector: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+    waiting: false,
+  },
   depositAddress: {
     data: undefined,
     status: 'idle',
@@ -71,6 +100,11 @@ const initialState: State = {
   fiat: undefined,
   method: undefined,
   network: undefined,
+  provider: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+  },
   slug: undefined,
   step: Steps.AssetSelection,
   steps: [
@@ -90,7 +124,7 @@ export const Store: React.FC<
     generateDepositAddress: (
       asset?: string,
       network?: string
-    ) => Promise<string>;
+    ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
     slug?: string;
     theme?: 'dark' | 'light';
@@ -197,6 +231,90 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
+        case 'SET_CONNECTOR_SUCCESS':
+          return {
+            ...state,
+            connector: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+              waiting: false,
+            },
+          };
+        case 'SET_CONNECTOR_ERROR':
+          return {
+            ...state,
+            connector: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+              waiting: false,
+            },
+          };
+        case 'SET_CONNECTOR_LOADING':
+          return {
+            ...state,
+            connector: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+              waiting: false,
+            },
+          };
+        case 'SET_CONNECTOR_IDLE':
+          return {
+            ...state,
+            connector: {
+              data: undefined,
+              error: undefined,
+              status: 'idle',
+              waiting: false,
+            },
+          };
+        // case 'SET_CONNECTOR_WAITING':
+        //   return {
+        //     ...state,
+        //     connector: {
+        //       ...state.connector!,
+        //       waiting: action.payload,
+        //     },
+        //   };
+        case 'SET_PROVIDER_SUCCESS':
+          return {
+            ...state,
+            provider: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+            },
+          };
+        case 'SET_PROVIDER_ERROR':
+          return {
+            ...state,
+            provider: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_PROVIDER_LOADING':
+          return {
+            ...state,
+            provider: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_PROVIDER_IDLE':
+          return {
+            ...state,
+            provider: {
+              data: undefined,
+              error: undefined,
+              status: 'idle',
+            },
+          };
         default:
           return state;
       }
@@ -218,12 +336,16 @@ export const Context = createContext<
     {
       generateDepositAddress: (
         asset?: string,
-        network?: string
-      ) => Promise<string>;
+        network?: string,
+        memoEnabled?: boolean
+      ) => Promise<{ address: string; memo?: string }>;
     }
   ]
 >([
   initialState,
   () => null,
-  { generateDepositAddress: () => new Promise((resolve) => resolve('')) },
+  {
+    generateDepositAddress: () =>
+      new Promise((resolve) => resolve({ address: '' })),
+  },
 ]);

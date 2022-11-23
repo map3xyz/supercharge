@@ -11,7 +11,7 @@ describe('Enter Amount', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            return '0x0000000000000000000000000000000000000000';
+            return { address: '0x0000000000000000000000000000000000000000' };
           },
           theme: 'dark',
         }}
@@ -25,7 +25,7 @@ describe('Enter Amount', () => {
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     await screen.findByText('Fetching Payment Methods...');
-    const metaMask = await screen.findByText('MetaMask');
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
     fireEvent.click(metaMask);
   });
 
@@ -42,7 +42,7 @@ describe('Enter Amount', () => {
     fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = await screen.findByText('MetaMask');
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
     fireEvent.click(metaMask);
     const warning = await screen.findByText(
       'No pricing available for this asset.'
@@ -116,8 +116,8 @@ describe('Enter Amount', () => {
       expect(connecting).toBeInTheDocument();
       const error = await screen.findByText('User rejected the request.');
       expect(error).toBeInTheDocument();
+      const form = await screen.findByTestId('enter-amount-form');
       await act(async () => {
-        const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
       expect(await screen.findByText('Connecting...')).toBeInTheDocument();
@@ -125,14 +125,14 @@ describe('Enter Amount', () => {
   });
 });
 
-describe('Web3', () => {
+describe('window.ethereum', () => {
   beforeEach(async () => {
     render(
       <App
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            throw 'Error generating deposit address.';
+            throw { address: 'Error generating deposit address.' };
           },
           theme: 'dark',
         }}
@@ -145,7 +145,7 @@ describe('Web3', () => {
     fireEvent.click(bitcoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = await screen.findByText('MetaMask');
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
@@ -168,39 +168,16 @@ describe('Web3', () => {
 
     it('should handle accounts disconnecting', async () => {
       testingUtils.mockNotConnectedWallet();
-      act(() => {
-        testingUtils.mockAccountsChanged(['0x123willDisconnect']);
-      });
-      act(() => {
-        global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
-      });
+      testingUtils.mockAccountsChanged(['0x123willDisconnect']);
+      testingUtils.mockAccountsChanged([]);
+      global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
       const confirm = await screen.findByText('Confirm Payment');
       expect(confirm).toBeInTheDocument();
-      act(() => {
-        testingUtils.mockAccountsChanged([]);
-      });
       act(() => {
         global.window.ethereum.emit('accountsChanged', []);
       });
       const connectWallet = await screen.findByText('Connect Wallet');
       expect(connectWallet).toBeInTheDocument();
-    });
-    it('should listen for connection requests', async () => {
-      act(() => {
-        fireEvent(
-          window,
-          new MessageEvent('message', {
-            data: { type: 'web3_connect' },
-            origin: '*',
-          })
-        );
-      });
-      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
-        '0x123willConnect',
-      ]);
-      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
-      await screen.findByText('Confirm Payment');
-      expect(await screen.findByText(/0x12/)).toBeInTheDocument();
     });
   });
 
