@@ -1,10 +1,34 @@
 import { ethers } from 'ethers';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { Context } from '../providers/Store';
 
 export const useWeb3 = () => {
   const [state] = useContext(Context);
+  const [providers, setProviders] = useState<{
+    [key in string]: boolean;
+  }>({});
+
+  useEffect(() => {
+    if (window.ethereum?.providers) {
+      return setProviders(
+        Object.keys(window.ethereum.providers).reduce((acc, key) => {
+          acc[key] = true;
+          return acc;
+        }, {} as { [key in string]: boolean })
+      );
+    }
+
+    if (window.ethereum?.isMetaMask) {
+      return setProviders({ MetaMask: true });
+    }
+
+    if (window.ethereum?.isCoinbaseWallet) {
+      return setProviders({ CoinbaseWallet: true });
+    }
+
+    return setProviders({});
+  }, []);
 
   const getChainID = async () => {
     if (state.method?.value === 'isWalletConnect') {
@@ -42,5 +66,5 @@ export const useWeb3 = () => {
     }
   };
 
-  return { getChainID, sendTransaction, switchChain };
+  return { getChainID, providers, sendTransaction, switchChain };
 };

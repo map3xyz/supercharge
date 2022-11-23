@@ -1,6 +1,9 @@
+import { generateTestingUtils } from 'eth-testing';
+
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
+import * as useWeb3Mock from '../../hooks/useWeb3';
 
 beforeEach(() => {
   render(
@@ -18,13 +21,37 @@ beforeEach(() => {
 });
 
 describe('Payment Selection', () => {
-  it('renders', async () => {
+  const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+  beforeAll(() => {
+    global.window.ethereum = testingUtils.getProvider();
+    global.window.ethereum.providers = [testingUtils.getProvider()];
+  });
+  afterEach(() => {
+    testingUtils.clearAllMocks();
+  });
+  beforeEach(async () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
-    const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const ethNetwork = await screen.findByText('Ethereum');
+    fireEvent.click(ethNetwork);
+  });
+  it('renders', async () => {
     const paymentSelection = await screen.findByText('Payment Method');
     expect(paymentSelection).toBeInTheDocument();
+  });
+  describe('WalletConnect', () => {
+    it('hides WalletConnect metamask connection if eth provider detected', async () => {
+      jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+        getChainID: jest.fn(),
+        providers: { MetaMask: true },
+        sendTransaction: jest.fn(),
+        switchChain: jest.fn(),
+      }));
+      const paymentSelection = await screen.findByText('Payment Method');
+      expect(paymentSelection).toBeInTheDocument();
+      const metamaskExtensions = await screen.findAllByText('MetaMask');
+      expect(metamaskExtensions).toHaveLength(1);
+    });
   });
 });

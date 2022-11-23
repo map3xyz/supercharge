@@ -116,7 +116,7 @@ const EnterAmount: React.FC<Props> = () => {
       const extraGas = memo ? (memo.length / 2) * 16 : 0;
 
       const transactionParameters = {
-        data: memo,
+        data: memo || '0x',
         from: state.account.data,
         gas: ethers.utils.hexlify(21000 + extraGas),
         to: address,

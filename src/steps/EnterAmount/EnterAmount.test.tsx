@@ -25,7 +25,7 @@ describe('Enter Amount', () => {
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     await screen.findByText('Fetching Payment Methods...');
-    const metaMask = await screen.findByText('MetaMask');
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
     fireEvent.click(metaMask);
   });
 
@@ -42,7 +42,7 @@ describe('Enter Amount', () => {
     fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = await screen.findByText('MetaMask');
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
     fireEvent.click(metaMask);
     const warning = await screen.findByText(
       'No pricing available for this asset.'
@@ -116,8 +116,8 @@ describe('Enter Amount', () => {
       expect(connecting).toBeInTheDocument();
       const error = await screen.findByText('User rejected the request.');
       expect(error).toBeInTheDocument();
+      const form = await screen.findByTestId('enter-amount-form');
       await act(async () => {
-        const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
       expect(await screen.findByText('Connecting...')).toBeInTheDocument();
@@ -145,7 +145,7 @@ describe('window.ethereum', () => {
     fireEvent.click(bitcoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = await screen.findByText('MetaMask');
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
@@ -168,17 +168,11 @@ describe('window.ethereum', () => {
 
     it('should handle accounts disconnecting', async () => {
       testingUtils.mockNotConnectedWallet();
-      act(() => {
-        testingUtils.mockAccountsChanged(['0x123willDisconnect']);
-      });
-      act(() => {
-        global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
-      });
+      testingUtils.mockAccountsChanged(['0x123willDisconnect']);
+      testingUtils.mockAccountsChanged([]);
+      global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
       const confirm = await screen.findByText('Confirm Payment');
       expect(confirm).toBeInTheDocument();
-      act(() => {
-        testingUtils.mockAccountsChanged([]);
-      });
       act(() => {
         global.window.ethereum.emit('accountsChanged', []);
       });

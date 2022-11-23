@@ -6,11 +6,13 @@ import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { useGetPaymentMethodsQuery } from '../../generated/apollo-gql';
+import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const chainId = state.network?.identifiers?.chainId;
+  const { providers } = useWeb3();
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
     variables: { chainId },
   });
@@ -35,7 +37,9 @@ const PaymentMethod: React.FC<Props> = () => {
       !method?.walletConnect ||
       ((method?.walletConnect?.chains?.length === 0 ||
         method?.walletConnect?.chains?.includes('eip155:' + chainId)) &&
-        method?.walletConnect?.mobile?.native)
+        method?.walletConnect?.mobile?.native &&
+        // TODO: Add better support for window.ethereum and WalletConnect overlaps
+        method.name !== 'MetaMask')
   );
 
   return (
@@ -144,6 +148,11 @@ const PaymentMethod: React.FC<Props> = () => {
               <div className="flex items-center gap-2">
                 <MethodIcon method={method} />
                 <span>{method.name}</span>
+                {providers[method.name || ''] ? (
+                  <Badge color="green">Installed</Badge>
+                ) : (
+                  <Badge color="red">Uninstalled</Badge>
+                )}
               </div>
               {`${state.method?.name}-${state.method?.value}` ===
               `${method.name}-${method.value}` ? (
