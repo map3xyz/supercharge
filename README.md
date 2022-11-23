@@ -51,10 +51,10 @@ You can also include a normal script and link tag if your app doesn't support mo
         const map3 = initMap3Sdk({
           theme: 'dark',
           anonKey: '<ANON_KEY>',
-          generateDepositAddress: async (coin, network) => {
+          generateDepositAddress: async (coin, network, memoEnabled) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return '0x0000000000000000000000000000000000000000';
+            return {address: '0x0000000000000000000000000000000000000000'};
           }
         })
         map3.open()
