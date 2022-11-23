@@ -150,9 +150,7 @@ const PaymentMethod: React.FC<Props> = () => {
                 <span>{method.name}</span>
                 {providers[method.name || ''] ? (
                   <Badge color="green">Installed</Badge>
-                ) : (
-                  <Badge color="red">Uninstalled</Badge>
-                )}
+                ) : null}
               </div>
               {`${state.method?.name}-${state.method?.value}` ===
               `${method.name}-${method.value}` ? (
