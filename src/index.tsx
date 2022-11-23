@@ -1,11 +1,8 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
-
-const queryClient = new QueryClient();
 
 export interface Map3InitConfig {
   anonKey: string;
@@ -75,9 +72,7 @@ export class Map3 {
     });
     this.root.render(
       <ApolloProvider client={client}>
-        <QueryClientProvider client={queryClient}>
-          <App config={this.config} onClose={this.onClose} />
-        </QueryClientProvider>
+        <App config={this.config} onClose={this.onClose} />
       </ApolloProvider>
     );
   }
