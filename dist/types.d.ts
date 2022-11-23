@@ -1,7 +1,10 @@
 export interface Map3InitConfig {
     anonKey: string;
     fiat?: string;
-    generateDepositAddress: (asset?: string, network?: string) => Promise<string>;
+    generateDepositAddress: (asset?: string, network?: string, memoEnabled?: boolean) => Promise<{
+        address: string;
+        memo?: string;
+    }>;
     slug?: string;
     theme?: 'dark' | 'light';
 }
