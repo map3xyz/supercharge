@@ -34,10 +34,9 @@ const PaymentMethod: React.FC<Props> = () => {
 
   const methodsForNetwork = data?.methodsForNetwork?.filter(
     (method) =>
-      !method?.walletConnect ||
-      ((method?.walletConnect?.chains?.length === 0 ||
-        method?.walletConnect?.chains?.includes('eip155:' + chainId)) &&
-        method?.walletConnect?.mobile?.native &&
+      !method?.walletConnect /*( method?.walletConnect?.chains?.length === 0 ||
+        method?.walletConnect?.chains?.includes('eip155:' + chainId)) && */ ||
+      (method?.walletConnect?.mobile?.native &&
         // TODO: Add better support for window.ethereum and WalletConnect overlaps
         method.name !== 'MetaMask')
   );

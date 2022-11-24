@@ -17,7 +17,8 @@ root.render(
             if (memoEnabled) {
               return {
                 address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-                memo: '123456',
+                // foobar
+                memo: '0x666f6f6261720d0a',
               };
             }
             return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
