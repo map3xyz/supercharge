@@ -125,7 +125,8 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
         htmlType="submit"
         loading={
           state.account.status === 'loading' ||
-          state.depositAddress.status === 'loading'
+          state.depositAddress.status === 'loading' ||
+          state.transaction?.status === 'loading'
         }
         size="medium"
         type={'default'}

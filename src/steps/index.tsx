@@ -10,6 +10,7 @@ import EnterAmount from '../steps/EnterAmount';
 import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import QRCode from '../steps/QRCode';
+import Result from './Result';
 import WalletConnect from './WalletConnect';
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
@@ -91,7 +92,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 <WalletConnect />
               </motion.div>
             )}
-            {steps[step] === Steps[Steps.Summary] && (
+            {steps[step] === Steps[Steps.QRCode] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 className="h-full"
@@ -99,7 +100,18 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
               >
-                {state.method?.value === 'qr' ? <QRCode /> : null}
+                <QRCode />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.Result] && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="h-full"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <Result />
               </motion.div>
             )}
           </AnimatePresence>

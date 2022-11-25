@@ -110,11 +110,11 @@ const PaymentMethod: React.FC<Props> = () => {
                       'AssetSelection',
                       'NetworkSelection',
                       'PaymentMethod',
-                      'Summary',
+                      'QRCode',
                     ],
                     type: 'SET_STEPS',
                   });
-                  dispatch({ payload: Steps.Summary, type: 'SET_STEP' });
+                  dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
                 } else if (method.value === 'isWalletConnect') {
                   dispatch({
                     payload: [
@@ -123,7 +123,7 @@ const PaymentMethod: React.FC<Props> = () => {
                       'PaymentMethod',
                       'WalletConnect',
                       'EnterAmount',
-                      'Summary',
+                      'Result',
                     ],
                     type: 'SET_STEPS',
                   });
@@ -135,7 +135,7 @@ const PaymentMethod: React.FC<Props> = () => {
                       'NetworkSelection',
                       'PaymentMethod',
                       'EnterAmount',
-                      'Summary',
+                      'Result',
                     ],
                     type: 'SET_STEPS',
                   });

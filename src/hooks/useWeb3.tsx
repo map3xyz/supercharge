@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Context } from '../providers/Store';
 
 export const useWeb3 = () => {
-  const [state] = useContext(Context);
+  const [state, dispatch] = useContext(Context);
   const [providers, setProviders] = useState<{
     [key in string]: boolean;
   }>({});
@@ -59,10 +59,20 @@ export const useWeb3 = () => {
   };
 
   const sendTransaction = async (txParams: any) => {
-    if (state.method?.value === 'isWalletConnect') {
-      await state.connector?.data?.sendTransaction(txParams);
-    } else {
-      await state.provider?.data?.send('eth_sendTransaction', [txParams]);
+    dispatch({ type: 'SET_TRANSACTION_LOADING' });
+    try {
+      let hash;
+      if (state.method?.value === 'isWalletConnect') {
+        hash = await state.connector?.data?.sendTransaction(txParams);
+        console.log(hash);
+      } else {
+        hash = await state.provider?.data?.send('eth_sendTransaction', [
+          txParams,
+        ]);
+      }
+      dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
+    } catch (e: any) {
+      dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
     }
   };
 

@@ -9,7 +9,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
 }) => {
   return (
     <InnerWrapper>
-      <div className="flex items-center gap-1 text-lg font-bold">
+      <div className="flex items-center gap-2 text-lg font-bold leading-5">
         <i className="fa fa-circle-xmark text-red-600"></i>{' '}
         <h3 className=" dark:text-white">{header}</h3>
       </div>
