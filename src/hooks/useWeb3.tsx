@@ -60,20 +60,24 @@ export const useWeb3 = () => {
 
   const sendTransaction = async (txParams: any) => {
     dispatch({ type: 'SET_TRANSACTION_LOADING' });
-    try {
-      let hash;
-      if (state.method?.value === 'isWalletConnect') {
+    let hash;
+    if (state.method?.value === 'isWalletConnect') {
+      try {
         hash = await state.connector?.data?.sendTransaction(txParams);
-        console.log(hash);
-      } else {
+      } catch (e: any) {
+        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
+      }
+    } else {
+      try {
         hash = await state.provider?.data?.send('eth_sendTransaction', [
           txParams,
         ]);
+      } catch (e: any) {
+        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
+        throw e;
       }
-      dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
-    } catch (e: any) {
-      dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
     }
+    dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
   };
 
   return { getChainID, providers, sendTransaction, switchChain };

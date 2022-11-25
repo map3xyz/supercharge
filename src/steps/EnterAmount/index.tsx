@@ -232,7 +232,7 @@ const EnterAmount: React.FC<Props> = () => {
         >
           <div />
           <div className="w-full">
-            <div className="flex relative box-border max-w-full items-center justify-center">
+            <div className="relative box-border flex max-w-full items-center justify-center">
               {formValue.inputSelected === 'fiat' ? (
                 <span className="text-inherit">$</span>
               ) : null}
@@ -265,7 +265,7 @@ const EnterAmount: React.FC<Props> = () => {
                 <span className="text-inherit">{state.asset.symbol}</span>
               ) : null}
             </div>
-            <div className="flex mt-8 items-center justify-center text-neutral-400">
+            <div className="mt-8 flex items-center justify-center text-neutral-400">
               {rate ? (
                 <>
                   <div className="text-xs">
@@ -279,7 +279,7 @@ const EnterAmount: React.FC<Props> = () => {
                       <span>&nbsp;{state.asset.symbol}</span>
                     ) : null}
                   </div>
-                  <div className="flex ml-4 items-center justify-center">
+                  <div className="ml-4 flex items-center justify-center">
                     <div
                       className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
                       data-testid="toggle-base"

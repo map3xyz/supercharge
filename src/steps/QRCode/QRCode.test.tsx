@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
+import QRCode from '.';
 
 describe('QR Code', () => {
   beforeEach(async () => {
@@ -39,6 +40,10 @@ describe('QR Code', () => {
 });
 
 describe('QR Code Errors', () => {
+  it('renders', async () => {
+    render(<QRCode />);
+    expect(true).toBe(true);
+  });
   it('handles errors generating address', async () => {
     render(
       <App

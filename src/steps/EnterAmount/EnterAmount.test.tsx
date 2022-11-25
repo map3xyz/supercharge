@@ -3,6 +3,7 @@ import { generateTestingUtils } from 'eth-testing';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
+import EnterAmount from '.';
 
 describe('Enter Amount', () => {
   beforeEach(async () => {
@@ -256,5 +257,12 @@ describe('window.ethereum', () => {
       );
       expect(error).toBeInTheDocument();
     });
+  });
+});
+
+describe('Enter Amount Errors', () => {
+  it('renders', () => {
+    render(<EnterAmount />);
+    expect(true).toBe(true);
   });
 });

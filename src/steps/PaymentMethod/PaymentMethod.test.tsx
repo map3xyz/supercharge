@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 import * as useWeb3Mock from '../../hooks/useWeb3';
+import PaymentMethod from '.';
 
 beforeEach(() => {
   render(
@@ -53,5 +54,12 @@ describe('Payment Selection', () => {
       const metamaskExtensions = await screen.findAllByText('MetaMask');
       expect(metamaskExtensions).toHaveLength(1);
     });
+  });
+});
+
+describe('Payment Method Errors', () => {
+  it('renders', () => {
+    render(<PaymentMethod />);
+    expect(true).toBe(true);
   });
 });

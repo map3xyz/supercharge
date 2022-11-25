@@ -95,8 +95,6 @@ const AssetSelection: React.FC<Props> = () => {
           />
         ) : (
           assets?.map((asset) => {
-            if (!asset) return null;
-
             return (
               <div
                 className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
@@ -117,15 +115,15 @@ const AssetSelection: React.FC<Props> = () => {
                   <div className="flex w-4 justify-center">
                     <CoinLogo
                       height="h-4"
-                      name={asset.name || ''}
-                      png={asset.logo?.png || undefined}
-                      svg={asset.logo?.svg || undefined}
+                      name={asset?.name || ''}
+                      png={asset?.logo?.png || undefined}
+                      svg={asset?.logo?.svg || undefined}
                       width="w-4"
                     />
                   </div>
                   <span>{asset?.name}</span>
                 </div>
-                {asset.symbol === state.asset?.symbol ? (
+                {asset?.symbol === state.asset?.symbol ? (
                   <i className="fa fa-check-circle text-green-400" />
                 ) : (
                   <i className="fa fa-chevron-right text-xxs" />

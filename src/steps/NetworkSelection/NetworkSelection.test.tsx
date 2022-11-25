@@ -5,6 +5,7 @@ import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 import { GetAssetsForOrgDocument } from '../../generated/apollo-gql';
+import NetworkSelection from '.';
 
 describe('Network Selection', () => {
   it('renders', async () => {
@@ -82,5 +83,12 @@ describe('Network Selection', () => {
     fireEvent.click(bitcoin);
     const error = await screen.findByText('Error Fetching Networks');
     expect(error).toBeInTheDocument();
+  });
+});
+
+describe('Network Selection Errors', () => {
+  it('renders', async () => {
+    render(<NetworkSelection />);
+    expect(true).toBe(true);
   });
 });
