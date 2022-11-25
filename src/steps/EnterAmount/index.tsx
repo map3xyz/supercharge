@@ -53,9 +53,9 @@ const EnterAmount: React.FC<Props> = () => {
         nextInputWidth = formWidth;
 
         formRef.current.style.fontSize = `${fontSize}px`;
-        inputRef.current.style.width = `${nextInputWidth}px`;
+        inputRef.current.style.maxWidth = `${nextInputWidth}px`;
       } else {
-        inputRef.current.style.width = `${nextInputWidth}px`;
+        inputRef.current.style.maxWidth = `${nextInputWidth}px`;
         formRef.current.style.fontSize = `${BASE_FONT_SIZE}px`;
       }
     }
@@ -124,6 +124,7 @@ const EnterAmount: React.FC<Props> = () => {
       };
 
       await sendTransaction(transactionParameters);
+      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
@@ -249,11 +250,11 @@ const EnterAmount: React.FC<Props> = () => {
                 type="number"
               />
               <span
-                className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
+                className="invisible absolute -left-96 -top-96 px-2 !text-5xl"
                 ref={dummyInputRef}
               />
               <span
-                className="invisible absolute -left-96 -top-96 pl-6 !text-5xl"
+                className="invisible absolute -left-96 -top-96 px-2 !text-5xl"
                 ref={dummySymbolRef}
               >
                 {formValue.inputSelected === 'crypto'

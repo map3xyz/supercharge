@@ -19,7 +19,7 @@ const WalletConnect: React.FC<Props> = () => {
         'NetworkSelection',
         'PaymentMethod',
         'EnterAmount',
-        'Summary',
+        'Result',
       ],
       type: 'SET_STEPS',
     });

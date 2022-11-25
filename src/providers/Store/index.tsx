@@ -14,7 +14,8 @@ export enum Steps {
   'PaymentMethod' = 2,
   'EnterAmount' = 3,
   'WalletConnect' = 4,
-  'Summary' = 5,
+  'QRCode' = 5,
+  'Result' = 6,
   __LENGTH,
 }
 
@@ -55,6 +56,11 @@ type State = {
   step: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
+  transaction?: {
+    error?: string;
+    hash?: string;
+    status: RemoteType;
+  };
 };
 
 type Action =
@@ -79,7 +85,10 @@ type Action =
   | { type: 'SET_PROVIDER_IDLE' }
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
-  | { payload: string; type: 'SET_PROVIDER_ERROR' };
+  | { payload: string; type: 'SET_PROVIDER_ERROR' }
+  | { payload: string; type: 'SET_TRANSACTION_SUCCESS' }
+  | { payload: string; type: 'SET_TRANSACTION_ERROR' }
+  | { type: 'SET_TRANSACTION_LOADING' };
 
 const initialState: State = {
   account: {
@@ -112,7 +121,7 @@ const initialState: State = {
     'NetworkSelection',
     'PaymentMethod',
     'EnterAmount',
-    'Summary',
+    'Result',
   ],
   theme: undefined,
 };
@@ -313,6 +322,33 @@ export const Store: React.FC<
               data: undefined,
               error: undefined,
               status: 'idle',
+            },
+          };
+        case 'SET_TRANSACTION_SUCCESS':
+          return {
+            ...state,
+            transaction: {
+              error: undefined,
+              hash: action.payload,
+              status: 'success',
+            },
+          };
+        case 'SET_TRANSACTION_ERROR':
+          return {
+            ...state,
+            transaction: {
+              error: action.payload,
+              hash: undefined,
+              status: 'error',
+            },
+          };
+        case 'SET_TRANSACTION_LOADING':
+          return {
+            ...state,
+            transaction: {
+              error: undefined,
+              hash: undefined,
+              status: 'loading',
             },
           };
         default:
