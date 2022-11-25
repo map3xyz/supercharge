@@ -63,7 +63,8 @@ export const useWeb3 = () => {
     try {
       let hash;
       if (state.method?.value === 'isWalletConnect') {
-        await state.connector?.data?.sendTransaction(txParams);
+        hash = await state.connector?.data?.sendTransaction(txParams);
+        console.log(hash);
       } else {
         hash = await state.provider?.data?.send('eth_sendTransaction', [
           txParams,
