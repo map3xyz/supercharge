@@ -72,7 +72,6 @@ export const useWeb3 = () => {
       dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
     } catch (e: any) {
       dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
-      throw e;
     }
   };
 

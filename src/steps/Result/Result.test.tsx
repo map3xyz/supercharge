@@ -22,7 +22,6 @@ beforeEach(() => {
 describe('Result', () => {
   const testingUtils = generateTestingUtils({
     providerType: 'MetaMask',
-    verbose: true,
   });
   beforeAll(() => {
     global.window.ethereum = testingUtils.getProvider();
@@ -58,6 +57,45 @@ describe('Result', () => {
       expect(
         await screen.findByText('Transaction Submitted')
       ).toBeInTheDocument();
+    });
+    it('lets user start over', async () => {
+      const startOver = await screen.findByText('Start Over');
+      fireEvent.click(startOver);
+      expect(await screen.findByText('Select Asset')).toBeInTheDocument();
+    });
+  });
+  describe('error', () => {
+    beforeEach(async () => {
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+      testingUtils.lowLevel.mockRequest('eth_sendTransaction', '0x1', {
+        shouldThrow: true,
+      });
+      await screen.findByText('Loading...');
+      const elonCoin = await screen.findByText('ElonCoin');
+      fireEvent.click(elonCoin);
+      const ethNetwork = await screen.findByText('Ethereum');
+      fireEvent.click(ethNetwork);
+      const metamaskExtension = await screen.findByText('MetaMask');
+      fireEvent.click(metamaskExtension);
+      const input = await screen.findByTestId('input');
+      act(() => {
+        fireEvent.change(input, { target: { value: '1' } });
+      });
+      await screen.findByText('Confirm Payment');
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+    });
+    it('renders', async () => {
+      expect(await screen.findByText('Transaction Failed')).toBeInTheDocument();
+    });
+    it('lets user retry', async () => {
+      const retry = await screen.findByText(/click here/);
+      fireEvent.click(retry);
+      expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     });
   });
 });

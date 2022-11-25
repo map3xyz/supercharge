@@ -64,6 +64,7 @@ type State = {
 };
 
 type Action =
+  | { type: 'RESET_STATE' }
   | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
@@ -351,6 +352,9 @@ export const Store: React.FC<
               status: 'loading',
             },
           };
+        case 'RESET_STATE': {
+          return { ...initialState, asset, fiat, network, slug, step, theme };
+        }
         default:
           return state;
       }
