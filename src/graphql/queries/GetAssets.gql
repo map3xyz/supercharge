@@ -1,6 +1,8 @@
 query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
   assetsForOrganization(limit: $limit, offset: $offset, currency: $currency) {
     id
+    address
+    decimals
     name
     networkCode
     networks {

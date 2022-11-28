@@ -6,6 +6,5 @@ query SearchAssets($query: String) {
       svg
     }
     symbol
-    type
   }
 }

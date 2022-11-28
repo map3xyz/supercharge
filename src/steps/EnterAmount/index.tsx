@@ -1,5 +1,4 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
-import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
@@ -113,17 +112,12 @@ const EnterAmount: React.FC<Props> = () => {
         state.method?.flags?.memo || false
       );
 
-      const extraGas = memo ? (memo.length / 2) * 16 : 0;
-
-      const transactionParameters = {
-        data: memo || '0x',
-        from: state.account.data,
-        gas: ethers.utils.hexlify(21000 + extraGas),
-        to: address,
-        value: ethers.utils.parseEther(amount.toString()).toHexString(),
-      };
-
-      await sendTransaction(transactionParameters);
+      await sendTransaction(
+        amount,
+        address,
+        memo,
+        state.asset?.type === 'asset'
+      );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
       if (e.message) {

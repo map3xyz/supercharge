@@ -1,4 +1,4 @@
-export const erc20 = [
+export const erc20Abi = [
   // Read-Only Functions
   'function balanceOf(address owner) view returns (uint256)',
 
