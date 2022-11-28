@@ -36,6 +36,7 @@ export const mocks: MockedResponse[] = [
               price: 20_000,
             },
             symbol: 'BTC',
+            type: 'network',
           },
           {
             id: 'elon123',
@@ -51,6 +52,7 @@ export const mocks: MockedResponse[] = [
             },
             price: null,
             symbol: 'ELON',
+            type: 'asset',
           },
         ],
       },

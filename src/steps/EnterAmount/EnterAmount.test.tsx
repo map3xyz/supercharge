@@ -258,6 +258,12 @@ describe('window.ethereum', () => {
       expect(error).toBeInTheDocument();
     });
   });
+
+  // describe('erc20', () => {
+  //   it('should handle erc20 transfers', () => {
+
+  //   })
+  // })
 });
 
 describe('Enter Amount Errors', () => {

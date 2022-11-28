@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 
 import { Context } from '../providers/Store';
@@ -39,21 +38,20 @@ export const useWeb3 = () => {
   };
 
   const switchChain = async (chainId: number) => {
+    const chainIdHex = '0x' + Number(chainId).toString(16);
     if (state.method?.value === 'isWalletConnect') {
       await state.connector?.data?.sendCustomRequest({
         jsonrpc: '2.0',
         method: 'wallet_switchEthereumChain',
         params: [
           {
-            chainId: ethers.utils.hexlify(chainId),
+            chainId: chainIdHex,
           },
         ],
       });
     } else {
       await state.provider?.data?.send('wallet_switchEthereumChain', [
-        {
-          chainId: ethers.utils.hexlify(chainId),
-        },
+        { chainId: chainIdHex },
       ]);
     }
   };
