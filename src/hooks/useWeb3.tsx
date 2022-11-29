@@ -1,7 +1,7 @@
-import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
 
 import { Context } from '../providers/Store';
+import { toHex } from '../utils/toHex';
 
 export const useWeb3 = () => {
   const [state, dispatch] = useContext(Context);
@@ -45,14 +45,14 @@ export const useWeb3 = () => {
         method: 'wallet_switchEthereumChain',
         params: [
           {
-            chainId: ethers.utils.hexlify(chainId),
+            chainId: toHex(chainId),
           },
         ],
       });
     } else {
       await state.provider?.data?.send('wallet_switchEthereumChain', [
         {
-          chainId: ethers.utils.hexlify(chainId),
+          chainId: toHex(chainId),
         },
       ]);
     }
