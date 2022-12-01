@@ -133,7 +133,7 @@ describe('window.ethereum', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            throw { address: 'Error generating deposit address.' };
+            throw 'Error generating deposit address.';
           },
           theme: 'dark',
         }}
@@ -142,8 +142,8 @@ describe('window.ethereum', () => {
     );
 
     await screen.findByText('Loading...');
-    const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     const metaMask = (await screen.findAllByText('MetaMask'))[0];
@@ -241,7 +241,7 @@ describe('window.ethereum', () => {
       testingUtils.clearAllMocks();
     });
 
-    it('should handle previous connection', async () => {
+    it('show an error', async () => {
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
@@ -260,10 +260,8 @@ describe('window.ethereum', () => {
   });
 
   // describe('erc20', () => {
-  //   it('should handle erc20 transfers', () => {
-
-  //   })
-  // })
+  //   it('should handle erc20 transfers', () => {});
+  // });
 });
 
 describe('Enter Amount Errors', () => {

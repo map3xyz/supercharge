@@ -73,25 +73,20 @@ export const useWeb3 = () => {
     const txParams = {
       data: memo || '0x',
       from: state.account.data,
-      gas: ethers.utils.hexlify(21000 + extraGas),
+      gas: ethers.utils.hexlify(21_000 + extraGas),
       to: address,
       value: ethers.utils.parseEther(amount.toString()).toHexString(),
     };
 
     if (isErc20) {
-      txParams.data = new ethers.utils.Interface(erc20Abi).encodeFunctionData(
-        'transfer',
-        [
+      txParams.data =
+        new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
           address,
-          ethers.utils.parseUnits(
-            amount.toString().split('.')[0] +
-              amount.toString().split('.')[1].slice(0, state.asset?.decimals!),
-            state.asset?.decimals!
-          ),
-        ]
-      );
+          ethers.utils.parseUnits(amount.toString(), state.asset?.decimals!),
+        ]) + memo?.replace('0x', '') || '';
+      txParams.to = state.asset?.address!;
       txParams.value = '0x0';
-      txParams.gas = ethers.utils.hexlify(100000 + extraGas);
+      txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
     }
 
     dispatch({ type: 'SET_TRANSACTION_LOADING' });

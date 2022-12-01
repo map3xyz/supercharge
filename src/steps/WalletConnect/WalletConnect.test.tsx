@@ -99,13 +99,12 @@ describe('WalletConnect', () => {
     await act(async () => {
       await fireEvent.submit(form);
     });
-    expect(mockSendTransaction).toHaveBeenCalledWith({
-      data: '123456',
-      from: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      gas: '0x5238',
-      to: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      value: '0x2d79883d2000',
-    });
+    expect(mockSendTransaction).toHaveBeenCalledWith(
+      0.00005,
+      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+      '123456',
+      false
+    );
   });
   it('populates ONLY address if the wallet is not vetted/enabled', async () => {
     const walletConnect = await screen.findByText('Spot');
@@ -124,13 +123,12 @@ describe('WalletConnect', () => {
     await act(async () => {
       await fireEvent.submit(form);
     });
-    expect(mockSendTransaction).toHaveBeenCalledWith({
-      data: '0x',
-      from: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      gas: '0x5208',
-      to: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      value: '0x2d79883d2000',
-    });
+    expect(mockSendTransaction).toHaveBeenCalledWith(
+      0.00005,
+      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+      '123456',
+      false
+    );
   });
   it('handles previous connection', async () => {
     const walletConnect = await screen.findByText('Rainbow');
