@@ -59,7 +59,7 @@ export const useWeb3 = () => {
   };
 
   const sendTransaction = async (
-    amount: number,
+    amount: string,
     address: string,
     memo?: string,
     isErc20?: boolean
@@ -75,14 +75,14 @@ export const useWeb3 = () => {
       from: state.account.data,
       gas: ethers.utils.hexlify(21_000 + extraGas),
       to: address,
-      value: ethers.utils.parseEther(amount.toString()).toHexString(),
+      value: ethers.utils.parseEther(amount).toHexString(),
     };
 
     if (isErc20) {
       txParams.data =
         new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
           address,
-          ethers.utils.parseUnits(amount.toString(), state.asset?.decimals!),
+          ethers.utils.parseUnits(amount, state.asset?.decimals!),
         ]) + memo?.replace('0x', '') || '';
       txParams.to = state.asset?.address!;
       txParams.value = '0x0';

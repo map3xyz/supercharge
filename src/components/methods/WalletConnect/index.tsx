@@ -16,7 +16,7 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
         disabled ||
         (state.account.status === 'error' &&
           state.account.data === 'No provider found.') ||
-        (state.account.status === 'success' && amount === 0) ||
+        (state.account.status === 'success' && amount === '0') ||
         state.account.status === 'loading' ||
         state.transaction?.status === 'loading'
       }
@@ -39,7 +39,7 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
 };
 
 type Props = {
-  amount: number;
+  amount: string;
   disabled: boolean;
 };
 

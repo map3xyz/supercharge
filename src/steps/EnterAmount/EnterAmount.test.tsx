@@ -308,6 +308,7 @@ describe('window.ethereum > ERC20', () => {
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
+      mockSendTransaction.mockClear();
     });
     it('should handle erc20 transaction', async () => {
       await act(async () => {
@@ -315,7 +316,7 @@ describe('window.ethereum > ERC20', () => {
         fireEvent.submit(form);
       });
       expect(mockSendTransaction).toHaveBeenCalledWith(
-        1,
+        '1.000000',
         '0x123',
         'memo',
         true

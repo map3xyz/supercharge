@@ -119,7 +119,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
           disabled ||
           (state.account.status === 'error' &&
             state.account.data === 'No provider found.') ||
-          (state.account.status === 'success' && amount === 0) ||
+          (state.account.status === 'success' && amount === '0') ||
           state.account.status === 'loading'
         }
         htmlType="submit"
@@ -141,7 +141,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
 );
 
 type Props = {
-  amount: number;
+  amount: string;
   disabled: boolean;
   setFormError: React.Dispatch<React.SetStateAction<string | undefined>>;
 };

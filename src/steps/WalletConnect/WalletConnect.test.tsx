@@ -100,7 +100,7 @@ describe('WalletConnect', () => {
       await fireEvent.submit(form);
     });
     expect(mockSendTransaction).toHaveBeenCalledWith(
-      0.00005,
+      '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
       '123456',
       false
@@ -124,7 +124,7 @@ describe('WalletConnect', () => {
       await fireEvent.submit(form);
     });
     expect(mockSendTransaction).toHaveBeenCalledWith(
-      0.00005,
+      '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
       '123456',
       false
