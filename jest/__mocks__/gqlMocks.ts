@@ -21,6 +21,8 @@ export const mocks: MockedResponse[] = [
       data: {
         assetsForOrganization: [
           {
+            address: null,
+            decimals: 8,
             id: 'satoshi123',
             logo: {
               png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
@@ -36,8 +38,11 @@ export const mocks: MockedResponse[] = [
               price: 20_000,
             },
             symbol: 'BTC',
+            type: 'network',
           },
           {
+            address: '0x123ElonAddress',
+            decimals: 6,
             id: 'elon123',
             logo: {
               png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
@@ -51,6 +56,7 @@ export const mocks: MockedResponse[] = [
             },
             price: null,
             symbol: 'ELON',
+            type: 'asset',
           },
         ],
       },

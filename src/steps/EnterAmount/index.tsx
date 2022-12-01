@@ -1,5 +1,4 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
-import { ethers } from 'ethers';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
@@ -32,7 +31,7 @@ const EnterAmount: React.FC<Props> = () => {
     inputSelected: 'crypto' | 'fiat';
     quote: string;
   }>({ base: '0', inputSelected: rate ? 'fiat' : 'crypto', quote: '0' });
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>('0');
 
   const { getChainID, sendTransaction, switchChain } = useWeb3();
   const { getDepositAddress } = useDepositAddress();
@@ -48,7 +47,7 @@ const EnterAmount: React.FC<Props> = () => {
     if (inputRef.current && formRef.current) {
       if (nextInputWidth + symbolWidth > formWidth) {
         const percentFontChange = formWidth / (nextInputWidth + symbolWidth);
-        const fontSize = Math.floor(BASE_FONT_SIZE * percentFontChange) - 1;
+        const fontSize = Math.floor(BASE_FONT_SIZE * percentFontChange) - 0.5;
 
         nextInputWidth = formWidth;
 
@@ -74,7 +73,14 @@ const EnterAmount: React.FC<Props> = () => {
           ? quote.toFixed(2)
           : quote.toFixed(8),
     }));
-    setAmount(formValue.inputSelected === 'crypto' ? base : quote);
+
+    if (base === 0) return setAmount('0');
+
+    setAmount(
+      formValue.inputSelected === 'crypto'
+        ? base.toFixed(state.asset?.decimals || 8)
+        : quote.toFixed(state.asset?.decimals || 8)
+    );
   }, [formValue.base]);
 
   const toggleBase = () => {
@@ -113,17 +119,12 @@ const EnterAmount: React.FC<Props> = () => {
         state.method?.flags?.memo || false
       );
 
-      const extraGas = memo ? (memo.length / 2) * 16 : 0;
-
-      const transactionParameters = {
-        data: memo || '0x',
-        from: state.account.data,
-        gas: ethers.utils.hexlify(21000 + extraGas),
-        to: address,
-        value: ethers.utils.parseEther(amount.toString()).toHexString(),
-      };
-
-      await sendTransaction(transactionParameters);
+      await sendTransaction(
+        amount,
+        address,
+        memo,
+        state.asset?.type === 'asset'
+      );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
       if (e.message) {
@@ -238,23 +239,25 @@ const EnterAmount: React.FC<Props> = () => {
               ) : null}
               <input
                 autoFocus
-                className="flex h-14 max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
+                className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
                 data-testid="input"
                 name="base"
                 placeholder="0"
                 ref={inputRef}
                 step={
-                  formValue.inputSelected === 'fiat' ? '0.01' : '0.00000001'
+                  formValue.inputSelected === 'fiat'
+                    ? '0.01'
+                    : '0.' + '0'.repeat((state.asset.decimals || 8) - 1) + '1'
                 }
                 style={{ minWidth: `${BASE_FONT_SIZE}px` }}
                 type="number"
               />
               <span
-                className="invisible absolute -left-96 -top-96 px-2 !text-5xl"
+                className="invisible absolute -left-96 -top-96 pr-3 !text-5xl"
                 ref={dummyInputRef}
               />
               <span
-                className="invisible absolute -left-96 -top-96 px-2 !text-5xl"
+                className="invisible absolute -left-96 -top-96 !text-5xl"
                 ref={dummySymbolRef}
               >
                 {formValue.inputSelected === 'crypto'

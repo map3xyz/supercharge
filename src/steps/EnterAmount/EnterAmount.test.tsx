@@ -3,6 +3,7 @@ import { generateTestingUtils } from 'eth-testing';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
+import * as useWeb3Mock from '../../hooks/useWeb3';
 import EnterAmount from '.';
 
 describe('Enter Amount', () => {
@@ -133,7 +134,7 @@ describe('window.ethereum', () => {
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
-            throw { address: 'Error generating deposit address.' };
+            throw 'Error generating deposit address.';
           },
           theme: 'dark',
         }}
@@ -142,8 +143,8 @@ describe('window.ethereum', () => {
     );
 
     await screen.findByText('Loading...');
-    const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     const metaMask = (await screen.findAllByText('MetaMask'))[0];
@@ -241,7 +242,7 @@ describe('window.ethereum', () => {
       testingUtils.clearAllMocks();
     });
 
-    it('should handle previous connection', async () => {
+    it('show an error', async () => {
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
@@ -256,6 +257,73 @@ describe('window.ethereum', () => {
         'Error generating a deposit address.'
       );
       expect(error).toBeInTheDocument();
+    });
+  });
+});
+
+describe('window.ethereum > ERC20', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            return { address: '0x123', memo: 'memo' };
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+
+  describe('transaction', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    const mockSendTransaction = jest.fn();
+    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+      getChainID: jest.fn(),
+      providers: {},
+      sendTransaction: mockSendTransaction,
+      switchChain: jest.fn(),
+    }));
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+      mockSendTransaction.mockClear();
+    });
+    it('should handle erc20 transaction', async () => {
+      await act(async () => {
+        const form = await screen.findByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(mockSendTransaction).toHaveBeenCalledWith(
+        '1.000000',
+        '0x123',
+        'memo',
+        true
+      );
+      expect(
+        await screen.findByText('Transaction Submitted')
+      ).toBeInTheDocument();
     });
   });
 });
