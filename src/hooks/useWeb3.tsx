@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
+import { toHex } from '../utils/toHex';
 
 export const useWeb3 = () => {
   const [state, dispatch] = useContext(Context);
@@ -40,20 +41,21 @@ export const useWeb3 = () => {
   };
 
   const switchChain = async (chainId: number) => {
-    const chainIdHex = '0x' + Number(chainId).toString(16);
     if (state.method?.value === 'isWalletConnect') {
       await state.connector?.data?.sendCustomRequest({
         jsonrpc: '2.0',
         method: 'wallet_switchEthereumChain',
         params: [
           {
-            chainId: chainIdHex,
+            chainId: toHex(chainId),
           },
         ],
       });
     } else {
       await state.provider?.data?.send('wallet_switchEthereumChain', [
-        { chainId: chainIdHex },
+        {
+          chainId: toHex(chainId),
+        },
       ]);
     }
   };

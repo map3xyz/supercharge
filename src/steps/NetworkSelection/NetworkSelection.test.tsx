@@ -45,6 +45,7 @@ describe('Network Selection', () => {
               data: {
                 assetsForOrganization: [
                   {
+                    decimals: 8,
                     id: 'satoshi123',
                     logo: {
                       png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
@@ -60,6 +61,7 @@ describe('Network Selection', () => {
                       price: 20_000,
                     },
                     symbol: 'BTC',
+                    type: 'network',
                   },
                 ],
               },
