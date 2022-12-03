@@ -59,6 +59,7 @@ const assetsForOrganizationMockResult = [
 const networksForAssetMockResult = [
   {
     __typename: 'Network',
+    id: 'ethId',
     identifiers: {
       chainId: 1,
     },

@@ -67,4 +67,26 @@ describe('App', () => {
     const paymentSelection = await screen.findByText('Payment Method');
     expect(paymentSelection).toBeInTheDocument();
   });
+  it('renders with a network', async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            return { address: '0x0000000000000000000000000000000000000000' };
+          },
+          networkCode: 'bitcoin',
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Fetching Payment Methods...')
+    ).toBeInTheDocument();
+    const paymentSelection = await screen.findByText('Payment Method');
+    expect(paymentSelection).toBeInTheDocument();
+  });
 });
