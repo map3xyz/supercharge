@@ -10,30 +10,24 @@ import {
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
-const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
-  const [networkString, assetString] = config?.slug?.split(':') ?? [];
-  // TODO: use network search
+const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
   const { data, error, loading, refetch } = useGetNetworksQuery();
-  // TODO: use asset search
   const {
     data: assetData,
     error: assetError,
     loading: assetLoading,
     refetch: assetRefetch,
-  } = useGetAssetsForOrgQuery({
-    variables: {
-      limit: 10,
-      offset: 0,
-    },
-  });
+  } = useGetAssetsForOrgQuery();
 
   if (loading || assetLoading) return <LoadingWrapper />;
 
   const network = data?.networks?.find(
-    (network) => network?.name === networkString
+    (network) => network?.networkCode === config.networkCode
   );
   const asset = assetData?.assetsForOrganization?.find(
-    (asset) => asset?.name === assetString
+    (asset) =>
+      asset?.address === config.address &&
+      asset?.networkCode === config.networkCode
   );
 
   if (error || assetError || !network || !asset)
@@ -53,4 +47,4 @@ const AppWithAssetAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     </Store>
   );
 };
-export default AppWithAssetAndNetwork;
+export default AppWithAddressAndNetwork;

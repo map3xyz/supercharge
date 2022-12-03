@@ -18,6 +18,7 @@ const AssetSelection: React.FC<Props> = () => {
   const [formValue, setFormValue] = useState<FormData>();
 
   const { data, error, fetchMore, loading, refetch } = useGetAssetsForOrgQuery({
+    fetchPolicy: 'network-only',
     variables: {
       currency: state.fiat,
       limit: 10,
@@ -140,6 +141,7 @@ const AssetSelection: React.FC<Props> = () => {
               if (inView) {
                 await fetchMore({
                   variables: {
+                    currency: state.fiat,
                     limit: currentLength * 2,
                     offset: currentLength,
                   },

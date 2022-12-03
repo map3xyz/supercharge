@@ -5,14 +5,16 @@ import { createRoot, Root } from 'react-dom/client';
 import App from './App';
 
 export interface Map3InitConfig {
+  address?: string;
   anonKey: string;
+  assetId?: string;
   fiat?: string;
   generateDepositAddress: (
     asset?: string,
     network?: string,
     memoEnabled?: boolean
   ) => Promise<{ address: string; memo?: string }>;
-  slug?: string;
+  networkCode?: string;
   theme?: 'dark' | 'light';
 }
 export class Map3 {
@@ -34,6 +36,13 @@ export class Map3 {
 
     if (!config.fiat) {
       config.fiat = 'USD';
+    }
+
+    if (config.address && !config.networkCode) {
+      console.warn(
+        'Warning: networkCode is required when address is provided. Falling back to asset selection.'
+      );
+      config.address = undefined;
     }
 
     this.config = config;

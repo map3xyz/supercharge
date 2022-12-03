@@ -45,6 +45,10 @@ describe('Network Selection', () => {
               data: {
                 assetsForOrganization: [
                   {
+                    address: null,
+                    config: {
+                      mappedAssetId: 'satoshi123',
+                    },
                     decimals: 8,
                     id: 'satoshi123',
                     logo: {

@@ -1,10 +1,27 @@
-query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
-  assetsForOrganization(limit: $limit, offset: $offset, currency: $currency) {
-    id
+query GetAssetsForOrg(
+  $limit: Int
+  $offset: Int
+  $currency: String
+  $address: String
+  $assetId: ID
+) {
+  assetsForOrganization(
+    limit: $limit
+    offset: $offset
+    currency: $currency
+    address: $address
+    assetId: $assetId
+  ) {
     address
     decimals
+    id
     name
     networkCode
+    symbol
+    type
+    config {
+      mappedAssetId
+    }
     networks {
       name
       networkCode
@@ -16,7 +33,5 @@ query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
     price {
       price
     }
-    symbol
-    type
   }
 }
