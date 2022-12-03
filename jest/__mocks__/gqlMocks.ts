@@ -2,64 +2,119 @@ import { MockedResponse } from '@apollo/client/testing';
 
 import {
   GetAssetsForOrgDocument,
+  GetMappedNetworksForAssetDocument,
   GetNetworksDocument,
   GetNetworksForAssetDocument,
   GetPaymentMethodsDocument,
   SearchAssetsDocument,
 } from '../../src/generated/apollo-gql';
 
+const assetsForOrganizationMockResult = [
+  {
+    address: null,
+    config: {
+      mappedAssetId: 'satoshi123',
+    },
+    decimals: 8,
+    id: 'satoshi123',
+    logo: {
+      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+    },
+    name: 'Bitcoin',
+    networkCode: 'bitcoin',
+    networks: {
+      name: 'Bitcoin',
+      networkCode: 'bitcoin',
+    },
+    price: {
+      price: 20_000,
+    },
+    symbol: 'BTC',
+    type: 'network',
+  },
+  {
+    address: '0x123ElonAddress',
+    config: {
+      mappedAssetId: 'elon123',
+    },
+    decimals: 6,
+    id: 'elon123',
+    logo: {
+      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+    },
+    name: 'ElonCoin',
+    networkCode: 'ethereum',
+    networks: {
+      name: 'Ethereum',
+      networkCode: 'ethereum',
+    },
+    price: null,
+    symbol: 'ELON',
+    type: 'asset',
+  },
+];
+
+const networksForAssetMockResult = [
+  {
+    __typename: 'Network',
+    identifiers: {
+      chainId: 1,
+    },
+    logo: {
+      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+    },
+    name: 'Ethereum',
+    networkCode: 'ethereum',
+    symbol: 'ETH',
+  },
+];
+
 export const mocks: MockedResponse[] = [
   {
     request: {
       query: GetAssetsForOrgDocument,
       variables: {
+        currency: undefined,
         limit: 10,
         offset: 0,
       },
     },
     result: {
-      data: {
-        assetsForOrganization: [
-          {
-            address: null,
-            decimals: 8,
-            id: 'satoshi123',
-            logo: {
-              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
-              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
-            },
-            name: 'Bitcoin',
-            networkCode: 'bitcoin',
-            networks: {
-              name: 'Bitcoin',
-              networkCode: 'bitcoin',
-            },
-            price: {
-              price: 20_000,
-            },
-            symbol: 'BTC',
-            type: 'network',
-          },
-          {
-            address: '0x123ElonAddress',
-            decimals: 6,
-            id: 'elon123',
-            logo: {
-              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
-              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
-            },
-            name: 'ElonCoin',
-            networkCode: 'ethereum',
-            networks: {
-              name: 'Ethereum',
-              networkCode: 'ethereum',
-            },
-            price: null,
-            symbol: 'ELON',
-            type: 'asset',
-          },
-        ],
+      data: { assetsForOrganization: assetsForOrganizationMockResult },
+    },
+  },
+  {
+    request: {
+      query: GetAssetsForOrgDocument,
+      variables: {
+        currency: undefined,
+        limit: 10,
+        offset: 0,
       },
+    },
+    result: {
+      data: { assetsForOrganization: assetsForOrganizationMockResult },
+    },
+  },
+  {
+    request: {
+      query: GetAssetsForOrgDocument,
+      variables: {},
+    },
+    result: {
+      data: { assetsForOrganization: assetsForOrganizationMockResult },
+    },
+  },
+  {
+    request: {
+      query: GetAssetsForOrgDocument,
+      variables: { assetId: 'satoshi123' },
+    },
+    result: {
+      data: { assetsForOrganization: assetsForOrganizationMockResult },
     },
   },
   {
@@ -86,20 +141,29 @@ export const mocks: MockedResponse[] = [
   },
   {
     request: {
-      query: GetNetworksDocument,
+      query: GetMappedNetworksForAssetDocument,
+      variables: {
+        assetId: 'elon123',
+      },
     },
     result: {
       data: {
-        networks: [
-          {
-            logo: {
-              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
-              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
-            },
-            name: 'Bitcoin',
-            symbol: 'BTC',
-          },
-        ],
+        __typename: 'Query',
+        mappedNetworksForAssetByOrg: networksForAssetMockResult,
+      },
+    },
+  },
+  {
+    request: {
+      query: GetMappedNetworksForAssetDocument,
+      variables: {
+        assetId: 'satoshi123',
+      },
+    },
+    result: {
+      data: {
+        __typename: 'Query',
+        mappedNetworksForAssetByOrg: networksForAssetMockResult,
       },
     },
   },
@@ -112,8 +176,34 @@ export const mocks: MockedResponse[] = [
     },
     result: {
       data: {
-        networksForAssetByOrg: [
+        __typename: 'Query',
+        networksForAssetByOrg: networksForAssetMockResult,
+      },
+    },
+  },
+  {
+    request: {
+      query: GetNetworksDocument,
+    },
+    result: {
+      data: {
+        __typename: 'Query',
+        networks: [
           {
+            __typename: 'Network',
+            identifiers: {
+              chainId: null,
+            },
+            logo: {
+              png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+              svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+            },
+            name: 'Bitcoin',
+            networkCode: 'bitcoin',
+            symbol: 'BTC',
+          },
+          {
+            __typename: 'Network',
             identifiers: {
               chainId: 1,
             },
@@ -138,8 +228,10 @@ export const mocks: MockedResponse[] = [
     },
     result: {
       data: {
+        __typename: 'Query',
         networksForAssetByOrg: [
           {
+            __typename: 'Network',
             identifiers: {
               chainId: null,
             },
@@ -152,6 +244,7 @@ export const mocks: MockedResponse[] = [
             symbol: 'BTC',
           },
           {
+            __typename: 'Network',
             identifiers: {
               chainId: 1,
             },
@@ -170,6 +263,7 @@ export const mocks: MockedResponse[] = [
   {
     request: {
       query: GetPaymentMethodsDocument,
+      variables: { chainId: null },
     },
     result: {
       data: {

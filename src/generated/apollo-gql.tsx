@@ -498,19 +498,10 @@ export type GetNetworksQueryResult = Apollo.QueryResult<GetNetworksQuery, GetNet
 export const GetNetworksForAssetDocument = gql`
     query GetNetworksForAsset($assetId: String) {
   networksForAssetByOrg(assetId: $assetId) {
-    name
-    networkCode
-    logo {
-      png
-      svg
-    }
-    identifiers {
-      chainId
-    }
-    symbol
+    ...NetworkFields
   }
 }
-    `;
+    ${NetworkFieldsFragmentDoc}`;
 
 /**
  * __useGetNetworksForAssetQuery__

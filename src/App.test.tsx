@@ -22,15 +22,15 @@ describe('App', () => {
     expect(assetSelection).toBeInTheDocument();
   });
 
-  it('renders with asset', async () => {
+  it('renders with an assetId', async () => {
     render(
       <App
         config={{
           anonKey: process.env.CONSOLE_ANON_KEY || '',
+          assetId: 'satoshi123',
           generateDepositAddress: async () => {
             return { address: '0x0000000000000000000000000000000000000000' };
           },
-          slug: ':Bitcoin',
           theme: 'dark',
         }}
         onClose={() => {}}
@@ -38,19 +38,22 @@ describe('App', () => {
     );
 
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
-    expect(await screen.findByText('Fetching Networks...')).toBeInTheDocument();
-    const networkSelection = await screen.findByText('Select Network');
-    expect(networkSelection).toBeInTheDocument();
+    expect(
+      await screen.findByText('Fetching Payment Methods...')
+    ).toBeInTheDocument();
+    const paymentMethod = await screen.findByText('Payment Method');
+    expect(paymentMethod).toBeInTheDocument();
   });
-  it('renders with asset and network', async () => {
+  it('renders with an address and network', async () => {
     render(
       <App
         config={{
+          address: '0x123ElonAddress',
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return { address: '0x0000000000000000000000000000000000000000' };
           },
-          slug: 'Bitcoin:Bitcoin',
+          networkCode: 'ethereum',
           theme: 'dark',
         }}
         onClose={() => {}}

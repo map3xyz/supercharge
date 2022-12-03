@@ -2,7 +2,6 @@ import { Modal } from '@map3xyz/components';
 import React, { useEffect, useState } from 'react';
 
 import { Map3InitConfig } from '.';
-import AppWithAddress from './App.withAddress';
 import AppWithAddressAndNetwork from './App.withAddressAndNetwork';
 import AppWithAssetId from './App.withAssetId';
 import { useWindowSize } from './hooks/useWindowSize';
@@ -35,8 +34,6 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
           <AppWithAssetId config={config} onClose={onClose} />
         ) : address && networkCode ? (
           <AppWithAddressAndNetwork config={config} onClose={onClose} />
-        ) : address ? (
-          <AppWithAddress config={config} onClose={onClose} />
         ) : (
           <Store {...config}>
             <Map3SdkSteps onClose={onClose} />

@@ -22,13 +22,19 @@ describe('Enter Amount', () => {
     );
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
+    act(() => {
+      fireEvent.click(bitcoin);
+    });
     await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
+    act(() => {
+      fireEvent.click(ethereum);
+    });
     await screen.findByText('Fetching Payment Methods...');
     const metaMask = (await screen.findAllByText('MetaMask'))[0];
-    fireEvent.click(metaMask);
+    act(() => {
+      fireEvent.click(metaMask);
+    });
   });
 
   it('renders', async () => {
@@ -37,15 +43,28 @@ describe('Enter Amount', () => {
   });
   it('handles no pricing available', async () => {
     const back = await screen.findByLabelText('Back');
-    fireEvent.click(back);
-    fireEvent.click(back);
-    fireEvent.click(back);
+    act(() => {
+      fireEvent.click(back);
+    });
+    act(() => {
+      fireEvent.click(back);
+    });
+    act(() => {
+      fireEvent.click(back);
+    });
+    await screen.findByText('Loading...');
     const elonCoin = await screen.findByText('ElonCoin');
-    fireEvent.click(elonCoin);
+    act(() => {
+      fireEvent.click(elonCoin);
+    });
     const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
+    act(() => {
+      fireEvent.click(ethereum);
+    });
     const metaMask = (await screen.findAllByText('MetaMask'))[0];
-    fireEvent.click(metaMask);
+    act(() => {
+      fireEvent.click(metaMask);
+    });
     const warning = await screen.findByText(
       'No pricing available for this asset.'
     );
@@ -145,6 +164,7 @@ describe('window.ethereum', () => {
     await screen.findByText('Loading...');
     const elonCoin = await screen.findByText('ElonCoin');
     fireEvent.click(elonCoin);
+    await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
     const metaMask = (await screen.findAllByText('MetaMask'))[0];
