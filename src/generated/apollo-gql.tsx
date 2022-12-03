@@ -31,6 +31,7 @@ export type Asset = IAsset & {
 export type AssetWithPrice = IAsset & {
   __typename?: 'AssetWithPrice';
   address?: Maybe<Scalars['String']>;
+  config?: Maybe<Config>;
   decimals?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['String']>;
   logo?: Maybe<Logo>;
@@ -40,6 +41,11 @@ export type AssetWithPrice = IAsset & {
   price?: Maybe<Price>;
   symbol?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
+};
+
+export type Config = {
+  __typename?: 'Config';
+  mappedAssetId?: Maybe<Scalars['String']>;
 };
 
 export type IAsset = {
@@ -80,6 +86,7 @@ export type MutationCreateOrganizationArgs = {
 
 export type MutationCreateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
+  mappedAssetId: Scalars['ID'];
   networkCode: Scalars['String'];
 };
 
@@ -87,6 +94,7 @@ export type MutationCreateSdkConfigForOrganizationArgs = {
 export type MutationUpdateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
   enabled: Scalars['Boolean'];
+  mappedAssetId: Scalars['ID'];
   networkCode: Scalars['String'];
 };
 
@@ -142,6 +150,7 @@ export type Query = {
   assetsCount?: Maybe<Scalars['Int']>;
   assetsForOrganization?: Maybe<Array<Maybe<AssetWithPrice>>>;
   mappedNetworksForAsset?: Maybe<Array<Maybe<Network>>>;
+  mappedNetworksForAssetByOrg?: Maybe<Array<Maybe<Network>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
   methodsForNetwork?: Maybe<Array<Maybe<PaymentMethod>>>;
   networkByCode?: Maybe<Network>;
@@ -173,6 +182,8 @@ export type QueryAssetsArgs = {
 
 
 export type QueryAssetsForOrganizationArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  assetId?: InputMaybe<Scalars['ID']>;
   currency?: InputMaybe<Scalars['String']>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -180,6 +191,11 @@ export type QueryAssetsForOrganizationArgs = {
 
 
 export type QueryMappedNetworksForAssetArgs = {
+  assetId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryMappedNetworksForAssetByOrgArgs = {
   assetId?: InputMaybe<Scalars['String']>;
 };
 
@@ -226,6 +242,7 @@ export type SdkConfigField = {
   created?: Maybe<Scalars['Int']>;
   enabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['ID']>;
+  mappedAssetId?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
   organizationId?: Maybe<Scalars['String']>;
   updated?: Maybe<Scalars['Int']>;
@@ -284,19 +301,30 @@ export type WalletConnectWallet = {
   versions?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type NetworkFieldsFragment = { __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
+
 export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
   currency?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<Scalars['String']>;
+  assetId?: InputMaybe<Scalars['ID']>;
 }>;
 
 
-export type GetAssetsForOrgQuery = { __typename?: 'Query', assetsForOrganization?: Array<{ __typename?: 'AssetWithPrice', id?: string | null, address?: string | null, decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null } | null> | null };
+export type GetAssetsForOrgQuery = { __typename?: 'Query', assetsForOrganization?: Array<{ __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null } | null> | null };
+
+export type GetMappedNetworksForAssetQueryVariables = Exact<{
+  assetId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetNetworksForAssetQueryVariables = Exact<{
   assetId?: InputMaybe<Scalars['String']>;
@@ -319,15 +347,39 @@ export type SearchAssetsQueryVariables = Exact<{
 
 export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
 
-
+export const NetworkFieldsFragmentDoc = gql`
+    fragment NetworkFields on Network {
+  name
+  networkCode
+  logo {
+    png
+    svg
+  }
+  identifiers {
+    chainId
+  }
+  symbol
+}
+    `;
 export const GetAssetsForOrgDocument = gql`
-    query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String) {
-  assetsForOrganization(limit: $limit, offset: $offset, currency: $currency) {
-    id
+    query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String, $address: String, $assetId: ID) {
+  assetsForOrganization(
+    limit: $limit
+    offset: $offset
+    currency: $currency
+    address: $address
+    assetId: $assetId
+  ) {
     address
     decimals
+    id
     name
     networkCode
+    symbol
+    type
+    config {
+      mappedAssetId
+    }
     networks {
       name
       networkCode
@@ -339,8 +391,6 @@ export const GetAssetsForOrgDocument = gql`
     price {
       price
     }
-    symbol
-    type
   }
 }
     `;
@@ -360,6 +410,8 @@ export const GetAssetsForOrgDocument = gql`
  *      limit: // value for 'limit'
  *      offset: // value for 'offset'
  *      currency: // value for 'currency'
+ *      address: // value for 'address'
+ *      assetId: // value for 'assetId'
  *   },
  * });
  */
@@ -374,18 +426,48 @@ export function useGetAssetsForOrgLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetAssetsForOrgQueryHookResult = ReturnType<typeof useGetAssetsForOrgQuery>;
 export type GetAssetsForOrgLazyQueryHookResult = ReturnType<typeof useGetAssetsForOrgLazyQuery>;
 export type GetAssetsForOrgQueryResult = Apollo.QueryResult<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>;
+export const GetMappedNetworksForAssetDocument = gql`
+    query GetMappedNetworksForAsset($assetId: String) {
+  mappedNetworksForAssetByOrg(assetId: $assetId) {
+    ...NetworkFields
+  }
+}
+    ${NetworkFieldsFragmentDoc}`;
+
+/**
+ * __useGetMappedNetworksForAssetQuery__
+ *
+ * To run a query within a React component, call `useGetMappedNetworksForAssetQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMappedNetworksForAssetQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMappedNetworksForAssetQuery({
+ *   variables: {
+ *      assetId: // value for 'assetId'
+ *   },
+ * });
+ */
+export function useGetMappedNetworksForAssetQuery(baseOptions?: Apollo.QueryHookOptions<GetMappedNetworksForAssetQuery, GetMappedNetworksForAssetQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMappedNetworksForAssetQuery, GetMappedNetworksForAssetQueryVariables>(GetMappedNetworksForAssetDocument, options);
+      }
+export function useGetMappedNetworksForAssetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMappedNetworksForAssetQuery, GetMappedNetworksForAssetQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMappedNetworksForAssetQuery, GetMappedNetworksForAssetQueryVariables>(GetMappedNetworksForAssetDocument, options);
+        }
+export type GetMappedNetworksForAssetQueryHookResult = ReturnType<typeof useGetMappedNetworksForAssetQuery>;
+export type GetMappedNetworksForAssetLazyQueryHookResult = ReturnType<typeof useGetMappedNetworksForAssetLazyQuery>;
+export type GetMappedNetworksForAssetQueryResult = Apollo.QueryResult<GetMappedNetworksForAssetQuery, GetMappedNetworksForAssetQueryVariables>;
 export const GetNetworksDocument = gql`
     query GetNetworks {
   networks {
-    name
-    logo {
-      png
-      svg
-    }
-    symbol
+    ...NetworkFields
   }
 }
-    `;
+    ${NetworkFieldsFragmentDoc}`;
 
 /**
  * __useGetNetworksQuery__

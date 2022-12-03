@@ -136,18 +136,9 @@ export const Store: React.FC<
       network?: string
     ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
-    slug?: string;
     theme?: 'dark' | 'light';
   }>
-> = ({
-  asset,
-  children,
-  fiat,
-  generateDepositAddress,
-  network,
-  slug,
-  theme,
-}) => {
+> = ({ asset, children, fiat, generateDepositAddress, network, theme }) => {
   let step = 0;
 
   if (asset) {
@@ -353,13 +344,13 @@ export const Store: React.FC<
             },
           };
         case 'RESET_STATE': {
-          return { ...initialState, asset, fiat, network, slug, step, theme };
+          return { ...initialState, asset, fiat, network, step, theme };
         }
         default:
           return state;
       }
     },
-    { ...initialState, asset, fiat, network, slug, step, theme }
+    { ...initialState, asset, fiat, network, step, theme }
   );
 
   return (

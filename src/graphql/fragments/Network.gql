@@ -1,0 +1,12 @@
+fragment NetworkFields on Network {
+  name
+  networkCode
+  logo {
+    png
+    svg
+  }
+  identifiers {
+    chainId
+  }
+  symbol
+}

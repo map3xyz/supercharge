@@ -7,17 +7,15 @@ import { useGetAssetsForOrgQuery } from './generated/apollo-gql';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
-const AppWithAsset: React.FC<AppProps> = ({ config, onClose }) => {
-  const [_, assetString] = config?.slug?.split(':') ?? [];
-  // TODO: use asset search
+const AppWithAddress: React.FC<AppProps> = ({ config, onClose }) => {
   const { data, error, loading, refetch } = useGetAssetsForOrgQuery({
-    variables: { limit: 10, offset: 0 },
+    variables: { address: config.address, assetId: config.assetId },
   });
 
   if (loading) return <LoadingWrapper />;
 
   const asset = data?.assetsForOrganization?.find(
-    (asset) => asset?.name === assetString
+    (asset) => asset?.id === config.assetId || asset?.address === config.address
   );
 
   if (error || !asset)
@@ -30,10 +28,10 @@ const AppWithAsset: React.FC<AppProps> = ({ config, onClose }) => {
     );
 
   return (
-    <Store {...config} asset={asset}>
+    <Store {...config} asset={asset} network={undefined}>
       <Map3SdkSteps onClose={onClose} />
     </Store>
   );
 };
 
-export default AppWithAsset;
+export default AppWithAddress;

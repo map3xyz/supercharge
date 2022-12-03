@@ -2,14 +2,15 @@ import { Modal } from '@map3xyz/components';
 import React, { useEffect, useState } from 'react';
 
 import { Map3InitConfig } from '.';
-import AppWithAsset from './App.withAsset';
-import AppWithAssetAndNetwork from './App.withAssetAndNetwork';
+import AppWithAddress from './App.withAddress';
+import AppWithAddressAndNetwork from './App.withAddressAndNetwork';
+import AppWithAssetId from './App.withAssetId';
 import { useWindowSize } from './hooks/useWindowSize';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
 const App: React.FC<AppProps> = ({ config, onClose }) => {
-  const [network, asset] = config.slug?.split(':') ?? [];
+  const { address, assetId, networkCode } = config;
   const [visible, setVisible] = useState(false);
   const { minWidth } = useWindowSize();
 
@@ -30,10 +31,12 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
         size="tiny"
         visible={visible}
       >
-        {asset && network ? (
-          <AppWithAssetAndNetwork config={config} onClose={onClose} />
-        ) : asset ? (
-          <AppWithAsset config={config} onClose={onClose} />
+        {assetId ? (
+          <AppWithAssetId config={config} onClose={onClose} />
+        ) : address && networkCode ? (
+          <AppWithAddressAndNetwork config={config} onClose={onClose} />
+        ) : address ? (
+          <AppWithAddress config={config} onClose={onClose} />
         ) : (
           <Store {...config}>
             <Map3SdkSteps onClose={onClose} />

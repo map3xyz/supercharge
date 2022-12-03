@@ -1,10 +1,5 @@
 query GetNetworks {
   networks {
-    name
-    logo {
-      png
-      svg
-    }
-    symbol
+    ...NetworkFields
   }
 }
