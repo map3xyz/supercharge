@@ -5,7 +5,7 @@ import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import {
   useGetAssetsForOrgQuery,
-  useGetNetworksForAssetQuery,
+  useGetNetworksQuery,
 } from './generated/apollo-gql';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
@@ -20,9 +20,7 @@ const AppWithAssetId: React.FC<AppProps> = ({ config, onClose }) => {
     error: networkError,
     loading: networkLoading,
     refetch: networkRefetch,
-  } = useGetNetworksForAssetQuery({
-    variables: { assetId: config.assetId },
-  });
+  } = useGetNetworksQuery();
 
   const retry = async () => {
     await refetch();
@@ -34,7 +32,7 @@ const AppWithAssetId: React.FC<AppProps> = ({ config, onClose }) => {
   const asset = data?.assetsForOrganization?.find(
     (asset) => asset?.id === config.assetId
   );
-  const network = networkData?.networksForAssetByOrg?.find(
+  const network = networkData?.networks?.find(
     (n) => n?.networkCode === asset?.networkCode
   );
 

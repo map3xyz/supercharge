@@ -156,7 +156,6 @@ export type Query = {
   networkByCode?: Maybe<Network>;
   networks?: Maybe<Array<Maybe<Network>>>;
   networksCount?: Maybe<Scalars['Int']>;
-  networksForAssetByOrg?: Maybe<Array<Maybe<Network>>>;
   organizationById?: Maybe<Organization>;
   sdkConfigForOrganization?: Maybe<Array<Maybe<SdkConfigField>>>;
   searchAssets?: Maybe<Array<Maybe<Asset>>>;
@@ -213,11 +212,6 @@ export type QueryNetworkByCodeArgs = {
 export type QueryNetworksArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type QueryNetworksForAssetByOrgArgs = {
-  assetId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -325,13 +319,6 @@ export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
-
-export type GetNetworksForAssetQueryVariables = Exact<{
-  assetId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetNetworksForAssetQuery = { __typename?: 'Query', networksForAssetByOrg?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetPaymentMethodsQueryVariables = Exact<{
   chainId?: InputMaybe<Scalars['Int']>;
@@ -495,41 +482,6 @@ export function useGetNetworksLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetNetworksQueryHookResult = ReturnType<typeof useGetNetworksQuery>;
 export type GetNetworksLazyQueryHookResult = ReturnType<typeof useGetNetworksLazyQuery>;
 export type GetNetworksQueryResult = Apollo.QueryResult<GetNetworksQuery, GetNetworksQueryVariables>;
-export const GetNetworksForAssetDocument = gql`
-    query GetNetworksForAsset($assetId: String) {
-  networksForAssetByOrg(assetId: $assetId) {
-    ...NetworkFields
-  }
-}
-    ${NetworkFieldsFragmentDoc}`;
-
-/**
- * __useGetNetworksForAssetQuery__
- *
- * To run a query within a React component, call `useGetNetworksForAssetQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetNetworksForAssetQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetNetworksForAssetQuery({
- *   variables: {
- *      assetId: // value for 'assetId'
- *   },
- * });
- */
-export function useGetNetworksForAssetQuery(baseOptions?: Apollo.QueryHookOptions<GetNetworksForAssetQuery, GetNetworksForAssetQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetNetworksForAssetQuery, GetNetworksForAssetQueryVariables>(GetNetworksForAssetDocument, options);
-      }
-export function useGetNetworksForAssetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNetworksForAssetQuery, GetNetworksForAssetQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetNetworksForAssetQuery, GetNetworksForAssetQueryVariables>(GetNetworksForAssetDocument, options);
-        }
-export type GetNetworksForAssetQueryHookResult = ReturnType<typeof useGetNetworksForAssetQuery>;
-export type GetNetworksForAssetLazyQueryHookResult = ReturnType<typeof useGetNetworksForAssetLazyQuery>;
-export type GetNetworksForAssetQueryResult = Apollo.QueryResult<GetNetworksForAssetQuery, GetNetworksForAssetQueryVariables>;
 export const GetPaymentMethodsDocument = gql`
     query GetPaymentMethods($chainId: Int) {
   methodsForNetwork(chainId: $chainId) {

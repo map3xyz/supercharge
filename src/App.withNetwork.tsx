@@ -32,7 +32,7 @@ const AppWithNetwork: React.FC<AppProps> = ({ config, onClose }) => {
   if (error || assetsError || !network || !asset)
     return (
       <ErrorWrapper
-        description="We had trouble loading the asset or network selected."
+        description="We had trouble loading the network selected."
         header="Failed to initialize the SDK"
         retry={() => {
           refetch();

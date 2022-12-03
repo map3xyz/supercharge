@@ -1,5 +1,0 @@
-query GetNetworksForAsset($assetId: String) {
-  networksForAssetByOrg(assetId: $assetId) {
-    ...NetworkFields
-  }
-}

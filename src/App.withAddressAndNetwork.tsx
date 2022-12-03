@@ -25,7 +25,9 @@ const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     (network) => network?.networkCode === config.networkCode
   );
   const asset = assetData?.assetsForOrganization?.find(
-    (asset) => asset?.address === config.address
+    (asset) =>
+      asset?.address === config.address &&
+      asset?.networkCode === config.networkCode
   );
 
   if (error || assetError || !network || !asset)

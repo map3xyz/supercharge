@@ -38,6 +38,13 @@ export class Map3 {
       config.fiat = 'USD';
     }
 
+    if (config.address && !config.networkCode) {
+      console.warn(
+        'Warning: networkCode is required when address is provided. Falling back to asset selection.'
+      );
+      config.address = undefined;
+    }
+
     this.config = config;
 
     this.onClose = () => {
