@@ -49,6 +49,20 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
   });
+  it('should warn if address is passed without network', async () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+    const initFn = () =>
+      initMap3Sdk({
+        address: '0x123',
+        anonKey: 'test',
+        fiat: 'USD',
+        generateDepositAddress: async () => ({ address: '0x000000' }),
+      });
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: networkCode is required when address is provided. Falling back to asset selection.'
+    );
+  });
   it('should throw if no generateDepositAddress function is passed', () => {
     // @ts-expect-error
     const initFn = () => initMap3Sdk({});
