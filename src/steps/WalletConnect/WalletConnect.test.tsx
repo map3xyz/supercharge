@@ -140,6 +140,39 @@ describe('WalletConnect', () => {
     }));
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
   });
+  it('kills session', async () => {
+    const killSessionMock = jest.fn();
+    const walletConnect = await screen.findByText('Rainbow');
+    fireEvent.click(walletConnect);
+    mockDefault.mockImplementationOnce(() => ({
+      ...defaults,
+      peerMeta: { name: 'Rainbow' },
+    }));
+    await act(async () => {
+      await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
+    });
+    expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
+    await act(async () => {
+      const back = await screen.findByLabelText('Back');
+      fireEvent.click(back);
+    });
+    mockDefault.mockImplementationOnce(() => ({
+      ...defaults,
+      connected: true,
+      killSession: killSessionMock,
+      peerMeta: { name: 'Rainbow' },
+    }));
+    const spot = await screen.findByText('Spot');
+    fireEvent.click(spot);
+    mockDefault.mockImplementationOnce(() => ({
+      ...defaults,
+      peerMeta: { name: 'Spot' },
+    }));
+    expect(
+      await screen.findByTestId('scan-wallet-connect')
+    ).toBeInTheDocument();
+    expect(killSessionMock).toHaveBeenCalled();
+  });
   it('handles connection error', async () => {
     const walletConnect = await screen.findByText('Rainbow');
     fireEvent.click(walletConnect);
