@@ -189,9 +189,11 @@ describe('window.ethereum', () => {
     });
 
     it('should handle accounts disconnecting', async () => {
-      testingUtils.mockNotConnectedWallet();
-      testingUtils.mockAccountsChanged(['0x123willDisconnect']);
-      testingUtils.mockAccountsChanged([]);
+      act(() => {
+        testingUtils.mockNotConnectedWallet();
+        testingUtils.mockAccountsChanged(['0x123willDisconnect']);
+        testingUtils.mockAccountsChanged([]);
+      });
       global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
       const confirm = await screen.findByText('Confirm Payment');
       expect(confirm).toBeInTheDocument();

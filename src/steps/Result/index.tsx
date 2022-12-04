@@ -1,9 +1,8 @@
 import { ReadOnlyText } from '@map3xyz/components';
 import React, { useContext } from 'react';
 
-import ErrorWrapper from '../../components/ErrorWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import { Context, Steps } from '../../providers/Store';
+import { Context } from '../../providers/Store';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -12,15 +11,7 @@ const Result: React.FC<Props> = () => {
     <div className="flex h-full flex-col items-center justify-center">
       {state.transaction?.status === 'loading' ? (
         <LoadingWrapper message="Submitting Transaction..." />
-      ) : state.transaction?.status === 'error' ? (
-        <ErrorWrapper
-          description="There was a problem submitting your transaction."
-          header="Transaction Failed"
-          retry={() => {
-            dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
-          }}
-        />
-      ) : true ? (
+      ) : (
         <div className="flex h-full w-full flex-col items-center justify-between">
           <div></div>
           <div className="flex flex-col items-center gap-2 text-sm font-semibold text-neutral-500">
@@ -48,7 +39,7 @@ const Result: React.FC<Props> = () => {
             </a>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
