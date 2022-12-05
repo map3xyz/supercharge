@@ -17,7 +17,10 @@ const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     error: assetError,
     loading: assetLoading,
     refetch: assetRefetch,
-  } = useGetAssetsForOrgQuery();
+  } = useGetAssetsForOrgQuery({
+    fetchPolicy: 'no-cache',
+    variables: { address: config.address },
+  });
 
   if (loading || assetLoading) return <LoadingWrapper />;
 
