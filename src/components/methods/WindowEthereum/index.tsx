@@ -22,16 +22,16 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
       dispatch({ type: 'SET_PROVIDER_LOADING' });
       const providers = window.ethereum?.providers;
       const selectedProvider = providers?.find(
-        (x: any) => x[state.method!.value!]
+        (x: any) => x[state.method?.value!]
       );
 
       if (
-        (!window.ethereum || !window.ethereum[state.method!.value!]) &&
+        (!window.ethereum || !window.ethereum[state.method?.value!]) &&
         !selectedProvider
       ) {
         dispatch({ payload: 'No provider found.', type: 'SET_ACCOUNT_ERROR' });
         dispatch({ payload: 'No provider found.', type: 'SET_PROVIDER_ERROR' });
-        setFormError(`Please download the ${state.method!.name} extension.`);
+        setFormError(`Please download the ${state.method?.name} extension.`);
 
         return;
       }
@@ -79,7 +79,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
               dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
               setFormError(e.message);
             } else {
-              console.log(e);
+              console.error(e);
             }
           }
         }
@@ -98,7 +98,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
       return () => dispatch({ type: 'SET_PROVIDER_IDLE' });
     }, []);
 
-    if (!state.method || !state.method.value) return null;
+    if (!state.method || !state.method?.value) return null;
 
     let cta = 'Confirm Payment';
 

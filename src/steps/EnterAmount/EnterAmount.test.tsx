@@ -3,6 +3,7 @@ import { generateTestingUtils } from 'eth-testing';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
+import WindowEthereum from '../../components/methods/WindowEthereum';
 import * as useWeb3Mock from '../../hooks/useWeb3';
 import EnterAmount from '.';
 
@@ -183,9 +184,20 @@ describe('window.ethereum', () => {
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
+      act(() => {
+        testingUtils.lowLevel.mockRequest('eth_accounts', []);
+        testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
+          '0x123EthReqAccounts',
+        ]);
+      });
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
+    });
+
+    it('should connect', async () => {
+      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
+      expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     });
 
     it('should handle accounts disconnecting', async () => {
@@ -202,6 +214,35 @@ describe('window.ethereum', () => {
       });
       const connectWallet = await screen.findByText('Connect Wallet');
       expect(connectWallet).toBeInTheDocument();
+    });
+  });
+
+  describe('Connection declined', () => {
+    const consoleSpy = jest.spyOn(console, 'error');
+    const testingUtils = generateTestingUtils({
+      providerType: 'MetaMask',
+    });
+    beforeAll(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.lowLevel.mockRequest(
+        'eth_requestAccounts',
+        [
+          {
+            message:
+              'Really long error message that will cause an ugly UI display. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+          },
+        ],
+        { shouldThrow: true }
+      );
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+
+    it('should console error', async () => {
+      await screen.findByText('Connecting...');
+      expect(consoleSpy).toHaveBeenCalled();
     });
   });
 
@@ -353,6 +394,15 @@ describe('window.ethereum > ERC20', () => {
 describe('Enter Amount Errors', () => {
   it('renders', () => {
     render(<EnterAmount />);
+    expect(true).toBe(true);
+  });
+});
+
+describe('WindowEthereum Errors', () => {
+  it('renders', () => {
+    render(
+      <WindowEthereum amount="1.000" disabled={false} setFormError={() => {}} />
+    );
     expect(true).toBe(true);
   });
 });
