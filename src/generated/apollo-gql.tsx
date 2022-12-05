@@ -159,7 +159,7 @@ export type Query = {
   organizationById?: Maybe<Organization>;
   sdkConfigForOrganization?: Maybe<Array<Maybe<SdkConfigField>>>;
   searchAssets?: Maybe<Array<Maybe<Asset>>>;
-  searchAssetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
+  searchAssetsForOrganization?: Maybe<Array<Maybe<AssetWithPrice>>>;
 };
 
 
@@ -295,6 +295,8 @@ export type WalletConnectWallet = {
   versions?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
+export type AssetFieldsFragment = { __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null };
+
 export type NetworkFieldsFragment = { __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
 
 export type GetAssetsForOrgQueryVariables = Exact<{
@@ -332,8 +334,33 @@ export type SearchAssetsQueryVariables = Exact<{
 }>;
 
 
-export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'Asset', name?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
+export type SearchAssetsQuery = { __typename?: 'Query', searchAssetsForOrganization?: Array<{ __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null } | null> | null };
 
+export const AssetFieldsFragmentDoc = gql`
+    fragment AssetFields on AssetWithPrice {
+  address
+  decimals
+  id
+  name
+  networkCode
+  symbol
+  type
+  config {
+    mappedAssetId
+  }
+  networks {
+    name
+    networkCode
+  }
+  logo {
+    png
+    svg
+  }
+  price {
+    price
+  }
+}
+    `;
 export const NetworkFieldsFragmentDoc = gql`
     fragment NetworkFields on Network {
   name
@@ -357,30 +384,10 @@ export const GetAssetsForOrgDocument = gql`
     address: $address
     assetId: $assetId
   ) {
-    address
-    decimals
-    id
-    name
-    networkCode
-    symbol
-    type
-    config {
-      mappedAssetId
-    }
-    networks {
-      name
-      networkCode
-    }
-    logo {
-      png
-      svg
-    }
-    price {
-      price
-    }
+    ...AssetFields
   }
 }
-    `;
+    ${AssetFieldsFragmentDoc}`;
 
 /**
  * __useGetAssetsForOrgQuery__
@@ -537,15 +544,10 @@ export type GetPaymentMethodsQueryResult = Apollo.QueryResult<GetPaymentMethodsQ
 export const SearchAssetsDocument = gql`
     query SearchAssets($query: String) {
   searchAssetsForOrganization(query: $query) {
-    name
-    logo {
-      png
-      svg
-    }
-    symbol
+    ...AssetFields
   }
 }
-    `;
+    ${AssetFieldsFragmentDoc}`;
 
 /**
  * __useSearchAssetsQuery__

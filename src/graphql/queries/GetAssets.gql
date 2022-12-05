@@ -12,26 +12,6 @@ query GetAssetsForOrg(
     address: $address
     assetId: $assetId
   ) {
-    address
-    decimals
-    id
-    name
-    networkCode
-    symbol
-    type
-    config {
-      mappedAssetId
-    }
-    networks {
-      name
-      networkCode
-    }
-    logo {
-      png
-      svg
-    }
-    price {
-      price
-    }
+    ...AssetFields
   }
 }

@@ -1,0 +1,23 @@
+fragment AssetFields on AssetWithPrice {
+  address
+  decimals
+  id
+  name
+  networkCode
+  symbol
+  type
+  config {
+    mappedAssetId
+  }
+  networks {
+    name
+    networkCode
+  }
+  logo {
+    png
+    svg
+  }
+  price {
+    price
+  }
+}
