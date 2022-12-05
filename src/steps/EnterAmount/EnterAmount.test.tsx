@@ -5,6 +5,7 @@ import { act, fireEvent, render, screen } from '~/jest/test-utils';
 import App from '../../App';
 import WindowEthereum from '../../components/methods/WindowEthereum';
 import * as useWeb3Mock from '../../hooks/useWeb3';
+import WalletConnect from '../WalletConnect';
 import EnterAmount from '.';
 
 describe('Enter Amount', () => {
@@ -403,6 +404,13 @@ describe('WindowEthereum Errors', () => {
     render(
       <WindowEthereum amount="1.000" disabled={false} setFormError={() => {}} />
     );
+    expect(true).toBe(true);
+  });
+});
+
+describe('WalletConnect Errors', () => {
+  it('renders', () => {
+    render(<WalletConnect />);
     expect(true).toBe(true);
   });
 });
