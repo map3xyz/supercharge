@@ -1,6 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { render as RTLRender } from '@testing-library/react';
 
+import { assetsForOrganizationMockResult } from '~/jest/__mocks__/assets';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -31,7 +32,6 @@ describe('Network Selection', () => {
   it('handles errors', async () => {
     RTLRender(
       <MockedProvider
-        addTypename={false}
         mocks={[
           {
             request: {
@@ -43,31 +43,8 @@ describe('Network Selection', () => {
             },
             result: {
               data: {
-                assetsForOrganization: [
-                  {
-                    address: null,
-                    config: {
-                      mappedAssetId: 'satoshi123',
-                    },
-                    decimals: 8,
-                    id: 'satoshi123',
-                    logo: {
-                      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
-                      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
-                    },
-                    name: 'Bitcoin',
-                    networkCode: 'bitcoin',
-                    networks: {
-                      name: 'Bitcoin',
-                      networkCode: 'bitcoin',
-                    },
-                    price: {
-                      price: 20_000,
-                    },
-                    symbol: 'BTC',
-                    type: 'network',
-                  },
-                ],
+                __typename: 'Query',
+                assetsForOrganization: [assetsForOrganizationMockResult[0]],
               },
             },
           },

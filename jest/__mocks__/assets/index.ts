@@ -6,6 +6,7 @@ import {
 
 export const assetsForOrganizationMockResult = [
   {
+    __typename: 'AssetWithPrice',
     address: null,
     config: {
       mappedAssetId: 'satoshi123',
@@ -29,6 +30,7 @@ export const assetsForOrganizationMockResult = [
     type: 'network',
   },
   {
+    __typename: 'AssetWithPrice',
     address: '0x123ElonAddress',
     config: {
       mappedAssetId: 'elon123',
@@ -59,6 +61,7 @@ export const getAssetsForOrgMock = (
     variables,
   },
   result: {
+    __typename: 'Query',
     data: { assetsForOrganization: assetsForOrganizationMockResult },
   },
 });
@@ -71,17 +74,9 @@ export const searchAssetsMock = () => ({
     },
   },
   result: {
+    __typename: 'Query',
     data: {
-      searchAssetsForOrganization: [
-        {
-          logo: {
-            png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
-            svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
-          },
-          name: 'Bitcoin',
-          symbol: 'BTC',
-        },
-      ],
+      searchAssetsForOrganization: [assetsForOrganizationMockResult[0]],
     },
   },
 });
