@@ -8,6 +8,7 @@ export const mocks: MockedResponse[] = [
   getAssetsForOrgMock({ currency: undefined, limit: 10, offset: 0 }),
   getAssetsForOrgMock({ currency: undefined, limit: 10, offset: 0 }),
   getAssetsForOrgMock({ assetId: 'satoshi123' }),
+  getAssetsForOrgMock({ address: '0x123ElonAddress' }),
   getAssetsForOrgMock({}),
   searchAssetsMock(),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
