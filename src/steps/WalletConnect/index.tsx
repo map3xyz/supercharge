@@ -2,6 +2,7 @@ import { ReadOnlyText } from '@map3xyz/components';
 import WalletConnectClient from '@walletconnect/client';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
+import { BrowserView, isMobile, MobileView } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -9,6 +10,7 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import { Context, Steps } from '../../providers/Store';
 
 const WalletConnect: React.FC<Props> = () => {
+  const [deeplink, setDeeplink] = useState<string | undefined>();
   const [uri, setUri] = useState<string | undefined>();
   const [state, dispatch] = useContext(Context);
 
@@ -32,7 +34,7 @@ const WalletConnect: React.FC<Props> = () => {
   const run = async () => {
     dispatch({ type: 'SET_CONNECTOR_LOADING' });
     try {
-      const connector = new WalletConnectClient({
+      const connector = await new WalletConnectClient({
         bridge: 'https://bridge.walletconnect.org',
       });
 
@@ -68,6 +70,15 @@ const WalletConnect: React.FC<Props> = () => {
           handleConnected(connector);
           return;
         }
+      }
+
+      if (isMobile) {
+        const deeplink =
+          state.method?.walletConnect?.mobile?.native +
+          '//wc?uri=' +
+          encodeURIComponent(connector.uri);
+        setDeeplink(deeplink);
+        window.location.href = deeplink;
       }
 
       setUri(connector.uri);
@@ -112,40 +123,51 @@ const WalletConnect: React.FC<Props> = () => {
           >
             Open <b>{state.method?.name}</b> on your mobile device and scan the
             QR Code to connect.{' '}
-            {state.method?.walletConnect?.desktop?.native ? (
-              <>
-                Or click{' '}
-                <a
-                  className="text-blue-500"
-                  href={state.method.walletConnect.desktop.native + uri}
-                >
-                  here
-                </a>{' '}
-                to connect with the desktop app.
-              </>
-            ) : null}
+            <BrowserView>
+              {state.method?.walletConnect?.desktop?.native ? (
+                <>
+                  Or click{' '}
+                  <a
+                    className="text-blue-500"
+                    href={state.method.walletConnect.desktop.native + uri}
+                  >
+                    here
+                  </a>{' '}
+                  to connect with the desktop app.
+                </>
+              ) : null}
+            </BrowserView>
           </div>
         </InnerWrapper>
-        <QRCodeSVG
-          bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
-          className="rounded-lg"
-          fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
-          imageSettings={{
-            excavate: false,
-            height: 40,
-            src: state.method?.logo || '',
-            width: 40,
-          }}
-          includeMargin={true}
-          size={200}
-          style={{
-            border:
-              state.theme === 'dark'
-                ? '1px solid #404040'
-                : '1px solid #e5e5e5',
-          }}
-          value={uri}
-        />
+        {isMobile && deeplink ? (
+          <>
+            <a className="text-white" href={deeplink}>
+              Open App
+            </a>
+            <div className="text-xxs text-white">{deeplink}</div>
+          </>
+        ) : (
+          <QRCodeSVG
+            bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
+            className="rounded-lg"
+            fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
+            imageSettings={{
+              excavate: false,
+              height: 40,
+              src: state.method?.logo || '',
+              width: 40,
+            }}
+            includeMargin={true}
+            size={200}
+            style={{
+              border:
+                state.theme === 'dark'
+                  ? '1px solid #404040'
+                  : '1px solid #e5e5e5',
+            }}
+            value={uri}
+          />
+        )}
         <InnerWrapper>
           <ReadOnlyText copyButton value={uri} />
         </InnerWrapper>
