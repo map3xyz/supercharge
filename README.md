@@ -34,7 +34,7 @@
 ```
 
 ### Examples
-[Install Via CDN](https://codesandbox.io/s/map3-sdk-cdn-demo-l9t2x5)
+[![Edit map3-sdk-cdn-demo-l9t2x5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/map3-sdk-cdn-demo-l9t2x5)
 
 ### Generating Anon Keys
 
