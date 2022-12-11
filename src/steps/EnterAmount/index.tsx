@@ -303,7 +303,7 @@ const EnterAmount: React.FC<Props> = () => {
           </div>
           <div className="relative w-full">
             {formError ? (
-              <span className="absolute -top-2 w-full -translate-y-full">
+              <span className="absolute -top-2 left-1/2 w-full -translate-x-1/2 -translate-y-full">
                 <Badge color="red" dot>
                   {formError}
                 </Badge>

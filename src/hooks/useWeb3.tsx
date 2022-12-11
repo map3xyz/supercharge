@@ -43,7 +43,7 @@ export const useWeb3 = () => {
 
   const switchChain = async (chainId: number) => {
     if (state.method?.value === 'isWalletConnect') {
-      await state.connector?.data?.sendCustomRequest({
+      const chainSwitch = state.connector?.data?.sendCustomRequest({
         jsonrpc: '2.0',
         method: 'wallet_switchEthereumChain',
         params: [
@@ -51,7 +51,8 @@ export const useWeb3 = () => {
             chainId: toHex(chainId),
           },
         ],
-      });
+      }) as Promise<number>;
+      await walletConnectHelper(chainSwitch);
     } else {
       await state.provider?.data?.send('wallet_switchEthereumChain', [
         {
@@ -92,17 +93,19 @@ export const useWeb3 = () => {
       txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
     }
 
-    dispatch({ type: 'SET_TRANSACTION_LOADING' });
+    if (!isMobile) {
+      dispatch({ type: 'SET_TRANSACTION_LOADING' });
+    }
     let hash;
     if (state.method?.value === 'isWalletConnect') {
       try {
-        hash = state.connector?.data?.sendTransaction(txParams);
-        if (isMobile && state.method.walletConnect?.mobile?.native) {
-          window.location.href = state.method.walletConnect?.mobile?.native;
-        }
-        hash = await hash;
+        hash = state.connector?.data?.sendTransaction(
+          txParams
+        ) as Promise<string>;
+        hash = await walletConnectHelper(hash);
       } catch (e: any) {
         dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
+        throw e;
       }
     } else {
       try {
@@ -110,11 +113,27 @@ export const useWeb3 = () => {
           txParams,
         ]);
       } catch (e: any) {
+        console.log('ERROR', e);
         dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
         throw e;
       }
     }
+    console.log('HERE');
+    console.log(hash);
     dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
+  };
+
+  const walletConnectHelper = async (promise: Promise<any>) => {
+    if (isMobile) {
+      if (state.method?.walletConnect?.mobile?.native) {
+        window.location.href = state.method.walletConnect.mobile.native;
+        return await promise;
+      } else {
+        throw new Error('No mobile wallet to connect to.');
+      }
+    } else {
+      return await promise;
+    }
   };
 
   return {

@@ -346,7 +346,9 @@ export const Store: React.FC<
         case 'RESET_STATE': {
           return { ...initialState, asset, fiat, network, step, theme };
         }
+        /* istanbul ignore next */
         default:
+          /* istanbul ignore next */
           return state;
       }
     },
@@ -376,6 +378,7 @@ export const Context = createContext<
   initialState,
   () => null,
   {
+    /* istanbul ignore next */
     generateDepositAddress: () =>
       new Promise((resolve) => resolve({ address: '' })),
   },

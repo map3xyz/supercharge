@@ -1,4 +1,4 @@
-import { ReadOnlyText } from '@map3xyz/components';
+import { Badge, Button, ReadOnlyText } from '@map3xyz/components';
 import WalletConnectClient from '@walletconnect/client';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
@@ -81,7 +81,6 @@ const WalletConnect: React.FC<Props> = () => {
           '//wc?uri=' +
           encodeURIComponent(connector.uri);
         setDeeplink(deeplink);
-        // window.location.href = deeplink;
       }
 
       setUri(connector.uri);
@@ -100,6 +99,7 @@ const WalletConnect: React.FC<Props> = () => {
         description="Error starting a WalletConnect session."
         header="WalletConnect Error"
         retry={run}
+        stacktrace={state.connector.error}
       />
     );
   }
@@ -127,7 +127,7 @@ const WalletConnect: React.FC<Props> = () => {
             <MobileView>
               <>
                 Click the button below to connect with{' '}
-                <b>{state.method?.name}</b>.
+                <b>{state.method?.name}</b>. You will be redirected to the app.
               </>
             </MobileView>
             <BrowserView>
@@ -151,12 +151,16 @@ const WalletConnect: React.FC<Props> = () => {
           </div>
         </InnerWrapper>
         {isMobile && deeplink ? (
-          <>
-            <a className="text-white" href={deeplink}>
-              Open App
-            </a>
-            <div className="break-all text-xxs text-white">{deeplink}</div>
-          </>
+          <InnerWrapper>
+            <Button block size="xlarge" type="default">
+              <a href={deeplink}>
+                <span className="flex items-center gap-2">
+                  <img className="h-6" src={state.method?.logo || ''} /> Open{' '}
+                  {state.method?.name}
+                </span>
+              </a>
+            </Button>
+          </InnerWrapper>
         ) : (
           <QRCodeSVG
             bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
@@ -180,6 +184,20 @@ const WalletConnect: React.FC<Props> = () => {
           />
         )}
         <InnerWrapper>
+          <MobileView className="mb-3">
+            {/* @ts-ignore */}
+            <Badge color="blue" dot>
+              {/* @ts-ignore */}
+              <a
+                className="leading-4"
+                href="https://support.map3.xyz"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Having trouble connecting? Please click here to contact support.
+              </a>
+            </Badge>
+          </MobileView>
           <ReadOnlyText copyButton value={uri} />
         </InnerWrapper>
       </div>

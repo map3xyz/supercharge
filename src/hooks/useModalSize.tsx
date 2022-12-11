@@ -13,6 +13,7 @@ export const useModalSize = () => {
       const modal = document.getElementById(
         'map3-modal-stepper'
       ) as HTMLElement;
+      if (!modal || !modal.getBoundingClientRect()) return;
       const { height, width } = modal.getBoundingClientRect();
 
       setModalSize({

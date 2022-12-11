@@ -29,7 +29,7 @@ const QRCode: React.FC<Props> = () => {
     };
     run();
 
-    return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
+    return dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
   }, []);
 
   return (
