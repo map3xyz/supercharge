@@ -76,10 +76,13 @@ const WalletConnect: React.FC<Props> = () => {
       }
 
       if (isMobile) {
-        const deeplink =
-          state.method?.walletConnect?.mobile?.native +
-          '//wc?uri=' +
-          encodeURIComponent(connector.uri);
+        let deeplink =
+          state.method?.walletConnect?.mobile?.native + '//wc?uri=';
+        if (state.method?.name === 'MetaMask') {
+          deeplink += connector.uri;
+        } else {
+          deeplink += encodeURIComponent(connector.uri);
+        }
         setDeeplink(deeplink);
       }
 
