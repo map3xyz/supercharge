@@ -1,16 +1,21 @@
-import { ReadOnlyText } from '@map3xyz/components';
+import { Badge, Button, ReadOnlyText } from '@map3xyz/components';
 import WalletConnectClient from '@walletconnect/client';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
+import { BrowserView, isMobile, MobileView } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const WalletConnect: React.FC<Props> = () => {
+  const [deeplink, setDeeplink] = useState<string | undefined>();
   const [uri, setUri] = useState<string | undefined>();
   const [state, dispatch] = useContext(Context);
+
+  const { width } = useModalSize();
 
   const handleConnected = (connector: WalletConnectClient) => {
     dispatch({
@@ -32,7 +37,7 @@ const WalletConnect: React.FC<Props> = () => {
   const run = async () => {
     dispatch({ type: 'SET_CONNECTOR_LOADING' });
     try {
-      const connector = new WalletConnectClient({
+      const connector = await new WalletConnectClient({
         bridge: 'https://bridge.walletconnect.org',
       });
 
@@ -70,6 +75,17 @@ const WalletConnect: React.FC<Props> = () => {
         }
       }
 
+      if (isMobile) {
+        let deeplink =
+          state.method?.walletConnect?.mobile?.native + '//wc?uri=';
+        if (state.method?.name === 'MetaMask') {
+          deeplink += connector.uri;
+        } else {
+          deeplink += encodeURIComponent(connector.uri);
+        }
+        setDeeplink(deeplink);
+      }
+
       setUri(connector.uri);
     } catch (e: any) {
       dispatch({ payload: e.message, type: 'SET_CONNECTOR_ERROR' });
@@ -86,6 +102,7 @@ const WalletConnect: React.FC<Props> = () => {
         description="Error starting a WalletConnect session."
         header="WalletConnect Error"
         retry={run}
+        stacktrace={state.connector.error}
       />
     );
   }
@@ -110,43 +127,80 @@ const WalletConnect: React.FC<Props> = () => {
             className="text-xs font-bold leading-4"
             data-testid="scan-wallet-connect"
           >
-            Open <b>{state.method?.name}</b> on your mobile device and scan the
-            QR Code to connect.{' '}
-            {state.method?.walletConnect?.desktop?.native ? (
+            <MobileView>
               <>
-                Or click{' '}
-                <a
-                  className="text-blue-500"
-                  href={state.method.walletConnect.desktop.native + uri}
-                >
-                  here
-                </a>{' '}
-                to connect with the desktop app.
+                Click the button below to connect with{' '}
+                <b>{state.method?.name}</b>. You will be redirected to the app.
               </>
-            ) : null}
+            </MobileView>
+            <BrowserView>
+              <>
+                Open <b>{state.method?.name}</b> on your mobile device and scan
+                the QR Code to connect.{' '}
+              </>
+              {state.method?.walletConnect?.desktop?.native ? (
+                <>
+                  Or{' '}
+                  <a
+                    className="text-blue-500"
+                    href={state.method.walletConnect.desktop.native + uri}
+                  >
+                    click here <i className="fa fa-external-link" />{' '}
+                  </a>{' '}
+                  to connect with the desktop app.
+                </>
+              ) : null}
+            </BrowserView>
           </div>
         </InnerWrapper>
-        <QRCodeSVG
-          bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
-          className="rounded-lg"
-          fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
-          imageSettings={{
-            excavate: false,
-            height: 40,
-            src: state.method?.logo || '',
-            width: 40,
-          }}
-          includeMargin={true}
-          size={200}
-          style={{
-            border:
-              state.theme === 'dark'
-                ? '1px solid #404040'
-                : '1px solid #e5e5e5',
-          }}
-          value={uri}
-        />
+        {isMobile && deeplink ? (
+          <InnerWrapper>
+            <Button block size="xlarge" type="default">
+              <a href={deeplink}>
+                <span className="flex items-center gap-2">
+                  <img className="h-6" src={state.method?.logo || ''} /> Open{' '}
+                  {state.method?.name}
+                </span>
+              </a>
+            </Button>
+          </InnerWrapper>
+        ) : (
+          <QRCodeSVG
+            bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
+            className="rounded-lg"
+            fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
+            imageSettings={{
+              excavate: false,
+              height: 40,
+              src: state.method?.logo || '',
+              width: 40,
+            }}
+            includeMargin={true}
+            size={width ? width - 96 : 0}
+            style={{
+              border:
+                state.theme === 'dark'
+                  ? '1px solid #404040'
+                  : '1px solid #e5e5e5',
+            }}
+            value={uri}
+          />
+        )}
         <InnerWrapper>
+          <MobileView className="mb-3">
+            {/* @ts-ignore */}
+            <Badge color="blue" dot>
+              {/* @ts-ignore */}
+              <a
+                className="leading-4"
+                href="https://support.map3.xyz"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Having trouble connecting? Please click here to contact support.
+              </a>
+            </Badge>
+          </MobileView>
           <ReadOnlyText copyButton value={uri} />
         </InnerWrapper>
       </div>

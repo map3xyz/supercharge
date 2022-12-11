@@ -1,5 +1,6 @@
 import { Badge } from '@map3xyz/components';
 import React, { useContext } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -17,6 +18,11 @@ const PaymentMethod: React.FC<Props> = () => {
     variables: { chainId },
   });
 
+  if (!state.asset || !state.network) {
+    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    return null;
+  }
+
   if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
   if (error)
     return (
@@ -27,19 +33,21 @@ const PaymentMethod: React.FC<Props> = () => {
       />
     );
 
-  if (!state.asset || !state.network) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
-    return null;
-  }
-
-  const methodsForNetwork = data?.methodsForNetwork?.filter(
-    (method) =>
+  const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
+    if (isMobile) {
+      // if mobile filter browser extensions and wallet connect methods without native deeplinks
+      return (
+        (method?.value !== 'isMetaMask' &&
+          method?.value !== 'isCoinbaseWallet') ||
+        (method.walletConnect && method.walletConnect.mobile?.native)
+      );
+    }
+    return (
       !method?.walletConnect /*( method?.walletConnect?.chains?.length === 0 ||
         method?.walletConnect?.chains?.includes('eip155:' + chainId)) && */ ||
-      (method?.walletConnect?.mobile?.native &&
-        // TODO: Add better support for window.ethereum and WalletConnect overlaps
-        method.name !== 'MetaMask')
-  );
+      (method?.walletConnect?.mobile?.native && method.name !== 'MetaMask')
+    );
+  });
 
   return (
     <>
@@ -56,33 +64,13 @@ const PaymentMethod: React.FC<Props> = () => {
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
           Send{' '}
-          <span
-            className="text-blue-600 underline"
-            onClick={() => {
-              dispatch({
-                payload: Steps.AssetSelection,
-                type: 'SET_STEP',
-              });
-            }}
-            role="button"
-          >
-            <Badge color="blue" size="large">
-              {state.asset?.symbol || ''}
-            </Badge>
-          </span>{' '}
-          on the{' '}
-          <span
-            className="text-blue-600 underline"
-            onClick={() => {
-              dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
-            }}
-            role="button"
-          >
-            {/* @ts-ignore */}
-            <Badge color="blue" size="large">
-              {state.network?.name || ''} Network
-            </Badge>
-          </span>{' '}
+          <Badge color="blue" size="large">
+            {state.asset?.symbol || ''}
+          </Badge>{' '}
+          on the {/* @ts-ignore */}
+          <Badge color="blue" size="large">
+            {state.network?.name || ''} Network
+          </Badge>{' '}
           via
         </div>
       </div>

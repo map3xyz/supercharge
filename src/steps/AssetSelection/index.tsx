@@ -36,7 +36,8 @@ const AssetSelection: React.FC<Props> = () => {
   if (error) {
     return (
       <ErrorWrapper
-        description="We couldn't get a list of assets to select."
+        // description="We couldn't get a list of assets to select."
+        description={JSON.stringify(error)}
         header="Error Fetching Assets"
         retry={() => refetch()}
       />
@@ -136,9 +137,13 @@ const AssetSelection: React.FC<Props> = () => {
         {/* TODO: check if we're at the limit */}
         {assets?.length ? (
           <InView
+            /* istanbul ignore next */
             onChange={async (inView) => {
+              /* istanbul ignore next */
               const currentLength = assets?.length || 0;
+              /* istanbul ignore next */
               if (inView) {
+                /* istanbul ignore next */
                 await fetchMore({
                   variables: {
                     currency: state.fiat,

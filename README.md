@@ -38,4 +38,4 @@
 
 ### Generating Anon Keys
 
-Visit https://console.map3.xyz/ to generate your ANON_KEY.
+Visit https://console.map3.xyz/ to generate your `ANON_KEY`.

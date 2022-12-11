@@ -5,11 +5,14 @@ import React, { useContext, useEffect } from 'react';
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
+
+  const { width } = useModalSize();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
@@ -26,7 +29,7 @@ const QRCode: React.FC<Props> = () => {
     };
     run();
 
-    return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
+    return dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
   }, []);
 
   return (
@@ -41,52 +44,20 @@ const QRCode: React.FC<Props> = () => {
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Send{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.AssetSelection,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          <Badge color="blue" size="large">
-            {state.asset?.name || ''}
-          </Badge>
-        </span>{' '}
-        on the{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
-          }}
-          role="button"
-        >
+        <Badge color="blue" size="large">
+          {state.asset?.name || ''}
+        </Badge>{' '}
+        on the {/* @ts-ignore */}
+        <Badge color="blue" size="large">
+          {state.network?.symbol || ''} Network
+        </Badge>{' '}
+        via {/* @ts-ignore */}
+        <Badge color="blue" size="large">
           {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network?.symbol || ''} Network
-          </Badge>
-        </span>{' '}
-        via{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.PaymentMethod,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}
-            </span>
-          </Badge>
-        </span>
+          <span className="flex items-center gap-1">
+            <MethodIcon method={state.method} /> {state.method.name}
+          </span>
+        </Badge>
       </div>
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
@@ -113,7 +84,7 @@ const QRCode: React.FC<Props> = () => {
         )}
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
-            <div className="flex h-full w-full flex-col items-center justify-between gap-4 text-sm">
+            <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
               <div className="text-xs text-neutral-400">
                 Only send {state.asset.name} on the {state.network?.symbol}{' '}
                 Network to this address.
@@ -130,7 +101,7 @@ const QRCode: React.FC<Props> = () => {
                     width: 40,
                   }}
                   includeMargin={true}
-                  size={150}
+                  size={width ? width - 160 : 0}
                   style={{
                     border:
                       state.theme === 'dark'

@@ -6,6 +6,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
   description,
   header,
   retry,
+  stacktrace,
 }) => {
   return (
     <InnerWrapper>
@@ -20,6 +21,11 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
         </a>{' '}
         to retry. If the error persists, please contact support.
       </div>
+      {stacktrace ? (
+        <details className="mt-2 text-xs text-white">
+          <summary>View the raw error:</summary> <pre>{stacktrace}</pre>
+        </details>
+      ) : null}
     </InnerWrapper>
   );
 };
@@ -28,6 +34,7 @@ type Props = {
   description: string;
   header: string;
   retry: () => void;
+  stacktrace?: string;
 };
 
 export default ErrorWrapper;

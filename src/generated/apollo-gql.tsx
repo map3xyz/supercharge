@@ -102,6 +102,7 @@ export type Network = {
   __typename?: 'Network';
   address?: Maybe<Scalars['String']>;
   assetId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
   identifiers?: Maybe<Identifiers>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
@@ -155,6 +156,7 @@ export type Query = {
   methodsForNetwork?: Maybe<Array<Maybe<PaymentMethod>>>;
   networkByCode?: Maybe<Network>;
   networks?: Maybe<Array<Maybe<Network>>>;
+  networksByNetworkCodes?: Maybe<Array<Maybe<Network>>>;
   networksCount?: Maybe<Scalars['Int']>;
   organizationById?: Maybe<Organization>;
   sdkConfigForOrganization?: Maybe<Array<Maybe<SdkConfigField>>>;
@@ -212,6 +214,11 @@ export type QueryNetworkByCodeArgs = {
 export type QueryNetworksArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryNetworksByNetworkCodesArgs = {
+  networkCodes?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 
