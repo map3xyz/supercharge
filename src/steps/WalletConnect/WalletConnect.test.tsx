@@ -1,3 +1,5 @@
+import * as reactDeviceDetect from 'react-device-detect';
+
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -226,5 +228,24 @@ describe('WalletConnect', () => {
       }
     );
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
+  });
+  it('displays a deeplink on mobile', async () => {
+    Object.defineProperty(reactDeviceDetect, 'isMobile', { get: () => true });
+    const walletConnect = await screen.findByText('Rainbow');
+    fireEvent.click(walletConnect);
+    mockConnect.mockImplementation((event: string, callback: () => void) => {
+      if (event === 'connect') {
+        setTimeout(() => {
+          callback();
+        }, TIMEOUT_BEFORE_MOCK_CONNECT);
+      }
+      if (event === 'disconnect') {
+        setTimeout(() => {
+          callback();
+        }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
+      }
+    });
+    const rainbow = await screen.findByText('Open Rainbow');
+    expect(rainbow).toBeInTheDocument();
   });
 });

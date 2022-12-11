@@ -151,71 +151,36 @@ const EnterAmount: React.FC<Props> = () => {
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Send{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.AssetSelection,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          <Badge color="blue" size="large">
-            {state.asset.symbol || ''}
-          </Badge>
-        </span>{' '}
-        on the{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
-          }}
-          role="button"
+        <Badge color="blue" size="large">
+          {state.asset.symbol || ''}
+        </Badge>{' '}
+        on the {/* @ts-ignore */}
+        <Badge color="blue" size="large">
+          {state.network.name || ''} Network
+        </Badge>{' '}
+        via {/* @ts-ignore */}
+        <Badge
+          color={
+            state.account.status === 'loading' ||
+            state.account.status === 'idle'
+              ? 'yellow'
+              : state.account.status === 'error'
+              ? 'red'
+              : 'green'
+          }
+          dot
+          size="large"
         >
           {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network.name || ''} Network
-          </Badge>
-        </span>{' '}
-        via{' '}
-        <span
-          onClick={() => {
-            if (state.account.status === 'success') {
-              dispatch({
-                payload: Steps.PaymentMethod,
-                type: 'SET_STEP',
-              });
-            } else {
-              connectRef.current?.connect();
-            }
-          }}
-          role="button"
-        >
-          {/* @ts-ignore */}
-          <Badge
-            color={
-              state.account.status === 'loading' ||
-              state.account.status === 'idle'
-                ? 'yellow'
-                : state.account.status === 'error'
-                ? 'red'
-                : 'green'
-            }
-            dot
-            size="large"
-          >
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}{' '}
-              {state.account.status === 'success' && state.account.data ? (
-                <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
-              ) : (
-                ''
-              )}
-            </span>
-          </Badge>
-        </span>
+          <span className="flex items-center gap-1">
+            <MethodIcon method={state.method} /> {state.method.name}{' '}
+            {state.account.status === 'success' && state.account.data ? (
+              <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
+            ) : (
+              ''
+            )}
+          </span>
+        </Badge>
       </div>
       <InnerWrapper className="h-full">
         <form
@@ -303,7 +268,7 @@ const EnterAmount: React.FC<Props> = () => {
           </div>
           <div className="relative w-full">
             {formError ? (
-              <span className="absolute -top-2 w-full -translate-y-full">
+              <span className="absolute -top-2 left-1/2 w-full -translate-x-1/2 -translate-y-full">
                 <Badge color="red" dot>
                   {formError}
                 </Badge>
