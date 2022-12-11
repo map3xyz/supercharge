@@ -16,6 +16,11 @@ const NetworkSelection: React.FC<Props> = () => {
     },
   });
 
+  if (!state.asset) {
+    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    return null;
+  }
+
   if (loading) return <LoadingWrapper message="Fetching Networks..." />;
 
   if (error)
@@ -26,11 +31,6 @@ const NetworkSelection: React.FC<Props> = () => {
         retry={refetch}
       />
     );
-
-  if (!state.asset) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
-    return null;
-  }
 
   return (
     <>
@@ -48,20 +48,9 @@ const NetworkSelection: React.FC<Props> = () => {
         </InnerWrapper>
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
           Send{' '}
-          <span
-            className="text-blue-600 underline"
-            onClick={() => {
-              dispatch({
-                payload: Steps.AssetSelection,
-                type: 'SET_STEP',
-              });
-            }}
-            role="button"
-          >
-            <Badge color="blue" size="large">
-              {state.asset.symbol || ''}
-            </Badge>
-          </span>{' '}
+          <Badge color="blue" size="large">
+            {state.asset.symbol || ''}
+          </Badge>{' '}
           on
         </div>
       </div>

@@ -137,9 +137,13 @@ const AssetSelection: React.FC<Props> = () => {
         {/* TODO: check if we're at the limit */}
         {assets?.length ? (
           <InView
+            /* istanbul ignore next */
             onChange={async (inView) => {
+              /* istanbul ignore next */
               const currentLength = assets?.length || 0;
+              /* istanbul ignore next */
               if (inView) {
+                /* istanbul ignore next */
                 await fetchMore({
                   variables: {
                     currency: state.fiat,

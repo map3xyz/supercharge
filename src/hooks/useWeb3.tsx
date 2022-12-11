@@ -113,13 +113,10 @@ export const useWeb3 = () => {
           txParams,
         ]);
       } catch (e: any) {
-        console.log('ERROR', e);
         dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
         throw e;
       }
     }
-    console.log('HERE');
-    console.log(hash);
     dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
   };
 

@@ -44,52 +44,20 @@ const QRCode: React.FC<Props> = () => {
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         Send{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.AssetSelection,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          <Badge color="blue" size="large">
-            {state.asset?.name || ''}
-          </Badge>
-        </span>{' '}
-        on the{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({ payload: Steps.NetworkSelection, type: 'SET_STEP' });
-          }}
-          role="button"
-        >
+        <Badge color="blue" size="large">
+          {state.asset?.name || ''}
+        </Badge>{' '}
+        on the {/* @ts-ignore */}
+        <Badge color="blue" size="large">
+          {state.network?.symbol || ''} Network
+        </Badge>{' '}
+        via {/* @ts-ignore */}
+        <Badge color="blue" size="large">
           {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network?.symbol || ''} Network
-          </Badge>
-        </span>{' '}
-        via{' '}
-        <span
-          className="text-blue-600 underline"
-          onClick={() => {
-            dispatch({
-              payload: Steps.PaymentMethod,
-              type: 'SET_STEP',
-            });
-          }}
-          role="button"
-        >
-          {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}
-            </span>
-          </Badge>
-        </span>
+          <span className="flex items-center gap-1">
+            <MethodIcon method={state.method} /> {state.method.name}
+          </span>
+        </Badge>
       </div>
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
