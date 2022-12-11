@@ -7,12 +7,15 @@ import { BrowserView, isMobile, MobileView } from 'react-device-detect';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const WalletConnect: React.FC<Props> = () => {
   const [deeplink, setDeeplink] = useState<string | undefined>();
   const [uri, setUri] = useState<string | undefined>();
   const [state, dispatch] = useContext(Context);
+
+  const { width } = useModalSize();
 
   const handleConnected = (connector: WalletConnectClient) => {
     dispatch({
@@ -78,7 +81,7 @@ const WalletConnect: React.FC<Props> = () => {
           '//wc?uri=' +
           encodeURIComponent(connector.uri);
         setDeeplink(deeplink);
-        window.location.href = deeplink;
+        // window.location.href = deeplink;
       }
 
       setUri(connector.uri);
@@ -121,17 +124,25 @@ const WalletConnect: React.FC<Props> = () => {
             className="text-xs font-bold leading-4"
             data-testid="scan-wallet-connect"
           >
-            Open <b>{state.method?.name}</b> on your mobile device and scan the
-            QR Code to connect.{' '}
+            <MobileView>
+              <>
+                Click the button below to connect with{' '}
+                <b>{state.method?.name}</b>.
+              </>
+            </MobileView>
             <BrowserView>
+              <>
+                Open <b>{state.method?.name}</b> on your mobile device and scan
+                the QR Code to connect.{' '}
+              </>
               {state.method?.walletConnect?.desktop?.native ? (
                 <>
-                  Or click{' '}
+                  Or{' '}
                   <a
                     className="text-blue-500"
                     href={state.method.walletConnect.desktop.native + uri}
                   >
-                    here
+                    click here <i className="fa fa-external-link" />{' '}
                   </a>{' '}
                   to connect with the desktop app.
                 </>
@@ -144,7 +155,7 @@ const WalletConnect: React.FC<Props> = () => {
             <a className="text-white" href={deeplink}>
               Open App
             </a>
-            <div className="text-xxs text-white">{deeplink}</div>
+            <div className="break-all text-xxs text-white">{deeplink}</div>
           </>
         ) : (
           <QRCodeSVG
@@ -158,7 +169,7 @@ const WalletConnect: React.FC<Props> = () => {
               width: 40,
             }}
             includeMargin={true}
-            size={200}
+            size={width ? width - 96 : 0}
             style={{
               border:
                 state.theme === 'dark'

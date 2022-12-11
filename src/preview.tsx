@@ -23,7 +23,7 @@ root.render(
             }
             return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
           },
-          networkCode: 'ethereum',
+          networkCode: 'goerli',
           theme: 'dark',
         });
         map3.open();

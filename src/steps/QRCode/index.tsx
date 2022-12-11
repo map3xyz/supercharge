@@ -5,11 +5,14 @@ import React, { useContext, useEffect } from 'react';
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
+
+  const { width } = useModalSize();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
@@ -113,7 +116,7 @@ const QRCode: React.FC<Props> = () => {
         )}
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
-            <div className="flex h-full w-full flex-col items-center justify-between gap-4 text-sm">
+            <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
               <div className="text-xs text-neutral-400">
                 Only send {state.asset.name} on the {state.network?.symbol}{' '}
                 Network to this address.
@@ -130,7 +133,7 @@ const QRCode: React.FC<Props> = () => {
                     width: 40,
                   }}
                   includeMargin={true}
-                  size={150}
+                  size={width ? width - 160 : 0}
                   style={{
                     border:
                       state.theme === 'dark'

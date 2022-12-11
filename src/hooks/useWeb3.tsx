@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
@@ -95,7 +96,11 @@ export const useWeb3 = () => {
     let hash;
     if (state.method?.value === 'isWalletConnect') {
       try {
-        hash = await state.connector?.data?.sendTransaction(txParams);
+        hash = state.connector?.data?.sendTransaction(txParams);
+        if (isMobile && state.method.walletConnect?.mobile?.native) {
+          window.location.href = state.method.walletConnect?.mobile?.native;
+        }
+        hash = await hash;
       } catch (e: any) {
         dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
       }

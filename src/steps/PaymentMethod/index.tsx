@@ -1,5 +1,6 @@
 import { Badge } from '@map3xyz/components';
 import React, { useContext } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -32,14 +33,21 @@ const PaymentMethod: React.FC<Props> = () => {
     return null;
   }
 
-  const methodsForNetwork = data?.methodsForNetwork?.filter(
-    (method) =>
+  const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
+    if (isMobile) {
+      // if mobile filter browser extensions and wallet connect methods without native deeplinks
+      return (
+        (method?.value !== 'isMetaMask' &&
+          method?.value !== 'isCoinbaseWallet') ||
+        (method.walletConnect && method.walletConnect.mobile?.native)
+      );
+    }
+    return (
       !method?.walletConnect /*( method?.walletConnect?.chains?.length === 0 ||
         method?.walletConnect?.chains?.includes('eip155:' + chainId)) && */ ||
-      (method?.walletConnect?.mobile?.native &&
-        // TODO: Add better support for window.ethereum and WalletConnect overlaps
-        method.name !== 'MetaMask')
-  );
+      (method?.walletConnect?.mobile?.native && method.name !== 'MetaMask')
+    );
+  });
 
   return (
     <>
