@@ -49,6 +49,8 @@ const AssetSelection: React.FC<Props> = () => {
     searchData?.searchAssetsForOrganization?.length &&
     formValue?.get('asset-search');
 
+  const emptySearch = !searchData?.searchAssetsForOrganization?.length;
+
   const assets = isSearch
     ? searchData.searchAssetsForOrganization
     : data?.assetsForOrganization;
@@ -89,8 +91,7 @@ const AssetSelection: React.FC<Props> = () => {
       <div className="flex flex-col dark:text-white">
         {searching ? (
           <LoadingWrapper />
-        ) : formValue?.get('asset-search') &&
-          !searchData?.searchAssetsForOrganization?.length ? (
+        ) : formValue?.get('asset-search') && emptySearch ? (
           <ErrorWrapper
             description="We couldn't find any assets that matched your search."
             header="No Assets Found"
@@ -162,7 +163,11 @@ const AssetSelection: React.FC<Props> = () => {
             }}
           >
             <div className="flex w-full items-center justify-center py-2">
-              {loading || searching || isSearch ? null : atAssetLimit ? (
+              {loading ||
+              searching ||
+              error ||
+              emptySearch ||
+              isSearch ? null : atAssetLimit ? (
                 <span className="text-xs text-neutral-500">
                   No more assets.
                 </span>
