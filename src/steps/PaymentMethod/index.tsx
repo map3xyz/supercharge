@@ -50,8 +50,8 @@ const PaymentMethod: React.FC<Props> = () => {
   });
 
   return (
-    <>
-      <div className="sticky top-0 z-20 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+    <div className="flex h-full flex-col">
+      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -74,82 +74,87 @@ const PaymentMethod: React.FC<Props> = () => {
           via
         </div>
       </div>
-      <div className="relative z-10 flex flex-col dark:text-white">
-        {methodsForNetwork?.map((method) =>
-          method ? (
-            <div
-              className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
-                method.flags?.enabled
-                  ? ''
-                  : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
-              }`}
-              key={method.name + '-' + method.value}
-              onClick={() => {
-                if (!method.flags?.enabled) {
-                  return;
-                }
-                dispatch({
-                  payload: method,
-                  type: 'SET_PAYMENT_METHOD',
-                });
-                if (method.value === 'qr') {
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="relative z-10 flex flex-col overflow-scroll dark:text-white">
+          {methodsForNetwork?.map((method) =>
+            method ? (
+              <div
+                className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+                  method.flags?.enabled
+                    ? ''
+                    : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
+                }`}
+                key={method.name + '-' + method.value}
+                onClick={() => {
+                  if (!method.flags?.enabled) {
+                    return;
+                  }
                   dispatch({
-                    payload: [
-                      'AssetSelection',
-                      'NetworkSelection',
-                      'PaymentMethod',
-                      'QRCode',
-                    ],
-                    type: 'SET_STEPS',
+                    payload: method,
+                    type: 'SET_PAYMENT_METHOD',
                   });
-                  dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
-                } else if (method.value === 'isWalletConnect') {
-                  dispatch({
-                    payload: [
-                      'AssetSelection',
-                      'NetworkSelection',
-                      'PaymentMethod',
-                      'WalletConnect',
-                      'EnterAmount',
-                      'Result',
-                    ],
-                    type: 'SET_STEPS',
-                  });
-                  dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
-                } else {
-                  dispatch({
-                    payload: [
-                      'AssetSelection',
-                      'NetworkSelection',
-                      'PaymentMethod',
-                      'EnterAmount',
-                      'Result',
-                    ],
-                    type: 'SET_STEPS',
-                  });
-                  dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
-                }
-              }}
-              role="button"
-            >
-              <div className="flex items-center gap-2">
-                <MethodIcon method={method} />
-                <span>{method.name}</span>
-                {providers[method.name || ''] ? (
-                  <Badge color="green">Installed</Badge>
-                ) : null}
+                  if (method.value === 'qr') {
+                    dispatch({
+                      payload: [
+                        'AssetSelection',
+                        'NetworkSelection',
+                        'PaymentMethod',
+                        'QRCode',
+                      ],
+                      type: 'SET_STEPS',
+                    });
+                    dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                  } else if (method.value === 'isWalletConnect') {
+                    dispatch({
+                      payload: [
+                        'AssetSelection',
+                        'NetworkSelection',
+                        'PaymentMethod',
+                        'WalletConnect',
+                        'EnterAmount',
+                        'Result',
+                      ],
+                      type: 'SET_STEPS',
+                    });
+                    dispatch({
+                      payload: Steps.WalletConnect,
+                      type: 'SET_STEP',
+                    });
+                  } else {
+                    dispatch({
+                      payload: [
+                        'AssetSelection',
+                        'NetworkSelection',
+                        'PaymentMethod',
+                        'EnterAmount',
+                        'Result',
+                      ],
+                      type: 'SET_STEPS',
+                    });
+                    dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+                  }
+                }}
+                role="button"
+              >
+                <div className="flex items-center gap-2">
+                  <MethodIcon method={method} />
+                  <span>{method.name}</span>
+                  {providers[method.name || ''] ? (
+                    <Badge color="green">Installed</Badge>
+                  ) : null}
+                </div>
+                {`${state.method?.name}-${state.method?.value}` ===
+                `${method.name}-${method.value}` ? (
+                  <i className="fa fa-check-circle text-green-400" />
+                ) : (
+                  <i className="fa fa-chevron-right text-xxs" />
+                )}
               </div>
-              {`${state.method?.name}-${state.method?.value}` ===
-              `${method.name}-${method.value}` ? (
-                <i className="fa fa-check-circle text-green-400" />
-              ) : (
-                <i className="fa fa-chevron-right text-xxs" />
-              )}
-            </div>
-          ) : null
-        )}
+            ) : null
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

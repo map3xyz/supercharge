@@ -49,15 +49,17 @@ const AssetSelection: React.FC<Props> = () => {
     searchData?.searchAssetsForOrganization?.length &&
     formValue?.get('asset-search');
 
-  const emptySearch = !searchData?.searchAssetsForOrganization?.length;
+  const isEmptySearch =
+    !searchData?.searchAssetsForOrganization?.length &&
+    formValue?.get('asset-search');
 
   const assets = isSearch
     ? searchData.searchAssetsForOrganization
     : data?.assetsForOrganization;
 
   return (
-    <>
-      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+    <div className="flex h-full flex-col">
+      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -88,97 +90,99 @@ const AssetSelection: React.FC<Props> = () => {
           </form>
         </InnerWrapper>
       </div>
-      <div className="flex flex-col dark:text-white">
-        {searching ? (
-          <LoadingWrapper />
-        ) : formValue?.get('asset-search') && emptySearch ? (
-          <ErrorWrapper
-            description="We couldn't find any assets that matched your search."
-            header="No Assets Found"
-            retry={() =>
-              search({
-                variables: { query: formValue.get('asset-search') as string },
-              })
-            }
-          />
-        ) : (
-          assets?.map((asset) => {
-            return (
-              <div
-                className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
-                key={asset?.name}
-                onClick={() => {
-                  dispatch({
-                    payload: asset as AssetWithPrice,
-                    type: 'SET_ASSET',
-                  });
-                  dispatch({
-                    payload: Steps.NetworkSelection,
-                    type: 'SET_STEP',
-                  });
-                }}
-                role="button"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="flex w-4 justify-center">
-                    <CoinLogo
-                      height="h-4"
-                      name={asset?.name || ''}
-                      png={asset?.logo?.png || undefined}
-                      svg={asset?.logo?.svg || undefined}
-                      width="w-4"
-                    />
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="relative z-10 flex flex-col overflow-scroll dark:text-white">
+          {searching ? (
+            <LoadingWrapper />
+          ) : formValue?.get('asset-search') && isEmptySearch ? (
+            <ErrorWrapper
+              description="We couldn't find any assets that matched your search."
+              header="No Assets Found"
+              retry={() =>
+                search({
+                  variables: { query: formValue.get('asset-search') as string },
+                })
+              }
+            />
+          ) : (
+            assets?.map((asset) => {
+              return (
+                <div
+                  className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+                  key={asset?.name}
+                  onClick={() => {
+                    dispatch({
+                      payload: asset as AssetWithPrice,
+                      type: 'SET_ASSET',
+                    });
+                    dispatch({
+                      payload: Steps.NetworkSelection,
+                      type: 'SET_STEP',
+                    });
+                  }}
+                  role="button"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="flex w-4 justify-center">
+                      <CoinLogo
+                        height="h-4"
+                        name={asset?.name || ''}
+                        png={asset?.logo?.png || undefined}
+                        svg={asset?.logo?.svg || undefined}
+                        width="w-4"
+                      />
+                    </div>
+                    <span>{asset?.name}</span>
                   </div>
-                  <span>{asset?.name}</span>
+                  {asset?.symbol === state.asset?.symbol ? (
+                    <i className="fa fa-check-circle text-green-400" />
+                  ) : (
+                    <i className="fa fa-chevron-right text-xxs" />
+                  )}
                 </div>
-                {asset?.symbol === state.asset?.symbol ? (
-                  <i className="fa fa-check-circle text-green-400" />
+              );
+            })
+          )}
+          {assets?.length ? (
+            <InView
+              /* istanbul ignore next */
+              onChange={async (inView) => {
+                /* istanbul ignore next */
+                const currentLength = assets?.length || 0;
+                /* istanbul ignore next */
+                if (inView && !atAssetLimit) {
+                  /* istanbul ignore next */
+                  const more = await fetchMore({
+                    variables: {
+                      currency: state.fiat,
+                      limit: currentLength * 2,
+                      offset: currentLength,
+                    },
+                  });
+                  if (more.data.assetsForOrganization?.length === 0) {
+                    setAtAssetLimit(true);
+                  }
+                }
+              }}
+            >
+              <div className="flex w-full items-center justify-center py-2">
+                {loading ||
+                searching ||
+                error ||
+                isEmptySearch ||
+                isSearch ? null : atAssetLimit ? (
+                  <span className="text-xs text-neutral-500">
+                    No more assets.
+                  </span>
                 ) : (
-                  <i className="fa fa-chevron-right text-xxs" />
+                  <i className="fa fa-gear animate-spin text-neutral-500" />
                 )}
               </div>
-            );
-          })
-        )}
-        {assets?.length ? (
-          <InView
-            /* istanbul ignore next */
-            onChange={async (inView) => {
-              /* istanbul ignore next */
-              const currentLength = assets?.length || 0;
-              /* istanbul ignore next */
-              if (inView && !atAssetLimit) {
-                /* istanbul ignore next */
-                const more = await fetchMore({
-                  variables: {
-                    currency: state.fiat,
-                    limit: currentLength * 2,
-                    offset: currentLength,
-                  },
-                });
-                if (more.data.assetsForOrganization?.length === 0) {
-                  setAtAssetLimit(true);
-                }
-              }
-            }}
-          >
-            <div className="flex w-full items-center justify-center py-2">
-              {loading ||
-              searching ||
-              error ||
-              emptySearch ||
-              isSearch ? null : atAssetLimit ? (
-                <span className="text-xs text-neutral-500">
-                  No more assets.
-                </span>
-              ) : (
-                <i className="fa fa-gear animate-spin text-neutral-500" />
-              )}
-            </div>
-          </InView>
-        ) : null}
+            </InView>
+          ) : null}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

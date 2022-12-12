@@ -29,7 +29,7 @@ const QRCode: React.FC<Props> = () => {
     };
     run();
 
-    return dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
+    return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
   }, []);
 
   return (
@@ -62,11 +62,11 @@ const QRCode: React.FC<Props> = () => {
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
           <div className="flex h-64 items-center justify-center text-sm">
-            <div className="flex flex-col items-center gap-2 font-semibold">
-              <div className="animate-spin dark:text-white">
+            <div className="flex flex-col items-center gap-2 font-semibold text-neutral-500">
+              <div className="animate-spin ">
                 <i className="fa fa-gear"></i>
               </div>
-              <span className="dark:text-white">Generating Address...</span>
+              <span>Generating Address...</span>
             </div>
           </div>
         )}
@@ -112,7 +112,7 @@ const QRCode: React.FC<Props> = () => {
                 />
               </div>
               <div className="w-full">
-                <label className="text-xs dark:text-white">
+                <label className="text-neutral-500:text-white text-xs">
                   Deposit Address
                 </label>
                 <ReadOnlyText copyButton value={state.depositAddress.data} />

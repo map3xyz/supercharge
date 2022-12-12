@@ -33,8 +33,8 @@ const NetworkSelection: React.FC<Props> = () => {
     );
 
   return (
-    <>
-      <div className="sticky top-0 border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+    <div className="flex h-full flex-col">
+      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -54,40 +54,42 @@ const NetworkSelection: React.FC<Props> = () => {
           on
         </div>
       </div>
-      <div className="flex flex-col dark:text-white">
-        {data?.mappedNetworksForAssetByOrg?.map((network) =>
-          network ? (
-            <div
-              className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
-              key={network.name}
-              onClick={() => {
-                dispatch({ payload: network, type: 'SET_NETWORK' });
-                dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
-              }}
-              role="button"
-            >
-              <div className="flex items-center gap-2">
-                <div className="flex w-4 justify-center">
-                  <CoinLogo
-                    height="h-4"
-                    name={network.name || ''}
-                    png={network.logo?.png || undefined}
-                    svg={network.logo?.svg || undefined}
-                    width="w-4"
-                  />
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="relative z-10 flex flex-col overflow-scroll dark:text-white">
+          {data?.mappedNetworksForAssetByOrg?.map((network) =>
+            network ? (
+              <div
+                className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+                key={network.name}
+                onClick={() => {
+                  dispatch({ payload: network, type: 'SET_NETWORK' });
+                  dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+                }}
+                role="button"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex w-4 justify-center">
+                    <CoinLogo
+                      height="h-4"
+                      name={network.name || ''}
+                      png={network.logo?.png || undefined}
+                      svg={network.logo?.svg || undefined}
+                      width="w-4"
+                    />
+                  </div>
+                  <span>{network.name}</span>
                 </div>
-                <span>{network.name}</span>
+                {state.network?.name === network.name ? (
+                  <i className="fa fa-check-circle text-green-400" />
+                ) : (
+                  <i className="fa fa-chevron-right text-xxs" />
+                )}
               </div>
-              {state.network?.name === network.name ? (
-                <i className="fa fa-check-circle text-green-400" />
-              ) : (
-                <i className="fa fa-chevron-right text-xxs" />
-              )}
-            </div>
-          ) : null
-        )}
+            ) : null
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

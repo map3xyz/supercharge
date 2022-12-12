@@ -46,6 +46,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
                 animate={{ opacity: 1 }}
+                className="h-full"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
@@ -56,6 +57,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             {steps[step] === Steps[Steps.NetworkSelection] && (
               <motion.div
                 animate={{ opacity: 1 }}
+                className="h-full"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
@@ -66,6 +68,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             {steps[step] === Steps[Steps.PaymentMethod] && (
               <motion.div
                 animate={{ opacity: 1 }}
+                className="h-full"
                 exit={{ opacity: 0 }}
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
