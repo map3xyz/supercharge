@@ -41,7 +41,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             </div>
           </div>
         </InnerWrapper>
-        <div className="!mt-0 h-full w-full overflow-scroll">
+        <div className="!mt-0 h-full w-full overflow-hidden">
           <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
