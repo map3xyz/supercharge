@@ -16,6 +16,7 @@ import { debounce } from '../../utils/debounce';
 const AssetSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const [formValue, setFormValue] = useState<FormData>();
+  const [atAssetLimit, setAtAssetLimit] = useState(false);
 
   const { data, error, fetchMore, loading, refetch } = useGetAssetsForOrgQuery({
     fetchPolicy: 'network-only',
@@ -44,7 +45,11 @@ const AssetSelection: React.FC<Props> = () => {
     );
   }
 
-  const assets = searchData?.searchAssetsForOrganization?.length
+  const isSearch =
+    searchData?.searchAssetsForOrganization?.length &&
+    formValue?.get('asset-search');
+
+  const assets = isSearch
     ? searchData.searchAssetsForOrganization
     : data?.assetsForOrganization;
 
@@ -134,7 +139,6 @@ const AssetSelection: React.FC<Props> = () => {
             );
           })
         )}
-        {/* TODO: check if we're at the limit */}
         {assets?.length ? (
           <InView
             /* istanbul ignore next */
@@ -142,21 +146,30 @@ const AssetSelection: React.FC<Props> = () => {
               /* istanbul ignore next */
               const currentLength = assets?.length || 0;
               /* istanbul ignore next */
-              if (inView) {
+              if (inView && !atAssetLimit) {
                 /* istanbul ignore next */
-                await fetchMore({
+                const more = await fetchMore({
                   variables: {
                     currency: state.fiat,
                     limit: currentLength * 2,
                     offset: currentLength,
                   },
                 });
+                if (more.data.assetsForOrganization?.length === 0) {
+                  setAtAssetLimit(true);
+                }
               }
             }}
           >
-            {/* <div className="flex w-full items-center justify-center py-2">
-              <i className="fa fa-gear animate-spin text-neutral-500" />
-            </div> */}
+            <div className="flex w-full items-center justify-center py-2">
+              {loading || searching || isSearch ? null : atAssetLimit ? (
+                <span className="text-xs text-neutral-500">
+                  No more assets.
+                </span>
+              ) : (
+                <i className="fa fa-gear animate-spin text-neutral-500" />
+              )}
+            </div>
           </InView>
         ) : null}
       </div>
