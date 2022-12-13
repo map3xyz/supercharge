@@ -11,8 +11,13 @@ query GetPaymentMethods($chainId: Int) {
     walletConnect {
       description
       chains
+      app {
+        ios
+        android
+      }
       mobile {
         native
+        universal
       }
       desktop {
         native

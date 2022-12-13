@@ -1,6 +1,6 @@
 import { Badge } from '@map3xyz/components';
 import React, { useContext } from 'react';
-import { isMobile } from 'react-device-detect';
+import { isAndroid, isIOS, isMobile } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -34,18 +34,48 @@ const PaymentMethod: React.FC<Props> = () => {
     );
 
   const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
+    const supportsChain =
+      method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
+      method?.walletConnect?.chains?.length === 0;
+
     if (isMobile) {
-      // if mobile filter browser extensions and wallet connect methods without native deeplinks
-      return (
-        (method?.value !== 'isMetaMask' &&
-          method?.value !== 'isCoinbaseWallet') ||
-        (method.walletConnect && method.walletConnect.mobile?.native)
-      );
+      // if mobile filter out extensions
+      if (
+        method?.value === 'isMetaMask' ||
+        method?.value === 'isCoinbaseWallet'
+      )
+        return false;
+
+      if (method?.walletConnect && !supportsChain) return false;
+
+      if (method?.walletConnect) {
+        if (!supportsChain) return false;
+
+        if (!method?.walletConnect?.mobile?.native) return false;
+
+        if (isIOS) {
+          return (
+            method?.walletConnect?.app?.ios ||
+            method?.walletConnect?.mobile?.universal
+          );
+        }
+        if (isAndroid) {
+          return (
+            method?.walletConnect?.app?.android ||
+            method?.walletConnect?.mobile?.universal
+          );
+        }
+      }
+
+      return true;
     }
+
     return (
-      !method?.walletConnect /*( method?.walletConnect?.chains?.length === 0 ||
-        method?.walletConnect?.chains?.includes('eip155:' + chainId)) && */ ||
-      (method?.walletConnect?.mobile?.native && method.name !== 'MetaMask')
+      !method?.walletConnect ||
+      (method.walletConnect &&
+        supportsChain &&
+        method?.walletConnect?.mobile?.native &&
+        method.name !== 'MetaMask')
     );
   });
 

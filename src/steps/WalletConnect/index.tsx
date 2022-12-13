@@ -153,18 +153,31 @@ const WalletConnect: React.FC<Props> = () => {
             </BrowserView>
           </div>
         </InnerWrapper>
-        {isMobile && deeplink ? (
+        <MobileView>
           <InnerWrapper>
-            <Button block size="xlarge" type="default">
-              <a href={deeplink}>
-                <span className="flex items-center gap-2">
-                  <img className="h-6" src={state.method?.logo || ''} /> Open{' '}
-                  {state.method?.name}
-                </span>
-              </a>
-            </Button>
+            {deeplink ? (
+              <Button block size="xlarge" type="default">
+                <a
+                  href={deeplink}
+                  onClick={() => {
+                    window.addEventListener('focusout', () => {
+                      dispatch({
+                        payload: Steps.PaymentMethod,
+                        type: 'SET_STEP',
+                      });
+                    });
+                  }}
+                >
+                  <span className="flex items-center gap-2">
+                    <img className="h-6" src={state.method?.logo || ''} /> Open{' '}
+                    {state.method?.name}
+                  </span>
+                </a>
+              </Button>
+            ) : null}
           </InnerWrapper>
-        ) : (
+        </MobileView>
+        <BrowserView>
           <QRCodeSVG
             bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
             className="rounded-lg"
@@ -185,7 +198,7 @@ const WalletConnect: React.FC<Props> = () => {
             }}
             value={uri}
           />
-        )}
+        </BrowserView>
         <InnerWrapper>
           <MobileView className="mb-3">
             {/* @ts-ignore */}
