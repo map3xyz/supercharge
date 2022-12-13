@@ -1,10 +1,10 @@
 import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
 import WalletConnectClient from '@walletconnect/client';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
-import GooglePlayBadge from 'jsx:../../assets/google-play-badge.png';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
 import { BrowserView, isIOS, isMobile, MobileView } from 'react-device-detect';
+import GooglePlayBadge from 'url:../../assets/google-play-badge.png';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -177,7 +177,7 @@ const WalletConnect: React.FC<Props> = () => {
             ) : null}
             {showInstall ? (
               <div className="text-center text-xs">
-                <Divider className="my-4">Or</Divider>
+                <Divider className="my-3">Or</Divider>
                 <a
                   className="flex w-full justify-center"
                   href={
@@ -188,7 +188,11 @@ const WalletConnect: React.FC<Props> = () => {
                     ''
                   }
                 >
-                  {isIOS ? <AppStoreBadge /> : <GooglePlayBadge />}
+                  {false ? (
+                    <AppStoreBadge />
+                  ) : (
+                    <img className="block w-1/2" src={GooglePlayBadge} />
+                  )}
                 </a>
               </div>
             ) : null}
