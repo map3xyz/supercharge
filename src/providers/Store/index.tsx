@@ -130,6 +130,11 @@ const initialState: State = {
 export const Store: React.FC<
   PropsWithChildren<{
     asset?: AssetWithPrice;
+    authorizeTransaction?: (
+      fromAddress: string,
+      network: string,
+      amount: string
+    ) => Promise<Boolean>;
     fiat?: string;
     generateDepositAddress: (
       asset?: string,
@@ -138,7 +143,15 @@ export const Store: React.FC<
     network?: Network;
     theme?: 'dark' | 'light';
   }>
-> = ({ asset, children, fiat, generateDepositAddress, network, theme }) => {
+> = ({
+  asset,
+  authorizeTransaction,
+  children,
+  fiat,
+  generateDepositAddress,
+  network,
+  theme,
+}) => {
   let step = 0;
 
   if (asset) {
@@ -356,7 +369,13 @@ export const Store: React.FC<
   );
 
   return (
-    <Context.Provider value={[state, dispatch, { generateDepositAddress }]}>
+    <Context.Provider
+      value={[
+        state,
+        dispatch,
+        { authorizeTransaction, generateDepositAddress },
+      ]}
+    >
       {children}
     </Context.Provider>
   );
@@ -367,6 +386,11 @@ export const Context = createContext<
     State,
     React.Dispatch<Action>,
     {
+      authorizeTransaction?: (
+        fromAddress: string,
+        network: string,
+        amount: string
+      ) => Promise<Boolean>;
       generateDepositAddress: (
         asset?: string,
         network?: string,
@@ -378,6 +402,8 @@ export const Context = createContext<
   initialState,
   () => null,
   {
+    /* istanbul ignore next */
+    authorizeTransaction: () => new Promise((resolve) => resolve(true)),
     /* istanbul ignore next */
     generateDepositAddress: () =>
       new Promise((resolve) => resolve({ address: '' })),

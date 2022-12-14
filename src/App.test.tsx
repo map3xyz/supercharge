@@ -89,4 +89,25 @@ describe('App', () => {
     const paymentSelection = await screen.findByText('Payment Method');
     expect(paymentSelection).toBeInTheDocument();
   });
+  it('accepts an optional callback `authorizeTransaction`', async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          authorizeTransaction: async () => {
+            return true;
+          },
+          generateDepositAddress: async () => {
+            return { address: '0x0000000000000000000000000000000000000000' };
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    const assetSelection = await screen.findByText('Select Asset');
+    expect(assetSelection).toBeInTheDocument();
+  });
 });

@@ -31,7 +31,12 @@ const EnterAmount: React.FC<Props> = () => {
   const quoteRef = useRef<HTMLSpanElement>(null);
   const connectRef = useRef<ConnectHandler>(null);
 
-  const { getChainID, sendTransaction, switchChain } = useWeb3();
+  const {
+    authorizeTransactionProxy,
+    getChainID,
+    sendTransaction,
+    switchChain,
+  } = useWeb3();
   const { getDepositAddress } = useDepositAddress();
 
   useEffect(() => {
@@ -103,6 +108,12 @@ const EnterAmount: React.FC<Props> = () => {
         connectRef.current?.connect();
         return;
       }
+
+      await authorizeTransactionProxy(
+        state.account.data,
+        state.network?.networkCode,
+        amount
+      );
 
       const currentChainId = await getChainID();
 

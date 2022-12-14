@@ -34,6 +34,7 @@ jest.mock('@walletconnect/client', () => ({
 
 const mockSendTransaction = jest.fn();
 jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+  authorizeTransactionProxy: jest.fn(),
   getChainID: jest.fn(),
   providers: {},
   sendTransaction: mockSendTransaction,

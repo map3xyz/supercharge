@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
@@ -7,7 +8,7 @@ import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
 
 export const useWeb3 = () => {
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch, { authorizeTransaction }] = useContext(Context);
   const [providers, setProviders] = useState<{
     [key in string]: boolean;
   }>({});
@@ -32,6 +33,25 @@ export const useWeb3 = () => {
 
     return setProviders({});
   }, []);
+
+  const authorizeTransactionProxy = async (
+    fromAddress?: string,
+    network?: Maybe<string> | undefined,
+    amount?: string
+  ) => {
+    if (!fromAddress || !network || !amount) {
+      throw new Error('Unable to authorize transaction.');
+    }
+    let isAuth: Boolean = true;
+    if (typeof authorizeTransaction === 'function') {
+      isAuth = await authorizeTransaction(fromAddress, network, amount);
+      if (!isAuth) {
+        throw new Error('Unable to authorize transaction.');
+      }
+    }
+
+    return isAuth;
+  };
 
   const getChainID = async () => {
     if (state.method?.value === 'isWalletConnect') {
@@ -137,6 +157,7 @@ export const useWeb3 = () => {
   };
 
   return {
+    authorizeTransactionProxy,
     getChainID,
     providers,
     sendTransaction,

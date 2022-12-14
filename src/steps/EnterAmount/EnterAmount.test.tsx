@@ -8,6 +8,8 @@ import WindowEthereum from '../../components/methods/WindowEthereum';
 import * as useWeb3Mock from '../../hooks/useWeb3';
 import EnterAmount from '.';
 
+const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
 describe('Enter Amount', () => {
   beforeEach(async () => {
     render(
@@ -326,7 +328,15 @@ describe('window.ethereum', () => {
 });
 
 describe('window.ethereum > ERC20', () => {
+  const mockSendTransaction = jest.fn();
   beforeEach(async () => {
+    web3MockSpy.mockImplementation(() => ({
+      authorizeTransactionProxy: jest.fn(),
+      getChainID: jest.fn(),
+      providers: {},
+      sendTransaction: mockSendTransaction,
+      switchChain: jest.fn(),
+    }));
     render(
       <App
         config={{
@@ -356,13 +366,6 @@ describe('window.ethereum > ERC20', () => {
 
   describe('transaction', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
-    const mockSendTransaction = jest.fn();
-    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-      getChainID: jest.fn(),
-      providers: {},
-      sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
-    }));
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
@@ -372,7 +375,6 @@ describe('window.ethereum > ERC20', () => {
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
-      mockSendTransaction.mockClear();
     });
     it('should handle erc20 transaction', async () => {
       await act(async () => {
@@ -388,6 +390,79 @@ describe('window.ethereum > ERC20', () => {
       expect(
         await screen.findByText('Transaction Submitted')
       ).toBeInTheDocument();
+    });
+  });
+});
+
+describe('txAuth', () => {
+  const mockAuthTransactionProxy = jest.fn();
+  const mockSendTransaction = jest.fn();
+  beforeEach(async () => {
+    web3MockSpy.mockImplementation(() => ({
+      authorizeTransactionProxy: mockAuthTransactionProxy,
+      getChainID: jest.fn(),
+      providers: {},
+      sendTransaction: mockSendTransaction,
+      switchChain: jest.fn(),
+    }));
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          authorizeTransaction: async () => {
+            return false;
+          },
+          generateDepositAddress: async () => {
+            return { address: '0x123', memo: 'memo' };
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+
+  describe('transaction', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(async () => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    it('should authorize transaction', async () => {
+      await act(() => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
+      act(() => {
+        const form = screen.getByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(mockAuthTransactionProxy).toHaveBeenCalledWith(
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        'ethereum',
+        '1.000000'
+      );
+      expect(mockSendTransaction).not.toHaveBeenCalled();
     });
   });
 });

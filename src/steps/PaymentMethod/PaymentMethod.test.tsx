@@ -44,6 +44,7 @@ describe('Payment Selection', () => {
   describe('WalletConnect', () => {
     it('hides WalletConnect metamask connection if eth provider detected', async () => {
       jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+        authorizeTransactionProxy: jest.fn(),
         getChainID: jest.fn(),
         providers: { MetaMask: true },
         sendTransaction: jest.fn(),
