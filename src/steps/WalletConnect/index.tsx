@@ -1,8 +1,10 @@
-import { Badge, Button, ReadOnlyText } from '@map3xyz/components';
+import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
 import WalletConnectClient from '@walletconnect/client';
+import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
-import { BrowserView, isMobile, MobileView } from 'react-device-detect';
+import { BrowserView, isIOS, isMobile, MobileView } from 'react-device-detect';
+import GooglePlayBadge from 'url:../../assets/google-play-badge.png';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -13,6 +15,7 @@ import { Context, Steps } from '../../providers/Store';
 const WalletConnect: React.FC<Props> = () => {
   const [deeplink, setDeeplink] = useState<string | undefined>();
   const [uri, setUri] = useState<string | undefined>();
+  const [showInstall, setShowInstall] = useState(false);
   const [state, dispatch] = useContext(Context);
 
   const { width } = useModalSize();
@@ -153,18 +156,49 @@ const WalletConnect: React.FC<Props> = () => {
             </BrowserView>
           </div>
         </InnerWrapper>
-        {isMobile && deeplink ? (
-          <InnerWrapper>
-            <Button block size="xlarge" type="default">
-              <a href={deeplink}>
-                <span className="flex items-center gap-2">
-                  <img className="h-6" src={state.method?.logo || ''} /> Open{' '}
-                  {state.method?.name}
-                </span>
-              </a>
-            </Button>
+        <MobileView className="w-full">
+          <InnerWrapper className="w-full">
+            {deeplink ? (
+              <Button block size="xlarge" type="default">
+                <a
+                  href={deeplink}
+                  onClick={() => {
+                    setTimeout(() => {
+                      setShowInstall(true);
+                    }, 1200);
+                  }}
+                >
+                  <span className="flex items-center gap-2">
+                    <img className="h-6" src={state.method?.logo || ''} />{' '}
+                    Connect {state.method?.name}
+                  </span>
+                </a>
+              </Button>
+            ) : null}
+            {showInstall ? (
+              <div className="text-center text-xs">
+                <Divider className="my-3">Or</Divider>
+                <a
+                  className="flex w-full justify-center"
+                  href={
+                    (isIOS
+                      ? state.method?.walletConnect?.app?.ios
+                      : state.method?.walletConnect?.app?.android) ||
+                    state.method?.walletConnect?.mobile?.universal ||
+                    ''
+                  }
+                >
+                  {false ? (
+                    <AppStoreBadge />
+                  ) : (
+                    <img className="block w-1/2" src={GooglePlayBadge} />
+                  )}
+                </a>
+              </div>
+            ) : null}
           </InnerWrapper>
-        ) : (
+        </MobileView>
+        <BrowserView>
           <QRCodeSVG
             bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
             className="rounded-lg"
@@ -185,7 +219,7 @@ const WalletConnect: React.FC<Props> = () => {
             }}
             value={uri}
           />
-        )}
+        </BrowserView>
         <InnerWrapper>
           <MobileView className="mb-3">
             {/* @ts-ignore */}

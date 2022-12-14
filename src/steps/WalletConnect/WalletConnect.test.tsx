@@ -230,13 +230,25 @@ describe('WalletConnect', () => {
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
   });
   it('displays a deeplink on mobile', async () => {
-    Object.defineProperty(reactDeviceDetect, 'isMobile', { get: () => true });
+    Object.defineProperties(reactDeviceDetect, {
+      BrowserView: {
+        get: () => () => null,
+      },
+      MobileView: {
+        get:
+          () =>
+          ({ children }: any) =>
+            <>{children}</>,
+      },
+      isBrowser: { get: () => false },
+      isMobile: { get: () => true },
+    });
     const walletConnect = await screen.findByText('Rainbow');
     fireEvent.click(walletConnect);
     mockConnect.mockImplementation((event: string, callback: () => void) => {
       if (event === 'connect') {
         setTimeout(() => {
-          callback();
+          // callback();
         }, TIMEOUT_BEFORE_MOCK_CONNECT);
       }
       if (event === 'disconnect') {
@@ -245,7 +257,7 @@ describe('WalletConnect', () => {
         }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
       }
     });
-    const rainbow = await screen.findByText('Open Rainbow');
+    const rainbow = await screen.findByText('Connect Rainbow');
     expect(rainbow).toBeInTheDocument();
   });
 });

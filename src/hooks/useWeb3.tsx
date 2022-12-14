@@ -103,6 +103,9 @@ export const useWeb3 = () => {
           txParams
         ) as Promise<string>;
         hash = await walletConnectHelper(hash);
+        if (!hash) {
+          throw new Error('Connection cancelled');
+        }
       } catch (e: any) {
         dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
         throw e;
