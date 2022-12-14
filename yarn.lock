@@ -7078,6 +7078,13 @@ eslint-plugin-flowtype@^8.0.3:
     lodash "^4.17.21"
     string-natural-compare "^3.0.1"
 
+eslint-plugin-hooks@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/eslint-plugin-hooks/-/eslint-plugin-hooks-0.4.3.tgz#3c4a2c1390ab4b65692d25d04259ee68dab72427"
+  integrity sha512-Ra/YMBoTVFlM3zcU0c3vW8WQnauDyj/zVGnx6MUlIHaIMdZ/fZcptA20rotOGpRxZDQhReTlCYzz8BQmteJNWw==
+  dependencies:
+    requireindex "~1.2.0"
+
 eslint-plugin-import@^2.25.3:
   version "2.26.0"
   resolved "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.26.0.tgz#f812dc47be4f2b72b478a021605a59fc6fe8b88b"

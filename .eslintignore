@@ -1,2 +1,4 @@
 node_modules/
 generated/
+dist/
+coverage/

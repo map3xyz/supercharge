@@ -37,10 +37,10 @@ const AssetSelection: React.FC<Props> = () => {
   if (error) {
     return (
       <ErrorWrapper
-        // description="We couldn't get a list of assets to select."
-        description={JSON.stringify(error)}
+        description="We couldn't get a list of assets to select."
         header="Error Fetching Assets"
         retry={() => refetch()}
+        stacktrace={JSON.stringify(error)}
       />
     );
   }

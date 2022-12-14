@@ -13,10 +13,10 @@ import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const WalletConnect: React.FC<Props> = () => {
+  const [state, dispatch] = useContext(Context);
   const [deeplink, setDeeplink] = useState<string | undefined>();
   const [uri, setUri] = useState<string | undefined>();
   const [showInstall, setShowInstall] = useState(false);
-  const [state, dispatch] = useContext(Context);
 
   const { width } = useModalSize();
 

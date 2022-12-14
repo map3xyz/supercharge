@@ -246,11 +246,6 @@ describe('WalletConnect', () => {
     const walletConnect = await screen.findByText('Rainbow');
     fireEvent.click(walletConnect);
     mockConnect.mockImplementation((event: string, callback: () => void) => {
-      if (event === 'connect') {
-        setTimeout(() => {
-          // callback();
-        }, TIMEOUT_BEFORE_MOCK_CONNECT);
-      }
       if (event === 'disconnect') {
         setTimeout(() => {
           callback();

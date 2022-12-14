@@ -14,24 +14,22 @@ import { Context, Steps } from '../../providers/Store';
 const BASE_FONT_SIZE = 48;
 
 const EnterAmount: React.FC<Props> = () => {
-  const dummyInputRef = useRef<HTMLSpanElement>(null);
-  const dummySymbolRef = useRef<HTMLSpanElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const quoteRef = useRef<HTMLSpanElement>(null);
-  const connectRef = useRef<ConnectHandler>(null);
-
   const [state, dispatch] = useContext(Context);
-  const [formError, setFormError] = useState<string | undefined>('');
-
   const rate = state.asset?.price?.price;
 
+  const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
     quote: string;
   }>({ base: '0', inputSelected: rate ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<string>('0');
+  const dummyInputRef = useRef<HTMLSpanElement>(null);
+  const dummySymbolRef = useRef<HTMLSpanElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const quoteRef = useRef<HTMLSpanElement>(null);
+  const connectRef = useRef<ConnectHandler>(null);
 
   const { getChainID, sendTransaction, switchChain } = useWeb3();
   const { getDepositAddress } = useDepositAddress();

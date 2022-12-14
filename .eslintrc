@@ -4,6 +4,7 @@
   "root": true,
 
   "plugins": [
+    "hooks",
     "jest-dom",
     "prettier",
     "react",
@@ -16,6 +17,20 @@
   ],
 
   "rules": {
+    "hooks/sort": [
+      2,
+      {
+        "groups": [
+          "useReducer",
+          "useContext",
+          "useState",
+          "useRef",
+          "useDispatch",
+          "useCallback",
+          "useEffect"
+        ]
+      }
+    ],
     "prettier/prettier": "error",
     "react/jsx-sort-props": "error",
     "tailwindcss/no-custom-classname": [

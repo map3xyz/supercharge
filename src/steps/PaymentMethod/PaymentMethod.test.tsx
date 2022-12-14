@@ -55,6 +55,16 @@ describe('Payment Selection', () => {
       expect(metamaskExtensions).toHaveLength(1);
     });
   });
+  describe('Search', () => {
+    it('searches for a payment method', async () => {
+      const rainbow = await screen.findByText('Rainbow');
+      const searchInput = await screen.findByTestId('method-search');
+      fireEvent.change(searchInput, { target: { value: 'metamask' } });
+      const metamask = await screen.findByText('MetaMask');
+      expect(metamask).toBeInTheDocument();
+      expect(rainbow).not.toBeInTheDocument();
+    });
+  });
 });
 
 describe('Payment Method Errors', () => {

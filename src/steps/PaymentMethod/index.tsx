@@ -1,5 +1,5 @@
-import { Badge } from '@map3xyz/components';
-import React, { useContext } from 'react';
+import { Badge, Input } from '@map3xyz/components';
+import React, { useContext, useRef, useState } from 'react';
 import { isAndroid, isIOS, isMobile } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -12,6 +12,8 @@ import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const [formValue, setFormValue] = useState<FormData>();
+  const formRef = useRef<HTMLFormElement>(null);
   const chainId = state.network?.identifiers?.chainId;
   const { providers } = useWeb3();
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
@@ -34,6 +36,16 @@ const PaymentMethod: React.FC<Props> = () => {
     );
 
   const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
+    const searchMatch = formValue?.get('method-search')
+      ? method?.name
+          ?.toLowerCase()
+          .includes(
+            (formValue.get('method-search') as string)?.toLowerCase() || ''
+          )
+      : true;
+
+    if (!searchMatch) return false;
+
     const supportsChain =
       method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
       method?.walletConnect?.chains?.length === 0;
@@ -79,6 +91,9 @@ const PaymentMethod: React.FC<Props> = () => {
     );
   });
 
+  const isEmptySearch =
+    methodsForNetwork?.length === 0 && !!formValue?.get('method-search');
+
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
@@ -90,6 +105,20 @@ const PaymentMethod: React.FC<Props> = () => {
             Payment Method
           </h3>
           <h5 className="text-xs text-neutral-400">How do you want to send?</h5>
+          <form
+            className="mt-2"
+            onChange={(e) => setFormValue(new FormData(e.currentTarget))}
+            ref={formRef}
+          >
+            <Input
+              autoFocus
+              data-testid="method-search"
+              icon={<i className="fa fa-search" />}
+              name="method-search"
+              placeholder="Search for a payment method..."
+              rounded
+            />
+          </form>
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
@@ -106,81 +135,98 @@ const PaymentMethod: React.FC<Props> = () => {
       </div>
       <div className="flex h-full flex-col overflow-hidden">
         <div className="relative z-10 flex flex-col overflow-y-auto dark:text-white">
-          {methodsForNetwork?.map((method) =>
-            method ? (
-              <div
-                className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
-                  method.flags?.enabled
-                    ? ''
-                    : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
-                }`}
-                key={method.name + '-' + method.value}
-                onClick={() => {
-                  if (!method.flags?.enabled) {
-                    return;
-                  }
-                  dispatch({
-                    payload: method,
-                    type: 'SET_PAYMENT_METHOD',
-                  });
-                  if (method.value === 'qr') {
+          {isEmptySearch ? (
+            <ErrorWrapper
+              description="We couldn't find any payment methods that matched your search."
+              header="No Payment Methods Found"
+              retry={() => {
+                if (!formRef.current) return;
+                const input = formRef.current.getElementsByTagName('input')[0];
+                input.value = '';
+                input.focus();
+                setFormValue(undefined);
+              }}
+            />
+          ) : (
+            methodsForNetwork?.map((method) =>
+              method ? (
+                <div
+                  className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+                    method.flags?.enabled
+                      ? ''
+                      : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
+                  }`}
+                  key={method.name + '-' + method.value}
+                  onClick={() => {
+                    if (!method.flags?.enabled) {
+                      return;
+                    }
                     dispatch({
-                      payload: [
-                        'AssetSelection',
-                        'NetworkSelection',
-                        'PaymentMethod',
-                        'QRCode',
-                      ],
-                      type: 'SET_STEPS',
+                      payload: method,
+                      type: 'SET_PAYMENT_METHOD',
                     });
-                    dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
-                  } else if (method.value === 'isWalletConnect') {
-                    dispatch({
-                      payload: [
-                        'AssetSelection',
-                        'NetworkSelection',
-                        'PaymentMethod',
-                        'WalletConnect',
-                        'EnterAmount',
-                        'Result',
-                      ],
-                      type: 'SET_STEPS',
-                    });
-                    dispatch({
-                      payload: Steps.WalletConnect,
-                      type: 'SET_STEP',
-                    });
-                  } else {
-                    dispatch({
-                      payload: [
-                        'AssetSelection',
-                        'NetworkSelection',
-                        'PaymentMethod',
-                        'EnterAmount',
-                        'Result',
-                      ],
-                      type: 'SET_STEPS',
-                    });
-                    dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
-                  }
-                }}
-                role="button"
-              >
-                <div className="flex items-center gap-2">
-                  <MethodIcon method={method} />
-                  <span>{method.name}</span>
-                  {providers[method.name || ''] ? (
-                    <Badge color="green">Installed</Badge>
-                  ) : null}
+                    if (method.value === 'qr') {
+                      dispatch({
+                        payload: [
+                          'AssetSelection',
+                          'NetworkSelection',
+                          'PaymentMethod',
+                          'QRCode',
+                        ],
+                        type: 'SET_STEPS',
+                      });
+                      dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                    } else if (method.value === 'isWalletConnect') {
+                      dispatch({
+                        payload: [
+                          'AssetSelection',
+                          'NetworkSelection',
+                          'PaymentMethod',
+                          'WalletConnect',
+                          'EnterAmount',
+                          'Result',
+                        ],
+                        type: 'SET_STEPS',
+                      });
+                      dispatch({
+                        payload: Steps.WalletConnect,
+                        type: 'SET_STEP',
+                      });
+                    } else {
+                      dispatch({
+                        payload: [
+                          'AssetSelection',
+                          'NetworkSelection',
+                          'PaymentMethod',
+                          'EnterAmount',
+                          'Result',
+                        ],
+                        type: 'SET_STEPS',
+                      });
+                      dispatch({
+                        payload: Steps.EnterAmount,
+                        type: 'SET_STEP',
+                      });
+                    }
+                  }}
+                  role="button"
+                >
+                  <div className="flex items-center gap-2">
+                    <MethodIcon method={method} />
+                    <span>{method.name}</span>
+                    {providers[method.name || ''] ? (
+                      <Badge color="green">Installed</Badge>
+                    ) : null}
+                  </div>
+                  {`${state.method?.name}-${state.method?.value}` ===
+                  `${method.name}-${method.value}` ? (
+                    <i className="fa fa-check-circle text-green-400" />
+                  ) : (
+                    <i className="fa fa-chevron-right text-xxs" />
+                  )}
                 </div>
-                {`${state.method?.name}-${state.method?.value}` ===
-                `${method.name}-${method.value}` ? (
-                  <i className="fa fa-check-circle text-green-400" />
-                ) : (
-                  <i className="fa fa-chevron-right text-xxs" />
-                )}
-              </div>
-            ) : null
+              ) : null
+            )
           )}
         </div>
       </div>
