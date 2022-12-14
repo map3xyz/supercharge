@@ -1,0 +1,13 @@
+name: Purge jsDelivr Cache
+on: [push]
+jobs:
+  purge-jsdelivr-cache:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: gacts/purge-jsdelivr-cache@v1
+        with:
+          url: |
+            https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk/dist/global/index.min.js
+            https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk/dist/global/index.css
+    with:
+        branches: master
