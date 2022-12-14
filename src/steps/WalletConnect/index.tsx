@@ -165,7 +165,7 @@ const WalletConnect: React.FC<Props> = () => {
                   onClick={() => {
                     setTimeout(() => {
                       setShowInstall(true);
-                    }, 2000);
+                    }, 1200);
                   }}
                 >
                   <span className="flex items-center gap-2">

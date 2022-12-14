@@ -15,6 +15,7 @@ module.exports = {
   coverageReporters: ['lcov', 'json-summary', 'text', 'text-summary'],
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/jest/__mocks__/styleMock.js',
+    '^.+\\.png$': '<rootDir>/jest/__mocks__/fileMock.js',
     '^.+\\.svg$': '<rootDir>/jest/__mocks__/svgMock.js',
     '^~/jest/(.*)$': '<rootDir>/jest/$1',
   },

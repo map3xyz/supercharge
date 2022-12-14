@@ -56,6 +56,11 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                 name: 'Rainbow',
                 value: 'isWalletConnect',
                 walletConnect: {
+                  app: {
+                    android:
+                      'https://play.google.com/store/apps/details?id=co.rainbow',
+                    ios: 'https://apps.apple.com/us/app/rainbow-wallet/id1477376905',
+                  },
                   chains: [
                     'eip155:1',
                     'eip155:10',
@@ -85,6 +90,11 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                 name: 'Spot',
                 value: 'isWalletConnect',
                 walletConnect: {
+                  app: {
+                    android:
+                      'https://play.google.com/store/apps/details?id=com.spotwallet',
+                    ios: 'https://apps.apple.com/us/app/spot-wallet/id1558385728',
+                  },
                   chains: [],
                   description:
                     'Spot is a mobile & secure non-custodial wallet for Ethereum, Polygon, Solana, Bitcoin, Tezos & NFTs. Access web3 & DeFi with WalletConnect.',
@@ -109,6 +119,10 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                 name: 'MetaMask',
                 value: 'isWalletConnect',
                 walletConnect: {
+                  app: {
+                    android: 'https://metamask.app.link/android',
+                    ios: 'https://metamask.app.link/ios',
+                  },
                   chains: [],
                   description:
                     'Whether you are an experienced user or brand new to blockchain, MetaMask helps you connect to the decentralized web: a new internet.',
