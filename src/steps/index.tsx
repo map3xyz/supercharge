@@ -31,12 +31,12 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
               className={step === 0 ? 'invisible' : 'visible'}
               onClick={() => dispatch({ payload: step - 1, type: 'SET_STEP' })}
             >
-              <i className="fa transition-color fa-long-arrow-left duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
+              <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
             <div>
               <button onClick={onClose}>
-                <i className="fa transition-color fa-close duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
+                <i className="fa fa-close transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
               </button>
             </div>
           </div>

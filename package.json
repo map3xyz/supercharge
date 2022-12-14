@@ -29,7 +29,8 @@
   "scripts": {
     "build": "rm -rf dist && parcel build",
     "start": "parcel src/index.html --dist-dir output",
-    "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\" --fix",
+    "lint": "eslint \"{**/*,*}.{ts,tsx}\"",
+    "lint:fix": "eslint \"{**/*,*}.{ts,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
     "test": "jest",
     "test:ci": "jest --ci"
@@ -55,6 +56,7 @@
     "assert": "^2.0.0",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-hooks": "^0.4.3",
     "eslint-plugin-jest-dom": "^4.0.2",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.7",
