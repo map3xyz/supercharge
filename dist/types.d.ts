@@ -2,6 +2,7 @@ export interface Map3InitConfig {
     address?: string;
     anonKey: string;
     assetId?: string;
+    authorizeTransaction?: (fromAddress: string, network: string, amount: string) => Promise<Boolean>;
     fiat?: string;
     generateDepositAddress: (asset?: string, network?: string, memoEnabled?: boolean) => Promise<{
         address: string;
