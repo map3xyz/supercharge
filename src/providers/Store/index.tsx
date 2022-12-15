@@ -402,10 +402,9 @@ export const Context = createContext<
   initialState,
   () => null,
   {
-    /* istanbul ignore next */
-    authorizeTransaction: () => new Promise((resolve) => resolve(true)),
-    /* istanbul ignore next */
-    generateDepositAddress: () =>
+    authorizeTransaction: /* istanbul ignore next */ () =>
+      new Promise((resolve) => resolve(true)),
+    generateDepositAddress: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
   },
 ]);
