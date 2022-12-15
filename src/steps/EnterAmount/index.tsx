@@ -49,12 +49,17 @@ const EnterAmount: React.FC<Props> = () => {
 
     if (inputRef.current && formRef.current) {
       if (nextInputWidth + symbolWidth > formWidth) {
+        /* istanbul ignore next */
         const percentFontChange = formWidth / (nextInputWidth + symbolWidth);
+        /* istanbul ignore next */
         const fontSize = Math.floor(BASE_FONT_SIZE * percentFontChange) - 0.5;
 
+        /* istanbul ignore next */
         nextInputWidth = formWidth;
 
+        /* istanbul ignore next */
         formRef.current.style.fontSize = `${fontSize}px`;
+        /* istanbul ignore next */
         inputRef.current.style.maxWidth = `${nextInputWidth}px`;
       } else {
         inputRef.current.style.maxWidth = `${nextInputWidth}px`;

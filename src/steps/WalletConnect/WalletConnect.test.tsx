@@ -230,7 +230,7 @@ describe('WalletConnect', () => {
     );
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
   });
-  it('displays a deeplink on mobile', async () => {
+  describe('Mobile Deeplink', () => {
     Object.defineProperties(reactDeviceDetect, {
       BrowserView: {
         get: () => () => null,
@@ -244,16 +244,60 @@ describe('WalletConnect', () => {
       isBrowser: { get: () => false },
       isMobile: { get: () => true },
     });
-    const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
-    mockConnect.mockImplementation((event: string, callback: () => void) => {
-      if (event === 'disconnect') {
-        setTimeout(() => {
-          callback();
-        }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
-      }
+    it('displays a deeplink on mobile', async () => {
+      const walletConnect = await screen.findByText('Rainbow');
+      fireEvent.click(walletConnect);
+      mockConnect.mockImplementation((event: string, callback: () => void) => {
+        if (event === 'disconnect') {
+          setTimeout(() => {
+            callback();
+          }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
+        }
+      });
+      const rainbow = await screen.findByText('Connect Rainbow');
+      expect(rainbow).toBeInTheDocument();
     });
-    const rainbow = await screen.findByText('Connect Rainbow');
-    expect(rainbow).toBeInTheDocument();
+    it('encodes the connector uri if method is not MetaMask', async () => {
+      const walletConnect = await screen.findByText('MetaMask');
+      fireEvent.click(walletConnect);
+      const connectBtn = await screen.findByTestId('connect-app');
+      expect(connectBtn.getAttribute('href')).toBe(
+        'metamask://wc?uri=wc:123@1?bridge=bridge.org&key=456'
+      );
+      const back = await screen.findByLabelText('Back');
+      fireEvent.click(back);
+      const rainbow = await screen.findByText('Rainbow');
+      fireEvent.click(rainbow);
+      const connectBtn2 = await screen.findByTestId('connect-app');
+      expect(connectBtn2.getAttribute('href')).toBe(
+        'rainbow://wc?uri=wc%3A123%401%3Fbridge%3Dbridge.org%26key%3D456'
+      );
+    });
+  });
+  describe('Install App', () => {
+    Object.defineProperties(reactDeviceDetect, {
+      BrowserView: {
+        get: () => () => null,
+      },
+      MobileView: {
+        get:
+          () =>
+          ({ children }: any) =>
+            <>{children}</>,
+      },
+      isBrowser: { get: () => false },
+      isIOS: { get: () => true },
+      isMobile: { get: () => true },
+    });
+    it('displays install app button after 1.2 seconds', async () => {
+      const walletConnect = await screen.findByText('Rainbow');
+      fireEvent.click(walletConnect);
+      const rainbow = await screen.findByText('Connect Rainbow');
+      fireEvent.click(rainbow);
+      await act(async () => {
+        await wait(1201);
+      });
+      expect(await screen.findByTestId('install-app')).toBeInTheDocument();
+    });
   });
 });

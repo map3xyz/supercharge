@@ -50,7 +50,6 @@ export const useWeb3 = () => {
     if (!isAuth) {
       throw new Error('Unable to authorize transaction.');
     }
-    console.log('isAuth', isAuth);
 
     return isAuth;
   };

@@ -161,6 +161,7 @@ const WalletConnect: React.FC<Props> = () => {
             {deeplink ? (
               <Button block size="xlarge" type="default">
                 <a
+                  data-testid="connect-app"
                   href={deeplink}
                   onClick={() => {
                     setTimeout(() => {
@@ -180,6 +181,7 @@ const WalletConnect: React.FC<Props> = () => {
                 <Divider className="my-3">Or</Divider>
                 <a
                   className="flex w-full justify-center"
+                  data-testid="install-app"
                   href={
                     (isIOS
                       ? state.method?.walletConnect?.app?.ios

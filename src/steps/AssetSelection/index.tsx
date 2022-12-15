@@ -145,25 +145,26 @@ const AssetSelection: React.FC<Props> = () => {
           )}
           {assets?.length ? (
             <InView
-              /* istanbul ignore next */
-              onChange={async (inView) => {
-                /* istanbul ignore next */
-                const currentLength = assets?.length || 0;
-                /* istanbul ignore next */
-                if (inView && !atAssetLimit) {
+              onChange={
+                /* istanbul ignore next */ async (inView) => {
                   /* istanbul ignore next */
-                  const more = await fetchMore({
-                    variables: {
-                      currency: state.fiat,
-                      limit: currentLength * 2,
-                      offset: currentLength,
-                    },
-                  });
-                  if (more.data.assetsForOrganization?.length === 0) {
-                    setAtAssetLimit(true);
+                  const currentLength = assets?.length || 0;
+                  /* istanbul ignore next */
+                  if (inView && !atAssetLimit) {
+                    /* istanbul ignore next */
+                    const more = await fetchMore({
+                      variables: {
+                        currency: state.fiat,
+                        limit: currentLength * 2,
+                        offset: currentLength,
+                      },
+                    });
+                    if (more.data.assetsForOrganization?.length === 0) {
+                      setAtAssetLimit(true);
+                    }
                   }
                 }
-              }}
+              }
             >
               <div className="flex w-full items-center justify-center py-2">
                 {loading ||
