@@ -19,6 +19,7 @@ const mockConnect = jest.fn((_event: string, callback: () => void) => {
 
 const defaults = {
   accounts: ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'],
+  chainId: 1,
   createSession: jest.fn(),
   killSession: jest.fn(),
   on: mockConnect,
@@ -30,15 +31,6 @@ const mockDefault = jest.fn(() => defaults);
 jest.mock('@walletconnect/client', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => mockDefault()),
-}));
-
-const mockSendTransaction = jest.fn();
-jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-  authorizeTransactionProxy: jest.fn(),
-  getChainID: jest.fn(),
-  providers: {},
-  sendTransaction: mockSendTransaction,
-  switchChain: jest.fn(),
 }));
 
 describe('WalletConnect', () => {
@@ -84,8 +76,25 @@ describe('WalletConnect', () => {
     });
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+    const form = await screen.findByTestId('enter-amount-form');
+    await act(async () => {
+      await fireEvent.submit(form);
+    });
   });
   it('populates address AND memo if the wallet is vetted/enabled', async () => {
+    const mockSendTransaction = jest.fn();
+    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+      authorizeTransactionProxy: jest.fn(),
+      getChainID: jest.fn(),
+      providers: {},
+      sendTransaction: mockSendTransaction,
+      switchChain: jest.fn(),
+    }));
+
     const walletConnect = await screen.findByText('Rainbow');
     fireEvent.click(walletConnect);
     await screen.findByTestId('scan-wallet-connect');
@@ -110,6 +119,15 @@ describe('WalletConnect', () => {
     );
   });
   it('populates ONLY address if the wallet is not vetted/enabled', async () => {
+    const mockSendTransaction = jest.fn();
+    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+      authorizeTransactionProxy: jest.fn(),
+      getChainID: jest.fn(),
+      providers: {},
+      sendTransaction: mockSendTransaction,
+      switchChain: jest.fn(),
+    }));
+
     const walletConnect = await screen.findByText('Spot');
     fireEvent.click(walletConnect);
     await screen.findByTestId('scan-wallet-connect');
@@ -129,7 +147,7 @@ describe('WalletConnect', () => {
     expect(mockSendTransaction).toHaveBeenCalledWith(
       '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      '123456',
+      undefined,
       false
     );
   });
@@ -230,6 +248,7 @@ describe('WalletConnect', () => {
     );
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
   });
+
   describe('Mobile Deeplink', () => {
     Object.defineProperties(reactDeviceDetect, {
       BrowserView: {
@@ -274,6 +293,7 @@ describe('WalletConnect', () => {
       );
     });
   });
+
   describe('Install App', () => {
     Object.defineProperties(reactDeviceDetect, {
       BrowserView: {
