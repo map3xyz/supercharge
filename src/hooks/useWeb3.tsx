@@ -43,12 +43,14 @@ export const useWeb3 = () => {
       throw new Error('Unable to authorize transaction.');
     }
     let isAuth: Boolean = true;
-    if (typeof authorizeTransaction === 'function') {
+    if (authorizeTransaction && typeof authorizeTransaction === 'function') {
       isAuth = await authorizeTransaction(fromAddress, network, amount);
-      if (!isAuth) {
-        throw new Error('Unable to authorize transaction.');
-      }
     }
+
+    if (!isAuth) {
+      throw new Error('Unable to authorize transaction.');
+    }
+    console.log('isAuth', isAuth);
 
     return isAuth;
   };

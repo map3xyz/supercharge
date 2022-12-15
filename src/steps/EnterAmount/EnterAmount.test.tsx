@@ -435,7 +435,7 @@ describe('txAuth', () => {
     });
   });
 
-  describe('transaction', () => {
+  describe('transaction auth failure', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
     beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
@@ -463,6 +463,79 @@ describe('txAuth', () => {
         '1.000000'
       );
       expect(mockSendTransaction).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('txAuth - Success', () => {
+  const mockAuthTransactionProxy = jest.fn();
+  const mockSendTransaction = jest.fn();
+  beforeEach(async () => {
+    web3MockSpy.mockImplementation(() => ({
+      authorizeTransactionProxy: mockAuthTransactionProxy,
+      getChainID: jest.fn(),
+      providers: {},
+      sendTransaction: mockSendTransaction,
+      switchChain: jest.fn(),
+    }));
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          authorizeTransaction: async () => {
+            return true;
+          },
+          generateDepositAddress: async () => {
+            return { address: '0x123', memo: 'memo' };
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+
+  describe('transaction auth success', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(async () => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    it('should authorize transaction', async () => {
+      await act(() => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
+      await act(async () => {
+        const form = screen.getByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(mockAuthTransactionProxy).toHaveBeenCalledWith(
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        'ethereum',
+        '1.000000'
+      );
+      expect(mockSendTransaction).toHaveBeenCalled();
     });
   });
 });
