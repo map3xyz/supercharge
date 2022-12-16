@@ -137,6 +137,62 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   name: 'MetaMask',
                 },
               },
+              {
+                flags: {
+                  enabled: true,
+                  memo: false,
+                },
+                icon: '',
+                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                name: 'No-Trust Wallet',
+                value: 'isWalletConnect',
+                walletConnect: {
+                  app: {
+                    android:
+                      'https://play.google.com/store/apps/details?id=com.notrustwallet',
+                    ios: 'https://apps.apple.com/us/app/no-trust-wallet/id1500000000',
+                  },
+                  chains: [],
+                  description:
+                    'No-Trust Wallet is a mobile & secure non-custodial wallet for Ethereum, Polygon, Solana, Bitcoin, Tezos & NFTs. Access web3 & DeFi with WalletConnect.',
+                  desktop: {
+                    native: null,
+                    universal: null,
+                  },
+                  mobile: {
+                    native: null,
+                    universal: null,
+                  },
+                },
+              },
+              {
+                flags: {
+                  enabled: true,
+                  memo: false,
+                },
+                icon: '',
+                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                name: 'Mt Gox',
+                value: 'isWalletConnect',
+                walletConnect: {
+                  app: {
+                    android:
+                      'https://play.google.com/store/apps/details?id=com.mtgox.android',
+                    ios: 'https://apps.apple.com/us/app/mt-gox/id1500000000',
+                  },
+                  chains: ['eip155:77'],
+                  description:
+                    'Mt Gox is a mobile & (in)secure wallet for Bitcoin Satoshi Vision.',
+                  desktop: {
+                    native: null,
+                    universal: null,
+                  },
+                  mobile: {
+                    native: 'mtgox:',
+                    universal: 'https://mtgox.com/',
+                  },
+                },
+              },
             ],
           },
         },

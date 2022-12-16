@@ -61,22 +61,18 @@ const PaymentMethod: React.FC<Props> = () => {
       if (method?.walletConnect && !supportsChain) return false;
 
       if (method?.walletConnect) {
-        if (!supportsChain) return false;
-
-        if (!method?.walletConnect?.mobile?.native) return false;
-
+        let app: string | null | undefined = null;
         if (isIOS) {
-          return (
-            method?.walletConnect?.app?.ios ||
-            method?.walletConnect?.mobile?.universal
-          );
+          app = method?.walletConnect?.app?.ios;
         }
         if (isAndroid) {
-          return (
-            method?.walletConnect?.app?.android ||
-            method?.walletConnect?.mobile?.universal
-          );
+          app = method?.walletConnect?.app?.android;
         }
+        const hasAppOrUniversal = !!(
+          app || method?.walletConnect?.mobile?.universal
+        );
+
+        if (!hasAppOrUniversal) return false;
       }
 
       return true;

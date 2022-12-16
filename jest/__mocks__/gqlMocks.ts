@@ -1,8 +1,8 @@
 import { MockedResponse } from '@apollo/client/testing';
 
 import { getAssetsForOrgMock, searchAssetsMock } from './assets';
-import { getMethodsMock } from './methods';
 import { getMappedNetworksForOrgMock, getNetworksMock } from './networks';
+import { getMethodsMock } from './payment-methods';
 
 export const mocks: MockedResponse[] = [
   getAssetsForOrgMock({ currency: undefined, limit: 10, offset: 0 }),

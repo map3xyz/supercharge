@@ -1,4 +1,5 @@
 import { generateTestingUtils } from 'eth-testing';
+import * as reactDeviceDetect from 'react-device-detect';
 
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
@@ -64,6 +65,22 @@ describe('Payment Selection', () => {
       const metamask = await screen.findByText('MetaMask');
       expect(metamask).toBeInTheDocument();
       expect(rainbow).not.toBeInTheDocument();
+    });
+  });
+  describe('Method filtering', () => {
+    it('filters out methods that dont support the eip:155 chain', async () => {
+      const paymentSelection = await screen.findByText('Payment Method');
+      expect(paymentSelection).toBeInTheDocument();
+      const mtGoxWallet = await screen.queryByText('Mt Gox');
+      expect(mtGoxWallet).toBeNull();
+    });
+    it('handles iOS and Android devices', async () => {
+      Object.defineProperties(reactDeviceDetect, {
+        isAndroid: { get: () => true },
+        isIOS: { get: () => true },
+      });
+      const paymentSelection = await screen.findByText('Payment Method');
+      expect(paymentSelection).toBeInTheDocument();
     });
   });
 });
