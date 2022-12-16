@@ -190,10 +190,14 @@ const WalletConnect: React.FC<Props> = () => {
                     ''
                   }
                 >
-                  {false ? (
-                    <AppStoreBadge />
+                  {isIOS ? (
+                    <AppStoreBadge aria-label="app-store-badge" />
                   ) : (
-                    <img className="block w-1/2" src={GooglePlayBadge} />
+                    <img
+                      aria-label="google-play-badge"
+                      className="block w-1/2"
+                      src={GooglePlayBadge}
+                    />
                   )}
                 </a>
               </div>

@@ -318,6 +318,12 @@ describe('WalletConnect', () => {
         await wait(1201);
       });
       expect(await screen.findByTestId('install-app')).toBeInTheDocument();
+      expect(
+        await screen.findByLabelText('app-store-badge')
+      ).toBeInTheDocument();
+      expect(
+        await screen.queryByLabelText('google-play-badge')
+      ).not.toBeInTheDocument();
     });
   });
 });
