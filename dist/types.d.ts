@@ -9,6 +9,7 @@ export interface Map3InitConfig {
         memo?: string;
     }>;
     networkCode?: string;
+    rainbowRoad?: boolean;
     theme?: 'dark' | 'light';
 }
 export class Map3 {

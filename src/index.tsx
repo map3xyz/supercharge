@@ -20,6 +20,7 @@ export interface Map3InitConfig {
     memoEnabled?: boolean
   ) => Promise<{ address: string; memo?: string }>;
   networkCode?: string;
+  rainbowRoad?: boolean;
   theme?: 'dark' | 'light';
 }
 export class Map3 {
@@ -50,6 +51,10 @@ export class Map3 {
       config.address = undefined;
     }
 
+    if (config.rainbowRoad) {
+      document.body.classList.add('rainbow-road');
+    }
+
     this.config = config;
 
     this.onClose = () => {
@@ -64,6 +69,25 @@ export class Map3 {
     if (config.theme === 'dark') {
       document.body.classList.add('dark');
     }
+
+    var parent = document.createElement('div');
+    parent.setAttribute('style', 'width:30px;height:30px;');
+    parent.classList.add('scrollbar-test');
+
+    var child = document.createElement('div');
+    child.setAttribute('style', 'width:100%;height:40px');
+    parent.appendChild(child);
+    document.body.appendChild(parent);
+
+    // Measure the child element, if it is not
+    // 30px wide the scrollbars are obtrusive.
+    // @ts-ignore
+    var scrollbarWidth = 30 - parent?.firstChild?.clientWidth;
+    if (scrollbarWidth) {
+      document.body.classList.add('map3-layout-scrollbar-obtrusive');
+    }
+
+    document.body.removeChild(parent);
 
     this.root = createRoot(element);
   }

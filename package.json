@@ -26,6 +26,11 @@
       "source": "src/index.tsx"
     }
   },
+  "@parcel/transformer-css": {
+    "cssModules": {
+      "dashedIdents": true
+    }
+  },
   "scripts": {
     "build": "rm -rf dist && parcel build",
     "start": "parcel src/index.html --dist-dir output",
@@ -77,6 +82,7 @@
     "os-browserify": "^0.3.0",
     "parcel": "^2.7.0",
     "postcss": "^8.4.16",
+    "postcss-modules": "^4.3.0",
     "prettier": "^2.2.1",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "process": "^0.11.10",
