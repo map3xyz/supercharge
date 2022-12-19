@@ -110,4 +110,23 @@ describe('App', () => {
     const assetSelection = await screen.findByText('Select Asset');
     expect(assetSelection).toBeInTheDocument();
   });
+  it('accepts optional preference "rainbow-road"', async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            return { address: '0x0000000000000000000000000000000000000000' };
+          },
+          rainbowRoad: true,
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    const assetSelection = await screen.findByText('Select Asset');
+    expect(assetSelection).toBeInTheDocument();
+  });
 });

@@ -1,0 +1,101 @@
+/* Variables */
+:root {
+    --scrollbar-size: .375rem;
+    --scrollbar-minlength: 1.5rem;
+    /* Minimum length of scrollbar thumb (width of horizontal, height of vertical) */
+    --scrollbar-ff-width: thin;
+    /* FF-only accepts auto, thin, none */
+    --scrollbar-track-color: transparent;
+    --scrollbar-color: rgba(0, 0, 0, .2);
+    --scrollbar-color-hover: rgba(0, 0, 0, .3);
+    --scrollbar-color-active: rgb(0, 0, 0);
+}
+
+/* Use .map3-layout-scrollbar-obtrusive to only use overflow if scrollbars don’t overlay */
+.scrollbar-test,
+.layout-cell {
+    overscroll-behavior: contain;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    scrollbar-width: var(--scrollbar-ff-width);
+}
+
+/* This class controls what elements have the new fancy scrollbar CSS */
+.layout-scrollbar {
+    overflow-y: overlay;
+    scrollbar-color: var(--scrollbar-color) var(--scrollbar-track-color);
+}
+
+/* Only apply height/width to ::-webkit-scrollbar if is obtrusive */
+.map3-layout-scrollbar-obtrusive .layout-scrollbar::-webkit-scrollbar {
+    height: var(--scrollbar-size);
+    width: var(--scrollbar-size);
+}
+
+.layout-scrollbar::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-color);
+}
+
+.layout-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color);
+    border-radius: 3px;
+}
+
+.layout-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-color-hover);
+}
+
+.layout-scrollbar::-webkit-scrollbar-thumb:active {
+    background: var(--scrollbar-color-active);
+}
+
+.scrollbar-test::-webkit-scrollbar-thumb:vertical,
+.layout-scrollbar::-webkit-scrollbar-thumb:vertical {
+    min-height: var(--scrollbar-minlength);
+}
+
+.scrollbar-test::-webkit-scrollbar-thumb:horizontal,
+.layout-scrollbar::-webkit-scrollbar-thumb:horizontal {
+    min-width: var(--scrollbar-minlength);
+}
+
+.dark {
+    --scrollbar-color: rgba(255, 255, 255, .2);
+    --scrollbar-color-hover: rgba(255, 255, 255, .3);
+    --scrollbar-color-active: rgb(255, 255, 255, .5);
+}
+
+.rainbow-road {
+    --scrollbar-track-color: linear-gradient(
+        0deg,
+        rgba(255, 0, 0, 1) 0%,
+        rgba(255, 154, 0, 1) 10%,
+        rgba(208, 222, 33, 1) 20%,
+        rgba(79, 220, 74, 1) 30%,
+        rgba(63, 218, 216, 1) 40%,
+        rgba(47, 201, 226, 1) 50%,
+        rgba(28, 127, 238, 1) 60%,
+        rgba(95, 21, 242, 1) 70%,
+        rgba(186, 12, 248, 1) 80%,
+        rgba(251, 7, 217, 1) 90%,
+        rgba(255, 0, 0, 1) 100%
+    );
+    --scrollbar-color: transparent;
+    .layout-scrollbar {
+        overflow-y: overlay;
+        scrollbar-color: initial;
+    }
+
+    .layout-scrollbar::-webkit-scrollbar-thumb {
+      background: transparent; /* opacity: 0; should do the thing either */
+      box-shadow: 0px 0px 0px 100000vh rgb(0 0 0 / var(--tw-bg-opacity));
+    }
+
+    &.dark {
+        .layout-scrollbar::-webkit-scrollbar-thumb {
+        // dark:bg-neutral-900   
+            box-shadow: 0px 0px 0px 100000vh rgb(23 23 23 / var(--tw-bg-opacity));
+        }
+    }
+}

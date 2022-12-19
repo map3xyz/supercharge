@@ -130,7 +130,7 @@ const PaymentMethod: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex h-full flex-col overflow-hidden">
-        <div className="relative z-10 flex flex-col overflow-y-auto dark:text-white">
+        <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">
           {isEmptySearch ? (
             <ErrorWrapper
               description="We couldn't find any payment methods that matched your search."

@@ -25,7 +25,7 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
   return (
     <div data-testid="map3-modal">
       <Modal
-        className={`map3 ${minWidth('sm') ? '' : 'h-full w-full'}`}
+        className={`${minWidth('sm') ? 'map3' : 'map3 h-full w-full'}`}
         footerBackground
         onCancel={onClose}
         size="tiny"

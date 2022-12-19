@@ -1,52 +1,11 @@
 @import '../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 @import '../node_modules/@map3xyz/components/dist/index.css';
+@import './styles/globals.scss';
+@import './styles/supabase.scss';
+@import './styles/scrollbars.scss';
 
 .map3 {
   @tailwind components;
   @tailwind utilities;
   @tailwind base;
-
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  .sbui-modal-content {
-    padding: 0 !important;
-    height: 100%;
-    width: 100%;
-  }
-
-  .sbui-modal-content>.sbui-space-row {
-    height: 100%;
-  }
-
-  .sbui-modal-content>.sbui-space-row>.sbui-space-col {
-    height: 100%;
-  }
-
-  @media screen and (min-width: 640px) {
-    .sbui-modal-content>.sbui-space-row {
-      height: initial;
-    }
-
-    .sbui-modal-content>.sbui-space-row>.sbui-space-col {
-      height: initial;
-    }
-  }
-
-  .sbui-space-y-4> :not([hidden])~ :not([hidden]) {
-    margin: 0 !important;
-  }
-
-  .sbui-modal-footer {
-    display: none !important;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
 }
