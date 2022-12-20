@@ -79,4 +79,16 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).toThrow('anonKey is required');
   });
+  it('should allow optional rainbowRoad config', () => {
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        rainbowRoad: true,
+      });
+    expect(initFn).not.toThrow();
+  });
 });
