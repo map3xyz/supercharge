@@ -9,8 +9,8 @@
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@latest/dist/global/index.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@latest/dist/index.css"></link>
+        <script src="https://map3xyz.github.io/payments-sdk/dist/global/index.js"></script>
+        <link rel="stylesheet" href="https://map3xyz.github.io/payments-sdk/dist/index.css"></link>
     </head>
 
     <body>
