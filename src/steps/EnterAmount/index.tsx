@@ -12,6 +12,7 @@ import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
+const CHAIN_MISSING = 'Unrecognized chain ID';
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -32,6 +33,7 @@ const EnterAmount: React.FC<Props> = () => {
   const connectRef = useRef<ConnectHandler>(null);
 
   const {
+    addChain,
     authorizeTransactionProxy,
     getChainID,
     sendTransaction,
@@ -104,9 +106,9 @@ const EnterAmount: React.FC<Props> = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     try {
-      e.preventDefault();
+      e?.preventDefault();
       setFormError(undefined);
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
@@ -141,6 +143,16 @@ const EnterAmount: React.FC<Props> = () => {
       );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
+      if (e.message?.includes(CHAIN_MISSING)) {
+        try {
+          await addChain();
+          handleSubmit();
+          return;
+        } catch (addChainError) {
+          e = addChainError as Error;
+        }
+      }
+
       if (e.message) {
         setFormError(e.message);
       }

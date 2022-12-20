@@ -65,6 +65,11 @@ export type Identifiers = {
   chainId?: Maybe<Scalars['Int']>;
 };
 
+export type Links = {
+  __typename?: 'Links';
+  explorer?: Maybe<Scalars['String']>;
+};
+
 export type Logo = {
   __typename?: 'Logo';
   png?: Maybe<Scalars['String']>;
@@ -102,8 +107,10 @@ export type Network = {
   __typename?: 'Network';
   address?: Maybe<Scalars['String']>;
   assetId?: Maybe<Scalars['String']>;
+  decimals?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['String']>;
   identifiers?: Maybe<Identifiers>;
+  links?: Maybe<Links>;
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
@@ -304,7 +311,7 @@ export type WalletConnectWallet = {
 
 export type AssetFieldsFragment = { __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null };
 
-export type NetworkFieldsFragment = { __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
+export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
 
 export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
@@ -322,12 +329,12 @@ export type GetMappedNetworksForAssetQueryVariables = Exact<{
 }>;
 
 
-export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
+export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
+export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetPaymentMethodsQueryVariables = Exact<{
   chainId?: InputMaybe<Scalars['Int']>;
@@ -370,11 +377,15 @@ export const AssetFieldsFragmentDoc = gql`
     `;
 export const NetworkFieldsFragmentDoc = gql`
     fragment NetworkFields on Network {
+  decimals
   name
   networkCode
   logo {
     png
     svg
+  }
+  links {
+    explorer
   }
   identifiers {
     chainId

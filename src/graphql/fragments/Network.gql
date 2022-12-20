@@ -1,9 +1,13 @@
 fragment NetworkFields on Network {
+  decimals
   name
   networkCode
   logo {
     png
     svg
+  }
+  links {
+    explorer
   }
   identifiers {
     chainId

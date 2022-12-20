@@ -83,6 +83,45 @@ export const useWeb3 = () => {
     }
   };
 
+  const addChain = async () => {
+    if (!state.network) {
+      throw new Error('No network');
+    }
+
+    if (!state.network.identifiers?.chainId) {
+      throw new Error('No chainId');
+    }
+
+    const rpcs: { [key in number]: any } = await fetch(
+      process.env.CONSOLE_API_URL + '/chainlistRPCs'
+    ).then((res) => res.json());
+
+    const params = [
+      {
+        blockExplorerUrls: [state.network.links?.explorer],
+        chainId: toHex(state.network.identifiers.chainId),
+        chainName: state.network.name,
+        nativeCurrency: {
+          decimals: state.network.decimals,
+          name: state.network.name,
+          symbol: state.network.symbol,
+        },
+        rpcUrls: rpcs[state.network.identifiers.chainId].rpcs,
+      },
+    ];
+
+    if (state.method?.value === 'isWalletConnect') {
+      const chainAdd = state.connector?.data?.sendCustomRequest({
+        jsonrpc: '2.0',
+        method: 'wallet_addEthereumChain',
+        params,
+      }) as Promise<number>;
+      await walletConnectHelper(chainAdd);
+    } else {
+      await state.provider?.data?.send('wallet_addEthereumChain', params);
+    }
+  };
+
   const sendTransaction = async (
     amount: string,
     address: string,
@@ -158,6 +197,7 @@ export const useWeb3 = () => {
   };
 
   return {
+    addChain,
     authorizeTransactionProxy,
     getChainID,
     providers,
