@@ -22,24 +22,31 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
     };
   }, []);
 
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 150);
+  };
+
   return (
     <div data-testid="map3-modal">
       <Modal
         className={`${minWidth('sm') ? 'map3' : 'map3 h-full w-full'}`}
         footerBackground
-        onCancel={onClose}
+        onCancel={handleClose}
         size="tiny"
         visible={visible}
       >
         {assetId ? (
-          <AppWithAssetId config={config} onClose={onClose} />
+          <AppWithAssetId config={config} onClose={handleClose} />
         ) : address && networkCode ? (
-          <AppWithAddressAndNetwork config={config} onClose={onClose} />
+          <AppWithAddressAndNetwork config={config} onClose={handleClose} />
         ) : networkCode ? (
-          <AppWithNetwork config={config} onClose={onClose} />
+          <AppWithNetwork config={config} onClose={handleClose} />
         ) : (
           <Store {...config}>
-            <Map3SdkSteps onClose={onClose} />
+            <Map3SdkSteps onClose={handleClose} />
           </Store>
         )}
       </Modal>
