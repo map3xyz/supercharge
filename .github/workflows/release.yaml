@@ -10,14 +10,19 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
+        token: ${{ secrets.BOT_ACCESS_TOKEN }}
         fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
-    - name: Create local changes
+    - name: Setup Git
       run: |
-        yarn install
-        GH_TOKEN=${{ secrets.RELEASE_TOKEN }} yarn release
-    - name: Pushing to the protected branch 'master'
-        uses: CasperWA/push-protected@v2
-        with:
-          token: ${{ secrets.RELEASE_TOKEN }}
-          branch: master
+        git config --global user.email "accounts+release@map3.xyz"
+        git config --global user.name "map3-release-bot"
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+    - name: Push
+      uses: actions-js/push@master
+      with:
+        github_token: ${{ secrets.BOT_ACCESS_TOKEN }}
+        branch: master
 

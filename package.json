@@ -38,8 +38,7 @@
     "lint:fix": "eslint \"{**/*,*}.{ts,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
     "test": "jest",
-    "test:ci": "jest --ci",
-    "release": "yarn build && npx semantic-release"
+    "test:ci": "jest --ci"
   },
   "resolutions": {
     "typescript": "~4.7",
@@ -110,7 +109,6 @@
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^9.4.0",
-    "semantic-release": "^19.0.5",
     "tailwindcss": "^3.1.8"
   }
 }
