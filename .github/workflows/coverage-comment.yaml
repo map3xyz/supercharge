@@ -3,6 +3,8 @@
 name: Jest coverage comment
 on:
   push:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
