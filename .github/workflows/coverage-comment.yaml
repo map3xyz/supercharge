@@ -10,13 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Install dependencies
         run: yarn install
-
       - name: Run tests
         run: |
           npx jest --coverage --coverageReporters json-summary
-
       - name: Jest coverage comment
         uses: MishaKav/jest-coverage-comment@main
