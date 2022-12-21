@@ -1,5 +1,5 @@
 # This workflow will install dependencies and run tests on pull requests
-name: Test
+name: @testing-library/react test suite
 on:
   pull_request:
 jobs:
