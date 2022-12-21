@@ -7,9 +7,13 @@ import {
 export const networksForAssetMockResult = [
   {
     __typename: 'Network',
+    decimals: 18,
     id: 'ethId',
     identifiers: {
       chainId: 1,
+    },
+    links: {
+      explorer: 'https://etherscan.io',
     },
     logo: {
       png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
@@ -46,8 +50,12 @@ export const getNetworksMock = () => ({
       networks: [
         {
           __typename: 'Network',
+          decimals: 18,
           identifiers: {
             chainId: null,
+          },
+          links: {
+            explorer: 'https://etherscan.io',
           },
           logo: {
             png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
@@ -59,8 +67,12 @@ export const getNetworksMock = () => ({
         },
         {
           __typename: 'Network',
+          decimals: 18,
           identifiers: {
             chainId: 1,
+          },
+          links: {
+            explorer: 'https://etherscan.io',
           },
           logo: {
             png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',

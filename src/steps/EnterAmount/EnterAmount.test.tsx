@@ -331,6 +331,7 @@ describe('window.ethereum > ERC20', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
+      addChain: jest.fn(),
       authorizeTransactionProxy: jest.fn(),
       getChainID: jest.fn(),
       providers: {},
@@ -399,6 +400,7 @@ describe('txAuth', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
+      addChain: jest.fn(),
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getChainID: jest.fn(),
       providers: {},
@@ -472,6 +474,7 @@ describe('txAuth - Success', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
+      addChain: jest.fn(),
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getChainID: jest.fn(),
       providers: {},
