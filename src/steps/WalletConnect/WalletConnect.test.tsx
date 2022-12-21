@@ -88,6 +88,7 @@ describe('WalletConnect', () => {
   it('populates address AND memo if the wallet is vetted/enabled', async () => {
     const mockSendTransaction = jest.fn();
     jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+      addChain: jest.fn(),
       authorizeTransactionProxy: jest.fn(),
       getChainID: jest.fn(),
       providers: {},
@@ -121,6 +122,7 @@ describe('WalletConnect', () => {
   it('populates ONLY address if the wallet is not vetted/enabled', async () => {
     const mockSendTransaction = jest.fn();
     jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
+      addChain: jest.fn(),
       authorizeTransactionProxy: jest.fn(),
       getChainID: jest.fn(),
       providers: {},
