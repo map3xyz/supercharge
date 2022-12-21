@@ -16,10 +16,12 @@ jobs:
       run: |
         git config --global user.email "accounts+release@map3.xyz"
         git config --global user.name "map3-release-bot"
-    - name: Semantic Release
-      uses: cycjimmy/semantic-release-action@v3
+    - name: Build
+      run: yarn build
+    - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
+      run: npx semantic-release
     - name: Push
       uses: actions-js/push@master
       with:
