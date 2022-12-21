@@ -10,7 +10,7 @@ jobs:
     - name: Check out repo
       uses: actions/checkout@v2
     - name: Install dependencies
-      run: npm install
+      run: yarn install
     - name: Run tests
       run: yarn test:ci
     - name: Generating coverage badges
