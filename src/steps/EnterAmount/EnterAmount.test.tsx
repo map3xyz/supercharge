@@ -474,7 +474,7 @@ describe('txAuth - Success', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      // addChain: jest.fn(),
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getChainID: jest.fn(),
       providers: {},
