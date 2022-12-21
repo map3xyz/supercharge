@@ -1,0 +1,22 @@
+# This workflow will install dependencies, run build, run semantic-release and push dist using https://github.com/actions-js/push
+name: Release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+    - name: Create local changes
+      run: |
+        npm install
+        npm run release
+    - name: Commit & Push changes
+      uses: actions-js/push@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
