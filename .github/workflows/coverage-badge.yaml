@@ -8,10 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Check out repo
-        with:
-          token: ${{ secrets.BOT_ACCESS_TOKEN }}
-          fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+      with:
+        token: ${{ secrets.BOT_ACCESS_TOKEN }}
+        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
     - name: Install dependencies
       run: yarn install
     - name: Run tests
