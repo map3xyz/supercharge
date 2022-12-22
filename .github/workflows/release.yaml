@@ -24,9 +24,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
+    - name: Set version
+      run: echo "VERSION=$(npm pkg get version | sed 's/"//g')" >> $GITHUB_ENV
     - name: Commit and push files
-      env:
-        VERSION: npm pkg get version | sed 's/"//g'
       run: |
         git commit -a -m "chore: release (v${{ env.VERSION }})"
         git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
