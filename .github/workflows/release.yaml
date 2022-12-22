@@ -4,6 +4,10 @@ on:
     branches:
       - master
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No test required"'
   release:
     runs-on: ubuntu-latest
     steps:
@@ -24,10 +28,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
     - name: Push
-      run: |
-        git add .
-        git commit -m "chore(release): publish"
-        git push origin master
+      uses: actions-js/push@master
+      with:
+        github_token: ${{ secrets.BOT_ACCESS_TOKEN }}
+        branch: master
     - name: Purge CDN jsDelivr cache
       uses: gacts/purge-jsdelivr-cache@v1
       with:
