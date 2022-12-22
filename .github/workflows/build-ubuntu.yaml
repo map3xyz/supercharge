@@ -1,3 +1,6 @@
+on:
+  workflow_call:
+
 name: Build Ubuntu
 jobs:
   build:

@@ -1,3 +1,6 @@
+on:
+  workflow_call:
+
 name: yarn install
 jobs:
   install:
