@@ -25,7 +25,9 @@ jobs:
       run: npx semantic-release
     - name: Push
       run: |
-        git push --follow-tags origin master
+        git add .
+        git commit -m "chore(release): publish"
+        git push origin master
     - name: Purge CDN jsDelivr cache
       uses: gacts/purge-jsdelivr-cache@v1
       with:
