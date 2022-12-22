@@ -24,7 +24,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
-     - name: Commit files
+    - name: Commit files
       run: |
         git commit -a -m "chore: release"
     - name: Push
