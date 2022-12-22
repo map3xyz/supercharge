@@ -3,6 +3,7 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
+import { CONSOLE_API_URL } from '../constants';
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
@@ -93,7 +94,7 @@ export const useWeb3 = () => {
     }
 
     const rpcs: { [key in number]: any } = await fetch(
-      process.env.CONSOLE_API_URL + '/chainlistRPCs'
+      (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
     ).then((res) => res.json());
 
     const params = [

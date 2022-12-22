@@ -3,6 +3,7 @@ import { offsetLimitPagination } from '@apollo/client/utilities';
 import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
+import { CONSOLE_API_URL } from './constants';
 
 export interface Map3InitConfig {
   address?: string;
@@ -106,7 +107,7 @@ export class Map3 {
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
       },
-      uri: process.env.CONSOLE_API_URL + '/graphql',
+      uri: (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/graphql',
     });
     this.root.render(
       <ApolloProvider client={client}>
