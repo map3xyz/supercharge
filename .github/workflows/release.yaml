@@ -34,6 +34,6 @@ jobs:
       uses: gacts/purge-jsdelivr-cache@v1
       with:
         url: |
-          https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@latest/dist/global/index.js
-          https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@latest/dist/index.css
+          https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk/dist/global/index.js
+          https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk/dist/index.css
 
