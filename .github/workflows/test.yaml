@@ -1,13 +1,12 @@
 # This workflow will install dependencies and run tests on pull requests
-name: testing-library/react test suite
+name: Jest Test Suite
 on:
   pull_request:
 jobs:
   test:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/build-ubuntu
     steps:
-      - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn install
+      - uses: ./.github/workflows/checkout
+      - uses: ./.github/workflows/install
       - name: Run tests
-        run: yarn test
+        run: yarn test:ci
