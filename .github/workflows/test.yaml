@@ -4,7 +4,6 @@ on:
   pull_request:
 jobs:
   test:
-    steps:
     - uses: ./.github/workflows/build-ubuntu.yaml
     - uses: ./.github/workflows/checkout.yaml
     - uses: ./.github/workflows/install.yaml
