@@ -28,7 +28,7 @@ jobs:
       run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
     - name: Commit and push files
       run: |
-        git commit -a -m "chore: release (v${{ env.VERSION }})"
+        git commit -a -m "chore: release (${{ env.VERSION }})"
         git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
     - name: Purge CDN jsDelivr cache
       uses: gacts/purge-jsdelivr-cache@v1
