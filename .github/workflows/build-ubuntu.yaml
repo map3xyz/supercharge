@@ -1,7 +1,0 @@
-on:
-  workflow_call:
-
-name: Build Ubuntu
-jobs:
-  build:
-    runs-on: ubuntu-latest

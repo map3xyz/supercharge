@@ -1,8 +1,0 @@
-on:
-  workflow_call:
-
-name: yarn install
-jobs:
-  install:
-    run: yarn install
-      

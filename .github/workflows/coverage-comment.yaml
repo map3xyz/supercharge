@@ -5,9 +5,14 @@ on:
   pull_request:
 jobs:
   comment:
-    - uses: ./.github/workflows/build-ubuntu.yaml
-    - uses: ./.github/workflows/checkout.yaml
-    - uses: ./.github/workflows/install.yaml
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        token: ${{ secrets.BOT_ACCESS_TOKEN }}
+        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+    - name: Install dependencies
+      run: yarn install
     - name: Run tests
       run: |
         npx jest --coverage --coverageReporters json-summary

@@ -4,8 +4,10 @@ on:
   pull_request:
 jobs:
   test:
-    - uses: ./.github/workflows/build-ubuntu.yaml
-    - uses: ./.github/workflows/checkout.yaml
-    - uses: ./.github/workflows/install.yaml
-    - name: Run tests
-      run: yarn test:ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn install
+      - name: Run tests
+        run: yarn test:ci
