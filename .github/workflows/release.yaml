@@ -24,11 +24,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
+     - name: Commit files
+      run: |
+        git commit -a -m "chore: release"
     - name: Push
       uses: ad-m/github-push-action@master
       with:
-        author_name: map3-release-bot
-        author_email: accounts+release@map3.xyz
         github_token: ${{ secrets.BOT_ACCESS_TOKEN }}
         branch: master
     - name: Purge CDN jsDelivr cache
