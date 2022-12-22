@@ -9,7 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
-        token: ${{ secrets.BOT_ACCESS_TOKEN }}
         persist-credentials: false
         fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
     - name: Setup Git
@@ -24,14 +23,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
-    - name: Commit files
+    - name: Commit and push files
       run: |
         git commit -a -m "chore: release"
-    - name: Push
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.BOT_ACCESS_TOKEN }}
-        branch: master
+        git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
     - name: Purge CDN jsDelivr cache
       uses: gacts/purge-jsdelivr-cache@v1
       with:
