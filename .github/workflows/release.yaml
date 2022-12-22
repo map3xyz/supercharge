@@ -4,10 +4,6 @@ on:
     branches:
       - master
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: 'echo "No test required"'
   release:
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +26,8 @@ jobs:
     - name: Push
       uses: actions-js/push@master
       with:
+        author_name: map3-release-bot
+        author_email: accounts+release@map3.xyz
         github_token: ${{ secrets.BOT_ACCESS_TOKEN }}
         branch: master
     - name: Purge CDN jsDelivr cache
