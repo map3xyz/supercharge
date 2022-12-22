@@ -8,5 +8,6 @@ output/
 coverage/*
 
 # env
+.env
 .env.local
 .env.production
