@@ -4,9 +4,9 @@ on:
   pull_request:
 jobs:
   test:
-    uses: ./.github/workflows/build-ubuntu
     steps:
-      - uses: ./.github/workflows/checkout
-      - uses: ./.github/workflows/install
-      - name: Run tests
-        run: yarn test:ci
+    - uses: ./.github/workflows/build-ubuntu.yaml
+    - uses: ./.github/workflows/checkout.yaml
+    - uses: ./.github/workflows/install.yaml
+    - name: Run tests
+      run: yarn test:ci

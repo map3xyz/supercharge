@@ -4,11 +4,11 @@ on:
     branches:
       - master
 jobs:
-  build:
+  badge:
     steps:
-    - uses: ./.github/workflows/build-ubuntu
-    - uses: ./.github/workflows/checkout
-    - uses: ./.github/workflows/install
+    - uses: ./.github/workflows/build-ubuntu.yaml
+    - uses: ./.github/workflows/checkout.yaml
+    - uses: ./.github/workflows/install.yaml
     - name: Run tests
       run: yarn test:ci
     - name: Generating coverage badges

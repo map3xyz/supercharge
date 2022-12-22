@@ -6,9 +6,10 @@ on:
 jobs:
   release:
     if: "!contains(github.event.head_commit.message, 'chore: release')"
-    - uses: ./.github/workflows/build-ubuntu
-    - uses: ./.github/workflows/checkout
-    - uses: ./.github/workflows/install
+    steps:
+    - uses: ./.github/workflows/build-ubuntu.yaml
+    - uses: ./.github/workflows/checkout.yaml
+    - uses: ./.github/workflows/install.yaml
     - name: Setup Git
       run: |
         git config --global user.email "accounts+release@map3.xyz"
