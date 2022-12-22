@@ -5,27 +5,26 @@ on:
       - master
 jobs:
   release:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-      with:
-        persist-credentials: false
-        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+    if: "!contains(github.event.head_commit.message, 'chore: release')"
+    - uses: ./.github/workflows/build-ubuntu
+    - uses: ./.github/workflows/checkout
+    - uses: ./.github/workflows/install
     - name: Setup Git
       run: |
         git config --global user.email "accounts+release@map3.xyz"
         git config --global user.name "map3-release-bot"
     - name: Build
       run: |
-        yarn install
         yarn build
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
     - name: Commit and push files
+      env:
+        VERSION: npm pkg get version | sed 's/"//g'
       run: |
-        git commit -a -m "chore: release"
+        git commit -a -m "chore: release (v${{ env.VERSION }})"
         git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
     - name: Purge CDN jsDelivr cache
       uses: gacts/purge-jsdelivr-cache@v1

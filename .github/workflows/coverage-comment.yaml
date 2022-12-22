@@ -5,14 +5,9 @@ on:
   pull_request:
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-      with:
-        token: ${{ secrets.BOT_ACCESS_TOKEN }}
-        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
-    - name: Install dependencies
-      run: yarn install
+    - uses: ./.github/workflows/build-ubuntu
+    - uses: ./.github/workflows/checkout
+    - uses: ./.github/workflows/install
     - name: Run tests
       run: |
         npx jest --coverage --coverageReporters json-summary

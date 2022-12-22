@@ -1,0 +1,5 @@
+name: yarn install
+jobs:
+  install:
+    run: yarn install
+      
