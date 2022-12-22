@@ -1,7 +1,0 @@
-name: Checkout
-jobs:
-  checkout:
-    - uses: actions/checkout@master
-      with:
-        persist-credentials: false
-        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo

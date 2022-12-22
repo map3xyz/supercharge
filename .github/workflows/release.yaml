@@ -6,15 +6,19 @@ on:
 jobs:
   release:
     if: "!contains(github.event.head_commit.message, 'chore: release')"
-    - uses: ./.github/workflows/build-ubuntu
-    - uses: ./.github/workflows/checkout
-    - uses: ./.github/workflows/install
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        persist-credentials: false
+        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
     - name: Setup Git
       run: |
         git config --global user.email "accounts+release@map3.xyz"
         git config --global user.name "map3-release-bot"
     - name: Build
       run: |
+        yarn install
         yarn build
     - name: Release
       env:

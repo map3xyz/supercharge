@@ -4,9 +4,10 @@ on:
   pull_request:
 jobs:
   test:
-    uses: ./.github/workflows/build-ubuntu
+    runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/checkout
-      - uses: ./.github/workflows/install
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn install
       - name: Run tests
         run: yarn test:ci
