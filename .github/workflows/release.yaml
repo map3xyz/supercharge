@@ -25,6 +25,7 @@ jobs:
       id: changes
       uses: UnicornGlobal/has-changes-action@v1.0.11
     - name: Release
+      if: steps.changes.outputs.changed == 'true'
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
