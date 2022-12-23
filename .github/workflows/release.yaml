@@ -27,16 +27,13 @@ jobs:
     - name: Commit and push files
       if: steps.get_changes.outputs.changed != 0
       run: |
-        git commit -a -m "chore: release (${{ env.VERSION }})"
+        git commit -a -m "chore: release 🚀"
         git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
     - name: Release
       if: steps.get_changes.outputs.changed != 0
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
-    - name: Set version
-      if: steps.get_changes.outputs.changed != 0
-      run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
     - name: Purge CDN jsDelivr cache
       if: steps.get_changes.outputs.changed != 0
       uses: gacts/purge-jsdelivr-cache@v1
