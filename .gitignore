@@ -61,15 +61,15 @@ jspm_packages/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
 
-# Next.js build output
-.next
-out
+# parcel output
+output
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
