@@ -18,18 +18,23 @@ export const useWeb3 = () => {
     if (window.ethereum?.providers) {
       return setProviders(
         Object.keys(window.ethereum.providers).reduce((acc, key) => {
-          acc[key] = true;
+          if (window.ethereum.providers[key].isMetaMask) {
+            acc.isMetaMask = true;
+          }
+          if (window.ethereum.providers[key].isCoinbaseWallet) {
+            acc.isCoinbaseWallet = true;
+          }
           return acc;
         }, {} as { [key in string]: boolean })
       );
     }
 
     if (window.ethereum?.isMetaMask) {
-      return setProviders({ MetaMask: true });
+      return setProviders({ isMetaMask: true });
     }
 
     if (window.ethereum?.isCoinbaseWallet) {
-      return setProviders({ CoinbaseWallet: true });
+      return setProviders({ isCoinbaseWallet: true });
     }
 
     return setProviders({});

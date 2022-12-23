@@ -210,7 +210,7 @@ const PaymentMethod: React.FC<Props> = () => {
                   <div className="flex items-center gap-2">
                     <MethodIcon method={method} />
                     <span>{method.name}</span>
-                    {providers[method.name || ''] ? (
+                    {providers[method.value || ''] ? (
                       <Badge color="green">Installed</Badge>
                     ) : null}
                   </div>
