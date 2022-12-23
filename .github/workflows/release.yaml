@@ -17,29 +17,28 @@ jobs:
       run: |
         git config --global user.email "accounts+release@map3.xyz"
         git config --global user.name "map3-release-bot"
-        git config --global --add safe.directory /github/workspace
     - name: Build
       run: |
         yarn install
         yarn build
-    - name: Check if there are changes
-      id: changes
-      uses: UnicornGlobal/has-changes-action@v1.0.11
+    - name: Check for uncommitted changes
+      id: check-changes
+      uses: mskri/check-uncommitted-changes-action@v1.0.1
     - name: Commit and push files
-      if: steps.changes.outputs.changed == 'true'
+      if: steps.check-changes.outputs.changes != ''
       run: |
         git commit -a -m "chore: release (${{ env.VERSION }})"
         git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
     - name: Release
-      if: steps.changes.outputs.changed == 'true'
+      if: steps.check-changes.outputs.changes != ''
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
     - name: Set version
-      if: steps.changes.outputs.changed == 'true'
+      if: steps.check-changes.outputs.changes != ''
       run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
     - name: Purge CDN jsDelivr cache
-      if: steps.changes.outputs.changed == 'true'
+      if: steps.check-changes.outputs.changes != ''
       uses: gacts/purge-jsdelivr-cache@v1
       with:
         url: |
