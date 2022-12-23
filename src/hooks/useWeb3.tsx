@@ -60,7 +60,6 @@ export const useWeb3 = () => {
       method: 'eth_chainId',
       params: [],
     });
-    console.log('chainId', chainId);
     return chainId;
   };
 
@@ -133,13 +132,16 @@ export const useWeb3 = () => {
         new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
           address,
           ethers.utils.parseUnits(amount, state.asset?.decimals!),
-        ]) + memo?.replace('0x', '') || '';
+        ]) +
+        (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
+
       txParams.to = state.asset?.address!;
       txParams.value = '0x0';
       txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
     }
 
-    if (!isMobile) {
+    // @ts-ignore
+    if (!isMobile && !state.method?.value === 'isWalletConnect') {
       dispatch({ type: 'SET_TRANSACTION_LOADING' });
     }
     let hash;
@@ -152,6 +154,7 @@ export const useWeb3 = () => {
         throw new Error('No transaction hash.');
       }
 
+      dispatch({ type: 'SET_TRANSACTION_LOADING' });
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
       await state.provider?.data?.waitForTransaction(hash, 1);
     } catch (e: any) {

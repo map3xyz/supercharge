@@ -1,4 +1,3 @@
-import WalletConnect from '@walletconnect/client';
 import { ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
@@ -34,12 +33,6 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
-  connector?: {
-    data?: WalletConnect;
-    error?: string;
-    status: RemoteType;
-    waiting: boolean;
-  };
   depositAddress: {
     data: string | undefined;
     status: RemoteType;
@@ -78,11 +71,6 @@ type Action =
   | { type: 'SET_ACCOUNT_LOADING' }
   | { payload: string; type: 'SET_ACCOUNT_SUCCESS' }
   | { payload: string; type: 'SET_ACCOUNT_ERROR' }
-  | { type: 'SET_CONNECTOR_IDLE' }
-  | { type: 'SET_CONNECTOR_LOADING' }
-  | { payload: any; type: 'SET_CONNECTOR_SUCCESS' }
-  | { payload: string; type: 'SET_CONNECTOR_ERROR' }
-  // | { payload: boolean; type: 'SET_CONNECTOR_WAITING' }
   | { type: 'SET_PROVIDER_IDLE' }
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
@@ -97,12 +85,6 @@ const initialState: State = {
     status: 'idle',
   },
   asset: undefined,
-  connector: {
-    data: undefined,
-    error: undefined,
-    status: 'idle',
-    waiting: false,
-  },
   depositAddress: {
     data: undefined,
     status: 'idle',
@@ -245,54 +227,6 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
-        case 'SET_CONNECTOR_SUCCESS':
-          return {
-            ...state,
-            connector: {
-              data: action.payload,
-              error: undefined,
-              status: 'success',
-              waiting: false,
-            },
-          };
-        case 'SET_CONNECTOR_ERROR':
-          return {
-            ...state,
-            connector: {
-              data: undefined,
-              error: action.payload,
-              status: 'error',
-              waiting: false,
-            },
-          };
-        case 'SET_CONNECTOR_LOADING':
-          return {
-            ...state,
-            connector: {
-              data: undefined,
-              error: undefined,
-              status: 'loading',
-              waiting: false,
-            },
-          };
-        case 'SET_CONNECTOR_IDLE':
-          return {
-            ...state,
-            connector: {
-              data: undefined,
-              error: undefined,
-              status: 'idle',
-              waiting: false,
-            },
-          };
-        // case 'SET_CONNECTOR_WAITING':
-        //   return {
-        //     ...state,
-        //     connector: {
-        //       ...state.connector!,
-        //       waiting: action.payload,
-        //     },
-        //   };
         case 'SET_PROVIDER_SUCCESS':
           return {
             ...state,

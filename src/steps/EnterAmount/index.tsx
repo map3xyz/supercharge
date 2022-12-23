@@ -123,7 +123,6 @@ const EnterAmount: React.FC<Props> = () => {
       );
 
       const currentChainId = await getChainID();
-      debugger;
 
       if (
         state.network?.identifiers?.chainId &&
