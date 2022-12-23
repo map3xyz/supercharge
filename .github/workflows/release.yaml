@@ -10,6 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
       with:
+        branch: master
         persist-credentials: false
         fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
     - name: Setup Git
@@ -20,17 +21,23 @@ jobs:
       run: |
         yarn install
         yarn build
+    - name: Check if there are changes
+      id: changes
+      uses: UnicornGlobal/has-changes-action@v1.0.11
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
       run: npx semantic-release
     - name: Set version
+      if: steps.changes.outputs.changed == 'true'
       run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
     - name: Commit and push files
+      if: steps.changes.outputs.changed == 'true'
       run: |
         git commit -a -m "chore: release (${{ env.VERSION }})"
         git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
     - name: Purge CDN jsDelivr cache
+      if: steps.changes.outputs.changed == 'true'
       uses: gacts/purge-jsdelivr-cache@v1
       with:
         url: |
