@@ -17,6 +17,7 @@ jobs:
       run: |
         git config --global user.email "accounts+release@map3.xyz"
         git config --global user.name "map3-release-bot"
+        git config --global --add safe.directory /github/workspace
     - name: Build
       run: |
         yarn install
