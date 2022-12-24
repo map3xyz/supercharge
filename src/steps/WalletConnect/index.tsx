@@ -1,5 +1,4 @@
 import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
@@ -13,6 +12,7 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import { CONSOLE_API_URL } from '../../constants';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
+import { getWalletConnectProvider } from './utils';
 
 const WalletConnect: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -45,21 +45,20 @@ const WalletConnect: React.FC<Props> = () => {
   const run = async () => {
     dispatch({ type: 'SET_PROVIDER_LOADING' });
     try {
-      const rpcs: { [key in number]: any } = await fetch(
-        (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
-      ).then((res) => res.json());
-      // get random rpc
-      const rpcIndex = Math.floor(
-        Math.random() * rpcs[state.network?.identifiers?.chainId!].rpcs.length
-      );
-      const externalProvider = await new WalletConnectProvider({
-        bridge: 'https://bridge.walletconnect.org',
-        qrcode: false,
-        rpc: {
-          [state.network?.identifiers?.chainId!]:
-            rpcs[state.network?.identifiers?.chainId!].rpcs[rpcIndex].url,
-        },
-      });
+      let rpc = '';
+      try {
+        const rpcs = await fetch(
+          (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
+        ).then((res) => res.json());
+        const rpcIndex = Math.floor(
+          Math.random() *
+            rpcs[state.network?.identifiers?.chainId!].rpcs?.length
+        );
+        const rpcsForChain = rpcs[state.network?.identifiers?.chainId!];
+        rpc = rpcsForChain.length ? rpcsForChain[rpcIndex].url : '';
+      } catch (e) {}
+
+      const externalProvider = await getWalletConnectProvider(rpc);
       const provider = new ethers.providers.Web3Provider(externalProvider);
       externalProvider.enable();
 
@@ -119,6 +118,7 @@ const WalletConnect: React.FC<Props> = () => {
 
       setUri(externalProvider.connector.uri);
     } catch (e: any) {
+      console.log(e);
       dispatch({ payload: e.message, type: 'SET_PROVIDER_ERROR' });
     }
   };

@@ -1,5 +1,6 @@
 import { MockedResponse } from '@apollo/client/testing';
 
+import { getAssetByMappedAssetIdAndNetworkCodeMock } from './asset';
 import { getAssetsForOrgMock, searchAssetsMock } from './assets';
 import { getMappedNetworksForOrgMock, getNetworksMock } from './networks';
 import { getMethodsMock } from './payment-methods';
@@ -10,6 +11,10 @@ export const mocks: MockedResponse[] = [
   getAssetsForOrgMock({ assetId: 'satoshi123' }),
   getAssetsForOrgMock({ address: '0x123ElonAddress' }),
   getAssetsForOrgMock({}),
+  getAssetByMappedAssetIdAndNetworkCodeMock({
+    mappedAssetId: 'elon123',
+    networkCode: 'ethereum',
+  }),
   searchAssetsMock(),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),

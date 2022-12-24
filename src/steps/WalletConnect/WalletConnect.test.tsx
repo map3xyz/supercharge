@@ -26,6 +26,7 @@ const defaults = {
     on: mockConnect,
     uri: 'wc:123@1?bridge=bridge.org&key=456',
   },
+  enable: jest.fn(),
 };
 
 const mockDefault = jest.fn(() => defaults);
@@ -34,6 +35,20 @@ jest.mock('@walletconnect/web3-provider', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => mockDefault()),
 }));
+
+jest.mock('ethers', () => {
+  const originalModule = jest.requireActual('ethers');
+  return {
+    ...originalModule,
+    ethers: {
+      ...originalModule.ethers,
+      providers: {
+        ...originalModule.ethers.providers,
+        Web3Provider: jest.fn(),
+      },
+    },
+  };
+});
 
 describe('WalletConnect', () => {
   beforeEach(async () => {
