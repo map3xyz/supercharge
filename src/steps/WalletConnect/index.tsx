@@ -1,5 +1,5 @@
 import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
-import WalletConnectProvider from '@walletconnect/web3-provider/dist/esm';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
