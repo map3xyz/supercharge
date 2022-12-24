@@ -116,10 +116,15 @@ export const useWeb3 = () => {
     amount: string,
     address: string,
     memo?: string,
-    isErc20?: boolean
+    isErc20?: boolean,
+    assetContract?: string | null
   ) => {
     if (!state.account.data) {
       throw new Error('No account');
+    }
+
+    if (isErc20 && !assetContract) {
+      throw new Error('No asset contract');
     }
 
     const extraGas = memo ? (memo.length / 2) * 16 : 0;
@@ -140,7 +145,7 @@ export const useWeb3 = () => {
         ]) +
         (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
 
-      txParams.to = state.asset?.address!;
+      txParams.to = assetContract!;
       txParams.value = '0x0';
       txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
     }

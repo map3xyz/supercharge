@@ -45,6 +45,7 @@ export type AssetWithPrice = IAsset & {
 
 export type Config = {
   __typename?: 'Config';
+  assetId?: Maybe<Scalars['String']>;
   mappedAssetId?: Maybe<Scalars['String']>;
 };
 
@@ -154,6 +155,7 @@ export type Query = {
   __typename?: 'Query';
   assetByAddressAndNetworkCode?: Maybe<Asset>;
   assetById?: Maybe<Asset>;
+  assetByMappedAssetIdAndNetworkCode?: Maybe<Asset>;
   assets?: Maybe<Array<Maybe<Asset>>>;
   assetsCount?: Maybe<Scalars['Int']>;
   assetsForOrganization?: Maybe<Array<Maybe<AssetWithPrice>>>;
@@ -180,6 +182,12 @@ export type QueryAssetByAddressAndNetworkCodeArgs = {
 
 export type QueryAssetByIdArgs = {
   id?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryAssetByMappedAssetIdAndNetworkCodeArgs = {
+  mappedAssetId?: InputMaybe<Scalars['String']>;
+  networkCode?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -313,6 +321,14 @@ export type AssetFieldsFragment = { __typename?: 'AssetWithPrice', address?: str
 
 export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
 
+export type GetAssetByMappedAssetIdAndNetworkCodeQueryVariables = Exact<{
+  mappedAssetId?: InputMaybe<Scalars['String']>;
+  networkCode?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetAssetByMappedAssetIdAndNetworkCodeQuery = { __typename?: 'Query', assetByMappedAssetIdAndNetworkCode?: { __typename?: 'Asset', address?: string | null } | null };
+
 export type GetAssetsForOrgQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -393,6 +409,45 @@ export const NetworkFieldsFragmentDoc = gql`
   symbol
 }
     `;
+export const GetAssetByMappedAssetIdAndNetworkCodeDocument = gql`
+    query GetAssetByMappedAssetIdAndNetworkCode($mappedAssetId: String, $networkCode: String) {
+  assetByMappedAssetIdAndNetworkCode(
+    mappedAssetId: $mappedAssetId
+    networkCode: $networkCode
+  ) {
+    address
+  }
+}
+    `;
+
+/**
+ * __useGetAssetByMappedAssetIdAndNetworkCodeQuery__
+ *
+ * To run a query within a React component, call `useGetAssetByMappedAssetIdAndNetworkCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAssetByMappedAssetIdAndNetworkCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAssetByMappedAssetIdAndNetworkCodeQuery({
+ *   variables: {
+ *      mappedAssetId: // value for 'mappedAssetId'
+ *      networkCode: // value for 'networkCode'
+ *   },
+ * });
+ */
+export function useGetAssetByMappedAssetIdAndNetworkCodeQuery(baseOptions?: Apollo.QueryHookOptions<GetAssetByMappedAssetIdAndNetworkCodeQuery, GetAssetByMappedAssetIdAndNetworkCodeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAssetByMappedAssetIdAndNetworkCodeQuery, GetAssetByMappedAssetIdAndNetworkCodeQueryVariables>(GetAssetByMappedAssetIdAndNetworkCodeDocument, options);
+      }
+export function useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAssetByMappedAssetIdAndNetworkCodeQuery, GetAssetByMappedAssetIdAndNetworkCodeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAssetByMappedAssetIdAndNetworkCodeQuery, GetAssetByMappedAssetIdAndNetworkCodeQueryVariables>(GetAssetByMappedAssetIdAndNetworkCodeDocument, options);
+        }
+export type GetAssetByMappedAssetIdAndNetworkCodeQueryHookResult = ReturnType<typeof useGetAssetByMappedAssetIdAndNetworkCodeQuery>;
+export type GetAssetByMappedAssetIdAndNetworkCodeLazyQueryHookResult = ReturnType<typeof useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery>;
+export type GetAssetByMappedAssetIdAndNetworkCodeQueryResult = Apollo.QueryResult<GetAssetByMappedAssetIdAndNetworkCodeQuery, GetAssetByMappedAssetIdAndNetworkCodeQueryVariables>;
 export const GetAssetsForOrgDocument = gql`
     query GetAssetsForOrg($limit: Int, $offset: Int, $currency: String, $address: String, $assetId: ID) {
   assetsForOrganization(

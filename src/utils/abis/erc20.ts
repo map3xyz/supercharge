@@ -3,7 +3,7 @@ export const erc20Abi = [
   'function balanceOf(address owner) view returns (uint256)',
 
   // Authenticated Functions
-  'function transfer(address to, uint amount) returns (bool)',
+  'function transfer(address to, uint256 amount) returns (bool)',
 
   // Events
   'event Transfer(address indexed from, address indexed to, uint amount)',

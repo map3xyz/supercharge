@@ -7,6 +7,7 @@ import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum, {
   ConnectHandler,
 } from '../../components/methods/WindowEthereum';
+import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
@@ -31,6 +32,14 @@ const EnterAmount: React.FC<Props> = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
   const connectRef = useRef<ConnectHandler>(null);
+
+  const { data, error, loading } =
+    useGetAssetByMappedAssetIdAndNetworkCodeQuery({
+      variables: {
+        mappedAssetId: state.asset?.config?.mappedAssetId,
+        networkCode: state.network?.networkCode,
+      },
+    });
 
   const {
     addChain,
@@ -139,7 +148,8 @@ const EnterAmount: React.FC<Props> = () => {
         amount,
         address,
         memo,
-        state.asset?.type === 'asset'
+        state.asset?.type === 'asset',
+        data?.assetByMappedAssetIdAndNetworkCode?.address
       );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
@@ -304,6 +314,8 @@ const EnterAmount: React.FC<Props> = () => {
               <WindowEthereum
                 amount={amount}
                 disabled={
+                  loading ||
+                  !!error ||
                   state.depositAddress.status === 'loading' ||
                   state.transaction?.status === 'loading'
                 }
@@ -313,7 +325,11 @@ const EnterAmount: React.FC<Props> = () => {
             ) : (
               <WalletConnect
                 amount={amount}
-                disabled={state.depositAddress.status === 'loading'}
+                disabled={
+                  loading ||
+                  !!error ||
+                  state.depositAddress.status === 'loading'
+                }
               />
             )}
           </div>

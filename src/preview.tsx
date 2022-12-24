@@ -11,7 +11,6 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
-          address: '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6',
           anonKey: process.env.CONSOLE_ANON_KEY || CONSOLE_ANON_KEY,
           generateDepositAddress: async (coin, network, memoEnabled) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -25,7 +24,6 @@ root.render(
             }
             return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
           },
-          networkCode: 'goerli',
           rainbowRoad: true,
           theme: 'dark',
         });

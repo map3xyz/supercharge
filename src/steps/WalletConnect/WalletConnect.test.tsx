@@ -18,17 +18,19 @@ const mockConnect = jest.fn((_event: string, callback: () => void) => {
 });
 
 const defaults = {
-  accounts: ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'],
-  chainId: 1,
-  createSession: jest.fn(),
-  killSession: jest.fn(),
-  on: mockConnect,
-  uri: 'wc:123@1?bridge=bridge.org&key=456',
+  connector: {
+    accounts: ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'],
+    chainId: 1,
+    createSession: jest.fn(),
+    killSession: jest.fn(),
+    on: mockConnect,
+    uri: 'wc:123@1?bridge=bridge.org&key=456',
+  },
 };
 
 const mockDefault = jest.fn(() => defaults);
 
-jest.mock('@walletconnect/client', () => ({
+jest.mock('@walletconnect/web3-provider', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => mockDefault()),
 }));
