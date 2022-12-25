@@ -45,7 +45,7 @@ describe('useWeb3', () => {
     });
 
     it('should connect', async () => {
-      const metaMask = (await screen.findAllByText('MetaMask'))[0];
+      const metaMask = await screen.findByText('MetaMask');
       fireEvent.click(metaMask);
 
       const input = await screen.findByTestId('input');

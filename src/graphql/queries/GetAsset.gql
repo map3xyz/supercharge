@@ -1,0 +1,5 @@
+query GetAssetByMappedAssetIdAndNetworkCode($mappedAssetId: String, $networkCode: String) {
+  assetByMappedAssetIdAndNetworkCode(mappedAssetId: $mappedAssetId, networkCode: $networkCode) {
+    address
+  }
+}

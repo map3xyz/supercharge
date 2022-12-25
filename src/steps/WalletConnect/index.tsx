@@ -1,5 +1,6 @@
 import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
-import WalletConnectClient from '@walletconnect/client';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { ethers } from 'ethers';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useState } from 'react';
@@ -9,6 +10,7 @@ import GooglePlayBadge from 'url:../../assets/google-play-badge.png';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import { CONSOLE_API_URL } from '../../constants';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
@@ -20,7 +22,10 @@ const WalletConnect: React.FC<Props> = () => {
 
   const { width } = useModalSize();
 
-  const handleConnected = (connector: WalletConnectClient) => {
+  const handleConnected = (
+    provider: ethers.providers.Web3Provider,
+    account: string
+  ) => {
     dispatch({
       payload: [
         'AssetSelection',
@@ -32,48 +37,85 @@ const WalletConnect: React.FC<Props> = () => {
       type: 'SET_STEPS',
     });
 
-    dispatch({ payload: connector, type: 'SET_CONNECTOR_SUCCESS' });
-    dispatch({ payload: connector.accounts[0], type: 'SET_ACCOUNT_SUCCESS' });
+    dispatch({ payload: provider, type: 'SET_PROVIDER_SUCCESS' });
+    dispatch({ payload: account, type: 'SET_ACCOUNT_SUCCESS' });
     dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
   };
 
   const run = async () => {
-    dispatch({ type: 'SET_CONNECTOR_LOADING' });
+    dispatch({ type: 'SET_PROVIDER_LOADING' });
     try {
-      const connector = await new WalletConnectClient({
+      let rpc = '';
+      try {
+        const rpcs = await fetch(
+          (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
+        ).then((res) => res.json());
+        const rpcIndex = Math.floor(
+          Math.random() *
+            rpcs[state.network?.identifiers?.chainId!].rpcs?.length
+        );
+        const rpcsForChain = rpcs[state.network?.identifiers?.chainId!]
+          .rpcs as (string | { url: string })[];
+        const randomRpc = rpcsForChain.length ? rpcsForChain[rpcIndex] : '';
+        if (typeof randomRpc === 'string') {
+          rpc = randomRpc;
+        } else {
+          rpc = randomRpc.url;
+        }
+      } catch (e) {}
+
+      const externalProvider = await new WalletConnectProvider({
         bridge: 'https://bridge.walletconnect.org',
+        pollingInterval: 15000,
+        qrcode: false,
+        rpc: {
+          [state.network?.identifiers?.chainId!]: rpc,
+        },
       });
+      const provider = new ethers.providers.Web3Provider(externalProvider);
+      externalProvider.enable();
 
-      connector.on('connect', (error) => {
+      externalProvider.connector.on('connect', (error) => {
         if (error) {
           throw error;
         }
 
-        handleConnected(connector);
+        handleConnected(provider, externalProvider.connector.accounts[0]);
       });
 
-      connector.on('disconnect', (error) => {
+      externalProvider.connector.on('disconnect', (error) => {
         if (error) {
           throw error;
         }
 
-        dispatch({ type: 'SET_CONNECTOR_IDLE' });
+        dispatch({ type: 'SET_PROVIDER_IDLE' });
         dispatch({ type: 'SET_ACCOUNT_IDLE' });
-        if (connector.peerMeta?.name.includes(state.method?.name || '')) {
+        if (
+          externalProvider.connector.peerMeta?.name?.includes(
+            state.method?.name || ''
+          )
+        ) {
           dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
         }
       });
 
-      if (!connector.connected) {
-        await connector.createSession({
+      if (!externalProvider.connector.connected) {
+        await externalProvider.connector.createSession({
           chainId: state.network?.identifiers?.chainId || 1,
         });
       } else {
-        if (!connector.peerMeta?.name.includes(state.method?.name || '')) {
-          await connector.killSession();
+        if (
+          !externalProvider.connector.peerMeta?.name?.includes(
+            state.method?.name || ''
+          ) ||
+          externalProvider.connector.chainId !==
+            state.network?.identifiers?.chainId
+        ) {
+          await localStorage.removeItem('walletconnect');
+          await externalProvider.connector.killSession();
           run();
         } else {
-          handleConnected(connector);
+          handleConnected(provider, externalProvider.connector.accounts[0]);
           return;
         }
       }
@@ -82,16 +124,17 @@ const WalletConnect: React.FC<Props> = () => {
         let deeplink =
           state.method?.walletConnect?.mobile?.native + '//wc?uri=';
         if (state.method?.name === 'MetaMask') {
-          deeplink += connector.uri;
+          deeplink += externalProvider.connector.uri;
         } else {
-          deeplink += encodeURIComponent(connector.uri);
+          deeplink += encodeURIComponent(externalProvider.connector.uri);
         }
         setDeeplink(deeplink);
       }
 
-      setUri(connector.uri);
+      setUri(externalProvider.connector.uri);
     } catch (e: any) {
-      dispatch({ payload: e.message, type: 'SET_CONNECTOR_ERROR' });
+      console.log(e);
+      dispatch({ payload: e.message, type: 'SET_PROVIDER_ERROR' });
     }
   };
 
@@ -99,13 +142,13 @@ const WalletConnect: React.FC<Props> = () => {
     run();
   }, []);
 
-  if (state.connector?.error) {
+  if (state.provider?.error) {
     return (
       <ErrorWrapper
         description="Error starting a WalletConnect session."
         header="WalletConnect Error"
         retry={run}
-        stacktrace={state.connector.error}
+        stacktrace={state.provider.error}
       />
     );
   }

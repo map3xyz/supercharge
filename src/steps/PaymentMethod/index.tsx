@@ -82,8 +82,7 @@ const PaymentMethod: React.FC<Props> = () => {
       !method?.walletConnect ||
       (method.walletConnect &&
         supportsChain &&
-        method?.walletConnect?.mobile?.native &&
-        method.name !== 'MetaMask')
+        method?.walletConnect?.mobile?.native)
     );
   });
 
@@ -209,8 +208,13 @@ const PaymentMethod: React.FC<Props> = () => {
                 >
                   <div className="flex items-center gap-2">
                     <MethodIcon method={method} />
-                    <span>{method.name}</span>
-                    {providers[method.name || ''] ? (
+                    <span>
+                      {method.name === 'MetaMask' &&
+                      method.value === 'isWalletConnect'
+                        ? method.name + ' (Mobile)'
+                        : method.name}
+                    </span>
+                    {providers[method.value || ''] ? (
                       <Badge color="green">Installed</Badge>
                     ) : null}
                   </div>

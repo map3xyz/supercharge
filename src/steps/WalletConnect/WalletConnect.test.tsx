@@ -9,8 +9,8 @@ import { wait } from '../../utils/wait';
 const TIMEOUT_BEFORE_MOCK_CONNECT = 100;
 const TIMEOUT_BEFORE_MOCK_DISCONNECT = 200;
 
-const mockConnect = jest.fn((_event: string, callback: () => void) => {
-  if (_event === 'connect') {
+const mockConnect = jest.fn((event: string, callback: () => void) => {
+  if (event === 'connect') {
     setTimeout(() => {
       callback();
     }, TIMEOUT_BEFORE_MOCK_CONNECT);
@@ -18,20 +18,39 @@ const mockConnect = jest.fn((_event: string, callback: () => void) => {
 });
 
 const defaults = {
-  accounts: ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'],
-  chainId: 1,
-  createSession: jest.fn(),
-  killSession: jest.fn(),
-  on: mockConnect,
-  uri: 'wc:123@1?bridge=bridge.org&key=456',
+  connector: {
+    accounts: ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'],
+    chainId: 1,
+    connected: false,
+    createSession: jest.fn(),
+    killSession: jest.fn(),
+    on: mockConnect,
+    peerMeta: {},
+    uri: 'wc:123@1?bridge=bridge.org&key=456',
+  },
+  enable: jest.fn(),
 };
 
 const mockDefault = jest.fn(() => defaults);
 
-jest.mock('@walletconnect/client', () => ({
+jest.mock('@walletconnect/web3-provider', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => mockDefault()),
 }));
+
+jest.mock('ethers', () => {
+  const originalModule = jest.requireActual('ethers');
+  return {
+    ...originalModule,
+    ethers: {
+      ...originalModule.ethers,
+      providers: {
+        ...originalModule.ethers.providers,
+        Web3Provider: jest.fn(),
+      },
+    },
+  };
+});
 
 describe('WalletConnect', () => {
   beforeEach(async () => {
@@ -116,7 +135,8 @@ describe('WalletConnect', () => {
       '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
       '123456',
-      false
+      false,
+      undefined
     );
   });
   it('populates ONLY address if the wallet is not vetted/enabled', async () => {
@@ -150,7 +170,8 @@ describe('WalletConnect', () => {
       '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
       undefined,
-      false
+      false,
+      undefined
     );
   });
   it('handles previous connection', async () => {
@@ -158,8 +179,11 @@ describe('WalletConnect', () => {
     fireEvent.click(walletConnect);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      connected: true,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        connected: true,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
   });
@@ -169,7 +193,10 @@ describe('WalletConnect', () => {
     fireEvent.click(walletConnect);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     await act(async () => {
       await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
@@ -181,15 +208,21 @@ describe('WalletConnect', () => {
     });
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      connected: true,
-      killSession: killSessionMock,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        connected: true,
+        killSession: killSessionMock,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     const spot = await screen.findByText('Spot');
     fireEvent.click(spot);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      peerMeta: { name: 'Spot' },
+      connector: {
+        ...defaults.connector,
+        peerMeta: { name: 'Spot' },
+      },
     }));
     expect(
       await screen.findByTestId('scan-wallet-connect')
@@ -213,7 +246,10 @@ describe('WalletConnect', () => {
     fireEvent.click(walletConnect);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     mockConnect.mockImplementation((event: string, callback: () => void) => {
       if (event === 'connect') {
@@ -279,7 +315,7 @@ describe('WalletConnect', () => {
       expect(rainbow).toBeInTheDocument();
     });
     it('encodes the connector uri if method is not MetaMask', async () => {
-      const walletConnect = await screen.findByText('MetaMask');
+      const walletConnect = await screen.findByText('MetaMask (Mobile)');
       fireEvent.click(walletConnect);
       const connectBtn = await screen.findByTestId('connect-app');
       expect(connectBtn.getAttribute('href')).toBe(

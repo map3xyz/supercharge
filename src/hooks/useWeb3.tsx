@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
 import { CONSOLE_API_URL } from '../constants';
-import { Context } from '../providers/Store';
+import { Context, Steps } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
 
@@ -18,18 +18,23 @@ export const useWeb3 = () => {
     if (window.ethereum?.providers) {
       return setProviders(
         Object.keys(window.ethereum.providers).reduce((acc, key) => {
-          acc[key] = true;
+          if (window.ethereum.providers[key].isMetaMask) {
+            acc.isMetaMask = true;
+          }
+          if (window.ethereum.providers[key].isCoinbaseWallet) {
+            acc.isCoinbaseWallet = true;
+          }
           return acc;
         }, {} as { [key in string]: boolean })
       );
     }
 
     if (window.ethereum?.isMetaMask) {
-      return setProviders({ MetaMask: true });
+      return setProviders({ isMetaMask: true });
     }
 
     if (window.ethereum?.isCoinbaseWallet) {
-      return setProviders({ CoinbaseWallet: true });
+      return setProviders({ isCoinbaseWallet: true });
     }
 
     return setProviders({});
@@ -56,32 +61,22 @@ export const useWeb3 = () => {
   };
 
   const getChainID = async () => {
-    if (state.method?.value === 'isWalletConnect') {
-      return state.connector?.data?.chainId;
-    } else {
-      return await state.provider?.data?.send('eth_chainId', []);
-    }
+    const chainId = await state.provider?.data?.provider?.request!({
+      method: 'eth_chainId',
+      params: [],
+    });
+    return chainId;
   };
 
   const switchChain = async (chainId: number) => {
-    if (state.method?.value === 'isWalletConnect') {
-      const chainSwitch = state.connector?.data?.sendCustomRequest({
-        jsonrpc: '2.0',
-        method: 'wallet_switchEthereumChain',
-        params: [
-          {
-            chainId: toHex(chainId),
-          },
-        ],
-      }) as Promise<number>;
-      await walletConnectHelper(chainSwitch);
-    } else {
-      await state.provider?.data?.send('wallet_switchEthereumChain', [
+    await state.provider?.data?.provider.request!({
+      method: 'wallet_switchEthereumChain',
+      params: [
         {
           chainId: toHex(chainId),
         },
-      ]);
-    }
+      ],
+    });
   };
 
   const addChain = async () => {
@@ -111,26 +106,25 @@ export const useWeb3 = () => {
       },
     ];
 
-    if (state.method?.value === 'isWalletConnect') {
-      const chainAdd = state.connector?.data?.sendCustomRequest({
-        jsonrpc: '2.0',
-        method: 'wallet_addEthereumChain',
-        params,
-      }) as Promise<number>;
-      await walletConnectHelper(chainAdd);
-    } else {
-      await state.provider?.data?.send('wallet_addEthereumChain', params);
-    }
+    await state.provider?.data?.provider.request!({
+      method: 'wallet_addEthereumChain',
+      params,
+    });
   };
 
   const sendTransaction = async (
     amount: string,
     address: string,
     memo?: string,
-    isErc20?: boolean
+    isErc20?: boolean,
+    assetContract?: string | null
   ) => {
     if (!state.account.data) {
       throw new Error('No account');
+    }
+
+    if (isErc20 && !assetContract) {
+      throw new Error('No asset contract');
     }
 
     const extraGas = memo ? (memo.length / 2) * 16 : 0;
@@ -148,53 +142,36 @@ export const useWeb3 = () => {
         new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
           address,
           ethers.utils.parseUnits(amount, state.asset?.decimals!),
-        ]) + memo?.replace('0x', '') || '';
-      txParams.to = state.asset?.address!;
+        ]) +
+        (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
+
+      txParams.to = assetContract!;
       txParams.value = '0x0';
       txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
     }
 
-    if (!isMobile) {
+    // @ts-ignore
+    if (!isMobile && !state.method?.value === 'isWalletConnect') {
       dispatch({ type: 'SET_TRANSACTION_LOADING' });
     }
     let hash;
-    if (state.method?.value === 'isWalletConnect') {
-      try {
-        hash = state.connector?.data?.sendTransaction(
-          txParams
-        ) as Promise<string>;
-        hash = await walletConnectHelper(hash);
-        if (!hash) {
-          throw new Error('Connection cancelled');
-        }
-      } catch (e: any) {
-        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
-        throw e;
+    try {
+      hash = await state.provider?.data?.provider.request!({
+        method: 'eth_sendTransaction',
+        params: [txParams],
+      });
+      if (!hash) {
+        throw new Error('No transaction hash.');
       }
-    } else {
-      try {
-        hash = await state.provider?.data?.send('eth_sendTransaction', [
-          txParams,
-        ]);
-      } catch (e: any) {
-        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
-        throw e;
-      }
+
+      dispatch({ type: 'SET_TRANSACTION_LOADING' });
+      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+      await state.provider?.data?.waitForTransaction(hash, 1);
+    } catch (e: any) {
+      dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
+      throw e;
     }
     dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
-  };
-
-  const walletConnectHelper = async (promise: Promise<any>) => {
-    if (isMobile) {
-      if (state.method?.walletConnect?.mobile?.native) {
-        window.location.href = state.method.walletConnect.mobile.native;
-        return await promise;
-      } else {
-        throw new Error('No mobile wallet to connect to.');
-      }
-    } else {
-      return await promise;
-    }
   };
 
   return {

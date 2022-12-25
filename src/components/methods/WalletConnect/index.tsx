@@ -22,7 +22,6 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
       }
       htmlType="submit"
       loading={
-        state.connector?.waiting ||
         state.account.status === 'loading' ||
         state.transaction?.status === 'loading' ||
         state.depositAddress.status === 'loading'
