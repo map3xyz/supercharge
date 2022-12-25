@@ -35,7 +35,7 @@ describe('Enter Amount', () => {
       fireEvent.click(ethereum);
     });
     await screen.findByText('Fetching Payment Methods...');
-    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    const metaMask = await screen.findByText('MetaMask');
     act(() => {
       fireEvent.click(metaMask);
     });
@@ -65,7 +65,7 @@ describe('Enter Amount', () => {
     act(() => {
       fireEvent.click(ethereum);
     });
-    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    const metaMask = await screen.findByText('MetaMask');
     act(() => {
       fireEvent.click(metaMask);
     });
@@ -171,7 +171,7 @@ describe('window.ethereum', () => {
     await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
@@ -356,7 +356,7 @@ describe('window.ethereum > ERC20', () => {
     fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
@@ -429,7 +429,7 @@ describe('txAuth', () => {
     fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
@@ -503,7 +503,7 @@ describe('txAuth - Success', () => {
     fireEvent.click(elonCoin);
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    const metaMask = (await screen.findAllByText('MetaMask'))[0];
+    const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');

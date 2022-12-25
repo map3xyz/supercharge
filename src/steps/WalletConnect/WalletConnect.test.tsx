@@ -315,7 +315,7 @@ describe('WalletConnect', () => {
       expect(rainbow).toBeInTheDocument();
     });
     it('encodes the connector uri if method is not MetaMask', async () => {
-      const walletConnect = await screen.findByText('MetaMask');
+      const walletConnect = await screen.findByText('MetaMask (Mobile)');
       fireEvent.click(walletConnect);
       const connectBtn = await screen.findByTestId('connect-app');
       expect(connectBtn.getAttribute('href')).toBe(
