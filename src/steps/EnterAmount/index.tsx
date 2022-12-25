@@ -79,7 +79,11 @@ const EnterAmount: React.FC<Props> = () => {
         formRef.current.style.fontSize = `${BASE_FONT_SIZE}px`;
       }
     }
-  }, [formValue, state.depositAddress.data]);
+  }, [
+    formValue,
+    state.depositAddress.data,
+    data?.assetByMappedAssetIdAndNetworkCode?.address,
+  ]);
 
   useEffect(() => {
     const base = parseFloat(formValue.base || '0');

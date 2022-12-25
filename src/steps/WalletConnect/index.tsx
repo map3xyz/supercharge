@@ -54,14 +54,23 @@ const WalletConnect: React.FC<Props> = () => {
           Math.random() *
             rpcs[state.network?.identifiers?.chainId!].rpcs?.length
         );
-        const rpcsForChain = rpcs[state.network?.identifiers?.chainId!];
-        rpc = rpcsForChain.length ? rpcsForChain[rpcIndex].url : '';
+        const rpcsForChain = rpcs[state.network?.identifiers?.chainId!]
+          .rpcs as (string | { url: string })[];
+        const randomRpc = rpcsForChain.length ? rpcsForChain[rpcIndex] : '';
+        if (typeof randomRpc === 'string') {
+          rpc = randomRpc;
+        } else {
+          rpc = randomRpc.url;
+        }
       } catch (e) {}
 
       const externalProvider = await new WalletConnectProvider({
         bridge: 'https://bridge.walletconnect.org',
+        pollingInterval: 15000,
         qrcode: false,
-        rpc,
+        rpc: {
+          [state.network?.identifiers?.chainId!]: rpc,
+        },
       });
       const provider = new ethers.providers.Web3Provider(externalProvider);
       externalProvider.enable();
@@ -98,7 +107,9 @@ const WalletConnect: React.FC<Props> = () => {
         if (
           !externalProvider.connector.peerMeta?.name?.includes(
             state.method?.name || ''
-          )
+          ) ||
+          externalProvider.connector.chainId !==
+            state.network?.identifiers?.chainId
         ) {
           await localStorage.removeItem('walletconnect');
           await externalProvider.connector.killSession();

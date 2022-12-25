@@ -24,7 +24,9 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
       {stacktrace ? (
         <details className="mt-2 text-xs text-white">
           <summary>View the raw error:</summary>{' '}
-          <pre className="mt-1 whitespace-pre-wrap">{stacktrace}</pre>
+          <pre className="layout-scrollbar mt-1 whitespace-pre-wrap">
+            {stacktrace}
+          </pre>
         </details>
       ) : null}
     </InnerWrapper>
