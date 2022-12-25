@@ -9,8 +9,8 @@ import { wait } from '../../utils/wait';
 const TIMEOUT_BEFORE_MOCK_CONNECT = 100;
 const TIMEOUT_BEFORE_MOCK_DISCONNECT = 200;
 
-const mockConnect = jest.fn((_event: string, callback: () => void) => {
-  if (_event === 'connect') {
+const mockConnect = jest.fn((event: string, callback: () => void) => {
+  if (event === 'connect') {
     setTimeout(() => {
       callback();
     }, TIMEOUT_BEFORE_MOCK_CONNECT);
@@ -21,9 +21,11 @@ const defaults = {
   connector: {
     accounts: ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'],
     chainId: 1,
+    connected: false,
     createSession: jest.fn(),
     killSession: jest.fn(),
     on: mockConnect,
+    peerMeta: {},
     uri: 'wc:123@1?bridge=bridge.org&key=456',
   },
   enable: jest.fn(),
@@ -133,7 +135,8 @@ describe('WalletConnect', () => {
       '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
       '123456',
-      false
+      false,
+      undefined
     );
   });
   it('populates ONLY address if the wallet is not vetted/enabled', async () => {
@@ -167,7 +170,8 @@ describe('WalletConnect', () => {
       '0.00005000',
       '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
       undefined,
-      false
+      false,
+      undefined
     );
   });
   it('handles previous connection', async () => {
@@ -175,8 +179,11 @@ describe('WalletConnect', () => {
     fireEvent.click(walletConnect);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      connected: true,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        connected: true,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
   });
@@ -186,7 +193,10 @@ describe('WalletConnect', () => {
     fireEvent.click(walletConnect);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     await act(async () => {
       await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
@@ -198,15 +208,21 @@ describe('WalletConnect', () => {
     });
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      connected: true,
-      killSession: killSessionMock,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        connected: true,
+        killSession: killSessionMock,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     const spot = await screen.findByText('Spot');
     fireEvent.click(spot);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      peerMeta: { name: 'Spot' },
+      connector: {
+        ...defaults.connector,
+        peerMeta: { name: 'Spot' },
+      },
     }));
     expect(
       await screen.findByTestId('scan-wallet-connect')
@@ -230,7 +246,10 @@ describe('WalletConnect', () => {
     fireEvent.click(walletConnect);
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
-      peerMeta: { name: 'Rainbow' },
+      connector: {
+        ...defaults.connector,
+        peerMeta: { name: 'Rainbow' },
+      },
     }));
     mockConnect.mockImplementation((event: string, callback: () => void) => {
       if (event === 'connect') {

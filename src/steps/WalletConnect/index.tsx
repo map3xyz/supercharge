@@ -1,4 +1,5 @@
 import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
@@ -12,7 +13,6 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import { CONSOLE_API_URL } from '../../constants';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
-import { getWalletConnectProvider } from './utils';
 
 const WalletConnect: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -58,7 +58,11 @@ const WalletConnect: React.FC<Props> = () => {
         rpc = rpcsForChain.length ? rpcsForChain[rpcIndex].url : '';
       } catch (e) {}
 
-      const externalProvider = await getWalletConnectProvider(rpc);
+      const externalProvider = await new WalletConnectProvider({
+        bridge: 'https://bridge.walletconnect.org',
+        qrcode: false,
+        rpc,
+      });
       const provider = new ethers.providers.Web3Provider(externalProvider);
       externalProvider.enable();
 
@@ -78,7 +82,7 @@ const WalletConnect: React.FC<Props> = () => {
         dispatch({ type: 'SET_PROVIDER_IDLE' });
         dispatch({ type: 'SET_ACCOUNT_IDLE' });
         if (
-          externalProvider.connector.peerMeta?.name.includes(
+          externalProvider.connector.peerMeta?.name?.includes(
             state.method?.name || ''
           )
         ) {
@@ -92,7 +96,7 @@ const WalletConnect: React.FC<Props> = () => {
         });
       } else {
         if (
-          !externalProvider.connector.peerMeta?.name.includes(
+          !externalProvider.connector.peerMeta?.name?.includes(
             state.method?.name || ''
           )
         ) {

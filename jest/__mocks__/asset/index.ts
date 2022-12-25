@@ -13,7 +13,9 @@ export const getAssetByMappedAssetIdAndNetworkCodeMock = (
     },
     result: {
       data: {
+        __typename: 'Query',
         assetByMappedAssetIdAndNetworkCode: {
+          __typename: 'Asset',
           address: '0x123ElonAddress',
         },
       },

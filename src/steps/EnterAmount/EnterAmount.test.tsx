@@ -386,7 +386,8 @@ describe('window.ethereum > ERC20', () => {
         '1.000000',
         '0x123',
         'memo',
-        true
+        true,
+        '0x123ElonAddress'
       );
       expect(
         await screen.findByText('Transaction Submitted')
