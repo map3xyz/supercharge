@@ -111,4 +111,27 @@ describe('App', () => {
     const assetSelection = await screen.findByText('Select Asset');
     expect(assetSelection).toBeInTheDocument();
   });
+  it('handles close', async () => {
+    jest.useFakeTimers();
+    const closeMock = jest.fn();
+
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          generateDepositAddress: async () => {
+            return { address: '0x000' };
+          },
+          theme: 'dark',
+        }}
+        onClose={closeMock}
+      />
+    );
+
+    const closeButton = await screen.findByLabelText('Close');
+    expect(closeButton).toBeInTheDocument();
+    closeButton.click();
+    jest.advanceTimersByTime(1000);
+    expect(closeMock).toHaveBeenCalled();
+  });
 });

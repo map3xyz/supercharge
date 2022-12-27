@@ -544,6 +544,116 @@ describe('txAuth - Success', () => {
   });
 });
 
+describe('Add Chain', () => {
+  const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          authorizeTransaction: async () => {
+            return true;
+          },
+          generateDepositAddress: async () => {
+            return { address: '0x123', memo: 'memo' };
+          },
+          theme: 'dark',
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = await screen.findByText('MetaMask');
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+  describe('add chain success', () => {
+    beforeAll(async () => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    it('should addChain', async () => {
+      const addChainMock = jest.fn();
+      const switchChainMock = jest.fn().mockImplementationOnce(() => {
+        throw new Error('Unrecognized chain ID');
+      });
+      web3MockSpy.mockImplementationOnce(() => ({
+        addChain: addChainMock,
+        authorizeTransactionProxy: jest.fn(),
+        getChainID: jest.fn(),
+        providers: {},
+        sendTransaction: jest.fn(),
+        switchChain: switchChainMock,
+      }));
+      await act(() => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
+      await act(async () => {
+        const form = screen.getByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(addChainMock).toHaveBeenCalled();
+    });
+  });
+
+  describe('add chain error', () => {
+    beforeAll(async () => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    it('should handle error', async () => {
+      jest.spyOn(console, 'error');
+      const addChainMock = jest.fn().mockImplementationOnce(() => {
+        throw new Error('Some other error');
+      });
+      const switchChainMock = jest.fn().mockImplementationOnce(() => {
+        throw new Error('Unrecognized chain ID');
+      });
+      web3MockSpy.mockImplementationOnce(() => ({
+        addChain: addChainMock,
+        authorizeTransactionProxy: jest.fn(),
+        getChainID: jest.fn(),
+        providers: {},
+        sendTransaction: jest.fn(),
+        switchChain: switchChainMock,
+      }));
+      await act(() => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
+      await act(async () => {
+        const form = screen.getByTestId('enter-amount-form');
+        fireEvent.submit(form);
+      });
+      expect(console.error).toHaveBeenCalled();
+    });
+  });
+});
+
 describe('Enter Amount Errors', () => {
   it('renders', () => {
     render(<EnterAmount />);

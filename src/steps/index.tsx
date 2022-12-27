@@ -35,7 +35,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
             <div>
-              <button onClick={onClose}>
+              <button aria-label="Close" onClick={onClose}>
                 <i className="fa fa-close transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
               </button>
             </div>
