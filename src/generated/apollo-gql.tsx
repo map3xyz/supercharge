@@ -79,9 +79,19 @@ export type Logo = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addWatchedAddress?: Maybe<Scalars['ID']>;
   createOrganization?: Maybe<Organization>;
   createSdkConfigForOrganization?: Maybe<SdkConfigField>;
+  removeWatchedAddress?: Maybe<Scalars['ID']>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
+};
+
+
+export type MutationAddWatchedAddressArgs = {
+  address: Scalars['String'];
+  assetId: Scalars['String'];
+  confirmationsToWatch: Scalars['Int'];
+  memo?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -94,6 +104,11 @@ export type MutationCreateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
   mappedAssetId: Scalars['ID'];
   networkCode: Scalars['String'];
+};
+
+
+export type MutationRemoveWatchedAddressArgs = {
+  watchedAddressId?: InputMaybe<Scalars['ID']>;
 };
 
 
@@ -120,10 +135,10 @@ export type Network = {
 
 export type Organization = {
   __typename?: 'Organization';
-  created?: Maybe<Scalars['Int']>;
+  created?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
-  updated?: Maybe<Scalars['Int']>;
+  updated?: Maybe<Scalars['String']>;
 };
 
 export type PaymentMethod = {
@@ -255,13 +270,13 @@ export type QuerySearchAssetsForOrganizationArgs = {
 export type SdkConfigField = {
   __typename?: 'SdkConfigField';
   assetId?: Maybe<Scalars['String']>;
-  created?: Maybe<Scalars['Int']>;
+  created?: Maybe<Scalars['String']>;
   enabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['ID']>;
   mappedAssetId?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
   organizationId?: Maybe<Scalars['String']>;
-  updated?: Maybe<Scalars['Int']>;
+  updated?: Maybe<Scalars['String']>;
 };
 
 export type WalletConnectAppType = {
@@ -315,6 +330,25 @@ export type WalletConnectWallet = {
   name?: Maybe<Scalars['String']>;
   sdks?: Maybe<Array<Maybe<Scalars['String']>>>;
   versions?: Maybe<Array<Maybe<Scalars['String']>>>;
+};
+
+export type WatchedAddress = {
+  __typename?: 'WatchedAddress';
+  address?: Maybe<Scalars['String']>;
+  assetId?: Maybe<Scalars['String']>;
+  confirmationsToWatch?: Maybe<Scalars['Int']>;
+  created?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  memo?: Maybe<Scalars['String']>;
+  networkCode?: Maybe<Scalars['String']>;
+  organizationId?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  txAmount?: Maybe<Scalars['Int']>;
+  txBlockHeight?: Maybe<Scalars['Int']>;
+  txCreatedAt?: Maybe<Scalars['String']>;
+  txId?: Maybe<Scalars['String']>;
+  unsubscribed?: Maybe<Scalars['Boolean']>;
+  updated?: Maybe<Scalars['String']>;
 };
 
 export type AssetFieldsFragment = { __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null };
