@@ -7,6 +7,7 @@ import MethodIcon from '../../components/MethodIcon';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
+import { listenToWatchedAddress } from '../../utils/supabase';
 
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -31,6 +32,10 @@ const QRCode: React.FC<Props> = () => {
 
     return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
   }, []);
+
+  if (state.depositAddress.status === 'success' && state.depositAddress.data) {
+    listenToWatchedAddress(state.depositAddress.data, (payload) => console.log);
+  }
 
   return (
     <div className="flex h-full flex-col">
@@ -127,3 +132,6 @@ const QRCode: React.FC<Props> = () => {
 type Props = {};
 
 export default QRCode;
+function subscribeToWatchedAdress(data: string) {
+  throw new Error('Function not implemented.');
+}
