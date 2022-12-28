@@ -72,7 +72,10 @@ const WalletConnect: React.FC<Props> = () => {
           [state.network?.identifiers?.chainId!]: rpc,
         },
       });
-      const provider = new ethers.providers.Web3Provider(externalProvider);
+      const provider = new ethers.providers.Web3Provider(
+        externalProvider,
+        'any'
+      );
       externalProvider.enable();
 
       externalProvider.connector.on('connect', (error) => {

@@ -33,6 +33,13 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
+  balance: {
+    data:
+      | { assetBalance: ethers.BigNumber; chainBalance: ethers.BigNumber }
+      | undefined;
+    error?: string;
+    status: RemoteType;
+  };
   depositAddress: {
     data: string | undefined;
     status: RemoteType;
@@ -45,6 +52,7 @@ type State = {
     error?: string;
     status: RemoteType;
   };
+  providerChainId?: number;
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
@@ -77,7 +85,18 @@ type Action =
   | { payload: string; type: 'SET_PROVIDER_ERROR' }
   | { payload: string; type: 'SET_TRANSACTION_SUCCESS' }
   | { payload: string; type: 'SET_TRANSACTION_ERROR' }
-  | { type: 'SET_TRANSACTION_LOADING' };
+  | { type: 'SET_TRANSACTION_LOADING' }
+  | { type: 'SET_BALANCE_LOADING' }
+  | {
+      payload: {
+        assetBalance: ethers.BigNumber;
+        chainBalance: ethers.BigNumber;
+      };
+      type: 'SET_BALANCE_SUCCESS';
+    }
+  | { payload: string; type: 'SET_BALANCE_ERROR' }
+  | { type: 'SET_BALANCE_IDLE' }
+  | { payload: number; type: 'SET_PROVIDER_CHAIN_ID' };
 
 const initialState: State = {
   account: {
@@ -85,6 +104,11 @@ const initialState: State = {
     status: 'idle',
   },
   asset: undefined,
+  balance: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+  },
   depositAddress: {
     data: undefined,
     status: 'idle',
@@ -97,6 +121,7 @@ const initialState: State = {
     error: undefined,
     status: 'idle',
   },
+  providerChainId: undefined,
   slug: undefined,
   step: Steps.AssetSelection,
   steps: [
@@ -227,6 +252,42 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
+        case 'SET_BALANCE_SUCCESS':
+          return {
+            ...state,
+            balance: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+            },
+          };
+        case 'SET_BALANCE_ERROR':
+          return {
+            ...state,
+            balance: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_BALANCE_LOADING':
+          return {
+            ...state,
+            balance: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_BALANCE_IDLE':
+          return {
+            ...state,
+            balance: {
+              data: undefined,
+              error: undefined,
+              status: 'idle',
+            },
+          };
         case 'SET_PROVIDER_SUCCESS':
           return {
             ...state,
@@ -262,6 +323,11 @@ export const Store: React.FC<
               error: undefined,
               status: 'idle',
             },
+          };
+        case 'SET_PROVIDER_CHAIN_ID':
+          return {
+            ...state,
+            providerChainId: action.payload,
           };
         case 'SET_TRANSACTION_SUCCESS':
           return {

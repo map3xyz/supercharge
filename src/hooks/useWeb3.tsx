@@ -40,6 +40,15 @@ export const useWeb3 = () => {
     return setProviders({});
   }, []);
 
+  useEffect(() => {
+    if (state.provider?.status !== 'success') return;
+
+    // @ts-ignore
+    state.provider.data?.provider.on('chainChanged', (chainId) => {
+      dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
+    });
+  }, [state.provider?.data]);
+
   const authorizeTransactionProxy = async (
     fromAddress?: string,
     network?: Maybe<string> | undefined,
@@ -58,6 +67,37 @@ export const useWeb3 = () => {
     }
 
     return isAuth;
+  };
+
+  const getBalance = async (
+    address?: string | null
+  ): Promise<{
+    assetBalance: ethers.BigNumber;
+    chainBalance: ethers.BigNumber;
+  }> => {
+    const currentChainId = await getChainID();
+
+    if (
+      state.network?.identifiers?.chainId &&
+      Number(currentChainId) !== state.network?.identifiers?.chainId
+    ) {
+      await switchChain(state.network?.identifiers?.chainId);
+    }
+
+    let assetBalance = ethers.BigNumber.from(0);
+    if (address) {
+      const contract = new ethers.Contract(
+        address,
+        new ethers.utils.Interface(erc20Abi),
+        state.provider?.data
+      );
+      assetBalance = await contract.balanceOf(state.account.data);
+    }
+    const chainBalance =
+      (await state.provider?.data?.getBalance(state.account.data || '')) ||
+      ethers.BigNumber.from(0);
+
+    return { assetBalance, chainBalance };
   };
 
   const getChainID = async () => {
@@ -177,6 +217,7 @@ export const useWeb3 = () => {
   return {
     addChain,
     authorizeTransactionProxy,
+    getBalance,
     getChainID,
     providers,
     sendTransaction,

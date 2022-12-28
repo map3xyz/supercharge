@@ -10,6 +10,7 @@ import WindowEthereum, {
 } from '../../components/methods/WindowEthereum';
 import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { useMaxLimit } from '../../hooks/useMaxLimit';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
@@ -21,6 +22,7 @@ const EnterAmount: React.FC<Props> = () => {
   const rate = state.asset?.price?.price;
 
   const [formError, setFormError] = useState<string | undefined>('');
+  const [formWarning, setFormWarning] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
@@ -46,11 +48,45 @@ const EnterAmount: React.FC<Props> = () => {
   const {
     addChain,
     authorizeTransactionProxy,
+    getBalance,
     getChainID,
     sendTransaction,
     switchChain,
   } = useWeb3();
+  const { maxLimit, maxLimitFormatted } = useMaxLimit();
   const { getDepositAddress } = useDepositAddress();
+
+  useEffect(() => {
+    if (loading || error) return;
+    if (state.account.status !== 'success') return;
+    if (state.provider?.status !== 'success') return;
+    const run = async () => {
+      try {
+        dispatch({ type: 'SET_BALANCE_LOADING' });
+        const balance = await getBalance(
+          data?.assetByMappedAssetIdAndNetworkCode?.address
+        );
+        setFormWarning(undefined);
+        dispatch({ payload: balance, type: 'SET_BALANCE_SUCCESS' });
+      } catch (e: any) {
+        console.log(e);
+        setFormWarning(
+          `Unknown balance. Please proceed with caution or manually change the network to
+            ${state.network?.name}.`
+        );
+        dispatch({ payload: e.message, type: 'SET_BALANCE_ERROR' });
+      }
+    };
+
+    run();
+  }, [
+    loading,
+    error,
+    state.account.status,
+    state.provider?.status,
+    state.providerChainId,
+    data?.assetByMappedAssetIdAndNetworkCode?.address,
+  ]);
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -125,6 +161,7 @@ const EnterAmount: React.FC<Props> = () => {
     try {
       e?.preventDefault();
       setFormError(undefined);
+      setFormWarning(undefined);
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
         connectRef.current?.connect();
@@ -312,13 +349,38 @@ const EnterAmount: React.FC<Props> = () => {
               </div>
             </div>
             <div className="relative w-full">
-              {formError ? (
-                <span className="absolute -top-2 left-1/2 w-full -translate-x-1/2 -translate-y-full">
+              <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
+                {formError ? (
                   <Badge color="red" dot>
                     {formError}
                   </Badge>
-                </span>
-              ) : null}
+                ) : formWarning ? (
+                  <Badge color="yellow" dot>
+                    {formWarning}
+                  </Badge>
+                ) : state.balance.status === 'success' ? (
+                  <span
+                    onClick={() => {
+                      if (!inputRef.current) return;
+                      if (formValue.inputSelected === 'fiat') toggleBase();
+                      inputRef.current.value = maxLimitFormatted;
+                      setFormValue({
+                        ...formValue,
+                        base: maxLimitFormatted,
+                        inputSelected: 'crypto',
+                      });
+                    }}
+                    role="button"
+                  >
+                    <Badge color="blue">
+                      {/* @ts-ignore */}
+                      <span className="whitespace-nowrap">
+                        Max: {maxLimitFormatted} {state.asset.name}
+                      </span>
+                    </Badge>
+                  </span>
+                ) : null}
+              </span>
               {state.method.value !== 'isWalletConnect' ? (
                 <WindowEthereum
                   amount={amount}
