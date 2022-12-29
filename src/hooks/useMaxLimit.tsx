@@ -1,55 +1,71 @@
 import { BigNumber, ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
+import { fromWei } from 'web3-utils';
 
+import { ERC20_GAS_LIMIT, GAS_LIMIT } from '../constants';
 import { Context } from '../providers/Store';
 
 export const useMaxLimit = () => {
-  const [state] = useContext(Context);
+  const [state, dispatch] = useContext(Context);
   const [maxLimit, setMaxLimit] = useState<string>('0');
   const [maxLimitRaw, setMaxLimitRaw] = useState<BigNumber>(BigNumber.from(0));
   const [maxLimitFormatted, setMaxLimitFormatted] = useState<string>('0');
+  const [feeError, setFeeError] = useState<boolean>(false);
 
   useEffect(() => {
+    dispatch({ type: 'SET_MAX_LIMIT_LOADING' });
     if (state.balance?.status !== 'success') return;
+    if (!state.provider?.data) return;
     if (!state.balance.data) return;
 
     const run = async () => {
       const { assetBalance, chainBalance } = state.balance.data!;
       try {
         const feeData = await state.provider?.data?.getFeeData();
+        if (!feeData) {
+          throw new Error('Unable to get gas price.');
+        }
 
         let max: BigNumber | undefined;
         let maxLimitRaw: BigNumber | undefined;
+        let gasLimit =
+          state.asset?.type === 'asset' ? GAS_LIMIT : ERC20_GAS_LIMIT;
+
+        const gasPriceGwei = fromWei(
+          feeData?.gasPrice!.add(feeData.maxFeePerGas!).toString(),
+          'gwei'
+        );
+        const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(0);
+        const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
+
         if (state.asset?.type === 'asset') {
           max = assetBalance;
           maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
         } else {
-          // MEMO!!!!!!!!
-          const gasLimitWei = ethers.utils.parseUnits('21000', 'wei');
-          const feeWei = feeData?.maxFeePerGas?.mul(gasLimitWei) || 0;
           max = chainBalance.sub(feeWei);
           maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
         }
 
+        const maxLimitFormatted = max.eq(0)
+          ? '0'
+          : ethers.utils.formatUnits(
+              maxLimitRaw.toString(),
+              state.asset?.decimals || 'ether'
+            );
+
         setMaxLimitRaw(maxLimitRaw);
         setMaxLimit(maxLimitRaw.toString());
-        setMaxLimitFormatted(
-          ethers.utils.formatUnits(
-            maxLimitRaw.toString(),
-            state.asset?.decimals || 'ether'
-          )
-        );
-      } catch (e) {
+        setMaxLimitFormatted(maxLimitFormatted);
+        setFeeError(chainBalance.sub(feeWei).lte(0));
+        dispatch({ payload: maxLimitFormatted, type: 'SET_MAX_LIMIT_SUCCESS' });
+      } catch (e: any) {
+        dispatch({ payload: e.message, type: 'SET_MAX_LIMIT_ERROR' });
         console.log(e);
       }
     };
 
     run();
-  }, [
-    state.balance.data?.assetBalance,
-    state.balance.data?.chainBalance,
-    state.provider?.data,
-  ]);
+  }, [state.balance.data?.chainBalance.toString()]);
 
-  return { maxLimit, maxLimitFormatted, maxLimitRaw };
+  return { feeError, maxLimit, maxLimitFormatted, maxLimitRaw };
 };

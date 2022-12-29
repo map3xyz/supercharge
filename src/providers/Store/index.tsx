@@ -45,6 +45,11 @@ type State = {
     status: RemoteType;
   };
   fiat?: string;
+  maxLimit: {
+    data: string | undefined;
+    error?: string;
+    status: RemoteType;
+  };
   method?: PaymentMethod & { description?: string };
   network?: Network;
   provider?: {
@@ -96,6 +101,10 @@ type Action =
     }
   | { payload: string; type: 'SET_BALANCE_ERROR' }
   | { type: 'SET_BALANCE_IDLE' }
+  | { type: 'SET_MAX_LIMIT_LOADING' }
+  | { payload: string; type: 'SET_MAX_LIMIT_SUCCESS' }
+  | { payload: string; type: 'SET_MAX_LIMIT_ERROR' }
+  | { type: 'SET_MAX_LIMIT_IDLE' }
   | { payload: number; type: 'SET_PROVIDER_CHAIN_ID' };
 
 const initialState: State = {
@@ -114,6 +123,11 @@ const initialState: State = {
     status: 'idle',
   },
   fiat: undefined,
+  maxLimit: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+  },
   method: undefined,
   network: undefined,
   provider: {
@@ -280,6 +294,42 @@ export const Store: React.FC<
             },
           };
         case 'SET_BALANCE_IDLE':
+          return {
+            ...state,
+            balance: {
+              data: undefined,
+              error: undefined,
+              status: 'idle',
+            },
+          };
+        case 'SET_MAX_LIMIT_SUCCESS':
+          return {
+            ...state,
+            maxLimit: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+            },
+          };
+        case 'SET_MAX_LIMIT_ERROR':
+          return {
+            ...state,
+            maxLimit: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_MAX_LIMIT_LOADING':
+          return {
+            ...state,
+            maxLimit: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_MAX_LIMIT_IDLE':
           return {
             ...state,
             balance: {

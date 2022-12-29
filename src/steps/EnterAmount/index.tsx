@@ -1,5 +1,7 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
+import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { toWei } from 'web3-utils';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -16,6 +18,7 @@ import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
 const CHAIN_MISSING = 'Unrecognized chain ID';
+const INSUFFICIENT_FUNDS = 'Amount exceeds maximum limit.';
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -53,7 +56,7 @@ const EnterAmount: React.FC<Props> = () => {
     sendTransaction,
     switchChain,
   } = useWeb3();
-  const { maxLimit, maxLimitFormatted } = useMaxLimit();
+  const { feeError, maxLimitFormatted, maxLimitRaw } = useMaxLimit();
   const { getDepositAddress } = useDepositAddress();
 
   useEffect(() => {
@@ -142,6 +145,17 @@ const EnterAmount: React.FC<Props> = () => {
         ? base.toFixed(state.asset?.decimals || 8)
         : quote.toFixed(state.asset?.decimals || 8)
     );
+  }, [formValue.base]);
+
+  useEffect(() => {
+    const cryptoAmt =
+      formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
+    const cryptoAmtWei = toWei(cryptoAmt);
+    if (maxLimitRaw.lt(cryptoAmtWei)) {
+      setFormError(INSUFFICIENT_FUNDS);
+    } else {
+      setFormError(undefined);
+    }
   }, [formValue.base]);
 
   const toggleBase = () => {
@@ -358,8 +372,15 @@ const EnterAmount: React.FC<Props> = () => {
                   <Badge color="yellow" dot>
                     {formWarning}
                   </Badge>
-                ) : state.balance.status === 'success' ? (
-                  <span
+                ) : feeError ? (
+                  <Badge color="red" dot>
+                    {`You don't have enough ${state.network.symbol} to complete this transaction.`}
+                  </Badge>
+                ) : state.maxLimit.status === 'success' ? (
+                  <motion.span
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
                     onClick={() => {
                       if (!inputRef.current) return;
                       if (formValue.inputSelected === 'fiat') toggleBase();
@@ -378,7 +399,7 @@ const EnterAmount: React.FC<Props> = () => {
                         Max: {maxLimitFormatted} {state.asset.name}
                       </span>
                     </Badge>
-                  </span>
+                  </motion.span>
                 ) : null}
               </span>
               {state.method.value !== 'isWalletConnect' ? (
@@ -386,7 +407,9 @@ const EnterAmount: React.FC<Props> = () => {
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
-                    state.transaction?.status === 'loading'
+                    state.transaction?.status === 'loading' ||
+                    formError === INSUFFICIENT_FUNDS ||
+                    feeError
                   }
                   ref={connectRef}
                   setFormError={setFormError}
@@ -394,7 +417,11 @@ const EnterAmount: React.FC<Props> = () => {
               ) : (
                 <WalletConnect
                   amount={amount}
-                  disabled={state.depositAddress.status === 'loading'}
+                  disabled={
+                    state.depositAddress.status === 'loading' ||
+                    formError === INSUFFICIENT_FUNDS ||
+                    feeError
+                  }
                 />
               )}
             </div>
