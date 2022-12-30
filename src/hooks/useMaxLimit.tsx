@@ -1,6 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
 import { useContext, useEffect, useState } from 'react';
-import { fromWei } from 'web3-utils';
 
 import { ERC20_GAS_LIMIT, GAS_LIMIT } from '../constants';
 import { Context } from '../providers/Store';
@@ -25,14 +24,17 @@ export const useMaxLimit = () => {
         if (!feeData) {
           throw new Error('Unable to get gas price.');
         }
+        if (!feeData.gasPrice) {
+          feeData.gasPrice = ethers.BigNumber.from(0);
+        }
 
         let max: BigNumber | undefined;
         let maxLimitRaw: BigNumber | undefined;
         let gasLimit =
           state.asset?.type === 'asset' ? GAS_LIMIT : ERC20_GAS_LIMIT;
 
-        const gasPriceGwei = fromWei(
-          feeData?.gasPrice!.add(feeData.maxFeePerGas!).toString(),
+        const gasPriceGwei = ethers.utils.formatUnits(
+          feeData?.gasPrice || 0,
           'gwei'
         );
         const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(0);

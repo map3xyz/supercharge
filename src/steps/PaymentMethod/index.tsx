@@ -20,8 +20,6 @@ const PaymentMethod: React.FC<Props> = () => {
     variables: { chainId },
   });
 
-  console.log(state.maxLimit.status);
-
   if (!state.asset || !state.network) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;

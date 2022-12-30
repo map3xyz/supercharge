@@ -164,7 +164,6 @@ const EnterAmount: React.FC<Props> = () => {
     if (inputRef.current) {
       inputRef.current.value = quoteRef.current!.innerText;
       inputRef.current.focus();
-      inputRef.current.setSelectionRange(0, 0);
 
       setFormValue((formValue) => ({
         base: quoteRef.current!.innerText,
@@ -304,7 +303,6 @@ const EnterAmount: React.FC<Props> = () => {
                   autoFocus
                   className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
                   data-testid="input"
-                  inputMode="numeric"
                   name="base"
                   placeholder="0"
                   ref={inputRef}
@@ -318,7 +316,7 @@ const EnterAmount: React.FC<Props> = () => {
                         '1'
                   }
                   style={{ minWidth: `${BASE_FONT_SIZE}px` }}
-                  type="text"
+                  type="number"
                 />
                 <span
                   className="invisible absolute -left-96 -top-96 pr-3 !text-5xl"
