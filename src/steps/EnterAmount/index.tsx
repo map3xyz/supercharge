@@ -26,7 +26,6 @@ const EnterAmount: React.FC<Props> = () => {
   const rate = state.asset?.price?.price;
 
   const [formError, setFormError] = useState<string | undefined>('');
-  const [formWarning, setFormWarning] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
@@ -70,14 +69,8 @@ const EnterAmount: React.FC<Props> = () => {
         const balance = await getBalance(
           data?.assetByMappedAssetIdAndNetworkCode?.address
         );
-        setFormWarning(undefined);
         dispatch({ payload: balance, type: 'SET_BALANCE_SUCCESS' });
       } catch (e: any) {
-        console.log(e);
-        setFormWarning(
-          `Unknown balance. Please proceed with caution or manually change the network to
-            ${state.network?.name}.`
-        );
         dispatch({ payload: e.message, type: 'SET_BALANCE_ERROR' });
       }
     };
@@ -149,15 +142,18 @@ const EnterAmount: React.FC<Props> = () => {
   }, [formValue.base]);
 
   useEffect(() => {
+    if (!formValue.base || !formValue.quote) {
+      setFormError(undefined);
+      return;
+    }
     const cryptoAmt =
       formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
     const cryptoAmtWei = ethers.utils.parseUnits(
       cryptoAmt,
       state.asset?.decimals || DECIMAL_FALLBACK
     );
-    console.log(cryptoAmtWei.toString(), maxLimitRaw.toString());
 
-    if (maxLimitRaw.lt(cryptoAmtWei)) {
+    if (maxLimitRaw.lt(cryptoAmtWei) && state.balance.status === 'success') {
       setFormError(INSUFFICIENT_FUNDS);
     } else {
       setFormError(undefined);
@@ -168,6 +164,7 @@ const EnterAmount: React.FC<Props> = () => {
     if (inputRef.current) {
       inputRef.current.value = quoteRef.current!.innerText;
       inputRef.current.focus();
+      inputRef.current.setSelectionRange(0, 0);
 
       setFormValue((formValue) => ({
         base: quoteRef.current!.innerText,
@@ -181,7 +178,6 @@ const EnterAmount: React.FC<Props> = () => {
     try {
       e?.preventDefault();
       setFormError(undefined);
-      setFormWarning(undefined);
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
         connectRef.current?.connect();
@@ -308,6 +304,7 @@ const EnterAmount: React.FC<Props> = () => {
                   autoFocus
                   className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
                   data-testid="input"
+                  inputMode="numeric"
                   name="base"
                   placeholder="0"
                   ref={inputRef}
@@ -321,7 +318,7 @@ const EnterAmount: React.FC<Props> = () => {
                         '1'
                   }
                   style={{ minWidth: `${BASE_FONT_SIZE}px` }}
-                  type="number"
+                  type="text"
                 />
                 <span
                   className="invisible absolute -left-96 -top-96 pr-3 !text-5xl"
@@ -378,10 +375,17 @@ const EnterAmount: React.FC<Props> = () => {
                   <Badge color="red" dot>
                     {formError}
                   </Badge>
-                ) : formWarning ? (
-                  <Badge color="yellow" dot>
-                    {formWarning}
-                  </Badge>
+                ) : state.balance.status === 'error' ? (
+                  <span
+                    onClick={() => {
+                      switchChain(state.network?.identifiers?.chainId!);
+                    }}
+                    role="button"
+                  >
+                    <Badge color="yellow" dot>
+                      {`Unknown balance. Please change the network on ${state.method?.name} to ${state.network?.name}.`}
+                    </Badge>
+                  </span>
                 ) : feeError ? (
                   <Badge color="red" dot>
                     {`You don't have enough ${state.network.symbol} to complete this transaction.`}
@@ -418,6 +422,7 @@ const EnterAmount: React.FC<Props> = () => {
                   disabled={
                     state.depositAddress.status === 'loading' ||
                     state.transaction?.status === 'loading' ||
+                    state.balance.status === 'error' ||
                     formError === INSUFFICIENT_FUNDS ||
                     feeError
                   }
@@ -429,6 +434,7 @@ const EnterAmount: React.FC<Props> = () => {
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
+                    state.balance.status === 'error' ||
                     formError === INSUFFICIENT_FUNDS ||
                     feeError
                   }

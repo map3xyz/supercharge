@@ -46,12 +46,14 @@ export const useMaxLimit = () => {
           maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
         }
 
-        const maxLimitFormatted = max.eq(0)
-          ? '0'
-          : ethers.utils.formatUnits(
-              maxLimitRaw.toString(),
-              state.asset?.decimals || 'ether'
-            );
+        let maxLimitFormatted = ethers.utils.formatUnits(
+          maxLimitRaw.toString(),
+          state.asset?.decimals || 'ether'
+        );
+
+        if (maxLimitFormatted.split('.')[1] === '0') {
+          maxLimitFormatted = maxLimitFormatted.split('.')[0];
+        }
 
         setMaxLimitRaw(maxLimitRaw);
         setMaxLimit(maxLimitRaw.toString());

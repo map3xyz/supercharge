@@ -81,7 +81,7 @@ export const useWeb3 = () => {
       state.network?.identifiers?.chainId &&
       Number(currentChainId) !== state.network?.identifiers?.chainId
     ) {
-      await switchChain(state.network?.identifiers?.chainId);
+      throw new Error('Wrong network');
     }
 
     let assetBalance = ethers.BigNumber.from(0);
