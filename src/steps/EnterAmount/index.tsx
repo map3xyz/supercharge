@@ -1,7 +1,7 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { toWei } from 'web3-utils';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -17,6 +17,7 @@ import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
+const DECIMAL_FALLBACK = 8;
 const CHAIN_MISSING = 'Unrecognized chain ID';
 const INSUFFICIENT_FUNDS = 'Amount exceeds maximum limit.';
 
@@ -135,28 +136,33 @@ const EnterAmount: React.FC<Props> = () => {
       quote:
         formValue.inputSelected === 'crypto'
           ? quote.toFixed(2)
-          : quote.toFixed(8),
+          : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK),
     }));
 
     if (base === 0) return setAmount('0');
 
     setAmount(
       formValue.inputSelected === 'crypto'
-        ? base.toFixed(state.asset?.decimals || 8)
-        : quote.toFixed(state.asset?.decimals || 8)
+        ? base.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
+        : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
     );
   }, [formValue.base]);
 
   useEffect(() => {
     const cryptoAmt =
       formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
-    const cryptoAmtWei = toWei(cryptoAmt);
+    const cryptoAmtWei = ethers.utils.parseUnits(
+      cryptoAmt,
+      state.asset?.decimals || DECIMAL_FALLBACK
+    );
+    console.log(cryptoAmtWei.toString(), maxLimitRaw.toString());
+
     if (maxLimitRaw.lt(cryptoAmtWei)) {
       setFormError(INSUFFICIENT_FUNDS);
     } else {
       setFormError(undefined);
     }
-  }, [formValue.base]);
+  }, [formValue.base, formValue.quote]);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -308,7 +314,11 @@ const EnterAmount: React.FC<Props> = () => {
                   step={
                     formValue.inputSelected === 'fiat'
                       ? '0.01'
-                      : '0.' + '0'.repeat((state.asset.decimals || 8) - 1) + '1'
+                      : '0.' +
+                        '0'.repeat(
+                          (state.asset.decimals || DECIMAL_FALLBACK) - 1
+                        ) +
+                        '1'
                   }
                   style={{ minWidth: `${BASE_FONT_SIZE}px` }}
                   type="number"
