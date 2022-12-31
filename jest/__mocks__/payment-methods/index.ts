@@ -8,7 +8,7 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
     ? {
         request: {
           query: GetPaymentMethodsDocument,
-          variables: { chainId: 1 },
+          variables,
         },
         result: {
           data: {

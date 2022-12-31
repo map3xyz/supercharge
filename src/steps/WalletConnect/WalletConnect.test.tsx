@@ -109,6 +109,7 @@ describe('WalletConnect', () => {
     jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
       addChain: jest.fn(),
       authorizeTransactionProxy: jest.fn(),
+      getBalance: jest.fn(),
       getChainID: jest.fn(),
       providers: {},
       sendTransaction: mockSendTransaction,
@@ -144,6 +145,7 @@ describe('WalletConnect', () => {
     jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
       addChain: jest.fn(),
       authorizeTransactionProxy: jest.fn(),
+      getBalance: jest.fn(),
       getChainID: jest.fn(),
       providers: {},
       sendTransaction: mockSendTransaction,

@@ -25,7 +25,7 @@ export const useMaxLimit = () => {
           throw new Error('Unable to get gas price.');
         }
         if (!feeData.gasPrice) {
-          feeData.gasPrice = ethers.BigNumber.from(0);
+          feeData.gasPrice = BigNumber.from(0);
         }
 
         let max: BigNumber | undefined;

@@ -43,11 +43,10 @@ export const useWeb3 = () => {
   useEffect(() => {
     if (state.provider?.status !== 'success') return;
 
-    // @ts-ignore
-    state.provider.data?.provider.on('chainChanged', (chainId) => {
+    state.provider.data?.on?.('network', ({ chainId }) => {
       dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
     });
-  }, [state.provider?.data]);
+  }, [state.provider?.status]);
 
   const authorizeTransactionProxy = async (
     fromAddress?: string,
@@ -101,7 +100,7 @@ export const useWeb3 = () => {
   };
 
   const getChainID = async () => {
-    const chainId = await state.provider?.data?.provider?.request!({
+    const chainId = await state.provider?.data?.provider?.request?.({
       method: 'eth_chainId',
       params: [],
     });
@@ -109,7 +108,7 @@ export const useWeb3 = () => {
   };
 
   const switchChain = async (chainId: number) => {
-    await state.provider?.data?.provider.request!({
+    await state.provider?.data?.provider.request?.({
       method: 'wallet_switchEthereumChain',
       params: [
         {
@@ -146,7 +145,7 @@ export const useWeb3 = () => {
       },
     ];
 
-    await state.provider?.data?.provider.request!({
+    await state.provider?.data?.provider.request?.({
       method: 'wallet_addEthereumChain',
       params,
     });
@@ -196,7 +195,7 @@ export const useWeb3 = () => {
     }
     let hash;
     try {
-      hash = await state.provider?.data?.provider.request!({
+      hash = await state.provider?.data?.provider?.request?.({
         method: 'eth_sendTransaction',
         params: [txParams],
       });

@@ -195,6 +195,7 @@ const EnterAmount: React.FC<Props> = () => {
         state.network?.identifiers?.chainId &&
         Number(currentChainId) !== state.network?.identifiers?.chainId
       ) {
+        console.log(switchChain);
         await switchChain(state.network?.identifiers?.chainId);
       }
 
