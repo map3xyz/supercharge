@@ -3,7 +3,7 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { CONSOLE_API_URL } from '../constants';
+import { CONSOLE_API_URL, GAS_LIMIT } from '../constants';
 import { Context, Steps } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
@@ -40,6 +40,14 @@ export const useWeb3 = () => {
     return setProviders({});
   }, []);
 
+  useEffect(() => {
+    if (state.provider?.status !== 'success') return;
+
+    state.provider.data?.on?.('network', ({ chainId }) => {
+      dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
+    });
+  }, [state.provider?.status]);
+
   const authorizeTransactionProxy = async (
     fromAddress?: string,
     network?: Maybe<string> | undefined,
@@ -60,8 +68,39 @@ export const useWeb3 = () => {
     return isAuth;
   };
 
+  const getBalance = async (
+    address?: string | null
+  ): Promise<{
+    assetBalance: ethers.BigNumber;
+    chainBalance: ethers.BigNumber;
+  }> => {
+    const currentChainId = await getChainID();
+
+    if (
+      state.network?.identifiers?.chainId &&
+      Number(currentChainId) !== state.network?.identifiers?.chainId
+    ) {
+      throw new Error('Wrong network');
+    }
+
+    let assetBalance = ethers.BigNumber.from(0);
+    if (address) {
+      const contract = new ethers.Contract(
+        address,
+        new ethers.utils.Interface(erc20Abi),
+        state.provider?.data
+      );
+      assetBalance = await contract.balanceOf(state.account.data);
+    }
+    const chainBalance =
+      (await state.provider?.data?.getBalance(state.account.data || '')) ||
+      ethers.BigNumber.from(0);
+
+    return { assetBalance, chainBalance };
+  };
+
   const getChainID = async () => {
-    const chainId = await state.provider?.data?.provider?.request!({
+    const chainId = await state.provider?.data?.provider?.request?.({
       method: 'eth_chainId',
       params: [],
     });
@@ -69,7 +108,7 @@ export const useWeb3 = () => {
   };
 
   const switchChain = async (chainId: number) => {
-    await state.provider?.data?.provider.request!({
+    await state.provider?.data?.provider.request?.({
       method: 'wallet_switchEthereumChain',
       params: [
         {
@@ -106,7 +145,7 @@ export const useWeb3 = () => {
       },
     ];
 
-    await state.provider?.data?.provider.request!({
+    await state.provider?.data?.provider.request?.({
       method: 'wallet_addEthereumChain',
       params,
     });
@@ -132,7 +171,7 @@ export const useWeb3 = () => {
     const txParams = {
       data: memo || '0x',
       from: state.account.data,
-      gas: ethers.utils.hexlify(21_000 + extraGas),
+      gas: ethers.utils.hexlify(GAS_LIMIT + extraGas),
       to: address,
       value: ethers.utils.parseEther(amount).toHexString(),
     };
@@ -156,7 +195,7 @@ export const useWeb3 = () => {
     }
     let hash;
     try {
-      hash = await state.provider?.data?.provider.request!({
+      hash = await state.provider?.data?.provider?.request?.({
         method: 'eth_sendTransaction',
         params: [txParams],
       });
@@ -177,6 +216,7 @@ export const useWeb3 = () => {
   return {
     addChain,
     authorizeTransactionProxy,
+    getBalance,
     getChainID,
     providers,
     sendTransaction,

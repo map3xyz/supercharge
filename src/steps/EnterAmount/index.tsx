@@ -1,4 +1,6 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
+import { ethers } from 'ethers';
+import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
@@ -10,11 +12,14 @@ import WindowEthereum, {
 } from '../../components/methods/WindowEthereum';
 import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { useMaxLimit } from '../../hooks/useMaxLimit';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
+const DECIMAL_FALLBACK = 8;
 const CHAIN_MISSING = 'Unrecognized chain ID';
+const INSUFFICIENT_FUNDS = 'Amount exceeds maximum limit.';
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -46,11 +51,39 @@ const EnterAmount: React.FC<Props> = () => {
   const {
     addChain,
     authorizeTransactionProxy,
+    getBalance,
     getChainID,
     sendTransaction,
     switchChain,
   } = useWeb3();
+  const { feeError, maxLimitFormatted, maxLimitRaw } = useMaxLimit();
   const { getDepositAddress } = useDepositAddress();
+
+  useEffect(() => {
+    if (loading || error) return;
+    if (state.account.status !== 'success') return;
+    if (state.provider?.status !== 'success') return;
+    const run = async () => {
+      try {
+        dispatch({ type: 'SET_BALANCE_LOADING' });
+        const balance = await getBalance(
+          data?.assetByMappedAssetIdAndNetworkCode?.address
+        );
+        dispatch({ payload: balance, type: 'SET_BALANCE_SUCCESS' });
+      } catch (e: any) {
+        dispatch({ payload: e.message, type: 'SET_BALANCE_ERROR' });
+      }
+    };
+
+    run();
+  }, [
+    loading,
+    error,
+    state.account.status,
+    state.provider?.status,
+    state.providerChainId,
+    data?.assetByMappedAssetIdAndNetworkCode?.address,
+  ]);
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -96,17 +129,36 @@ const EnterAmount: React.FC<Props> = () => {
       quote:
         formValue.inputSelected === 'crypto'
           ? quote.toFixed(2)
-          : quote.toFixed(8),
+          : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK),
     }));
 
     if (base === 0) return setAmount('0');
 
     setAmount(
       formValue.inputSelected === 'crypto'
-        ? base.toFixed(state.asset?.decimals || 8)
-        : quote.toFixed(state.asset?.decimals || 8)
+        ? base.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
+        : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
     );
   }, [formValue.base]);
+
+  useEffect(() => {
+    if (!formValue.base || !formValue.quote) {
+      setFormError(undefined);
+      return;
+    }
+    const cryptoAmt =
+      formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
+    const cryptoAmtWei = ethers.utils.parseUnits(
+      cryptoAmt,
+      state.asset?.decimals || DECIMAL_FALLBACK
+    );
+
+    if (maxLimitRaw.lt(cryptoAmtWei) && state.balance.status === 'success') {
+      setFormError(INSUFFICIENT_FUNDS);
+    } else {
+      setFormError(undefined);
+    }
+  }, [formValue.base, formValue.quote]);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -143,6 +195,7 @@ const EnterAmount: React.FC<Props> = () => {
         state.network?.identifiers?.chainId &&
         Number(currentChainId) !== state.network?.identifiers?.chainId
       ) {
+        console.log(switchChain);
         await switchChain(state.network?.identifiers?.chainId);
       }
 
@@ -257,7 +310,11 @@ const EnterAmount: React.FC<Props> = () => {
                   step={
                     formValue.inputSelected === 'fiat'
                       ? '0.01'
-                      : '0.' + '0'.repeat((state.asset.decimals || 8) - 1) + '1'
+                      : '0.' +
+                        '0'.repeat(
+                          (state.asset.decimals || DECIMAL_FALLBACK) - 1
+                        ) +
+                        '1'
                   }
                   style={{ minWidth: `${BASE_FONT_SIZE}px` }}
                   type="number"
@@ -312,19 +369,61 @@ const EnterAmount: React.FC<Props> = () => {
               </div>
             </div>
             <div className="relative w-full">
-              {formError ? (
-                <span className="absolute -top-2 left-1/2 w-full -translate-x-1/2 -translate-y-full">
+              <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
+                {formError ? (
                   <Badge color="red" dot>
                     {formError}
                   </Badge>
-                </span>
-              ) : null}
+                ) : state.balance.status === 'error' ? (
+                  <span
+                    onClick={() => {
+                      switchChain(state.network?.identifiers?.chainId!);
+                    }}
+                    role="button"
+                  >
+                    <Badge color="yellow" dot>
+                      {`Unknown balance. Please change the network on ${state.method?.name} to ${state.network?.name}.`}
+                    </Badge>
+                  </span>
+                ) : feeError ? (
+                  <Badge color="red" dot>
+                    {`You don't have enough ${state.network.symbol} to complete this transaction.`}
+                  </Badge>
+                ) : state.maxLimit.status === 'success' ? (
+                  <motion.span
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    onClick={() => {
+                      if (!inputRef.current) return;
+                      if (formValue.inputSelected === 'fiat') toggleBase();
+                      inputRef.current.value = maxLimitFormatted;
+                      setFormValue({
+                        ...formValue,
+                        base: maxLimitFormatted,
+                        inputSelected: 'crypto',
+                      });
+                    }}
+                    role="button"
+                  >
+                    <Badge color="blue">
+                      {/* @ts-ignore */}
+                      <span className="whitespace-nowrap">
+                        Max: {maxLimitFormatted} {state.asset.name}
+                      </span>
+                    </Badge>
+                  </motion.span>
+                ) : null}
+              </span>
               {state.method.value !== 'isWalletConnect' ? (
                 <WindowEthereum
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
-                    state.transaction?.status === 'loading'
+                    state.transaction?.status === 'loading' ||
+                    state.balance.status === 'error' ||
+                    formError === INSUFFICIENT_FUNDS ||
+                    feeError
                   }
                   ref={connectRef}
                   setFormError={setFormError}
@@ -332,7 +431,12 @@ const EnterAmount: React.FC<Props> = () => {
               ) : (
                 <WalletConnect
                   amount={amount}
-                  disabled={state.depositAddress.status === 'loading'}
+                  disabled={
+                    state.depositAddress.status === 'loading' ||
+                    state.balance.status === 'error' ||
+                    formError === INSUFFICIENT_FUNDS ||
+                    feeError
+                  }
                 />
               )}
             </div>

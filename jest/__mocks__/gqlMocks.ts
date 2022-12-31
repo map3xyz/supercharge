@@ -15,10 +15,15 @@ export const mocks: MockedResponse[] = [
     mappedAssetId: 'elon123',
     networkCode: 'ethereum',
   }),
+  getAssetByMappedAssetIdAndNetworkCodeMock({
+    mappedAssetId: 'elon123',
+    networkCode: 'polygon',
+  }),
   searchAssetsMock(),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
   getNetworksMock(),
   getMethodsMock({ chainId: null }),
   getMethodsMock({ chainId: 1 }),
+  getMethodsMock({ chainId: 137 }),
 ];

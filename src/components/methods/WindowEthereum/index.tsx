@@ -37,7 +37,8 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
       }
 
       const web3Provider = new ethers.providers.Web3Provider(
-        selectedProvider || window.ethereum
+        selectedProvider || window.ethereum,
+        'any'
       );
       dispatch({ payload: web3Provider, type: 'SET_PROVIDER_SUCCESS' });
 

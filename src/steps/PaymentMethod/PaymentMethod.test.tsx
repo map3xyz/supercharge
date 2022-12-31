@@ -47,6 +47,7 @@ describe('Payment Selection', () => {
       jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
         addChain: jest.fn(),
         authorizeTransactionProxy: jest.fn(),
+        getBalance: jest.fn(),
         getChainID: jest.fn(),
         providers: { MetaMask: true },
         sendTransaction: jest.fn(),
