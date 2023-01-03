@@ -45,19 +45,17 @@ export const usePrebuildTx = () => {
       } else {
         estimatedGas = await state.provider?.data?.estimateGas?.(tx);
       }
-      const gasPriceWei: number =
-        await state.provider?.data?.provider?.request?.({
-          method: 'eth_gasPrice',
-          params: [],
-        });
+      const gasPrice: number = await state.provider?.data?.provider?.request?.({
+        method: 'eth_gasPrice',
+        params: [],
+      });
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
       const gasLimit = estimatedGas.toNumber();
-      const gasPriceGwei = ethers.utils.formatUnits(gasPriceWei || 0, 'gwei');
-      const gasPrice = parseFloat(gasPriceGwei);
-      const feeGwei = (gasPrice * gasLimit).toFixed(0);
+      const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
+      const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(0);
       const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
 
       if (state.asset?.type === 'asset') {

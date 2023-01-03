@@ -151,7 +151,7 @@ export const useWeb3 = () => {
     });
   };
 
-  const sendTransaction = async () => {
+  const sendTransaction = async (amount: string) => {
     if (!state.account.data) {
       throw new Error('No account');
     }
@@ -167,8 +167,9 @@ export const useWeb3 = () => {
         params: [
           {
             ...state.prebuiltTx.data?.tx,
-            gasLimit: state.prebuiltTx.data?.gasLimit.toString(),
-            gasPrice: state.prebuiltTx.data?.gasPrice.toString(),
+            gas: state.prebuiltTx.data?.gasLimit.toString(16),
+            gasPrice: state.prebuiltTx.data?.gasPrice.toString(16),
+            value: ethers.utils.parseEther(amount).toHexString(),
           },
         ],
       });

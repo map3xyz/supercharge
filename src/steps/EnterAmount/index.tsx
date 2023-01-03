@@ -141,7 +141,7 @@ const EnterAmount: React.FC<Props> = () => {
     };
 
     run();
-  }, [state.provider?.status, state.account.status, loading, error, amount]);
+  }, [state.provider?.status, state.account.status, loading, error]);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -180,16 +180,7 @@ const EnterAmount: React.FC<Props> = () => {
         amount
       );
 
-      const currentChainId = await getChainID();
-
-      if (
-        state.network?.identifiers?.chainId &&
-        Number(currentChainId) !== state.network?.identifiers?.chainId
-      ) {
-        await switchChain(state.network?.identifiers?.chainId);
-      }
-
-      await sendTransaction();
+      await sendTransaction(amount);
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
       console.log(e.message);
@@ -355,6 +346,11 @@ const EnterAmount: React.FC<Props> = () => {
                   <Badge color="red" dot>
                     {formError}
                   </Badge>
+                ) : state.prebuiltTx.status === 'loading' ? (
+                  <Badge color="blue">
+                    {/* @ts-ignore */}
+                    {<i className="fa fa-gear animate-spin" />}
+                  </Badge>
                 ) : state.prebuiltTx.status === 'error' ? (
                   <Badge color="yellow" dot>
                     {/* @ts-ignore */}
@@ -372,7 +368,7 @@ const EnterAmount: React.FC<Props> = () => {
                       {state.network?.name}.
                     </span>
                   </Badge>
-                ) : state.prebuiltTx.error ? (
+                ) : state.prebuiltTx.data?.feeError ? (
                   <Badge color="red" dot>
                     {`You don't have enough ${state.network.symbol} to complete this transaction.`}
                   </Badge>
@@ -410,6 +406,7 @@ const EnterAmount: React.FC<Props> = () => {
                   disabled={
                     state.depositAddress.status === 'loading' ||
                     state.transaction?.status === 'loading' ||
+                    state.prebuiltTx.status !== 'success' ||
                     state.prebuiltTx.data?.feeError ||
                     formError === INSUFFICIENT_FUNDS
                   }
@@ -421,6 +418,7 @@ const EnterAmount: React.FC<Props> = () => {
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
+                    state.prebuiltTx.status !== 'success' ||
                     state.prebuiltTx.data?.feeError ||
                     formError === INSUFFICIENT_FUNDS
                   }
