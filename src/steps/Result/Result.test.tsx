@@ -29,8 +29,8 @@ jest.mock('ethers', () => {
 const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
 
 const getBalanceMock = jest.fn().mockImplementation(() => ({
-  assetBalance: ethers.BigNumber.from(100000),
-  chainBalance: ethers.BigNumber.from(2000),
+  assetBalance: ethers.BigNumber.from('100000000'),
+  chainBalance: ethers.BigNumber.from('20000000000000000000'),
 }));
 
 beforeEach(() => {
@@ -86,11 +86,7 @@ describe('Result', () => {
       act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+      await screen.findByText(/Max: 100/);
       await screen.findByText('Confirm Payment');
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');

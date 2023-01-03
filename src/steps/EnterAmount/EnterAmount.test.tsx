@@ -12,8 +12,8 @@ import EnterAmount from '.';
 const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
 
 const getBalanceMock = jest.fn().mockImplementation(() => ({
-  assetBalance: ethers.BigNumber.from(100000),
-  chainBalance: ethers.BigNumber.from(2000),
+  assetBalance: ethers.BigNumber.from('100000000'),
+  chainBalance: ethers.BigNumber.from('20000000000000000000'),
 }));
 
 jest.mock('ethers', () => {
@@ -407,11 +407,8 @@ describe('window.ethereum > ERC20', () => {
       testingUtils.clearAllMocks();
     });
     it('should handle erc20 transaction', async () => {
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+      await screen.findByText(/Max: 100/);
+      screen.debug();
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
@@ -485,11 +482,7 @@ describe('txAuth - Failure', () => {
       testingUtils.clearAllMocks();
     });
     it('should not authorize transaction', async () => {
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+      await screen.findByText(/Max: 100/);
       act(() => {
         const form = screen.getByTestId('enter-amount-form');
         fireEvent.submit(form);
@@ -564,11 +557,7 @@ describe('txAuth - Success', () => {
       testingUtils.clearAllMocks();
     });
     it('should authorize transaction', async () => {
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+      await screen.findByText(/Max: 100/);
       await act(async () => {
         const form = screen.getByTestId('enter-amount-form');
         fireEvent.submit(form);
