@@ -416,7 +416,7 @@ describe('window.ethereum > ERC20', () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
-      expect(mockSendTransaction).toHaveBeenCalledWith();
+      expect(mockSendTransaction).toHaveBeenCalledWith('1.000000');
       expect(
         await screen.findByText('Transaction Submitted')
       ).toBeInTheDocument();

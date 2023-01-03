@@ -47,13 +47,8 @@ const EnterAmount: React.FC<Props> = () => {
       },
     });
 
-  const {
-    addChain,
-    authorizeTransactionProxy,
-    getChainID,
-    sendTransaction,
-    switchChain,
-  } = useWeb3();
+  const { addChain, authorizeTransactionProxy, sendTransaction, switchChain } =
+    useWeb3();
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
