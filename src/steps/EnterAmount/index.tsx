@@ -170,8 +170,6 @@ const EnterAmount: React.FC<Props> = () => {
         throw new Error('Deposit address not found.');
       }
 
-      console.log(state.prebuiltTx);
-
       if (state.prebuiltTx.status !== 'success') {
         throw new Error('Prebuilt transaction not found.');
       }
@@ -194,6 +192,7 @@ const EnterAmount: React.FC<Props> = () => {
       await sendTransaction();
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
+      console.log(e.message);
       if (e.message?.includes(CHAIN_MISSING)) {
         try {
           await addChain();

@@ -43,24 +43,19 @@ export const usePrebuildTx = () => {
           ethers.utils.parseUnits(amount, decimals).toString()
         );
       } else {
-        estimatedGas = await state.provider?.data?.estimateGas(tx);
+        estimatedGas = await state.provider?.data?.estimateGas?.(tx);
       }
-      const feeData = await state.provider?.data?.getFeeData();
-      if (!feeData) {
-        throw new Error('Unable to get gas price.');
-      }
-      if (!feeData.gasPrice) {
-        feeData.gasPrice = BigNumber.from(0);
-      }
+      const gasPriceWei: number =
+        await state.provider?.data?.provider?.request?.({
+          method: 'eth_gasPrice',
+          params: [],
+        });
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
       const gasLimit = estimatedGas.toNumber();
-      const gasPriceGwei = ethers.utils.formatUnits(
-        feeData?.gasPrice || 0,
-        'gwei'
-      );
+      const gasPriceGwei = ethers.utils.formatUnits(gasPriceWei || 0, 'gwei');
       const gasPrice = parseFloat(gasPriceGwei);
       const feeGwei = (gasPrice * gasLimit).toFixed(0);
       const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
