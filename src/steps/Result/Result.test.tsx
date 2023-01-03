@@ -59,7 +59,7 @@ describe('Result', () => {
   afterEach(() => {
     testingUtils.clearAllMocks();
   });
-  fdescribe('success', () => {
+  describe('success', () => {
     beforeEach(async () => {
       web3MockSpy.mockImplementation(() => ({
         addChain: jest.fn(),

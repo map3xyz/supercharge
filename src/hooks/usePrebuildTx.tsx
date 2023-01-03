@@ -96,7 +96,7 @@ export const usePrebuildTx = () => {
   };
 
   useEffect(() => {
-    dispatch({ type: 'SET_PREBUILT_TX_LOADING' });
+    dispatch({ type: 'SET_PREBUILT_TX_IDLE' });
   }, [state.provider?.status, state.account?.status]);
 
   return { prebuildTx };
