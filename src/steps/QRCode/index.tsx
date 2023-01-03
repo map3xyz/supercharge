@@ -108,14 +108,17 @@ const QRCode: React.FC<Props> = () => {
                         ? '1px solid #404040'
                         : '1px solid #e5e5e5',
                   }}
-                  value={state.depositAddress.data}
+                  value={state.depositAddress.data.address}
                 />
               </div>
               <div className="w-full">
                 <label className="text-neutral-500:text-white text-xs">
                   Deposit Address
                 </label>
-                <ReadOnlyText copyButton value={state.depositAddress.data} />
+                <ReadOnlyText
+                  copyButton
+                  value={state.depositAddress.data.address}
+                />
               </div>
             </div>
           )}

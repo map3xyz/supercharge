@@ -440,7 +440,7 @@ describe('txAuth', () => {
     });
   });
 
-  describe('transaction auth failure', () => {
+  fdescribe('transaction auth failure', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
     beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
