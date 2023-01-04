@@ -357,7 +357,10 @@ const EnterAmount: React.FC<Props> = () => {
                   </span>
                 ) : state.prebuiltTx.data?.feeError ? (
                   <Badge color="red" dot>
-                    {`You don't have enough ${state.network?.symbol} to complete this transaction.`}
+                    {`You need at least ${ethers.utils.formatEther(
+                      state.prebuiltTx.data.gasPrice *
+                        state.prebuiltTx.data.gasLimit
+                    )} ${state.network?.symbol} to complete this transaction.`}
                   </Badge>
                 ) : state.prebuiltTx.status === 'success' ? (
                   <motion.span
