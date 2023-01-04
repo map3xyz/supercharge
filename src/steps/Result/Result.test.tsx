@@ -86,7 +86,7 @@ describe('Result', () => {
       act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
-      await screen.findByText(/Max: 100/);
+      await screen.findByText(/Max: 100 ElonCoin/);
       await screen.findByText('Confirm Payment');
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');

@@ -17,7 +17,7 @@ import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
-const INSUFFICIENT_FUNDS = 'Amount exceeds maximum limit.';
+const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -120,7 +120,7 @@ const EnterAmount: React.FC<Props> = () => {
     );
 
     if (maxLimitRaw.lt(cryptoAmtWei)) {
-      setFormError(INSUFFICIENT_FUNDS);
+      setFormError(INSUFFICIENT_FUNDS + state.asset?.symbol + ' balance.');
     } else {
       setFormError(undefined);
     }
@@ -147,6 +147,17 @@ const EnterAmount: React.FC<Props> = () => {
         quote: formValue.base,
       }));
     }
+  };
+
+  const setMax = () => {
+    if (!inputRef.current) return;
+    if (formValue.inputSelected === 'fiat') toggleBase();
+    inputRef.current.value = state.prebuiltTx.data!.maxLimitFormatted;
+    setFormValue({
+      ...formValue,
+      base: state.prebuiltTx.data!.maxLimitFormatted,
+      inputSelected: 'crypto',
+    });
   };
 
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
@@ -320,42 +331,43 @@ const EnterAmount: React.FC<Props> = () => {
             </div>
             <div className="relative w-full">
               <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
-                {formError ? (
+                {formError?.includes(INSUFFICIENT_FUNDS) ? (
+                  <motion.span
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    onClick={setMax}
+                    role="button"
+                  >
+                    <Badge color="red" dot>
+                      {formError}
+                    </Badge>
+                  </motion.span>
+                ) : formError ? (
                   <Badge color="red" dot>
                     {formError}
                   </Badge>
                 ) : state.prebuiltTx.status === 'loading' ? (
-                  <Badge color="blue">
-                    {/* @ts-ignore */}
-                    {<i className="fa fa-gear animate-spin" />}
-                  </Badge>
+                  <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
+                    {<i className="fa fa-gear text-xs" />}
+                  </span>
                 ) : state.prebuiltTx.data?.feeError ? (
                   <Badge color="red" dot>
-                    {`You don't have enough ${state.network.symbol} to complete this transaction.`}
+                    {`You don't have enough ${state.network?.symbol} to complete this transaction.`}
                   </Badge>
                 ) : state.prebuiltTx.status === 'success' ? (
                   <motion.span
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     initial={{ opacity: 0 }}
-                    onClick={() => {
-                      if (!inputRef.current) return;
-                      if (formValue.inputSelected === 'fiat') toggleBase();
-                      inputRef.current.value =
-                        state.prebuiltTx.data!.maxLimitFormatted;
-                      setFormValue({
-                        ...formValue,
-                        base: state.prebuiltTx.data!.maxLimitFormatted,
-                        inputSelected: 'crypto',
-                      });
-                    }}
+                    onClick={setMax}
                     role="button"
                   >
                     <Badge color="blue">
                       {/* @ts-ignore */}
                       <span className="whitespace-nowrap">
                         Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
-                        {state.asset.name}
+                        {state.asset.symbol}
                       </span>
                     </Badge>
                   </motion.span>
@@ -369,7 +381,7 @@ const EnterAmount: React.FC<Props> = () => {
                     state.transaction?.status === 'loading' ||
                     state.prebuiltTx.status !== 'success' ||
                     state.prebuiltTx.data?.feeError ||
-                    formError === INSUFFICIENT_FUNDS
+                    !!formError?.includes(INSUFFICIENT_FUNDS)
                   }
                   ref={connectRef}
                   setFormError={setFormError}
@@ -381,7 +393,7 @@ const EnterAmount: React.FC<Props> = () => {
                     state.depositAddress.status === 'loading' ||
                     state.prebuiltTx.status !== 'success' ||
                     state.prebuiltTx.data?.feeError ||
-                    formError === INSUFFICIENT_FUNDS
+                    !!formError?.includes(INSUFFICIENT_FUNDS)
                   }
                 />
               )}

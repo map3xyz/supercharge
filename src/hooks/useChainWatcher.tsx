@@ -9,7 +9,6 @@ export const useChainWatcher = () => {
     if (state.provider?.status !== 'success') return;
 
     state.provider?.data?.on?.('network', ({ chainId }) => {
-      console.log('network', chainId);
       dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
     });
   }, [state.provider?.status]);
