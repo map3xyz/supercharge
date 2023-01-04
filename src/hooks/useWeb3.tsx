@@ -144,15 +144,32 @@ export const useWeb3 = () => {
       dispatch({ type: 'SET_TRANSACTION_LOADING' });
     }
     let hash;
+
+    const decimals = state.asset?.decimals || 18;
+    const memo = state.depositAddress.data?.memo;
+
+    let data = state.prebuiltTx.data?.tx.data;
+    let value = ethers.utils.parseEther(amount).toHexString();
+    if (state.asset?.type === 'asset') {
+      value = '0x0';
+      data =
+        new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
+          state.prebuiltTx.data?.tx.to,
+          ethers.utils.parseUnits(amount, decimals).toString(),
+        ]) +
+        (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
+    }
+
     try {
       hash = await state.provider?.data?.provider?.request?.({
         method: 'eth_sendTransaction',
         params: [
           {
             ...state.prebuiltTx.data?.tx,
+            data,
             gas: state.prebuiltTx.data?.gasLimit.toString(16),
             gasPrice: state.prebuiltTx.data?.gasPrice.toString(16),
-            value: ethers.utils.parseEther(amount).toHexString(),
+            value,
           },
         ],
       });
