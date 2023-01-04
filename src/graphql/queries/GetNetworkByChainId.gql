@@ -1,0 +1,5 @@
+query GetNetworkByChainId($chainId: Int!) {
+  networkByChainId(chainId: $chainId) {
+    ...NetworkFields
+  }
+}

@@ -3,7 +3,7 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { CONSOLE_API_URL, GAS_LIMIT } from '../constants';
+import { CONSOLE_API_URL } from '../constants';
 import { Context, Steps } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
@@ -40,14 +40,6 @@ export const useWeb3 = () => {
     return setProviders({});
   }, []);
 
-  useEffect(() => {
-    if (state.provider?.status !== 'success') return;
-
-    state.provider.data?.on?.('network', ({ chainId }) => {
-      dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
-    });
-  }, [state.provider?.status]);
-
   const authorizeTransactionProxy = async (
     fromAddress?: string,
     network?: Maybe<string> | undefined,
@@ -74,15 +66,6 @@ export const useWeb3 = () => {
     assetBalance: ethers.BigNumber;
     chainBalance: ethers.BigNumber;
   }> => {
-    const currentChainId = await getChainID();
-
-    if (
-      state.network?.identifiers?.chainId &&
-      Number(currentChainId) !== state.network?.identifiers?.chainId
-    ) {
-      throw new Error('Wrong network');
-    }
-
     let assetBalance = ethers.BigNumber.from(0);
     if (address) {
       const contract = new ethers.Contract(
@@ -120,11 +103,11 @@ export const useWeb3 = () => {
 
   const addChain = async () => {
     if (!state.network) {
-      throw new Error('No network');
+      throw new Error('No network selected.');
     }
 
     if (!state.network.identifiers?.chainId) {
-      throw new Error('No chainId');
+      throw new Error('No Chain ID.');
     }
 
     const rpcs: { [key in number]: any } = await fetch(
@@ -151,42 +134,9 @@ export const useWeb3 = () => {
     });
   };
 
-  const sendTransaction = async (
-    amount: string,
-    address: string,
-    memo?: string,
-    isErc20?: boolean,
-    assetContract?: string | null
-  ) => {
+  const sendTransaction = async (amount: string) => {
     if (!state.account.data) {
       throw new Error('No account');
-    }
-
-    if (isErc20 && !assetContract) {
-      throw new Error('No asset contract');
-    }
-
-    const extraGas = memo ? (memo.length / 2) * 16 : 0;
-
-    const txParams = {
-      data: memo || '0x',
-      from: state.account.data,
-      gas: ethers.utils.hexlify(GAS_LIMIT + extraGas),
-      to: address,
-      value: ethers.utils.parseEther(amount).toHexString(),
-    };
-
-    if (isErc20) {
-      txParams.data =
-        new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
-          address,
-          ethers.utils.parseUnits(amount, state.asset?.decimals!),
-        ]) +
-        (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
-
-      txParams.to = assetContract!;
-      txParams.value = '0x0';
-      txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
     }
 
     // @ts-ignore
@@ -197,7 +147,14 @@ export const useWeb3 = () => {
     try {
       hash = await state.provider?.data?.provider?.request?.({
         method: 'eth_sendTransaction',
-        params: [txParams],
+        params: [
+          {
+            ...state.prebuiltTx.data?.tx,
+            gas: state.prebuiltTx.data?.gasLimit.toString(16),
+            gasPrice: state.prebuiltTx.data?.gasPrice.toString(16),
+            value: ethers.utils.parseEther(amount).toHexString(),
+          },
+        ],
       });
       if (!hash) {
         throw new Error('No transaction hash.');

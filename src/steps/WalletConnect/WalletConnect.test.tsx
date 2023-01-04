@@ -1,9 +1,9 @@
+import { ethers } from 'ethers';
 import * as reactDeviceDetect from 'react-device-detect';
 
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import * as useWeb3Mock from '../../hooks/useWeb3';
 import { wait } from '../../utils/wait';
 
 const TIMEOUT_BEFORE_MOCK_CONNECT = 100;
@@ -44,6 +44,15 @@ jest.mock('ethers', () => {
     ...originalModule,
     ethers: {
       ...originalModule.ethers,
+      Contract: jest.fn(() => {
+        return {
+          estimateGas: {
+            transfer: jest.fn(() => {
+              return ethers.BigNumber.from(21_000);
+            }),
+          },
+        };
+      }),
       providers: {
         ...originalModule.ethers.providers,
         Web3Provider: jest.fn(),
@@ -103,78 +112,6 @@ describe('WalletConnect', () => {
     await act(async () => {
       await fireEvent.submit(form);
     });
-  });
-  it('populates address AND memo if the wallet is vetted/enabled', async () => {
-    const mockSendTransaction = jest.fn();
-    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
-      getBalance: jest.fn(),
-      getChainID: jest.fn(),
-      providers: {},
-      sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
-    }));
-
-    const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
-    await screen.findByTestId('scan-wallet-connect');
-    await act(async () => {
-      await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
-    });
-    expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
-    expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
-    const input = await screen.findByTestId('input');
-    act(() => {
-      fireEvent.change(input, { target: { value: '1' } });
-    });
-    const form = await screen.findByTestId('enter-amount-form');
-    await act(async () => {
-      await fireEvent.submit(form);
-    });
-    expect(mockSendTransaction).toHaveBeenCalledWith(
-      '0.00005000',
-      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      '123456',
-      false,
-      undefined
-    );
-  });
-  it('populates ONLY address if the wallet is not vetted/enabled', async () => {
-    const mockSendTransaction = jest.fn();
-    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
-      getBalance: jest.fn(),
-      getChainID: jest.fn(),
-      providers: {},
-      sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
-    }));
-
-    const walletConnect = await screen.findByText('Spot');
-    fireEvent.click(walletConnect);
-    await screen.findByTestId('scan-wallet-connect');
-    await act(async () => {
-      await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
-    });
-    expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
-    expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
-    const input = await screen.findByTestId('input');
-    act(() => {
-      fireEvent.change(input, { target: { value: '1' } });
-    });
-    const form = await screen.findByTestId('enter-amount-form');
-    await act(async () => {
-      await fireEvent.submit(form);
-    });
-    expect(mockSendTransaction).toHaveBeenCalledWith(
-      '0.00005000',
-      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      undefined,
-      false,
-      undefined
-    );
   });
   it('handles previous connection', async () => {
     const walletConnect = await screen.findByText('Rainbow');

@@ -48,7 +48,7 @@ describe('App', () => {
     render(
       <App
         config={{
-          address: '0x123ElonAddress',
+          address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async () => {
             return { address: '0x0000000000000000000000000000000000000000' };

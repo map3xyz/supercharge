@@ -95,8 +95,6 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
 
     useEffect(() => {
       connect();
-
-      return () => dispatch({ type: 'SET_PROVIDER_IDLE' });
     }, []);
 
     if (!state.method || !state.method?.value) return null;
@@ -126,7 +124,6 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
         htmlType="submit"
         loading={
           state.account.status === 'loading' ||
-          state.depositAddress.status === 'loading' ||
           state.transaction?.status === 'loading'
         }
         size="medium"

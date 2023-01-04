@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import {
@@ -6,15 +6,17 @@ import {
   Network,
   PaymentMethod,
 } from '../../generated/apollo-gql';
+import { PrebuiltTx } from '../../utils/transactions/evm';
 
 export enum Steps {
   'AssetSelection' = 0,
   'NetworkSelection' = 1,
   'PaymentMethod' = 2,
-  'EnterAmount' = 3,
-  'WalletConnect' = 4,
-  'QRCode' = 5,
-  'Result' = 6,
+  'SwitchChain' = 3,
+  'EnterAmount' = 4,
+  'WalletConnect' = 5,
+  'QRCode' = 6,
+  'Result' = 7,
   __LENGTH,
 }
 
@@ -33,25 +35,25 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
-  balance: {
-    data:
-      | { assetBalance: ethers.BigNumber; chainBalance: ethers.BigNumber }
-      | undefined;
-    error?: string;
-    status: RemoteType;
-  };
   depositAddress: {
-    data: string | undefined;
+    data?: { address: string; memo?: string };
     status: RemoteType;
   };
   fiat?: string;
-  maxLimit: {
-    data: string | undefined;
+  method?: PaymentMethod & { description?: string };
+  network?: Network;
+  prebuiltTx: {
+    data?: {
+      feeError: boolean;
+      gasLimit: number;
+      gasPrice: number;
+      maxLimitFormatted: string;
+      maxLimitRaw: BigNumber;
+      tx: PrebuiltTx;
+    };
     error?: string;
     status: RemoteType;
   };
-  method?: PaymentMethod & { description?: string };
-  network?: Network;
   provider?: {
     data?: ethers.providers.Web3Provider;
     error?: string;
@@ -76,7 +78,10 @@ type Action =
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
-  | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
+  | {
+      payload: { address: string; memo?: string };
+      type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS';
+    }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' }
@@ -101,11 +106,21 @@ type Action =
     }
   | { payload: string; type: 'SET_BALANCE_ERROR' }
   | { type: 'SET_BALANCE_IDLE' }
-  | { type: 'SET_MAX_LIMIT_LOADING' }
-  | { payload: string; type: 'SET_MAX_LIMIT_SUCCESS' }
-  | { payload: string; type: 'SET_MAX_LIMIT_ERROR' }
-  | { type: 'SET_MAX_LIMIT_IDLE' }
-  | { payload: number; type: 'SET_PROVIDER_CHAIN_ID' };
+  | { type: 'SET_PREBUILT_TX_LOADING' }
+  | {
+      payload: {
+        feeError: boolean;
+        gasLimit: number;
+        gasPrice: number;
+        maxLimitFormatted: string;
+        maxLimitRaw: BigNumber;
+        tx: PrebuiltTx;
+      };
+      type: 'SET_PREBUILT_TX_SUCCESS';
+    }
+  | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
+  | { type: 'SET_PREBUILT_TX_IDLE' }
+  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' };
 
 const initialState: State = {
   account: {
@@ -113,23 +128,18 @@ const initialState: State = {
     status: 'idle',
   },
   asset: undefined,
-  balance: {
-    data: undefined,
-    error: undefined,
-    status: 'idle',
-  },
   depositAddress: {
     data: undefined,
     status: 'idle',
   },
   fiat: undefined,
-  maxLimit: {
+  method: undefined,
+  network: undefined,
+  prebuiltTx: {
     data: undefined,
     error: undefined,
     status: 'idle',
   },
-  method: undefined,
-  network: undefined,
   provider: {
     data: undefined,
     error: undefined,
@@ -266,73 +276,37 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
-        case 'SET_BALANCE_SUCCESS':
+        case 'SET_PREBUILT_TX_SUCCESS':
           return {
             ...state,
-            balance: {
+            prebuiltTx: {
               data: action.payload,
               error: undefined,
               status: 'success',
             },
           };
-        case 'SET_BALANCE_ERROR':
+        case 'SET_PREBUILT_TX_ERROR':
           return {
             ...state,
-            balance: {
+            prebuiltTx: {
               data: undefined,
               error: action.payload,
               status: 'error',
             },
           };
-        case 'SET_BALANCE_LOADING':
+        case 'SET_PREBUILT_TX_LOADING':
           return {
             ...state,
-            balance: {
+            prebuiltTx: {
               data: undefined,
               error: undefined,
               status: 'loading',
             },
           };
-        case 'SET_BALANCE_IDLE':
+        case 'SET_PREBUILT_TX_IDLE':
           return {
             ...state,
-            balance: {
-              data: undefined,
-              error: undefined,
-              status: 'idle',
-            },
-          };
-        case 'SET_MAX_LIMIT_SUCCESS':
-          return {
-            ...state,
-            maxLimit: {
-              data: action.payload,
-              error: undefined,
-              status: 'success',
-            },
-          };
-        case 'SET_MAX_LIMIT_ERROR':
-          return {
-            ...state,
-            maxLimit: {
-              data: undefined,
-              error: action.payload,
-              status: 'error',
-            },
-          };
-        case 'SET_MAX_LIMIT_LOADING':
-          return {
-            ...state,
-            maxLimit: {
-              data: undefined,
-              error: undefined,
-              status: 'loading',
-            },
-          };
-        case 'SET_MAX_LIMIT_IDLE':
-          return {
-            ...state,
-            balance: {
+            prebuiltTx: {
               data: undefined,
               error: undefined,
               status: 'idle',

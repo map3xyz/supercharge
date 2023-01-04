@@ -11,15 +11,13 @@ import WindowEthereum, {
   ConnectHandler,
 } from '../../components/methods/WindowEthereum';
 import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
-import { useDepositAddress } from '../../hooks/useDepositAddress';
-import { useMaxLimit } from '../../hooks/useMaxLimit';
+import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
-const CHAIN_MISSING = 'Unrecognized chain ID';
-const INSUFFICIENT_FUNDS = 'Amount exceeds maximum limit.';
+const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -48,42 +46,8 @@ const EnterAmount: React.FC<Props> = () => {
       },
     });
 
-  const {
-    addChain,
-    authorizeTransactionProxy,
-    getBalance,
-    getChainID,
-    sendTransaction,
-    switchChain,
-  } = useWeb3();
-  const { feeError, maxLimitFormatted, maxLimitRaw } = useMaxLimit();
-  const { getDepositAddress } = useDepositAddress();
-
-  useEffect(() => {
-    if (loading || error) return;
-    if (state.account.status !== 'success') return;
-    if (state.provider?.status !== 'success') return;
-    const run = async () => {
-      try {
-        dispatch({ type: 'SET_BALANCE_LOADING' });
-        const balance = await getBalance(
-          data?.assetByMappedAssetIdAndNetworkCode?.address
-        );
-        dispatch({ payload: balance, type: 'SET_BALANCE_SUCCESS' });
-      } catch (e: any) {
-        dispatch({ payload: e.message, type: 'SET_BALANCE_ERROR' });
-      }
-    };
-
-    run();
-  }, [
-    loading,
-    error,
-    state.account.status,
-    state.provider?.status,
-    state.providerChainId,
-    data?.assetByMappedAssetIdAndNetworkCode?.address,
-  ]);
+  const { authorizeTransactionProxy, sendTransaction } = useWeb3();
+  const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -146,6 +110,8 @@ const EnterAmount: React.FC<Props> = () => {
       setFormError(undefined);
       return;
     }
+    if (!state.prebuiltTx.data?.maxLimitFormatted) return;
+    const { maxLimitRaw } = state.prebuiltTx.data;
     const cryptoAmt =
       formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
     const cryptoAmtWei = ethers.utils.parseUnits(
@@ -153,12 +119,22 @@ const EnterAmount: React.FC<Props> = () => {
       state.asset?.decimals || DECIMAL_FALLBACK
     );
 
-    if (maxLimitRaw.lt(cryptoAmtWei) && state.balance.status === 'success') {
-      setFormError(INSUFFICIENT_FUNDS);
+    if (maxLimitRaw.lt(cryptoAmtWei)) {
+      setFormError(INSUFFICIENT_FUNDS + state.asset?.symbol + ' balance.');
     } else {
       setFormError(undefined);
     }
-  }, [formValue.base, formValue.quote]);
+  }, [formValue.base, formValue.quote, state.prebuiltTx.data?.maxLimitRaw]);
+
+  useEffect(() => {
+    if (loading || error) return;
+
+    const run = async () => {
+      prebuildTx(amount, data?.assetByMappedAssetIdAndNetworkCode?.address);
+    };
+
+    run();
+  }, [state.provider?.status, state.account.status, loading, error]);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -173,6 +149,17 @@ const EnterAmount: React.FC<Props> = () => {
     }
   };
 
+  const setMax = () => {
+    if (!inputRef.current) return;
+    if (formValue.inputSelected === 'fiat') toggleBase();
+    inputRef.current.value = state.prebuiltTx.data!.maxLimitFormatted;
+    setFormValue({
+      ...formValue,
+      base: state.prebuiltTx.data!.maxLimitFormatted,
+      inputSelected: 'crypto',
+    });
+  };
+
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     try {
       e?.preventDefault();
@@ -183,45 +170,23 @@ const EnterAmount: React.FC<Props> = () => {
         return;
       }
 
+      if (state.depositAddress.status !== 'success') {
+        throw new Error('Deposit address not found.');
+      }
+
+      if (state.prebuiltTx.status !== 'success') {
+        throw new Error('Prebuilt transaction not found.');
+      }
+
       await authorizeTransactionProxy(
         state.account.data,
         state.network?.networkCode,
         amount
       );
 
-      const currentChainId = await getChainID();
-
-      if (
-        state.network?.identifiers?.chainId &&
-        Number(currentChainId) !== state.network?.identifiers?.chainId
-      ) {
-        console.log(switchChain);
-        await switchChain(state.network?.identifiers?.chainId);
-      }
-
-      const { address, memo } = await getDepositAddress(
-        state.method?.flags?.memo || false
-      );
-
-      await sendTransaction(
-        amount,
-        address,
-        memo,
-        state.asset?.type === 'asset',
-        data?.assetByMappedAssetIdAndNetworkCode?.address
-      );
+      await sendTransaction(amount);
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
-      if (e.message?.includes(CHAIN_MISSING)) {
-        try {
-          await addChain();
-          handleSubmit();
-          return;
-        } catch (addChainError) {
-          e = addChainError as Error;
-        }
-      }
-
       if (e.message) {
         setFormError(e.message);
       }
@@ -370,46 +335,46 @@ const EnterAmount: React.FC<Props> = () => {
             </div>
             <div className="relative w-full">
               <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
-                {formError ? (
-                  <Badge color="red" dot>
-                    {formError}
-                  </Badge>
-                ) : state.balance.status === 'error' ? (
-                  <span
-                    onClick={() => {
-                      switchChain(state.network?.identifiers?.chainId!);
-                    }}
-                    role="button"
-                  >
-                    <Badge color="yellow" dot>
-                      {`Unknown balance. Please change the network on ${state.method?.name} to ${state.network?.name}.`}
-                    </Badge>
-                  </span>
-                ) : feeError ? (
-                  <Badge color="red" dot>
-                    {`You don't have enough ${state.network.symbol} to complete this transaction.`}
-                  </Badge>
-                ) : state.maxLimit.status === 'success' ? (
+                {formError?.includes(INSUFFICIENT_FUNDS) ? (
                   <motion.span
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     initial={{ opacity: 0 }}
-                    onClick={() => {
-                      if (!inputRef.current) return;
-                      if (formValue.inputSelected === 'fiat') toggleBase();
-                      inputRef.current.value = maxLimitFormatted;
-                      setFormValue({
-                        ...formValue,
-                        base: maxLimitFormatted,
-                        inputSelected: 'crypto',
-                      });
-                    }}
+                    onClick={setMax}
+                    role="button"
+                  >
+                    <Badge color="red" dot>
+                      {formError}
+                    </Badge>
+                  </motion.span>
+                ) : formError ? (
+                  <Badge color="red" dot>
+                    {formError}
+                  </Badge>
+                ) : state.prebuiltTx.status === 'loading' ? (
+                  <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
+                    {<i className="fa fa-gear text-xs" />}
+                  </span>
+                ) : state.prebuiltTx.data?.feeError ? (
+                  <Badge color="red" dot>
+                    {`You need at least ${ethers.utils.formatEther(
+                      state.prebuiltTx.data.gasPrice *
+                        state.prebuiltTx.data.gasLimit
+                    )} ${state.network?.symbol} to complete this transaction.`}
+                  </Badge>
+                ) : state.prebuiltTx.status === 'success' ? (
+                  <motion.span
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    onClick={setMax}
                     role="button"
                   >
                     <Badge color="blue">
                       {/* @ts-ignore */}
                       <span className="whitespace-nowrap">
-                        Max: {maxLimitFormatted} {state.asset.name}
+                        Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
+                        {state.asset.symbol}
                       </span>
                     </Badge>
                   </motion.span>
@@ -421,9 +386,9 @@ const EnterAmount: React.FC<Props> = () => {
                   disabled={
                     state.depositAddress.status === 'loading' ||
                     state.transaction?.status === 'loading' ||
-                    state.balance.status === 'error' ||
-                    formError === INSUFFICIENT_FUNDS ||
-                    feeError
+                    state.prebuiltTx.status !== 'success' ||
+                    state.prebuiltTx.data?.feeError ||
+                    !!formError?.includes(INSUFFICIENT_FUNDS)
                   }
                   ref={connectRef}
                   setFormError={setFormError}
@@ -433,9 +398,9 @@ const EnterAmount: React.FC<Props> = () => {
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
-                    state.balance.status === 'error' ||
-                    formError === INSUFFICIENT_FUNDS ||
-                    feeError
+                    state.prebuiltTx.status !== 'success' ||
+                    state.prebuiltTx.data?.feeError ||
+                    !!formError?.includes(INSUFFICIENT_FUNDS)
                   }
                 />
               )}

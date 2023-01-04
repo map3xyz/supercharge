@@ -1,6 +1,7 @@
 import {
   GetMappedNetworksForAssetDocument,
   GetMappedNetworksForAssetQueryVariables,
+  GetNetworkByChainIdDocument,
   GetNetworksDocument,
 } from '../../../src/generated/apollo-gql';
 
@@ -53,6 +54,24 @@ export const getMappedNetworksForOrgMock = (
     data: {
       __typename: 'Query',
       mappedNetworksForAssetByOrg: networksForAssetMockResult,
+    },
+  },
+});
+
+export const getNetworkByChainIdMock = (chainId: number) => ({
+  request: {
+    query: GetNetworkByChainIdDocument,
+    variables: {
+      chainId,
+    },
+  },
+  result: {
+    data: {
+      __typename: 'Query',
+      networkByChainId:
+        chainId === 1
+          ? networksForAssetMockResult[0]
+          : networksForAssetMockResult[1],
     },
   },
 });
