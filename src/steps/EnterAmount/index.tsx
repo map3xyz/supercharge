@@ -170,6 +170,10 @@ const EnterAmount: React.FC<Props> = () => {
         return;
       }
 
+      if (state.depositAddress.status !== 'success') {
+        throw new Error('Deposit address not found.');
+      }
+
       if (state.prebuiltTx.status !== 'success') {
         throw new Error('Prebuilt transaction not found.');
       }
