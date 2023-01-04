@@ -40,14 +40,6 @@ export const useWeb3 = () => {
     return setProviders({});
   }, []);
 
-  useEffect(() => {
-    if (state.provider?.status !== 'success') return;
-
-    state.provider.data?.on?.('network', ({ chainId }) => {
-      dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
-    });
-  }, [state.provider?.status]);
-
   const authorizeTransactionProxy = async (
     fromAddress?: string,
     network?: Maybe<string> | undefined,
@@ -74,15 +66,6 @@ export const useWeb3 = () => {
     assetBalance: ethers.BigNumber;
     chainBalance: ethers.BigNumber;
   }> => {
-    const currentChainId = await getChainID();
-
-    if (
-      state.network?.identifiers?.chainId &&
-      Number(currentChainId) !== state.network?.identifiers?.chainId
-    ) {
-      throw new Error('Wrong network');
-    }
-
     let assetBalance = ethers.BigNumber.from(0);
     if (address) {
       const contract = new ethers.Contract(
@@ -120,11 +103,11 @@ export const useWeb3 = () => {
 
   const addChain = async () => {
     if (!state.network) {
-      throw new Error('No network');
+      throw new Error('No network selected.');
     }
 
     if (!state.network.identifiers?.chainId) {
-      throw new Error('No chainId');
+      throw new Error('No Chain ID.');
     }
 
     const rpcs: { [key in number]: any } = await fetch(

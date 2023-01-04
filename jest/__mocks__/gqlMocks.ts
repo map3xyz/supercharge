@@ -2,7 +2,11 @@ import { MockedResponse } from '@apollo/client/testing';
 
 import { getAssetByMappedAssetIdAndNetworkCodeMock } from './asset';
 import { getAssetsForOrgMock, searchAssetsMock } from './assets';
-import { getMappedNetworksForOrgMock, getNetworksMock } from './networks';
+import {
+  getMappedNetworksForOrgMock,
+  getNetworkByChainIdMock,
+  getNetworksMock,
+} from './networks';
 import { getMethodsMock } from './payment-methods';
 
 export const mocks: MockedResponse[] = [
@@ -24,6 +28,8 @@ export const mocks: MockedResponse[] = [
   searchAssetsMock(),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
+  getNetworkByChainIdMock(1),
+  getNetworkByChainIdMock(137),
   getNetworksMock(),
   getMethodsMock({ chainId: null }),
   getMethodsMock({ chainId: 1 }),

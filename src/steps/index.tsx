@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
+import { useChainWatcher } from '../hooks/useChainWatcher';
 import { Context, Steps } from '../providers/Store';
 import AssetSelection from '../steps/AssetSelection';
 import EnterAmount from '../steps/EnterAmount';
@@ -11,10 +12,12 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import QRCode from '../steps/QRCode';
 import Result from './Result';
+import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   const [state, dispatch] = useContext(Context);
+  useChainWatcher();
 
   const { step, steps } = state;
 
@@ -74,6 +77,17 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 key={Steps[step]}
               >
                 <PaymentMethod />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.SwitchChain] && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="h-full"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <SwitchChain />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.EnterAmount] && (

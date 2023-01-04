@@ -17,7 +17,6 @@ import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
-const CHAIN_MISSING = 'Unrecognized chain ID';
 const INSUFFICIENT_FUNDS = 'Amount exceeds maximum limit.';
 
 const EnterAmount: React.FC<Props> = () => {
@@ -47,8 +46,7 @@ const EnterAmount: React.FC<Props> = () => {
       },
     });
 
-  const { addChain, authorizeTransactionProxy, sendTransaction, switchChain } =
-    useWeb3();
+  const { authorizeTransactionProxy, sendTransaction } = useWeb3();
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
@@ -161,10 +159,6 @@ const EnterAmount: React.FC<Props> = () => {
         return;
       }
 
-      if (state.depositAddress.status !== 'success') {
-        throw new Error('Deposit address not found.');
-      }
-
       if (state.prebuiltTx.status !== 'success') {
         throw new Error('Prebuilt transaction not found.');
       }
@@ -178,17 +172,6 @@ const EnterAmount: React.FC<Props> = () => {
       await sendTransaction(amount);
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
-      console.log(e.message);
-      if (e.message?.includes(CHAIN_MISSING)) {
-        try {
-          await addChain();
-          handleSubmit();
-          return;
-        } catch (addChainError) {
-          e = addChainError as Error;
-        }
-      }
-
       if (e.message) {
         setFormError(e.message);
       }
@@ -345,23 +328,6 @@ const EnterAmount: React.FC<Props> = () => {
                   <Badge color="blue">
                     {/* @ts-ignore */}
                     {<i className="fa fa-gear animate-spin" />}
-                  </Badge>
-                ) : state.prebuiltTx.status === 'error' ? (
-                  <Badge color="yellow" dot>
-                    {/* @ts-ignore */}
-                    <span>
-                      Unknown balance.{' '}
-                      <span
-                        className="cursor-pointer text-blue-600 underline"
-                        onClick={() => {
-                          switchChain(state.network?.identifiers?.chainId!);
-                        }}
-                      >
-                        Click here
-                      </span>{' '}
-                      to change the network on {state.method?.name} to{' '}
-                      {state.network?.name}.
-                    </span>
                   </Badge>
                 ) : state.prebuiltTx.data?.feeError ? (
                   <Badge color="red" dot>

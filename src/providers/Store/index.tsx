@@ -12,10 +12,11 @@ export enum Steps {
   'AssetSelection' = 0,
   'NetworkSelection' = 1,
   'PaymentMethod' = 2,
-  'EnterAmount' = 3,
-  'WalletConnect' = 4,
-  'QRCode' = 5,
-  'Result' = 6,
+  'SwitchChain' = 3,
+  'EnterAmount' = 4,
+  'WalletConnect' = 5,
+  'QRCode' = 6,
+  'Result' = 7,
   __LENGTH,
 }
 
@@ -119,7 +120,7 @@ type Action =
     }
   | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
   | { type: 'SET_PREBUILT_TX_IDLE' }
-  | { payload: number; type: 'SET_PROVIDER_CHAIN_ID' };
+  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' };
 
 const initialState: State = {
   account: {

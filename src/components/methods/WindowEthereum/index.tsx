@@ -95,8 +95,6 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
 
     useEffect(() => {
       connect();
-
-      return () => dispatch({ type: 'SET_PROVIDER_IDLE' });
     }, []);
 
     if (!state.method || !state.method?.value) return null;
