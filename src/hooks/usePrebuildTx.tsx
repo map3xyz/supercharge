@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
