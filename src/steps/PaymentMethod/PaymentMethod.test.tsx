@@ -48,7 +48,7 @@ describe('Payment Selection', () => {
         addChain: jest.fn(),
         authorizeTransactionProxy: jest.fn(),
         getBalance: jest.fn(),
-        getChainID: jest.fn(),
+        getChainId: jest.fn(),
         providers: { MetaMask: true },
         sendTransaction: jest.fn(),
         switchChain: jest.fn(),

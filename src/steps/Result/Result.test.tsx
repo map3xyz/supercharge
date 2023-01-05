@@ -53,6 +53,15 @@ describe('Result', () => {
     providerType: 'MetaMask',
   });
   beforeAll(() => {
+    web3MockSpy.mockImplementation(() => ({
+      addChain: jest.fn(),
+      authorizeTransactionProxy: jest.fn(),
+      getBalance: getBalanceMock,
+      getChainId: jest.fn(),
+      providers: {},
+      sendTransaction: jest.fn(),
+      switchChain: jest.fn(),
+    }));
     global.window.ethereum = testingUtils.getProvider();
     global.window.ethereum.providers = [testingUtils.getProvider()];
   });
@@ -61,15 +70,6 @@ describe('Result', () => {
   });
   describe('success', () => {
     beforeEach(async () => {
-      web3MockSpy.mockImplementation(() => ({
-        addChain: jest.fn(),
-        authorizeTransactionProxy: jest.fn(),
-        getBalance: getBalanceMock,
-        getChainID: jest.fn(),
-        providers: {},
-        sendTransaction: jest.fn(),
-        switchChain: jest.fn(),
-      }));
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);

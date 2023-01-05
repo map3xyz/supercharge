@@ -358,7 +358,7 @@ describe('window.ethereum > ERC20', () => {
       addChain: jest.fn(),
       authorizeTransactionProxy: jest.fn(),
       getBalance: getBalanceMock,
-      getChainID: jest.fn(),
+      getChainId: jest.fn(),
       providers: {},
       sendTransaction: mockSendTransaction,
       switchChain: jest.fn(),
@@ -408,7 +408,6 @@ describe('window.ethereum > ERC20', () => {
     });
     it('should handle erc20 transaction', async () => {
       await screen.findByText(/Max: 100/);
-      screen.debug();
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
@@ -432,7 +431,7 @@ describe('txAuth - Failure', () => {
       addChain: jest.fn(),
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      getChainID: jest.fn(),
+      getChainId: jest.fn(),
       providers: {},
       sendTransaction: mockSendTransaction,
       switchChain: jest.fn(),
@@ -508,7 +507,7 @@ describe('txAuth - Success', () => {
       addChain: jest.fn(),
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      getChainID: jest.fn(),
+      getChainId: jest.fn(),
       providers: {},
       sendTransaction: mockSendTransaction,
       switchChain: jest.fn(),
