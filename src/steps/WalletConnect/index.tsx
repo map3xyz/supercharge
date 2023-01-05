@@ -37,6 +37,12 @@ const WalletConnect: React.FC<Props> = () => {
       type: 'SET_STEPS',
     });
 
+    const chainId = state.network?.identifiers?.chainId;
+    if (!chainId) {
+      throw new Error('No chainId.');
+    }
+
+    dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
     dispatch({ payload: provider, type: 'SET_PROVIDER_SUCCESS' });
     dispatch({ payload: account, type: 'SET_ACCOUNT_SUCCESS' });
     dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
@@ -93,13 +99,6 @@ const WalletConnect: React.FC<Props> = () => {
 
         dispatch({ type: 'SET_PROVIDER_IDLE' });
         dispatch({ type: 'SET_ACCOUNT_IDLE' });
-        if (
-          externalProvider.connector.peerMeta?.name?.includes(
-            state.method?.name || ''
-          )
-        ) {
-          dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
-        }
       });
 
       if (!externalProvider.connector.connected) {
@@ -111,8 +110,7 @@ const WalletConnect: React.FC<Props> = () => {
           !externalProvider.connector.peerMeta?.name?.includes(
             state.method?.name || ''
           ) ||
-          externalProvider.connector.chainId !==
-            state.network?.identifiers?.chainId
+          state.providerChainId !== state.network?.identifiers?.chainId
         ) {
           await localStorage.removeItem('walletconnect');
           await externalProvider.connector.killSession();

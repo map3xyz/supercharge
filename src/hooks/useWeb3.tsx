@@ -83,7 +83,7 @@ export const useWeb3 = () => {
     return { assetBalance, chainBalance };
   };
 
-  const getChainID = async () => {
+  const getChainId = async () => {
     const chainId = await state.provider?.data?.send('eth_chainId', []);
     return chainId;
   };
@@ -186,7 +186,7 @@ export const useWeb3 = () => {
     addChain,
     authorizeTransactionProxy,
     getBalance,
-    getChainID,
+    getChainId,
     providers,
     sendTransaction,
     switchChain,

@@ -65,7 +65,7 @@ describe('Result', () => {
         addChain: jest.fn(),
         authorizeTransactionProxy: jest.fn(),
         getBalance: getBalanceMock,
-        getChainID: jest.fn(),
+        getChainId: jest.fn(),
         providers: {},
         sendTransaction: jest.fn(),
         switchChain: jest.fn(),
