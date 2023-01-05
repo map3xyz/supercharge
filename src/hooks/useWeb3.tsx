@@ -84,22 +84,16 @@ export const useWeb3 = () => {
   };
 
   const getChainID = async () => {
-    const chainId = await state.provider?.data?.provider?.request?.({
-      method: 'eth_chainId',
-      params: [],
-    });
+    const chainId = await state.provider?.data?.send('eth_chainId', []);
     return chainId;
   };
 
   const switchChain = async (chainId: number) => {
-    await state.provider?.data?.provider.request?.({
-      method: 'wallet_switchEthereumChain',
-      params: [
-        {
-          chainId: toHex(chainId),
-        },
-      ],
-    });
+    await state.provider?.data?.send('wallet_switchEthereumChain', [
+      {
+        chainId: toHex(chainId),
+      },
+    ]);
   };
 
   const addChain = async () => {
@@ -129,10 +123,7 @@ export const useWeb3 = () => {
       },
     ];
 
-    await state.provider?.data?.provider.request?.({
-      method: 'wallet_addEthereumChain',
-      params,
-    });
+    await state.provider?.data?.send('wallet_addEthereumChain', params);
   };
 
   const sendTransaction = async (amount: string, assetContract?: string) => {
@@ -154,7 +145,7 @@ export const useWeb3 = () => {
     }
 
     if (!state.prebuiltTx.data?.tx.to) {
-      throw new Error('No to address.');
+      throw new Error('No recipient address.');
     }
 
     let finalTx = buildTx({
@@ -167,16 +158,16 @@ export const useWeb3 = () => {
     });
 
     try {
-      hash = await state.provider?.data?.provider?.request?.({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            ...finalTx,
-            gas: state.prebuiltTx.data?.gasLimit.toString(16),
-            gasPrice: state.prebuiltTx.data?.gasPrice.toString(16),
-          },
-        ],
-      });
+      if (isMobile && state.method?.walletConnect?.mobile?.native) {
+        window.location.href = state.method?.walletConnect?.mobile?.native;
+      }
+      hash = await state.provider?.data?.send('eth_sendTransaction', [
+        {
+          ...finalTx,
+          gas: state.prebuiltTx.data?.gasLimit.toString(16),
+          gasPrice: state.prebuiltTx.data?.gasPrice.toString(16),
+        },
+      ]);
       if (!hash) {
         throw new Error('No transaction hash.');
       }

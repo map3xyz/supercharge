@@ -136,6 +136,18 @@ const EnterAmount: React.FC<Props> = () => {
     run();
   }, [state.provider?.status, state.account.status, loading, error]);
 
+  useEffect(() => {
+    // cleanup
+    return () => {
+      dispatch({
+        type: 'GENERATE_DEPOSIT_ADDRESS_IDLE',
+      });
+      dispatch({
+        type: 'SET_PREBUILT_TX_IDLE',
+      });
+    };
+  }, []);
+
   const toggleBase = () => {
     if (inputRef.current) {
       inputRef.current.value = quoteRef.current!.innerText;
