@@ -99,6 +99,7 @@ const WalletConnect: React.FC<Props> = () => {
 
         dispatch({ type: 'SET_PROVIDER_IDLE' });
         dispatch({ type: 'SET_ACCOUNT_IDLE' });
+        dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
       });
 
       if (!externalProvider.connector.connected) {
@@ -106,14 +107,13 @@ const WalletConnect: React.FC<Props> = () => {
           chainId: state.network?.identifiers?.chainId || 1,
         });
       } else {
-        if (
-          !externalProvider.connector.peerMeta?.name?.includes(
-            state.method?.name || ''
-          ) ||
-          state.providerChainId !== state.network?.identifiers?.chainId
-        ) {
+        const appChange = !externalProvider.connector.peerMeta?.name?.includes(
+          state.method?.name || ''
+        );
+        const chainChange =
+          state.providerChainId !== state.network?.identifiers?.chainId;
+        if (appChange || chainChange) {
           await localStorage.removeItem('walletconnect');
-          await externalProvider.connector.killSession();
           run();
         } else {
           handleConnected(provider, externalProvider.connector.accounts[0]);

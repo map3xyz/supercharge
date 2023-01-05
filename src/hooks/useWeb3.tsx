@@ -84,12 +84,12 @@ export const useWeb3 = () => {
   };
 
   const getChainId = async () => {
-    const chainId = await state.provider?.data?.send('eth_chainId', []);
-    return chainId;
+    const chainId = await state.provider?.data?.send?.('eth_chainId', []);
+    return Number(chainId);
   };
 
   const switchChain = async (chainId: number) => {
-    await state.provider?.data?.send('wallet_switchEthereumChain', [
+    await state.provider?.data?.send?.('wallet_switchEthereumChain', [
       {
         chainId: toHex(chainId),
       },
@@ -123,7 +123,7 @@ export const useWeb3 = () => {
       },
     ];
 
-    await state.provider?.data?.send('wallet_addEthereumChain', params);
+    await state.provider?.data?.send?.('wallet_addEthereumChain', params);
   };
 
   const sendTransaction = async (amount: string, assetContract?: string) => {
@@ -161,7 +161,7 @@ export const useWeb3 = () => {
       if (isMobile && state.method?.walletConnect?.mobile?.native) {
         window.location.href = state.method?.walletConnect?.mobile?.native;
       }
-      hash = await state.provider?.data?.send('eth_sendTransaction', [
+      hash = await state.provider?.data?.send?.('eth_sendTransaction', [
         {
           ...finalTx,
           gas: state.prebuiltTx.data?.gasLimit.toString(16),

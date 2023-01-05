@@ -408,7 +408,6 @@ describe('window.ethereum > ERC20', () => {
     });
     it('should handle erc20 transaction', async () => {
       await screen.findByText(/Max: 100/);
-      screen.debug();
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
