@@ -178,13 +178,23 @@ const EnterAmount: React.FC<Props> = () => {
         throw new Error('Prebuilt transaction not found.');
       }
 
+      if (
+        state.asset?.type === 'asset' &&
+        !data?.assetByMappedAssetIdAndNetworkCode?.address
+      ) {
+        throw new Error('Asset contract not found.');
+      }
+
       await authorizeTransactionProxy(
         state.account.data,
         state.network?.networkCode,
         amount
       );
 
-      await sendTransaction(amount);
+      await sendTransaction(
+        amount,
+        data?.assetByMappedAssetIdAndNetworkCode?.address as string
+      );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } catch (e: any) {
       if (e.message) {
