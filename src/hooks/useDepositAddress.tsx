@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { Context } from '../providers/Store';
 
@@ -32,12 +32,6 @@ export const useDepositAddress = () => {
       throw new Error('Error generating a deposit address.');
     }
   };
-
-  useEffect(() => {
-    dispatch({
-      type: 'GENERATE_DEPOSIT_ADDRESS_IDLE',
-    });
-  }, [state.network?.name, state.asset?.symbol]);
 
   return {
     getDepositAddress,

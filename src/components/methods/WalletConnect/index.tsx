@@ -23,8 +23,7 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
       htmlType="submit"
       loading={
         state.account.status === 'loading' ||
-        state.transaction?.status === 'loading' ||
-        state.depositAddress.status === 'loading'
+        state.transaction?.status === 'loading'
       }
       size="medium"
       type={'default'}

@@ -47,10 +47,10 @@ export const usePrebuildTx = () => {
       } else {
         estimatedGas = await state.provider?.data?.estimateGas?.(tx);
       }
-      const gasPrice: number = await state.provider?.data?.provider?.request?.({
-        method: 'eth_gasPrice',
-        params: [],
-      });
+      const gasPrice: number = await state.provider?.data?.send(
+        'eth_gasPrice',
+        []
+      );
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
@@ -94,10 +94,6 @@ export const usePrebuildTx = () => {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    dispatch({ type: 'SET_PREBUILT_TX_IDLE' });
-  }, [state.provider?.status, state.account?.status]);
 
   return { prebuildTx };
 };
