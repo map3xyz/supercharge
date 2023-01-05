@@ -7,6 +7,7 @@ import { CONSOLE_API_URL } from '../constants';
 import { Context, Steps } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
+import { buildTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
   const [state, dispatch, { authorizeTransaction }] = useContext(Context);
@@ -134,7 +135,7 @@ export const useWeb3 = () => {
     });
   };
 
-  const sendTransaction = async (amount: string) => {
+  const sendTransaction = async (amount: string, assetContract?: string) => {
     if (!state.account.data) {
       throw new Error('No account');
     }
@@ -145,31 +146,34 @@ export const useWeb3 = () => {
     }
     let hash;
 
-    const decimals = state.asset?.decimals || 18;
+    const decimals = state.asset?.decimals;
     const memo = state.depositAddress.data?.memo;
 
-    let data = state.prebuiltTx.data?.tx.data;
-    let value = ethers.utils.parseEther(amount).toHexString();
-    if (state.asset?.type === 'asset') {
-      value = '0x0';
-      data =
-        new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
-          state.prebuiltTx.data?.tx.to,
-          ethers.utils.parseUnits(amount, decimals).toString(),
-        ]) +
-        (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
+    if (!decimals) {
+      throw new Error('No decimals.');
     }
+
+    if (!state.prebuiltTx.data?.tx.to) {
+      throw new Error('No to address.');
+    }
+
+    let finalTx = buildTx({
+      address: state.prebuiltTx.data.tx.to,
+      amount,
+      assetContract,
+      decimals,
+      from: state.account.data,
+      memo,
+    });
 
     try {
       hash = await state.provider?.data?.provider?.request?.({
         method: 'eth_sendTransaction',
         params: [
           {
-            ...state.prebuiltTx.data?.tx,
-            data,
+            ...finalTx,
             gas: state.prebuiltTx.data?.gasLimit.toString(16),
             gasPrice: state.prebuiltTx.data?.gasPrice.toString(16),
-            value,
           },
         ],
       });

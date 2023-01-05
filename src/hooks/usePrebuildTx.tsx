@@ -15,9 +15,11 @@ export const usePrebuildTx = () => {
   const prebuildTx = async (amount: string, assetContract?: string | null) => {
     if (!state.provider?.data) return;
     if (!state.account.data) return;
-    const decimals = state.asset?.decimals || 8;
+    const decimals = state.asset?.decimals;
 
     try {
+      if (!decimals) throw new Error('Unable to get decimals.');
+
       dispatch({ type: 'SET_PREBUILT_TX_LOADING' });
       const { assetBalance, chainBalance } = await getBalance(assetContract);
       const { address, memo } = await getDepositAddress(
