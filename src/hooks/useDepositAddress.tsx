@@ -37,7 +37,7 @@ export const useDepositAddress = () => {
     dispatch({
       type: 'GENERATE_DEPOSIT_ADDRESS_IDLE',
     });
-  }, [state.provider?.status, state.network?.name, state.asset?.symbol]);
+  }, [state.network?.name, state.asset?.symbol]);
 
   return {
     getDepositAddress,
