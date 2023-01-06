@@ -102,12 +102,8 @@ export const useWeb3 = () => {
     }
 
     if (!state.network.identifiers?.chainId) {
-      throw new Error('No Chain ID.');
+      throw new Error('No chainId.');
     }
-
-    const rpcs: { [key in number]: any } = await fetch(
-      (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
-    ).then((res) => res.json());
 
     const params = [
       {
@@ -119,7 +115,9 @@ export const useWeb3 = () => {
           name: state.network.name,
           symbol: state.network.symbol,
         },
-        rpcUrls: rpcs[state.network.identifiers.chainId].rpcs,
+        rpcUrls: [
+          `${CONSOLE_API_URL}/rpcProxy?chainId=${state.network.identifiers?.chainId}`,
+        ],
       },
     ];
 

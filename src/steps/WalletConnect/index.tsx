@@ -51,33 +51,20 @@ const WalletConnect: React.FC<Props> = () => {
   const run = async () => {
     dispatch({ type: 'SET_PROVIDER_LOADING' });
     try {
-      let rpc = '';
-      try {
-        const rpcs = await fetch(
-          (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
-        ).then((res) => res.json());
-        const rpcIndex = Math.floor(
-          Math.random() *
-            rpcs[state.network?.identifiers?.chainId!].rpcs?.length
-        );
-        const rpcsForChain = rpcs[state.network?.identifiers?.chainId!]
-          .rpcs as (string | { url: string })[];
-        const randomRpc = rpcsForChain.length ? rpcsForChain[rpcIndex] : '';
-        if (typeof randomRpc === 'string') {
-          rpc = randomRpc;
-        } else {
-          rpc = randomRpc.url;
-        }
-      } catch (e) {}
+      const chainId = state.network?.identifiers?.chainId;
+      if (!chainId) {
+        throw new Error('No chainId.');
+      }
+      const rpc = `${CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
 
       const externalProvider = await new WalletConnectProvider({
         bridge: 'https://bridge.walletconnect.org',
-        pollingInterval: 15000,
+        // polls mainnet.infura.io, but we don't use it
+        pollingInterval: 100_000_000,
         qrcode: false,
-        rpc: {
-          [state.network?.identifiers?.chainId!]: rpc,
-        },
+        rpc: { [chainId]: rpc },
       });
+      externalProvider.updateRpcUrl(chainId, rpc);
       const provider = new ethers.providers.Web3Provider(
         externalProvider,
         'any'
