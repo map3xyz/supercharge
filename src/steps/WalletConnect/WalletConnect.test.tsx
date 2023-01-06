@@ -28,6 +28,7 @@ const defaults = {
     uri: 'wc:123@1?bridge=bridge.org&key=456',
   },
   enable: jest.fn(),
+  updateRpcUrl: jest.fn(),
 };
 
 const mockDefault = jest.fn(() => defaults);

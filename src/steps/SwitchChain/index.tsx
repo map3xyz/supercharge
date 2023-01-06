@@ -95,9 +95,9 @@ const SwitchChain: React.FC<Props> = () => {
         {loadingCurrentChain ? (
           <LoadingWrapper />
         ) : currentChain ? (
-          <div className="flex justify-between">
+          <div className="flex h-full items-start justify-between">
             <div className="flex w-1/2 flex-col items-center justify-center">
-              <div className="mb-1 whitespace-nowrap text-xs text-neutral-400">
+              <div className="mb-2 whitespace-nowrap text-xs text-neutral-400">
                 Current Network
               </div>
               <CoinLogo
@@ -111,11 +111,11 @@ const SwitchChain: React.FC<Props> = () => {
                 {currentChain.networkByChainId?.name}
               </div>
             </div>
-            <div className="flex items-center justify-center">
+            <div className="flex h-full items-center justify-center">
               <i className="fa fa-arrow-right text-lg text-neutral-400" />
             </div>
             <div className="flex w-1/2 flex-col items-center justify-center">
-              <div className="mb-1 whitespace-nowrap text-xs text-neutral-400">
+              <div className="mb-2 whitespace-nowrap text-xs text-neutral-400">
                 Switch to
               </div>
               <CoinLogo
