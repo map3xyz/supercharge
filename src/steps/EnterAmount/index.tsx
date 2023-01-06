@@ -384,6 +384,11 @@ const EnterAmount: React.FC<Props> = () => {
                         state.prebuiltTx.data.gasLimit
                     )} ${state.network?.symbol} to complete this transaction.`}
                   </Badge>
+                ) : state.prebuiltTx.status === 'error' ? (
+                  <Badge color="red">
+                    {state.prebuiltTx.error ||
+                      'Unknown error building transaction.'}
+                  </Badge>
                 ) : state.prebuiltTx.status === 'success' ? (
                   <motion.span
                     animate={{ opacity: 1 }}
