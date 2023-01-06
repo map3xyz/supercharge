@@ -1,6 +1,7 @@
 # Map3 Payments SDK
 
-![Jest coverage](./badges/coverage-jest%20coverage.svg)
+The Map3 Payments SDK connects crypto apps to Wallets, Exchanges & Bridges,
+enabling cross-chain deposits and increasing volumes.
 
 ## Getting Started
 
