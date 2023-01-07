@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import * as reactDeviceDetect from 'react-device-detect';
 
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -66,7 +67,7 @@ describe('WalletConnect', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async (_asset, _network, memoEnabled) => {
             if (memoEnabled) {
               return {
@@ -76,7 +77,6 @@ describe('WalletConnect', () => {
             }
             return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />

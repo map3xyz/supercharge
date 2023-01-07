@@ -12,6 +12,7 @@ describe('Map3Sdk', () => {
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return { address: '0x0000000000000000000000000000000000000000' };
       },
+      userId: 'test',
     });
     await act(async () => {
       map3.open();
@@ -31,6 +32,7 @@ describe('Map3Sdk', () => {
         return { address: '0x0000000000000000000000000000000000000000' };
       },
       theme: 'dark',
+      userId: 'test',
     });
     await act(async () => {
       map3.open();
@@ -46,6 +48,7 @@ describe('Map3Sdk', () => {
           await new Promise((resolve) => setTimeout(resolve, 1000));
           return { address: '0x0000000000000000000000000000000000000000' };
         },
+        userId: 'test',
       });
     expect(initFn).not.toThrow();
   });
@@ -57,6 +60,7 @@ describe('Map3Sdk', () => {
         anonKey: 'test',
         fiat: 'USD',
         generateDepositAddress: async () => ({ address: '0x000000' }),
+        userId: 'test',
       });
     expect(initFn).not.toThrow();
     expect(warnSpy).toBeCalledWith(
@@ -66,7 +70,7 @@ describe('Map3Sdk', () => {
   it('should throw if no generateDepositAddress function is passed', () => {
     // @ts-expect-error
     const initFn = () => initMap3Sdk({});
-    expect(initFn).toThrow('generateDepositAddress is required');
+    expect(initFn).toThrow('generateDepositAddress is required.');
   });
   it('should throw if no anonKey is passed', () => {
     const initFn = () =>
@@ -77,7 +81,19 @@ describe('Map3Sdk', () => {
           return { address: '0x0000000000000000000000000000000000000000' };
         },
       });
-    expect(initFn).toThrow('anonKey is required');
+    expect(initFn).toThrow('anonKey is required.');
+  });
+  it('should throw if no userId is passed', () => {
+    const initFn = () =>
+      // @ts-expect-error
+      initMap3Sdk({
+        anonKey: 'test',
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+      });
+    expect(initFn).toThrow('userId is required.');
   });
   it('should allow optional rainbowRoad config', () => {
     const initFn = () =>
@@ -88,6 +104,7 @@ describe('Map3Sdk', () => {
           return { address: '0x0000000000000000000000000000000000000000' };
         },
         rainbowRoad: true,
+        userId: 'test',
       });
     expect(initFn).not.toThrow();
   });

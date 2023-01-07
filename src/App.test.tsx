@@ -1,21 +1,11 @@
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { render, screen } from '~/jest/test-utils';
 
 import App from './App';
 
 describe('App', () => {
   it('renders', async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
+    render(<App config={mockConfig} onClose={() => {}} />);
 
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
     const assetSelection = await screen.findByText('Select Asset');
@@ -26,12 +16,8 @@ describe('App', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           assetId: 'satoshi123',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -48,13 +34,9 @@ describe('App', () => {
     render(
       <App
         config={{
+          ...mockConfig,
           address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
           networkCode: 'ethereum',
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -71,12 +53,8 @@ describe('App', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
+          ...mockConfig,
           networkCode: 'bitcoin',
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -93,15 +71,11 @@ describe('App', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           authorizeTransaction: async () => {
             return true;
           },
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
           rainbowRoad: true,
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -115,18 +89,7 @@ describe('App', () => {
     jest.useFakeTimers();
     const closeMock = jest.fn();
 
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={closeMock}
-      />
-    );
+    render(<App config={mockConfig} onClose={closeMock} />);
 
     const closeButton = await screen.findByLabelText('Close');
     expect(closeButton).toBeInTheDocument();

@@ -1,6 +1,7 @@
 import { generateTestingUtils } from 'eth-testing';
 import { ethers } from 'ethers';
 
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -20,18 +21,7 @@ describe('SwitchChain', () => {
     expect(true).toBe(true);
   });
   beforeEach(async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
+    render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
     const elonCoin = await screen.findByText('ElonCoin');
     fireEvent.click(elonCoin);

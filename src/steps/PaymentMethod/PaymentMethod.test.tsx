@@ -1,6 +1,7 @@
 import { generateTestingUtils } from 'eth-testing';
 import * as reactDeviceDetect from 'react-device-detect';
 
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -11,11 +12,7 @@ beforeEach(() => {
   render(
     <App
       config={{
-        anonKey: process.env.CONSOLE_ANON_KEY || '',
-        generateDepositAddress: async () => {
-          return { address: '0x0000000000000000000000000000000000000000' };
-        },
-        theme: 'dark',
+        ...mockConfig,
       }}
       onClose={() => {}}
     />

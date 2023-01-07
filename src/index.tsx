@@ -23,6 +23,7 @@ export interface Map3InitConfig {
   networkCode?: string;
   rainbowRoad?: boolean;
   theme?: 'dark' | 'light';
+  userId: string;
 }
 export class Map3 {
   private onClose: () => void;
@@ -31,10 +32,14 @@ export class Map3 {
 
   constructor(config: Map3InitConfig) {
     if (!config.generateDepositAddress) {
-      throw new Error('generateDepositAddress is required');
+      throw new Error('generateDepositAddress is required.');
     }
     if (!config.anonKey) {
-      throw new Error('anonKey is required');
+      throw new Error('anonKey is required.');
+    }
+
+    if (!config.userId) {
+      throw new Error('userId is required.');
     }
 
     if (!config.theme) {
@@ -106,7 +111,7 @@ export class Map3 {
       }),
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
-        'X-MAP3-USER': '123',
+        'X-MAP3-USER': this.config.userId,
       },
       uri: (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/graphql',
     });

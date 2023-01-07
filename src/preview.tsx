@@ -28,6 +28,7 @@ root.render(
           networkCode: 'polygon',
           rainbowRoad: true,
           theme: 'dark',
+          userId: 'preview-user-id',
         });
         map3.open();
       }}
