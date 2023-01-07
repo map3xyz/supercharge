@@ -22,16 +22,13 @@ export const usePrebuildTx = () => {
 
       dispatch({ type: 'SET_PREBUILT_TX_LOADING' });
       const { assetBalance, chainBalance } = await getBalance(assetContract);
-      const { address, memo } = await getDepositAddress(
-        state.method?.flags?.memo || false
-      );
+      const { address } = await getDepositAddress();
       const tx = buildTx({
         address,
         amount,
         assetContract,
         decimals,
         from: state.account.data,
-        memo,
       });
       let estimatedGas = BigNumber.from(0);
       if (assetContract) {

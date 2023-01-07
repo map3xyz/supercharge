@@ -68,13 +68,7 @@ describe('WalletConnect', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async (_asset, _network, memoEnabled) => {
-            if (memoEnabled) {
-              return {
-                address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-                memo: '123456',
-              };
-            }
+          generateDepositAddress: async (_asset, _network) => {
             return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
           },
         }}

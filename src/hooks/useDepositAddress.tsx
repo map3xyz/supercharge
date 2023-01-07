@@ -5,9 +5,10 @@ import { Context } from '../providers/Store';
 export const useDepositAddress = () => {
   const [state, dispatch, { generateDepositAddress }] = useContext(Context);
 
-  const getDepositAddress = async (
-    memoEnabled: boolean
-  ): Promise<{ address: string; memo?: string }> => {
+  const getDepositAddress = async (): Promise<{
+    address: string;
+    memo?: string;
+  }> => {
     try {
       if (
         state.depositAddress.status === 'success' &&
@@ -16,17 +17,16 @@ export const useDepositAddress = () => {
         return state.depositAddress.data;
       }
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-      const { address, memo } = await generateDepositAddress(
+      const { address } = await generateDepositAddress(
         state.asset?.symbol as string,
-        state.network?.symbol as string,
-        memoEnabled
+        state.network?.symbol as string
       );
       dispatch({
-        payload: { address, memo },
+        payload: { address },
         type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
       });
 
-      return { address, memo };
+      return { address };
     } catch (e) {
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
       throw new Error('Error generating a deposit address.');

@@ -17,10 +17,12 @@ export interface Map3InitConfig {
   fiat?: string;
   generateDepositAddress: (
     asset?: string,
-    network?: string,
-    memoEnabled?: boolean
+    network?: string
   ) => Promise<{ address: string; memo?: string }>;
   networkCode?: string;
+  onClose?: () => void;
+  onFailure?: (coin: string, network: string, error: string) => void;
+  onSuccess?: (coin: string, network: string, txHash: string) => void;
   rainbowRoad?: boolean;
   theme?: 'dark' | 'light';
   userId: string;
@@ -65,14 +67,14 @@ export class Map3 {
 
     this.onClose = () => {
       this.root.unmount();
-      document.body.classList.remove('dark');
+      this.config.onClose?.();
     };
 
     const element = document.createElement('div');
     element.id = 'map3';
     document.body.appendChild(element);
 
-    if (config.theme === 'dark') {
+    if (config.theme === 'dark' && !document.body.classList.contains('dark')) {
       document.body.classList.add('dark');
     }
 

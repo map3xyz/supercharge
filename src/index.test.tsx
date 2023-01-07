@@ -108,4 +108,43 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
   });
+  it('should allow optional onClose', () => {
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        onClose: () => {},
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+  });
+  it('should allow optional onFailure', () => {
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        onFailure: () => {},
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+  });
+  it('should allow optional onSuccess', () => {
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        onSuccess: () => {},
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+  });
 });

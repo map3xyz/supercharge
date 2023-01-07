@@ -136,7 +136,6 @@ export const useWeb3 = () => {
     let hash;
 
     const decimals = state.asset?.decimals;
-    const memo = state.depositAddress.data?.memo;
 
     if (!decimals) {
       throw new Error('No decimals.');
@@ -152,7 +151,6 @@ export const useWeb3 = () => {
       assetContract,
       decimals,
       from: state.account.data,
-      memo,
     });
 
     try {

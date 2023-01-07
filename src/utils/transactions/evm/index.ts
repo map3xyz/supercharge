@@ -15,22 +15,20 @@ export const buildTx = (params: {
   assetContract?: string | null;
   decimals: number;
   from: string;
-  memo?: string;
 }): PrebuiltTx => {
-  const { address, amount, assetContract, decimals, from, memo } = params;
+  const { address, amount, assetContract, decimals, from } = params;
   const txParams = {
-    data: memo || '0x',
+    data: '0x',
     from,
     to: address,
     value: ethers.utils.parseEther(amount).toHexString(),
   };
 
   if (assetContract) {
-    txParams.data =
-      new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
-        address,
-        ethers.utils.parseUnits(amount, decimals).toString(),
-      ]) + (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
+    txParams.data = new ethers.utils.Interface(erc20Abi).encodeFunctionData(
+      'transfer',
+      [address, ethers.utils.parseUnits(amount, decimals).toString()]
+    );
 
     txParams.to = assetContract;
     txParams.value = '0x0';
