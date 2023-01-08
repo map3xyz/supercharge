@@ -22,7 +22,7 @@ const QRCode: React.FC<Props> = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        await getDepositAddress(false);
+        await getDepositAddress();
       } catch (e) {
         console.error(e);
       }

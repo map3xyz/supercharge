@@ -1,3 +1,4 @@
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -5,18 +6,7 @@ import QRCode from '.';
 
 describe('QR Code', () => {
   beforeEach(async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
+    render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
@@ -48,11 +38,10 @@ describe('QR Code Errors', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async () => {
             throw new Error('Test Error');
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />

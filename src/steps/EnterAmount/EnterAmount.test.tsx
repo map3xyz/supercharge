@@ -1,6 +1,8 @@
 import { generateTestingUtils } from 'eth-testing';
 import { ethers } from 'ethers';
 
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
+import { web3Mock } from '~/jest/__mocks__/web3Mock';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -38,18 +40,7 @@ jest.mock('ethers', () => {
 
 describe('Enter Amount', () => {
   beforeEach(async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
+    render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     act(() => {
@@ -181,11 +172,10 @@ describe('window.ethereum', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async () => {
             throw 'Error generating deposit address.';
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -355,25 +345,20 @@ describe('window.ethereum > ERC20', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
+      ...web3Mock,
       getBalance: getBalanceMock,
-      getChainId: jest.fn(),
-      providers: {},
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
             };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -428,18 +413,15 @@ describe('txAuth - Failure', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      getChainId: jest.fn(),
-      providers: {},
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           authorizeTransaction: async () => {
             return false;
           },
@@ -449,7 +431,6 @@ describe('txAuth - Failure', () => {
               memo: 'memo',
             };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -504,18 +485,15 @@ describe('txAuth - Success', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      getChainId: jest.fn(),
-      providers: {},
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           authorizeTransaction: async () => {
             return true;
           },
@@ -525,7 +503,6 @@ describe('txAuth - Success', () => {
               memo: 'memo',
             };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />

@@ -36,7 +36,7 @@ type State = {
   };
   asset?: AssetWithPrice;
   depositAddress: {
-    data?: { address: string; memo?: string };
+    data?: { address: string };
     status: RemoteType;
   };
   fiat?: string;
@@ -172,6 +172,8 @@ export const Store: React.FC<
       network?: string
     ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
+    onFailure?: (error: string, networkCode: string, address?: string) => void;
+    onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     theme?: 'dark' | 'light';
   }>
 > = ({
@@ -181,6 +183,8 @@ export const Store: React.FC<
   fiat,
   generateDepositAddress,
   network,
+  onFailure,
+  onSuccess,
   theme,
 }) => {
   let step = 0;
@@ -397,7 +401,7 @@ export const Store: React.FC<
       value={[
         state,
         dispatch,
-        { authorizeTransaction, generateDepositAddress },
+        { authorizeTransaction, generateDepositAddress, onFailure, onSuccess },
       ]}
     >
       {children}
@@ -417,9 +421,18 @@ export const Context = createContext<
       ) => Promise<Boolean>;
       generateDepositAddress: (
         asset?: string,
-        network?: string,
-        memoEnabled?: boolean
-      ) => Promise<{ address: string; memo?: string }>;
+        network?: string
+      ) => Promise<{ address: string }>;
+      onFailure?: (
+        error: string,
+        networkCode: string,
+        address?: string
+      ) => void;
+      onSuccess?: (
+        txHash: string,
+        networkCode: string,
+        address?: string
+      ) => void;
     }
   ]
 >([
@@ -430,5 +443,7 @@ export const Context = createContext<
       new Promise((resolve) => resolve(true)),
     generateDepositAddress: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
+    onFailure: /* istanbul ignore next */ () => {},
+    onSuccess: /* istanbul ignore next */ () => {},
   },
 ]);

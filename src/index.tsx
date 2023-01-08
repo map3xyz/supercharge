@@ -17,12 +17,15 @@ export interface Map3InitConfig {
   fiat?: string;
   generateDepositAddress: (
     asset?: string,
-    network?: string,
-    memoEnabled?: boolean
+    network?: string
   ) => Promise<{ address: string; memo?: string }>;
   networkCode?: string;
+  onClose?: () => void;
+  onFailure?: (error: string, networkCode: string, address?: string) => void;
+  onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
   rainbowRoad?: boolean;
   theme?: 'dark' | 'light';
+  userId: string;
 }
 export class Map3 {
   private onClose: () => void;
@@ -31,10 +34,14 @@ export class Map3 {
 
   constructor(config: Map3InitConfig) {
     if (!config.generateDepositAddress) {
-      throw new Error('generateDepositAddress is required');
+      throw new Error('generateDepositAddress is required.');
     }
     if (!config.anonKey) {
-      throw new Error('anonKey is required');
+      throw new Error('anonKey is required.');
+    }
+
+    if (!config.userId) {
+      throw new Error('userId is required.');
     }
 
     if (!config.theme) {
@@ -60,14 +67,14 @@ export class Map3 {
 
     this.onClose = () => {
       this.root.unmount();
-      document.body.classList.remove('dark');
+      this.config.onClose?.();
     };
 
     const element = document.createElement('div');
     element.id = 'map3';
     document.body.appendChild(element);
 
-    if (config.theme === 'dark') {
+    if (config.theme === 'dark' && !document.body.classList.contains('dark')) {
       document.body.classList.add('dark');
     }
 
@@ -106,7 +113,7 @@ export class Map3 {
       }),
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
-        'X-MAP3-USER': '123',
+        'X-MAP3-USER': this.config.userId,
       },
       uri: (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/graphql',
     });

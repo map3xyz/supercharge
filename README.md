@@ -22,7 +22,7 @@ enabling cross-chain deposits and increasing volumes.
         const map3 = initMap3Sdk({
           theme: 'dark',
           anonKey: '<ANON_KEY>',
-          generateDepositAddress: async (coin, network, memoEnabled) => {
+          generateDepositAddress: async (coin, network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             return {address: '0x0000000000000000000000000000000000000000'};
