@@ -9,18 +9,18 @@ const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
 
   useEffect(() => {
-    if (state.transaction?.status === 'success' && onSuccess) {
-      onSuccess(
-        state.asset?.symbol || '',
+    if (state.transaction?.status === 'success') {
+      onSuccess?.(
+        state.transaction?.hash || '',
         state.network?.networkCode || '',
-        state.transaction?.hash || ''
+        state.asset?.address || undefined
       );
     }
     if (state.transaction?.status === 'error') {
       onFailure?.(
-        state.asset?.symbol || '',
+        state.transaction.error || '',
         state.network?.networkCode || '',
-        state.transaction.error || ''
+        state.asset?.address || undefined
       );
     }
   }, [state.transaction?.status]);

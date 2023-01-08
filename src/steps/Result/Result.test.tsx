@@ -60,6 +60,9 @@ describe('Result', () => {
       web3MockSpy.mockImplementation(() => ({
         ...web3Mock,
         getBalance: getBalanceMock,
+        sendTransaction: jest.fn().mockImplementation(() => {
+          return Promise.resolve('0x1');
+        }),
       }));
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
@@ -102,7 +105,11 @@ describe('Result', () => {
       expect(await screen.findByText('Select Asset')).toBeInTheDocument();
     });
     it('calls onSuccess callback', async () => {
-      expect(onSuccessMock).toHaveBeenCalled();
+      expect(onSuccessMock).toHaveBeenCalledWith(
+        '0x1',
+        'ethereum',
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
+      );
     });
   });
   describe('failure', () => {
@@ -151,7 +158,11 @@ describe('Result', () => {
       expect(await screen.findByText('Transaction Error')).toBeInTheDocument();
     });
     it('calls onFailure callback', async () => {
-      expect(onFailureMock).toHaveBeenCalled();
+      expect(onFailureMock).toHaveBeenCalledWith(
+        'Transaction failed',
+        'ethereum',
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
+      );
     });
   });
 });

@@ -172,8 +172,8 @@ export const Store: React.FC<
       network?: string
     ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
-    onFailure?: (coin: string, network: string, error: string) => void;
-    onSuccess?: (coin: string, network: string, txHash: string) => void;
+    onFailure?: (error: string, networkCode: string, address?: string) => void;
+    onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     theme?: 'dark' | 'light';
   }>
 > = ({
@@ -423,8 +423,16 @@ export const Context = createContext<
         asset?: string,
         network?: string
       ) => Promise<{ address: string }>;
-      onFailure?: (coin: string, network: string, error: string) => void;
-      onSuccess?: (coin: string, network: string, txHash: string) => void;
+      onFailure?: (
+        error: string,
+        networkCode: string,
+        address?: string
+      ) => void;
+      onSuccess?: (
+        txHash: string,
+        networkCode: string,
+        address?: string
+      ) => void;
     }
   ]
 >([

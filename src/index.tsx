@@ -21,8 +21,8 @@ export interface Map3InitConfig {
   ) => Promise<{ address: string; memo?: string }>;
   networkCode?: string;
   onClose?: () => void;
-  onFailure?: (coin: string, network: string, error: string) => void;
-  onSuccess?: (coin: string, network: string, txHash: string) => void;
+  onFailure?: (error: string, networkCode: string, address?: string) => void;
+  onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
   rainbowRoad?: boolean;
   theme?: 'dark' | 'light';
   userId: string;
