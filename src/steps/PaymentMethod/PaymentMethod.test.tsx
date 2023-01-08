@@ -2,6 +2,7 @@ import { generateTestingUtils } from 'eth-testing';
 import * as reactDeviceDetect from 'react-device-detect';
 
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
+import { web3Mock } from '~/jest/__mocks__/web3Mock';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -42,13 +43,8 @@ describe('Payment Selection', () => {
   describe('WalletConnect', () => {
     it('hides WalletConnect metamask connection if eth provider detected', async () => {
       jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-        addChain: jest.fn(),
-        authorizeTransactionProxy: jest.fn(),
-        getBalance: jest.fn(),
-        getChainId: jest.fn(),
+        ...web3Mock,
         providers: { MetaMask: true },
-        sendTransaction: jest.fn(),
-        switchChain: jest.fn(),
       }));
       const paymentSelection = await screen.findByText('Payment Method');
       expect(paymentSelection).toBeInTheDocument();

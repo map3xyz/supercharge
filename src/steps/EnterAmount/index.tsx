@@ -2,6 +2,7 @@ import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -46,7 +47,8 @@ const EnterAmount: React.FC<Props> = () => {
       },
     });
 
-  const { authorizeTransactionProxy, sendTransaction } = useWeb3();
+  const { authorizeTransactionProxy, sendTransaction, waitForTransaction } =
+    useWeb3();
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
@@ -203,14 +205,21 @@ const EnterAmount: React.FC<Props> = () => {
         amount
       );
 
-      await sendTransaction(
+      if (!isMobile && state.method?.value !== 'isWalletConnect') {
+        dispatch({ type: 'SET_TRANSACTION_LOADING' });
+      }
+      const hash = await sendTransaction(
         amount,
         data?.assetByMappedAssetIdAndNetworkCode?.address as string
       );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+      dispatch({ type: 'SET_TRANSACTION_LOADING' });
+      await waitForTransaction(hash, 1);
+      dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
+        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
       }
       console.error(e);
     }

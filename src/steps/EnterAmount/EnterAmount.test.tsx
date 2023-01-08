@@ -2,6 +2,7 @@ import { generateTestingUtils } from 'eth-testing';
 import { ethers } from 'ethers';
 
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
+import { web3Mock } from '~/jest/__mocks__/web3Mock';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -344,13 +345,9 @@ describe('window.ethereum > ERC20', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
+      ...web3Mock,
       getBalance: getBalanceMock,
-      getChainId: jest.fn(),
-      providers: {},
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
@@ -416,13 +413,10 @@ describe('txAuth - Failure', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      getChainId: jest.fn(),
-      providers: {},
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
@@ -491,13 +485,10 @@ describe('txAuth - Success', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      getChainId: jest.fn(),
-      providers: {},
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App

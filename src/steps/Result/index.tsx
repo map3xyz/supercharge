@@ -1,16 +1,43 @@
 import { ReadOnlyText } from '@map3xyz/components';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
+import ErrorWrapper from '../../components/ErrorWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import { Context } from '../../providers/Store';
+import { Context, Steps } from '../../providers/Store';
 
 const Result: React.FC<Props> = () => {
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
+
+  useEffect(() => {
+    if (state.transaction?.status === 'success' && onSuccess) {
+      onSuccess(
+        state.asset?.symbol || '',
+        state.network?.networkCode || '',
+        state.transaction?.hash || ''
+      );
+    }
+    if (state.transaction?.status === 'error') {
+      onFailure?.(
+        state.asset?.symbol || '',
+        state.network?.networkCode || '',
+        state.transaction.error || ''
+      );
+    }
+  }, [state.transaction?.status]);
 
   return (
     <div className="flex h-full flex-col items-center justify-center">
       {state.transaction?.status === 'loading' ? (
         <LoadingWrapper message="Submitting Transaction..." />
+      ) : state.transaction?.status === 'error' ? (
+        <ErrorWrapper
+          description="There was a problem submitting your transaction."
+          header="Transaction Error"
+          retry={() => {
+            dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+          }}
+          stacktrace={state.transaction?.error}
+        />
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-between">
           <div></div>
