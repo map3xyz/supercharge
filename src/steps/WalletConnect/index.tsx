@@ -99,7 +99,10 @@ const WalletConnect: React.FC<Props> = () => {
           state.providerChainId !== state.network?.identifiers?.chainId;
         if (appChange || chainChange) {
           await localStorage.removeItem('walletconnect');
+          await externalProvider.connector.killSession();
+          await externalProvider.onDisconnect();
           run();
+          dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
         } else {
           handleConnected(provider, externalProvider.connector.accounts[0]);
           return;
