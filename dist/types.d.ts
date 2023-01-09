@@ -4,13 +4,17 @@ export interface Map3InitConfig {
     assetId?: string;
     authorizeTransaction?: (fromAddress: string, network: string, amount: string) => Promise<Boolean>;
     fiat?: string;
-    generateDepositAddress: (asset?: string, network?: string, memoEnabled?: boolean) => Promise<{
+    generateDepositAddress: (asset?: string, network?: string) => Promise<{
         address: string;
         memo?: string;
     }>;
     networkCode?: string;
+    onClose?: () => void;
+    onFailure?: (error: string, networkCode: string, address?: string) => void;
+    onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     rainbowRoad?: boolean;
     theme?: 'dark' | 'light';
+    userId: string;
 }
 export class Map3 {
     constructor(config: Map3InitConfig);

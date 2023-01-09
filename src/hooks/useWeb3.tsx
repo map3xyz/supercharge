@@ -4,13 +4,13 @@ import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
 import { CONSOLE_API_URL } from '../constants';
-import { Context, Steps } from '../providers/Store';
+import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
 import { buildTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
-  const [state, dispatch, { authorizeTransaction }] = useContext(Context);
+  const [state, _, { authorizeTransaction }] = useContext(Context);
   const [providers, setProviders] = useState<{
     [key in string]: boolean;
   }>({});
@@ -129,14 +129,9 @@ export const useWeb3 = () => {
       throw new Error('No account');
     }
 
-    // @ts-ignore
-    if (!isMobile && !state.method?.value === 'isWalletConnect') {
-      dispatch({ type: 'SET_TRANSACTION_LOADING' });
-    }
     let hash;
 
     const decimals = state.asset?.decimals;
-    const memo = state.depositAddress.data?.memo;
 
     if (!decimals) {
       throw new Error('No decimals.');
@@ -152,7 +147,6 @@ export const useWeb3 = () => {
       assetContract,
       decimals,
       from: state.account.data,
-      memo,
     });
 
     try {
@@ -170,14 +164,22 @@ export const useWeb3 = () => {
         throw new Error('No transaction hash.');
       }
 
-      dispatch({ type: 'SET_TRANSACTION_LOADING' });
-      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-      await state.provider?.data?.waitForTransaction(hash, 1);
+      return hash;
     } catch (e: any) {
-      dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
       throw e;
     }
-    dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
+  };
+
+  const waitForTransaction = async (hash: string, confirmations: number) => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    const tx = await state.provider?.data?.waitForTransaction(
+      hash,
+      confirmations
+    );
+    return tx;
   };
 
   return {
@@ -188,5 +190,6 @@ export const useWeb3 = () => {
     providers,
     sendTransaction,
     switchChain,
+    waitForTransaction,
   };
 };
