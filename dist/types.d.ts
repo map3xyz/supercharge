@@ -3,6 +3,10 @@ export interface Map3InitConfig {
     anonKey: string;
     assetId?: string;
     authorizeTransaction?: (fromAddress: string, network: string, amount: string) => Promise<Boolean>;
+    colors?: {
+        progressBar?: string;
+        scrollBar?: string;
+    };
     fiat?: string;
     generateDepositAddress: (asset?: string, network?: string) => Promise<{
         address: string;
