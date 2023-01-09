@@ -1,5 +1,9 @@
 require('jest-fetch-mock').enableMocks();
 
+global.CSS = {
+  supports: (k, v) => false,
+};
+
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
 
