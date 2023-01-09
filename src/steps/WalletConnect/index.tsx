@@ -262,14 +262,28 @@ const WalletConnect: React.FC<Props> = () => {
             {/* @ts-ignore */}
             <Badge color="blue" dot>
               {/* @ts-ignore */}
-              <a
-                className="leading-4"
-                href="https://support.map3.xyz"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Having trouble connecting? Please click here to contact support.
-              </a>
+              <span className="leading-4">
+                Having trouble connecting? Please{' '}
+                <a
+                  className="underline"
+                  href="https://support.map3.xyz"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  click here
+                </a>{' '}
+                to contact support. Or{' '}
+                <a
+                  className="underline"
+                  onClick={async () => {
+                    await localStorage.removeItem('walletconnect');
+                    run();
+                  }}
+                >
+                  here
+                </a>{' '}
+                to create a new WalletConnect session.
+              </span>
             </Badge>
           </MobileView>
           <ReadOnlyText copyButton value={uri} />

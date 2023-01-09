@@ -15,7 +15,7 @@ root.render(
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
+            return { address: '0xd59d78c15Ecc41b8c01382b4a616Ee4eBf1e18Af' };
           },
           networkCode: 'polygon',
           rainbowRoad: true,
