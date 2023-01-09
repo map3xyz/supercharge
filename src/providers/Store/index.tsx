@@ -35,6 +35,10 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
+  colors?: {
+    progressBar?: string;
+    scrollBar?: string;
+  };
   depositAddress: {
     data?: { address: string };
     status: RemoteType;
@@ -166,6 +170,10 @@ export const Store: React.FC<
       network: string,
       amount: string
     ) => Promise<Boolean>;
+    colors?: {
+      progressBar?: string;
+      scrollBar?: string;
+    };
     fiat?: string;
     generateDepositAddress: (
       asset?: string,
@@ -180,6 +188,7 @@ export const Store: React.FC<
   asset,
   authorizeTransaction,
   children,
+  colors,
   fiat,
   generateDepositAddress,
   network,
@@ -393,7 +402,7 @@ export const Store: React.FC<
           return state;
       }
     },
-    { ...initialState, asset, fiat, network, step, theme }
+    { ...initialState, asset, colors, fiat, network, step, theme }
   );
 
   return (

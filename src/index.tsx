@@ -14,6 +14,10 @@ export interface Map3InitConfig {
     network: string,
     amount: string
   ) => Promise<Boolean>;
+  colors?: {
+    progressBar?: string;
+    scrollBar?: string;
+  };
   fiat?: string;
   generateDepositAddress: (
     asset?: string,
@@ -61,6 +65,33 @@ export class Map3 {
 
     if (config.rainbowRoad) {
       document.body.classList.add('rainbow-road');
+    }
+
+    if (config.colors) {
+      const validKeys = ['progressBar', 'scrollBar'];
+      const invalidKeys = Object.keys(config.colors).filter(
+        (key) => !validKeys.includes(key)
+      );
+      if (invalidKeys.length > 0) {
+        console.warn(
+          `Warning: invalid key passed to colors. Valid keys are: ${validKeys.join(
+            ', '
+          )}`
+        );
+      }
+
+      if (config.colors.scrollBar) {
+        if (CSS.supports('color', config.colors.scrollBar)) {
+          document.body.style.setProperty(
+            '--scrollbar-color',
+            config.colors.scrollBar
+          );
+        } else {
+          console.warn(
+            `Warning: invalid value passed to colors.scrollBar. Falling back to default.`
+          );
+        }
+      }
     }
 
     this.config = config;

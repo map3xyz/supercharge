@@ -18,7 +18,6 @@ root.render(
             return { address: '0xd59d78c15Ecc41b8c01382b4a616Ee4eBf1e18Af' };
           },
           networkCode: 'polygon',
-          rainbowRoad: true,
           theme: 'dark',
           userId: 'preview-user-id',
         });

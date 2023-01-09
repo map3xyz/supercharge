@@ -147,4 +147,59 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
   });
+  it('should allow an optional custom.colors', () => {
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        colors: {
+          progressBar: '#000000',
+          scrollBar: '#000000',
+        },
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+  });
+  it('should console.warn if invalid key is passed to colors', () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        colors: {
+          // @ts-expect-error
+          invalidKey: '#000000',
+        },
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: invalid key passed to colors. Valid keys are: progressBar, scrollBar'
+    );
+  });
+  it('should check valid config.colors.scrollBar', () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+    const initFn = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        colors: {
+          scrollBar: 'not-a-color',
+        },
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x0000000000000000000000000000000000000000' };
+        },
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: invalid value passed to colors.scrollBar. Falling back to default.'
+    );
+  });
 });
