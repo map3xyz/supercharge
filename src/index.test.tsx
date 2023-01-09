@@ -147,7 +147,7 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
   });
-  it('should allow an optional customColor', () => {
+  it('should allow an optional custom.colors', () => {
     const initFn = () =>
       initMap3Sdk({
         anonKey: 'test',

@@ -5,8 +5,6 @@ import { Context } from '../../providers/Store';
 const ProgressBar: React.FC<Props> = ({ progress }) => {
   const [state] = useContext(Context);
 
-  console.log(state.colors?.progressBar);
-
   useEffect(() => {
     if (state.colors?.progressBar) {
       const progressBar = document.getElementById('progress-bar');
