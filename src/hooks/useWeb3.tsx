@@ -156,8 +156,8 @@ export const useWeb3 = () => {
       hash = await state.provider?.data?.send?.('eth_sendTransaction', [
         {
           ...finalTx,
-          gas: ethers.utils.hexlify(state.prebuiltTx.data?.gasLimit),
-          gasPrice: ethers.utils.hexlify(state.prebuiltTx.data?.gasPrice),
+          gas: toHex(state.prebuiltTx.data?.gasLimit),
+          gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
         },
       ]);
       if (!hash) {

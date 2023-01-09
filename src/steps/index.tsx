@@ -32,7 +32,12 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             <button
               aria-label="Back"
               className={step === 0 ? 'invisible' : 'visible'}
-              onClick={() => dispatch({ payload: step - 1, type: 'SET_STEP' })}
+              onClick={() => {
+                dispatch({
+                  payload: Steps[state.steps[state.step - 1]],
+                  type: 'SET_STEP',
+                });
+              }}
             >
               <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
             </button>

@@ -59,8 +59,6 @@ const WalletConnect: React.FC<Props> = () => {
 
       const externalProvider = await new WalletConnectProvider({
         bridge: 'https://bridge.walletconnect.org',
-        // polls mainnet.infura.io, but we don't use it
-        pollingInterval: 100_000_000,
         qrcode: false,
         rpc: { [chainId]: rpc },
       });
