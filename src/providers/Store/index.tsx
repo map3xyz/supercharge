@@ -205,12 +205,6 @@ export const Store: React.FC<
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
         case 'SET_STEP':
-          console.log(state.steps);
-          console.log(action.payload);
-          console.log(
-            state.steps.indexOf(Steps[action.payload] as keyof typeof Steps)
-          );
-          debugger
           return {
             ...state,
             step: state.steps.indexOf(
