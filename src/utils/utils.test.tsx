@@ -9,5 +9,7 @@ describe('toHex', () => {
     expect(toHex(16)).toEqual('0x10');
     expect(toHex(255)).toEqual('0xff');
     expect(toHex(256)).toEqual('0x100');
+    expect(toHex(21_000)).toEqual('0x5208');
+    expect(toHex(1_000_000)).toEqual('0xf4240');
   });
 });
