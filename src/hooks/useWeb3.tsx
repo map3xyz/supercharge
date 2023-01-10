@@ -141,12 +141,15 @@ export const useWeb3 = () => {
       throw new Error('No recipient address.');
     }
 
+    const memo = state.depositAddress.data?.memo;
+
     let finalTx = buildTx({
       address: state.prebuiltTx.data.tx.to,
       amount,
       assetContract,
       decimals,
       from: state.account.data,
+      memo,
     });
 
     try {

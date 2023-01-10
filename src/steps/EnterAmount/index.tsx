@@ -139,7 +139,6 @@ const EnterAmount: React.FC<Props> = () => {
   }, [state.provider?.status, state.account.status, loading, error]);
 
   useEffect(() => {
-    // cleanup
     return () => {
       dispatch({
         type: 'GENERATE_DEPOSIT_ADDRESS_IDLE',
