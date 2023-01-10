@@ -40,7 +40,7 @@ type State = {
     scrollBar?: string;
   };
   depositAddress: {
-    data?: { address: string };
+    data?: { address: string; memo?: string };
     status: RemoteType;
   };
   fiat?: string;
@@ -53,6 +53,7 @@ type State = {
       gasPrice: number;
       maxLimitFormatted: string;
       maxLimitRaw: BigNumber;
+      memo?: string;
       tx: PrebuiltTx;
     };
     error?: string;
@@ -118,6 +119,7 @@ type Action =
         gasPrice: number;
         maxLimitFormatted: string;
         maxLimitRaw: BigNumber;
+        memo?: string;
         tx: PrebuiltTx;
       };
       type: 'SET_PREBUILT_TX_SUCCESS';
@@ -177,7 +179,8 @@ export const Store: React.FC<
     fiat?: string;
     generateDepositAddress: (
       asset?: string,
-      network?: string
+      network?: string,
+      memoEnabled?: boolean
     ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
@@ -430,8 +433,9 @@ export const Context = createContext<
       ) => Promise<Boolean>;
       generateDepositAddress: (
         asset?: string,
-        network?: string
-      ) => Promise<{ address: string }>;
+        network?: string,
+        memoEnabled?: boolean
+      ) => Promise<{ address: string; memo?: string }>;
       onFailure?: (
         error: string,
         networkCode: string,

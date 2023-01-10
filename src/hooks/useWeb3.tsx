@@ -147,6 +147,7 @@ export const useWeb3 = () => {
       assetContract,
       decimals,
       from: state.account.data,
+      memo: state.prebuiltTx.data.memo,
     });
 
     try {

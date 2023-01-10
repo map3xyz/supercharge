@@ -22,13 +22,14 @@ export const usePrebuildTx = () => {
 
       dispatch({ type: 'SET_PREBUILT_TX_LOADING' });
       const { assetBalance, chainBalance } = await getBalance(assetContract);
-      const { address } = await getDepositAddress();
+      const { address, memo } = await getDepositAddress();
       const tx = buildTx({
         address,
         amount,
         assetContract,
         decimals,
         from: state.account.data,
+        memo,
       });
       let estimatedGas = BigNumber.from(0);
       if (assetContract) {
@@ -52,7 +53,9 @@ export const usePrebuildTx = () => {
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
-      const gasLimit = estimatedGas.toNumber();
+      const extraGas = memo ? (memo.length / 2) * 16 : 0;
+
+      const gasLimit = estimatedGas.toNumber() + extraGas;
       const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
       const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(0);
       const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
@@ -82,6 +85,7 @@ export const usePrebuildTx = () => {
           gasPrice,
           maxLimitFormatted,
           maxLimitRaw,
+          memo,
           tx,
         },
         type: 'SET_PREBUILT_TX_SUCCESS',

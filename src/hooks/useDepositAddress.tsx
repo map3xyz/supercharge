@@ -17,16 +17,16 @@ export const useDepositAddress = () => {
         return state.depositAddress.data;
       }
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-      const { address } = await generateDepositAddress(
+      const { address, memo } = await generateDepositAddress(
         state.asset?.symbol as string,
         state.network?.symbol as string
       );
       dispatch({
-        payload: { address },
+        payload: { address, memo },
         type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
       });
 
-      return { address };
+      return { address, memo };
     } catch (e) {
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
       throw new Error('Error generating a deposit address.');
