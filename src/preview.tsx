@@ -15,9 +15,12 @@ root.render(
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return { address: '0xd59d78c15Ecc41b8c01382b4a616Ee4eBf1e18Af' };
+            return {
+              address: '0xd59d78c15Ecc41b8c01382b4a616Ee4eBf1e18Af',
+              memo: '0x666f',
+            };
           },
-          networkCode: 'polygon',
+          networkCode: 'goerli',
           theme: 'dark',
           userId: 'preview-user-id',
         });

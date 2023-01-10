@@ -53,6 +53,7 @@ type State = {
       gasPrice: number;
       maxLimitFormatted: string;
       maxLimitRaw: BigNumber;
+      memo?: string;
       tx: PrebuiltTx;
     };
     error?: string;
@@ -118,6 +119,7 @@ type Action =
         gasPrice: number;
         maxLimitFormatted: string;
         maxLimitRaw: BigNumber;
+        memo?: string;
         tx: PrebuiltTx;
       };
       type: 'SET_PREBUILT_TX_SUCCESS';
