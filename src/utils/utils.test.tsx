@@ -11,5 +11,7 @@ describe('toHex', () => {
     expect(toHex(256)).toEqual('0x100');
     expect(toHex(21_000)).toEqual('0x5208');
     expect(toHex(1_000_000)).toEqual('0xf4240');
+    // @ts-expect-error
+    expect(toHex('0x199563048')).toEqual('0x199563048');
   });
 });
