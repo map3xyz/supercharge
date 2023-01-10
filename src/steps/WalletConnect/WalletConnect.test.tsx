@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import * as reactDeviceDetect from 'react-device-detect';
 
+// import * as reactDeviceDetect from 'react-device-detect';
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
@@ -178,81 +178,82 @@ describe('WalletConnect', () => {
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
   });
 
-  describe('Mobile Deeplink', () => {
-    Object.defineProperties(reactDeviceDetect, {
-      BrowserView: {
-        get: () => () => null,
-      },
-      MobileView: {
-        get:
-          () =>
-          ({ children }: any) =>
-            <>{children}</>,
-      },
-      isBrowser: { get: () => false },
-      isMobile: { get: () => true },
-    });
-    it('displays a deeplink on mobile', async () => {
-      const walletConnect = await screen.findByText('Rainbow');
-      fireEvent.click(walletConnect);
-      mockConnect.mockImplementation((event: string, callback: () => void) => {
-        if (event === 'disconnect') {
-          setTimeout(() => {
-            callback();
-          }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
-        }
-      });
-      const rainbow = await screen.findByText('Connect Rainbow');
-      expect(rainbow).toBeInTheDocument();
-    });
-    it('encodes the connector uri if method is not MetaMask', async () => {
-      const walletConnect = await screen.findByText('MetaMask (Mobile)');
-      fireEvent.click(walletConnect);
-      const connectBtn = await screen.findByTestId('connect-app');
-      expect(connectBtn.getAttribute('href')).toBe(
-        'metamask://wc?uri=wc:123@1?bridge=bridge.org&key=456'
-      );
-      const back = await screen.findByLabelText('Back');
-      fireEvent.click(back);
-      const rainbow = await screen.findByText('Rainbow');
-      fireEvent.click(rainbow);
-      const connectBtn2 = await screen.findByTestId('connect-app');
-      expect(connectBtn2.getAttribute('href')).toBe(
-        'rainbow://wc?uri=wc%3A123%401%3Fbridge%3Dbridge.org%26key%3D456'
-      );
-    });
-  });
-
-  describe('Install App', () => {
-    Object.defineProperties(reactDeviceDetect, {
-      BrowserView: {
-        get: () => () => null,
-      },
-      MobileView: {
-        get:
-          () =>
-          ({ children }: any) =>
-            <>{children}</>,
-      },
-      isBrowser: { get: () => false },
-      isIOS: { get: () => true },
-      isMobile: { get: () => true },
-    });
-    it('displays install app button after 1.2 seconds', async () => {
-      const walletConnect = await screen.findByText('Rainbow');
-      fireEvent.click(walletConnect);
-      const rainbow = await screen.findByText('Connect Rainbow');
-      fireEvent.click(rainbow);
-      await act(async () => {
-        await wait(1201);
-      });
-      expect(await screen.findByTestId('install-app')).toBeInTheDocument();
-      expect(
-        await screen.findByLabelText('app-store-badge')
-      ).toBeInTheDocument();
-      expect(
-        await screen.queryByLabelText('google-play-badge')
-      ).not.toBeInTheDocument();
-    });
-  });
+  // TODO: support walletconnect on mobile
+  // describe('Mobile Deeplink', () => {
+  //   Object.defineProperties(reactDeviceDetect, {
+  //     BrowserView: {
+  //       get: () => () => null,
+  //     },
+  //     MobileView: {
+  //       get:
+  //         () =>
+  //         ({ children }: any) =>
+  //           <>{children}</>,
+  //     },
+  //     isBrowser: { get: () => false },
+  //     isMobile: { get: () => true },
+  //   });
+  //   it('displays a deeplink on mobile', async () => {
+  //     const walletConnect = await screen.findByText('Rainbow');
+  //     fireEvent.click(walletConnect);
+  //     mockConnect.mockImplementation((event: string, callback: () => void) => {
+  //       if (event === 'disconnect') {
+  //         setTimeout(() => {
+  //           callback();
+  //         }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
+  //       }
+  //     });
+  //     const rainbow = await screen.findByText('Connect Rainbow');
+  //     expect(rainbow).toBeInTheDocument();
+  //   });
+  //   it('encodes the connector uri if method is not MetaMask', async () => {
+  //     const walletConnect = await screen.findByText('MetaMask (Mobile)');
+  //     fireEvent.click(walletConnect);
+  //     const connectBtn = await screen.findByTestId('connect-app');
+  //     expect(connectBtn.getAttribute('href')).toBe(
+  //       'metamask://wc?uri=wc:123@1?bridge=bridge.org&key=456'
+  //     );
+  //     const back = await screen.findByLabelText('Back');
+  //     fireEvent.click(back);
+  //     const rainbow = await screen.findByText('Rainbow');
+  //     fireEvent.click(rainbow);
+  //     const connectBtn2 = await screen.findByTestId('connect-app');
+  //     expect(connectBtn2.getAttribute('href')).toBe(
+  //       'rainbow://wc?uri=wc%3A123%401%3Fbridge%3Dbridge.org%26key%3D456'
+  //     );
+  //   });
+  // });
+  // TODO: support walletconnect on mobile
+  // describe('Install App', () => {
+  //   Object.defineProperties(reactDeviceDetect, {
+  //     BrowserView: {
+  //       get: () => () => null,
+  //     },
+  //     MobileView: {
+  //       get:
+  //         () =>
+  //         ({ children }: any) =>
+  //           <>{children}</>,
+  //     },
+  //     isBrowser: { get: () => false },
+  //     isIOS: { get: () => true },
+  //     isMobile: { get: () => true },
+  //   });
+  //   it('displays install app button after 1.2 seconds', async () => {
+  //     const walletConnect = await screen.findByText('Rainbow');
+  //     fireEvent.click(walletConnect);
+  //     const rainbow = await screen.findByText('Connect Rainbow');
+  //     fireEvent.click(rainbow);
+  //     await act(async () => {
+  //       await wait(1201);
+  //     });
+  //     expect(await screen.findByTestId('install-app')).toBeInTheDocument();
+  //     expect(
+  //       await screen.findByLabelText('app-store-badge')
+  //     ).toBeInTheDocument();
+  //     expect(
+  //       await screen.queryByLabelText('google-play-badge')
+  //     ).not.toBeInTheDocument();
+  //   });
+  // });
 });

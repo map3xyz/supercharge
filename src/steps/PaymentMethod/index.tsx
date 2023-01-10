@@ -1,6 +1,6 @@
 import { Badge, Input } from '@map3xyz/components';
 import React, { useContext, useRef, useState } from 'react';
-import { isAndroid, isIOS, isMobile } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -51,29 +51,31 @@ const PaymentMethod: React.FC<Props> = () => {
       method?.walletConnect?.chains?.length === 0;
 
     if (isMobile) {
-      // if mobile filter out extensions
+      // if mobile filter out extensions and walletconnect
       if (
         method?.value === 'isMetaMask' ||
-        method?.value === 'isCoinbaseWallet'
+        method?.value === 'isCoinbaseWallet' ||
+        method?.value === 'isWalletConnect'
       )
         return false;
 
-      if (method?.walletConnect && !supportsChain) return false;
+      // TODO: support walletconnect on mobile
+      // if (method?.walletConnect && !supportsChain) return false;
 
-      if (method?.walletConnect) {
-        let app: string | null | undefined = null;
-        if (isIOS) {
-          app = method?.walletConnect?.app?.ios;
-        }
-        if (isAndroid) {
-          app = method?.walletConnect?.app?.android;
-        }
-        const hasAppOrUniversal = !!(
-          app || method?.walletConnect?.mobile?.universal
-        );
+      // if (method?.walletConnect) {
+      //   let app: string | null | undefined = null;
+      //   if (isIOS) {
+      //     app = method?.walletConnect?.app?.ios;
+      //   }
+      //   if (isAndroid) {
+      //     app = method?.walletConnect?.app?.android;
+      //   }
+      //   const hasAppOrUniversal = !!(
+      //     app || method?.walletConnect?.mobile?.universal
+      //   );
 
-        if (!hasAppOrUniversal) return false;
-      }
+      //   if (!hasAppOrUniversal) return false;
+      // }
 
       return true;
     }
