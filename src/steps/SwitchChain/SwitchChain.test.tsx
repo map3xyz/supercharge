@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { web3Mock } from '~/jest/__mocks__/web3Mock';
-import { act, fireEvent, render, screen } from '~/jest/test-utils';
+import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 import * as useWeb3Mock from '../../hooks/useWeb3';
