@@ -98,6 +98,9 @@ describe('Result', () => {
       expect(
         await screen.findByText('Transaction Submitted')
       ).toBeInTheDocument();
+      expect(
+        await screen.findByText('Created Transaction')
+      ).toBeInTheDocument();
     });
     it('lets user start over', async () => {
       const startOver = await screen.findByText('Start Over');

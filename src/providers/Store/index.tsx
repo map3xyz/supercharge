@@ -20,6 +20,14 @@ export enum Steps {
   __LENGTH,
 }
 
+export enum TransactionSteps {
+  'Created' = 0,
+  'Submitted' = 1,
+  'Pending' = 2,
+  '1st Confirmation' = 3,
+  'Confirmed' = 4,
+}
+
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
 
 export type AlertType = {
@@ -69,10 +77,17 @@ type State = {
   step: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
-  transaction?: {
-    error?: string;
-    hash?: string;
-    status: RemoteType;
+  transaction: {
+    progress: {
+      [key in keyof typeof TransactionSteps]: {
+        data?: string;
+        displayType: 'readonly' | 'text';
+        error?: string;
+        status: RemoteType;
+      };
+    };
+    step: number;
+    steps: (keyof typeof TransactionSteps)[];
   };
 };
 
@@ -98,9 +113,6 @@ type Action =
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
   | { payload: string; type: 'SET_PROVIDER_ERROR' }
-  | { payload: string; type: 'SET_TRANSACTION_SUCCESS' }
-  | { payload: string; type: 'SET_TRANSACTION_ERROR' }
-  | { type: 'SET_TRANSACTION_LOADING' }
   | { type: 'SET_BALANCE_LOADING' }
   | {
       payload: {
@@ -126,7 +138,24 @@ type Action =
     }
   | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
   | { type: 'SET_PREBUILT_TX_IDLE' }
-  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' };
+  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
+  | {
+      payload: { steps: (keyof typeof TransactionSteps)[] };
+      type: 'SET_TRANSACTION_PROGRESS_STEPS';
+    }
+  | {
+      payload: {
+        data?: string;
+        displayType?: 'readonly' | 'text';
+        error?: string;
+        status: RemoteType;
+        step: keyof typeof TransactionSteps;
+      };
+      type: 'SET_TRANSACTION';
+    }
+  | {
+      type: 'RESET_TRANSACTION';
+    };
 
 const initialState: State = {
   account: {
@@ -162,6 +191,42 @@ const initialState: State = {
     'Result',
   ],
   theme: undefined,
+  transaction: {
+    progress: {
+      '1st Confirmation': {
+        data: undefined,
+        displayType: 'text',
+        error: undefined,
+        status: 'idle',
+      },
+      Confirmed: {
+        data: undefined,
+        displayType: 'readonly',
+        error: undefined,
+        status: 'idle',
+      },
+      Created: {
+        data: undefined,
+        displayType: 'text',
+        error: undefined,
+        status: 'idle',
+      },
+      Pending: {
+        data: undefined,
+        displayType: 'text',
+        error: undefined,
+        status: 'idle',
+      },
+      Submitted: {
+        data: undefined,
+        displayType: 'text',
+        error: undefined,
+        status: 'idle',
+      },
+    },
+    step: 0,
+    steps: ['Created', 'Submitted', 'Pending', '1st Confirmation', 'Confirmed'],
+  },
 };
 
 export const Store: React.FC<
@@ -369,31 +434,26 @@ export const Store: React.FC<
             ...state,
             providerChainId: action.payload,
           };
-        case 'SET_TRANSACTION_SUCCESS':
+        case 'SET_TRANSACTION':
           return {
             ...state,
             transaction: {
-              error: undefined,
-              hash: action.payload,
-              status: 'success',
+              ...state.transaction,
+              progress: {
+                ...state.transaction.progress,
+                [action.payload.step]: {
+                  ...state.transaction.progress[action.payload.step],
+                  ...action.payload,
+                },
+              },
+              step: TransactionSteps[action.payload.step],
             },
           };
-        case 'SET_TRANSACTION_ERROR':
+        case 'RESET_TRANSACTION':
           return {
             ...state,
             transaction: {
-              error: action.payload,
-              hash: undefined,
-              status: 'error',
-            },
-          };
-        case 'SET_TRANSACTION_LOADING':
-          return {
-            ...state,
-            transaction: {
-              error: undefined,
-              hash: undefined,
-              status: 'loading',
+              ...initialState.transaction,
             },
           };
         case 'RESET_STATE': {

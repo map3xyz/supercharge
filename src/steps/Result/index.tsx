@@ -1,72 +1,152 @@
-import { ReadOnlyText } from '@map3xyz/components';
+import { Badge, CryptoAddress, ReadOnlyText } from '@map3xyz/components';
 import React, { useContext, useEffect } from 'react';
 
-import ErrorWrapper from '../../components/ErrorWrapper';
-import LoadingWrapper from '../../components/LoadingWrapper';
-import { Context, Steps } from '../../providers/Store';
+import InnerWrapper from '../../components/InnerWrapper';
+import MethodIcon from '../../components/MethodIcon';
+import { Context, Steps, TransactionSteps } from '../../providers/Store';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
 
+  if (!state.method) {
+    dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+    return null;
+  }
+
   useEffect(() => {
-    if (state.transaction?.status === 'success') {
+    if (state.transaction.progress.Submitted?.status === 'success') {
       onSuccess?.(
-        state.transaction?.hash || '',
+        state.transaction?.progress.Submitted.data || '',
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
     }
-    if (state.transaction?.status === 'error') {
+    if (state.transaction?.progress.Submitted?.status === 'error') {
       onFailure?.(
-        state.transaction.error || '',
+        state.transaction.progress.Submitted.error || '',
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
     }
-  }, [state.transaction?.status]);
+  }, [state.transaction?.progress.Submitted?.status]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: 'RESET_TRANSACTION',
+      });
+    };
+  }, []);
 
   return (
-    <div className="flex h-full flex-col items-center justify-center">
-      {state.transaction?.status === 'loading' ? (
-        <LoadingWrapper message="Submitting Transaction..." />
-      ) : state.transaction?.status === 'error' ? (
-        <ErrorWrapper
-          description="There was a problem submitting your transaction."
-          header="Transaction Error"
-          retry={() => {
-            dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
-          }}
-          stacktrace={state.transaction?.error}
-        />
-      ) : (
-        <div className="flex h-full w-full flex-col items-center justify-between">
-          <div></div>
-          <div className="flex flex-col items-center gap-2 text-sm font-semibold text-neutral-500">
-            <div>
-              <i className="fa fa-check-circle text-green-600"></i>
-            </div>
-            <div>Transaction Submitted</div>
-            <div className="w-full">
-              <ReadOnlyText
-                copyButton
-                value={state.transaction?.hash || '0x1'}
-              />
-            </div>
-          </div>
-          <div>
-            <a
-              className="mb-2 block text-xs text-blue-600 underline"
-              href=""
-              onClick={(e) => {
-                e.preventDefault();
-                dispatch({ type: 'RESET_STATE' });
-              }}
-            >
-              Start Over
-            </a>
-          </div>
+    <div className="flex h-full flex-col items-center">
+      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+          Send{' '}
+          <Badge color="blue" size="large">
+            {state.asset?.symbol || ''}
+          </Badge>{' '}
+          on the {/* @ts-ignore */}
+          <Badge color="blue" size="large">
+            {state.network?.name || ''} Network
+          </Badge>{' '}
+          via
+          <Badge
+            color={
+              state.account.status === 'loading' ||
+              state.account.status === 'idle'
+                ? 'yellow'
+                : state.account.status === 'error'
+                ? 'red'
+                : 'green'
+            }
+            dot
+            size="large"
+          >
+            {/* @ts-ignore */}
+            <span className="flex items-center gap-1">
+              <MethodIcon method={state.method} /> {state.method.name}{' '}
+              {state.account.status === 'success' && state.account.data ? (
+                <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
+              ) : (
+                ''
+              )}
+            </span>
+          </Badge>
         </div>
-      )}
+      </div>
+      <InnerWrapper className="h-full">
+        {state.transaction.steps.map((step, i) => {
+          return (
+            <div
+              className={`flex min-h-[42px] flex-col ${
+                TransactionSteps[step] <= state.transaction.step
+                  ? ''
+                  : 'opacity-50'
+              }`}
+              key={step}
+            >
+              <div className="flex flex-1">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`flex h-5 min-h-[1.25rem] w-5 items-center justify-center rounded-full border ${
+                      state.transaction.progress[step].status === 'success'
+                        ? 'border-green-800 bg-green-900/50 text-green-500'
+                        : state.transaction.progress[step].status === 'error'
+                        ? 'border-red-800 bg-red-900/50 text-red-500'
+                        : 'border-gray-600 bg-gray-600/50 text-gray-400'
+                    }`}
+                  >
+                    {state.transaction.progress[step].status === 'success' && (
+                      <i className="fas fa-check-circle text-xs" />
+                    )}
+                    {state.transaction.progress[step].status === 'error' && (
+                      <i className="fas fa-times-circle text-xs" />
+                    )}
+                    {state.transaction.progress[step].status === 'loading' && (
+                      <i className="fas fa-spinner animate-spin text-xs" />
+                    )}
+                  </div>
+                  <div
+                    className={`relative my-1 h-full w-[1px] opacity-50 ${
+                      i === state.steps.length - 1 ? 'hidden' : ''
+                    } ${
+                      TransactionSteps[step] < state.transaction.step
+                        ? 'bg-green-500'
+                        : 'bg-gray-400'
+                    }`}
+                  ></div>
+                </div>
+                <div className="ml-2 mb-2 w-full">
+                  <div className="mb-0.5 text-sm font-semibold dark:text-white">
+                    {step}
+                  </div>
+                  {state.transaction.progress[step].status === 'success' &&
+                  state.transaction.progress[step].displayType ===
+                    'readonly' ? (
+                    <ReadOnlyText
+                      copyButton
+                      value={state.transaction.progress[step].data}
+                    />
+                  ) : (
+                    <div className="text-xs text-neutral-500">
+                      {state.transaction.progress[step].data}
+                    </div>
+                  )}
+                  {state.transaction.progress[step].status === 'error' && (
+                    <div className="text-xs text-red-500">
+                      {state.transaction.progress[step].error}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </InnerWrapper>
+      <InnerWrapper className="border-t border-neutral-200 bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800">
+        Transaction Details
+      </InnerWrapper>
     </div>
   );
 };

@@ -204,21 +204,94 @@ const EnterAmount: React.FC<Props> = () => {
         amount
       );
 
-      if (!isMobile && state.method?.value !== 'isWalletConnect') {
-        dispatch({ type: 'SET_TRANSACTION_LOADING' });
-      }
-      const hash = await sendTransaction(
+      dispatch({
+        payload: {
+          data: new Date().toLocaleString(),
+          status: 'success',
+          step: 'Created',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+      dispatch({
+        payload: { status: 'loading', step: 'Submitted' },
+        type: 'SET_TRANSACTION',
+      });
+      const hash: string = await sendTransaction(
         amount,
         data?.assetByMappedAssetIdAndNetworkCode?.address as string
       );
-      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-      dispatch({ type: 'SET_TRANSACTION_LOADING' });
-      await waitForTransaction(hash, 1);
-      dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
+      dispatch({
+        payload: {
+          data: new Date().toLocaleString(),
+          status: 'success',
+          step: 'Submitted',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      dispatch({
+        payload: {
+          data: 'Waiting for your transaction to hit the mempool.',
+          status: 'loading',
+          step: 'Pending',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      let transaction;
+      while (!transaction) {
+        transaction = await state.provider?.data?.getTransaction(hash);
+      }
+      dispatch({
+        payload: {
+          data: 'Transaction detected in mempool.',
+          status: 'success',
+          step: 'Pending',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      dispatch({
+        payload: {
+          data: 'Waiting for the first on-chain confirmation.',
+          status: 'loading',
+          step: '1st Confirmation',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      const txReceipt = await waitForTransaction(hash, 1);
+      dispatch({
+        payload: {
+          data: 'Transaction included in block ' + txReceipt.blockNumber + '.',
+          status: 'success',
+          step: '1st Confirmation',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      dispatch({
+        payload: {
+          data: 'Waiting for 3 confirmations.',
+          displayType: 'text',
+          status: 'loading',
+          step: 'Confirmed',
+        },
+        type: 'SET_TRANSACTION',
+      });
+      await waitForTransaction(hash, 3);
+      dispatch({
+        payload: {
+          data: hash,
+          displayType: 'readonly',
+          status: 'success',
+          step: 'Confirmed',
+        },
+        type: 'SET_TRANSACTION',
+      });
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
-        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
+        dispatch({
+          payload: { error: e.message, status: 'error', step: 'Submitted' },
+          type: 'SET_TRANSACTION',
+        });
       }
       console.error(e);
     }
@@ -420,7 +493,6 @@ const EnterAmount: React.FC<Props> = () => {
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
-                    state.transaction?.status === 'loading' ||
                     state.prebuiltTx.status !== 'success' ||
                     state.prebuiltTx.data?.feeError ||
                     !!formError?.includes(INSUFFICIENT_FUNDS)
