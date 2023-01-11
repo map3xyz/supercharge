@@ -112,7 +112,7 @@ const QRCode: React.FC<Props> = () => {
                 />
               </div>
               <div className="w-full">
-                <label className="text-neutral-500:text-white text-xs">
+                <label className="text-xs text-neutral-500 dark:text-white">
                   Deposit Address
                 </label>
                 <ReadOnlyText

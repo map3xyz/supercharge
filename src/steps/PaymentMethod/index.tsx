@@ -1,5 +1,5 @@
 import { Badge, Input } from '@map3xyz/components';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -19,6 +19,13 @@ const PaymentMethod: React.FC<Props> = () => {
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
     variables: { chainId },
   });
+
+  useEffect(() => {
+    state.provider?.data?.off?.('network');
+    dispatch({ type: 'SET_ACCOUNT_IDLE' });
+    dispatch({ type: 'SET_PROVIDER_IDLE' });
+    dispatch({ payload: undefined, type: 'SET_PROVIDER_CHAIN_ID' });
+  }, []);
 
   if (!state.asset || !state.network) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });

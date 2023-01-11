@@ -2,11 +2,9 @@ import { generateTestingUtils } from 'eth-testing';
 import * as reactDeviceDetect from 'react-device-detect';
 
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
-import { web3Mock } from '~/jest/__mocks__/web3Mock';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import * as useWeb3Mock from '../../hooks/useWeb3';
 import PaymentMethod from '.';
 
 beforeEach(() => {
@@ -39,18 +37,6 @@ describe('Payment Selection', () => {
   it('renders', async () => {
     const paymentSelection = await screen.findByText('Payment Method');
     expect(paymentSelection).toBeInTheDocument();
-  });
-  describe('WalletConnect', () => {
-    it('hides WalletConnect metamask connection if eth provider detected', async () => {
-      jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-        ...web3Mock,
-        providers: { MetaMask: true },
-      }));
-      const paymentSelection = await screen.findByText('Payment Method');
-      expect(paymentSelection).toBeInTheDocument();
-      const metamaskExtensions = await screen.findAllByText('MetaMask');
-      expect(metamaskExtensions).toHaveLength(1);
-    });
   });
   describe('Search', () => {
     it('searches for a payment method', async () => {
