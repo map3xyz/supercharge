@@ -20,11 +20,10 @@ export enum Steps {
   __LENGTH,
 }
 
-export enum TransactionSteps {
-  'Detected' = 0,
-  'Submitted' = 1,
-  'Confirming' = 2,
-  'Crediting' = 3,
+export enum TxSteps {
+  'Submitted' = 0,
+  'Confirming' = 1,
+  'Confirmed' = 2,
 }
 
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
@@ -42,7 +41,6 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
-  block?: number;
   colors?: {
     progressBar?: string;
     scrollBar?: string;
@@ -77,11 +75,11 @@ type State = {
   step: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
-  transaction: {
+  tx: {
     amount?: string;
     hash?: string;
     progress: {
-      [key in keyof typeof TransactionSteps]: {
+      [key in keyof typeof TxSteps]: {
         data?: string;
         error?: string;
         status: RemoteType;
@@ -89,7 +87,7 @@ type State = {
     };
     response?: ethers.providers.TransactionResponse;
     step: number;
-    steps: (keyof typeof TransactionSteps)[];
+    steps: (keyof typeof TxSteps)[];
   };
 };
 
@@ -97,7 +95,6 @@ type Action =
   | { type: 'RESET_STATE' }
   | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
-  | { payload?: number; type: 'SET_BLOCK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
@@ -143,26 +140,26 @@ type Action =
   | { type: 'SET_PREBUILT_TX_IDLE' }
   | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
   | {
-      payload: { steps: (keyof typeof TransactionSteps)[] };
-      type: 'SET_TRANSACTION_PROGRESS_STEPS';
+      payload: { steps: (keyof typeof TxSteps)[] };
+      type: 'SET_TX_PROGRESS_STEPS';
     }
   | {
       payload: {
         data?: string;
         error?: string;
         status: RemoteType;
-        step: keyof typeof TransactionSteps;
+        step: keyof typeof TxSteps;
       };
-      type: 'SET_TRANSACTION';
+      type: 'SET_TX';
     }
-  | { payload: string; type: 'SET_TRANSACTION_HASH' }
-  | { payload: string; type: 'SET_TRANSACTION_AMOUNT' }
+  | { payload: string; type: 'SET_TX_HASH' }
+  | { payload: string; type: 'SET_TX_AMOUNT' }
   | {
       payload: ethers.providers.TransactionResponse;
-      type: 'SET_TRANSACTION_RESPONSE';
+      type: 'SET_TX_RESPONSE';
     }
   | {
-      type: 'RESET_TRANSACTION';
+      type: 'RESET_TX';
     };
 
 const initialState: State = {
@@ -199,19 +196,14 @@ const initialState: State = {
     'Result',
   ],
   theme: undefined,
-  transaction: {
+  tx: {
     progress: {
+      Confirmed: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
       Confirming: {
-        data: undefined,
-        error: undefined,
-        status: 'idle',
-      },
-      Crediting: {
-        data: undefined,
-        error: undefined,
-        status: 'idle',
-      },
-      Detected: {
         data: undefined,
         error: undefined,
         status: 'idle',
@@ -223,7 +215,7 @@ const initialState: State = {
       },
     },
     step: 0,
-    steps: ['Submitted', 'Confirming', 'Crediting'],
+    steps: ['Submitted', 'Confirming', 'Confirmed'],
   },
 };
 
@@ -279,8 +271,6 @@ export const Store: React.FC<
           return { ...state, asset: action.payload };
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
-        case 'SET_BLOCK':
-          return { ...state, block: action.payload };
         case 'SET_STEP':
           return {
             ...state,
@@ -434,50 +424,50 @@ export const Store: React.FC<
             ...state,
             providerChainId: action.payload,
           };
-        case 'SET_TRANSACTION':
+        case 'SET_TX':
           return {
             ...state,
-            transaction: {
-              ...state.transaction,
+            tx: {
+              ...state.tx,
               progress: {
-                ...state.transaction.progress,
+                ...state.tx.progress,
                 [action.payload.step]: {
-                  ...state.transaction.progress[action.payload.step],
+                  ...state.tx.progress[action.payload.step],
                   ...action.payload,
                 },
               },
-              step: TransactionSteps[action.payload.step],
+              step: TxSteps[action.payload.step],
             },
           };
-        case 'SET_TRANSACTION_HASH':
+        case 'SET_TX_HASH':
           return {
             ...state,
-            transaction: {
-              ...state.transaction,
+            tx: {
+              ...state.tx,
               hash: action.payload,
             },
           };
-        case 'SET_TRANSACTION_AMOUNT':
+        case 'SET_TX_AMOUNT':
           return {
             ...state,
-            transaction: {
-              ...state.transaction,
+            tx: {
+              ...state.tx,
               amount: action.payload,
             },
           };
-        case 'SET_TRANSACTION_RESPONSE':
+        case 'SET_TX_RESPONSE':
           return {
             ...state,
-            transaction: {
-              ...state.transaction,
+            tx: {
+              ...state.tx,
               response: action.payload,
             },
           };
-        case 'RESET_TRANSACTION':
+        case 'RESET_TX':
           return {
             ...state,
-            transaction: {
-              ...initialState.transaction,
+            tx: {
+              ...initialState.tx,
             },
           };
         case 'RESET_STATE': {

@@ -209,7 +209,7 @@ const EnterAmount: React.FC<Props> = () => {
 
       dispatch({
         payload: amount + ' ' + state.asset?.symbol,
-        type: 'SET_TRANSACTION_AMOUNT',
+        type: 'SET_TX_AMOUNT',
       });
       dispatch({
         payload: {
@@ -217,20 +217,20 @@ const EnterAmount: React.FC<Props> = () => {
           status: 'loading',
           step: 'Submitted',
         },
-        type: 'SET_TRANSACTION',
+        type: 'SET_TX',
       });
       const hash: string = await sendTransaction(
         amount,
         data?.assetByMappedAssetIdAndNetworkCode?.address as string
       );
-      dispatch({ payload: hash, type: 'SET_TRANSACTION_HASH' });
+      dispatch({ payload: hash, type: 'SET_TX_HASH' });
       dispatch({
         payload: {
           data: new Date().toLocaleString(),
           status: 'success',
           step: 'Submitted',
         },
-        type: 'SET_TRANSACTION',
+        type: 'SET_TX',
       });
       dispatch({
         payload: {
@@ -238,13 +238,13 @@ const EnterAmount: React.FC<Props> = () => {
           status: 'loading',
           step: 'Confirming',
         },
-        type: 'SET_TRANSACTION',
+        type: 'SET_TX',
       });
       let response;
       while (!response) {
         response = await state.provider?.data?.getTransaction(hash);
       }
-      dispatch({ payload: response, type: 'SET_TRANSACTION_RESPONSE' });
+      dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
       const receipt = await waitForTransaction(hash, 1);
       dispatch({
         payload: {
@@ -252,31 +252,31 @@ const EnterAmount: React.FC<Props> = () => {
           status: 'success',
           step: 'Confirming',
         },
-        type: 'SET_TRANSACTION',
+        type: 'SET_TX',
       });
       dispatch({
         payload: {
-          data: `Waiting for ${MIN_CONFIRMATIONS} confirmations. Current block: ${state.block}.`,
+          data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
           status: 'loading',
-          step: 'Crediting',
+          step: 'Confirmed',
         },
-        type: 'SET_TRANSACTION',
+        type: 'SET_TX',
       });
       await waitForTransaction(hash, MIN_CONFIRMATIONS);
       dispatch({
         payload: {
           data: '🚀 Transaction confirmed!',
           status: 'success',
-          step: 'Crediting',
+          step: 'Confirmed',
         },
-        type: 'SET_TRANSACTION',
+        type: 'SET_TX',
       });
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
         dispatch({
           payload: { error: e.message, status: 'error', step: 'Submitted' },
-          type: 'SET_TRANSACTION',
+          type: 'SET_TX',
         });
       }
       console.error(e);
