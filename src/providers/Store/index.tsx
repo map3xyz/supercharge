@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import {
@@ -6,16 +6,24 @@ import {
   Network,
   PaymentMethod,
 } from '../../generated/apollo-gql';
+import { PrebuiltTx } from '../../utils/transactions/evm';
 
 export enum Steps {
   'AssetSelection' = 0,
   'NetworkSelection' = 1,
   'PaymentMethod' = 2,
-  'EnterAmount' = 3,
-  'WalletConnect' = 4,
-  'QRCode' = 5,
-  'Result' = 6,
+  'SwitchChain' = 3,
+  'EnterAmount' = 4,
+  'WalletConnect' = 5,
+  'QRCode' = 6,
+  'Result' = 7,
   __LENGTH,
+}
+
+export enum TxSteps {
+  'Submitted' = 0,
+  'Confirming' = 1,
+  'Confirmed' = 2,
 }
 
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
@@ -33,26 +41,53 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
+  colors?: {
+    progressBar?: string;
+    scrollBar?: string;
+  };
   depositAddress: {
-    data: string | undefined;
+    data?: { address: string; memo?: string };
     status: RemoteType;
   };
   fiat?: string;
   method?: PaymentMethod & { description?: string };
   network?: Network;
+  prebuiltTx: {
+    data?: {
+      feeError: boolean;
+      gasLimit: number;
+      gasPrice: number;
+      maxLimitFormatted: string;
+      maxLimitRaw: BigNumber;
+      memo?: string;
+      tx: PrebuiltTx;
+    };
+    error?: string;
+    status: RemoteType;
+  };
   provider?: {
     data?: ethers.providers.Web3Provider;
     error?: string;
     status: RemoteType;
   };
+  providerChainId?: number;
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
-  transaction?: {
-    error?: string;
+  tx: {
+    amount?: string;
     hash?: string;
-    status: RemoteType;
+    progress: {
+      [key in keyof typeof TxSteps]: {
+        data?: string;
+        error?: string;
+        status: RemoteType;
+      };
+    };
+    response?: ethers.providers.TransactionResponse;
+    step: number;
+    steps: (keyof typeof TxSteps)[];
   };
 };
 
@@ -63,7 +98,10 @@ type Action =
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
-  | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS' }
+  | {
+      payload: { address: string; memo?: string };
+      type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS';
+    }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' }
@@ -75,9 +113,54 @@ type Action =
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
   | { payload: string; type: 'SET_PROVIDER_ERROR' }
-  | { payload: string; type: 'SET_TRANSACTION_SUCCESS' }
-  | { payload: string; type: 'SET_TRANSACTION_ERROR' }
-  | { type: 'SET_TRANSACTION_LOADING' };
+  | { type: 'SET_BALANCE_LOADING' }
+  | {
+      payload: {
+        assetBalance: ethers.BigNumber;
+        chainBalance: ethers.BigNumber;
+      };
+      type: 'SET_BALANCE_SUCCESS';
+    }
+  | { payload: string; type: 'SET_BALANCE_ERROR' }
+  | { type: 'SET_BALANCE_IDLE' }
+  | { type: 'SET_PREBUILT_TX_LOADING' }
+  | {
+      payload: {
+        feeError: boolean;
+        gasLimit: number;
+        gasPrice: number;
+        maxLimitFormatted: string;
+        maxLimitRaw: BigNumber;
+        memo?: string;
+        tx: PrebuiltTx;
+      };
+      type: 'SET_PREBUILT_TX_SUCCESS';
+    }
+  | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
+  | { type: 'SET_PREBUILT_TX_IDLE' }
+  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
+  | {
+      payload: { steps: (keyof typeof TxSteps)[] };
+      type: 'SET_TX_PROGRESS_STEPS';
+    }
+  | {
+      payload: {
+        data?: string;
+        error?: string;
+        status: RemoteType;
+        step: keyof typeof TxSteps;
+      };
+      type: 'SET_TX';
+    }
+  | { payload: string; type: 'SET_TX_HASH' }
+  | { payload: string; type: 'SET_TX_AMOUNT' }
+  | {
+      payload: ethers.providers.TransactionResponse;
+      type: 'SET_TX_RESPONSE';
+    }
+  | {
+      type: 'RESET_TX';
+    };
 
 const initialState: State = {
   account: {
@@ -92,11 +175,17 @@ const initialState: State = {
   fiat: undefined,
   method: undefined,
   network: undefined,
+  prebuiltTx: {
+    data: undefined,
+    error: undefined,
+    status: 'idle',
+  },
   provider: {
     data: undefined,
     error: undefined,
     status: 'idle',
   },
+  providerChainId: undefined,
   slug: undefined,
   step: Steps.AssetSelection,
   steps: [
@@ -107,6 +196,27 @@ const initialState: State = {
     'Result',
   ],
   theme: undefined,
+  tx: {
+    progress: {
+      Confirmed: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+      Confirming: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+      Submitted: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+    },
+    step: 0,
+    steps: ['Submitted', 'Confirming', 'Confirmed'],
+  },
 };
 
 export const Store: React.FC<
@@ -117,21 +227,31 @@ export const Store: React.FC<
       network: string,
       amount: string
     ) => Promise<Boolean>;
+    colors?: {
+      progressBar?: string;
+      scrollBar?: string;
+    };
     fiat?: string;
     generateDepositAddress: (
       asset?: string,
-      network?: string
+      network?: string,
+      memoEnabled?: boolean
     ) => Promise<{ address: string; memo?: string }>;
     network?: Network;
+    onFailure?: (error: string, networkCode: string, address?: string) => void;
+    onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     theme?: 'dark' | 'light';
   }>
 > = ({
   asset,
   authorizeTransaction,
   children,
+  colors,
   fiat,
   generateDepositAddress,
   network,
+  onFailure,
+  onSuccess,
   theme,
 }) => {
   let step = 0;
@@ -227,6 +347,42 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
+        case 'SET_PREBUILT_TX_SUCCESS':
+          return {
+            ...state,
+            prebuiltTx: {
+              data: action.payload,
+              error: undefined,
+              status: 'success',
+            },
+          };
+        case 'SET_PREBUILT_TX_ERROR':
+          return {
+            ...state,
+            prebuiltTx: {
+              data: undefined,
+              error: action.payload,
+              status: 'error',
+            },
+          };
+        case 'SET_PREBUILT_TX_LOADING':
+          return {
+            ...state,
+            prebuiltTx: {
+              data: undefined,
+              error: undefined,
+              status: 'loading',
+            },
+          };
+        case 'SET_PREBUILT_TX_IDLE':
+          return {
+            ...state,
+            prebuiltTx: {
+              data: undefined,
+              error: undefined,
+              status: 'idle',
+            },
+          };
         case 'SET_PROVIDER_SUCCESS':
           return {
             ...state,
@@ -263,31 +419,55 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
-        case 'SET_TRANSACTION_SUCCESS':
+        case 'SET_PROVIDER_CHAIN_ID':
           return {
             ...state,
-            transaction: {
-              error: undefined,
+            providerChainId: action.payload,
+          };
+        case 'SET_TX':
+          return {
+            ...state,
+            tx: {
+              ...state.tx,
+              progress: {
+                ...state.tx.progress,
+                [action.payload.step]: {
+                  ...state.tx.progress[action.payload.step],
+                  ...action.payload,
+                },
+              },
+              step: TxSteps[action.payload.step],
+            },
+          };
+        case 'SET_TX_HASH':
+          return {
+            ...state,
+            tx: {
+              ...state.tx,
               hash: action.payload,
-              status: 'success',
             },
           };
-        case 'SET_TRANSACTION_ERROR':
+        case 'SET_TX_AMOUNT':
           return {
             ...state,
-            transaction: {
-              error: action.payload,
-              hash: undefined,
-              status: 'error',
+            tx: {
+              ...state.tx,
+              amount: action.payload,
             },
           };
-        case 'SET_TRANSACTION_LOADING':
+        case 'SET_TX_RESPONSE':
           return {
             ...state,
-            transaction: {
-              error: undefined,
-              hash: undefined,
-              status: 'loading',
+            tx: {
+              ...state.tx,
+              response: action.payload,
+            },
+          };
+        case 'RESET_TX':
+          return {
+            ...state,
+            tx: {
+              ...initialState.tx,
             },
           };
         case 'RESET_STATE': {
@@ -299,7 +479,7 @@ export const Store: React.FC<
           return state;
       }
     },
-    { ...initialState, asset, fiat, network, step, theme }
+    { ...initialState, asset, colors, fiat, network, step, theme }
   );
 
   return (
@@ -307,7 +487,7 @@ export const Store: React.FC<
       value={[
         state,
         dispatch,
-        { authorizeTransaction, generateDepositAddress },
+        { authorizeTransaction, generateDepositAddress, onFailure, onSuccess },
       ]}
     >
       {children}
@@ -330,6 +510,16 @@ export const Context = createContext<
         network?: string,
         memoEnabled?: boolean
       ) => Promise<{ address: string; memo?: string }>;
+      onFailure?: (
+        error: string,
+        networkCode: string,
+        address?: string
+      ) => void;
+      onSuccess?: (
+        txHash: string,
+        networkCode: string,
+        address?: string
+      ) => void;
     }
   ]
 >([
@@ -340,5 +530,7 @@ export const Context = createContext<
       new Promise((resolve) => resolve(true)),
     generateDepositAddress: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
+    onFailure: /* istanbul ignore next */ () => {},
+    onSuccess: /* istanbul ignore next */ () => {},
   },
 ]);

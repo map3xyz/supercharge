@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
+import { useChainWatcher } from '../hooks/useChainWatcher';
 import { Context, Steps } from '../providers/Store';
 import AssetSelection from '../steps/AssetSelection';
 import EnterAmount from '../steps/EnterAmount';
@@ -11,16 +12,18 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import QRCode from '../steps/QRCode';
 import Result from './Result';
+import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   const [state, dispatch] = useContext(Context);
-
   const { step, steps } = state;
+
+  useChainWatcher();
 
   return (
     <div
-      className="flex h-full w-full flex-col justify-between sm:!h-[500px]"
+      className="flex h-full w-full flex-col justify-between sm:!h-[520px]"
       id="map3-modal-stepper"
     >
       <>
@@ -29,7 +32,12 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
             <button
               aria-label="Back"
               className={step === 0 ? 'invisible' : 'visible'}
-              onClick={() => dispatch({ payload: step - 1, type: 'SET_STEP' })}
+              onClick={() => {
+                dispatch({
+                  payload: Steps[state.steps[state.step - 1]],
+                  type: 'SET_STEP',
+                });
+              }}
             >
               <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
             </button>
@@ -74,6 +82,17 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 key={Steps[step]}
               >
                 <PaymentMethod />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.SwitchChain] && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="h-full"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <SwitchChain />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.EnterAmount] && (

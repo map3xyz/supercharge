@@ -1,5 +1,6 @@
 import { generateTestingUtils } from 'eth-testing';
 
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -9,11 +10,10 @@ describe('useWeb3', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async () => {
             throw 'Error generating deposit address.';
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />

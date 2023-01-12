@@ -37,6 +37,12 @@ const WalletConnect: React.FC<Props> = () => {
       type: 'SET_STEPS',
     });
 
+    const chainId = state.network?.identifiers?.chainId;
+    if (!chainId) {
+      throw new Error('No chainId.');
+    }
+
+    dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
     dispatch({ payload: provider, type: 'SET_PROVIDER_SUCCESS' });
     dispatch({ payload: account, type: 'SET_ACCOUNT_SUCCESS' });
     dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
@@ -45,34 +51,22 @@ const WalletConnect: React.FC<Props> = () => {
   const run = async () => {
     dispatch({ type: 'SET_PROVIDER_LOADING' });
     try {
-      let rpc = '';
-      try {
-        const rpcs = await fetch(
-          (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
-        ).then((res) => res.json());
-        const rpcIndex = Math.floor(
-          Math.random() *
-            rpcs[state.network?.identifiers?.chainId!].rpcs?.length
-        );
-        const rpcsForChain = rpcs[state.network?.identifiers?.chainId!]
-          .rpcs as (string | { url: string })[];
-        const randomRpc = rpcsForChain.length ? rpcsForChain[rpcIndex] : '';
-        if (typeof randomRpc === 'string') {
-          rpc = randomRpc;
-        } else {
-          rpc = randomRpc.url;
-        }
-      } catch (e) {}
+      const chainId = state.network?.identifiers?.chainId;
+      if (!chainId) {
+        throw new Error('No chainId.');
+      }
+      const rpc = `${CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
 
       const externalProvider = await new WalletConnectProvider({
         bridge: 'https://bridge.walletconnect.org',
-        pollingInterval: 15000,
         qrcode: false,
-        rpc: {
-          [state.network?.identifiers?.chainId!]: rpc,
-        },
+        rpc: { [chainId]: rpc },
       });
-      const provider = new ethers.providers.Web3Provider(externalProvider);
+      externalProvider.updateRpcUrl(chainId, rpc);
+      const provider = new ethers.providers.Web3Provider(
+        externalProvider,
+        'any'
+      );
       externalProvider.enable();
 
       externalProvider.connector.on('connect', (error) => {
@@ -90,13 +84,7 @@ const WalletConnect: React.FC<Props> = () => {
 
         dispatch({ type: 'SET_PROVIDER_IDLE' });
         dispatch({ type: 'SET_ACCOUNT_IDLE' });
-        if (
-          externalProvider.connector.peerMeta?.name?.includes(
-            state.method?.name || ''
-          )
-        ) {
-          dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
-        }
+        dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
       });
 
       if (!externalProvider.connector.connected) {
@@ -104,16 +92,17 @@ const WalletConnect: React.FC<Props> = () => {
           chainId: state.network?.identifiers?.chainId || 1,
         });
       } else {
-        if (
-          !externalProvider.connector.peerMeta?.name?.includes(
-            state.method?.name || ''
-          ) ||
-          externalProvider.connector.chainId !==
-            state.network?.identifiers?.chainId
-        ) {
+        const appChange = !externalProvider.connector.peerMeta?.name?.includes(
+          state.method?.name || ''
+        );
+        const chainChange =
+          state.providerChainId !== state.network?.identifiers?.chainId;
+        if (appChange || chainChange) {
           await localStorage.removeItem('walletconnect');
           await externalProvider.connector.killSession();
+          await externalProvider.onDisconnect();
           run();
+          dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
         } else {
           handleConnected(provider, externalProvider.connector.accounts[0]);
           return;
@@ -274,14 +263,28 @@ const WalletConnect: React.FC<Props> = () => {
             {/* @ts-ignore */}
             <Badge color="blue" dot>
               {/* @ts-ignore */}
-              <a
-                className="leading-4"
-                href="https://support.map3.xyz"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Having trouble connecting? Please click here to contact support.
-              </a>
+              <span className="leading-4">
+                Having trouble connecting? Please{' '}
+                <a
+                  className="underline"
+                  href="https://support.map3.xyz"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  click here
+                </a>{' '}
+                to contact support. Or{' '}
+                <a
+                  className="underline"
+                  onClick={async () => {
+                    await localStorage.removeItem('walletconnect');
+                    run();
+                  }}
+                >
+                  here
+                </a>{' '}
+                to create a new WalletConnect session.
+              </span>
             </Badge>
           </MobileView>
           <ReadOnlyText copyButton value={uri} />

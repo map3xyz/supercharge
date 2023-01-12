@@ -26,7 +26,7 @@ const QRCode: React.FC<Props> = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const { address } = await getDepositAddress(false);
+        const { address } = await getDepositAddress();
 
         const { data } = await addWatchedAddress({
           variables: {
@@ -141,14 +141,17 @@ const QRCode: React.FC<Props> = () => {
                         ? '1px solid #404040'
                         : '1px solid #e5e5e5',
                   }}
-                  value={state.depositAddress.data}
+                  value={state.depositAddress.data.address}
                 />
               </div>
               <div className="w-full">
-                <label className="text-neutral-500:text-white text-xs">
+                <label className="text-xs text-neutral-500 dark:text-white">
                   Deposit Address
                 </label>
-                <ReadOnlyText copyButton value={state.depositAddress.data} />
+                <ReadOnlyText
+                  copyButton
+                  value={state.depositAddress.data.address}
+                />
               </div>
             </div>
           )}

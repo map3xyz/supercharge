@@ -4,12 +4,13 @@ import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
 import { CONSOLE_API_URL } from '../constants';
-import { Context, Steps } from '../providers/Store';
+import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
+import { buildTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
-  const [state, dispatch, { authorizeTransaction }] = useContext(Context);
+  const [state, _, { authorizeTransaction }] = useContext(Context);
   const [providers, setProviders] = useState<{
     [key in string]: boolean;
   }>({});
@@ -60,37 +61,49 @@ export const useWeb3 = () => {
     return isAuth;
   };
 
-  const getChainID = async () => {
-    const chainId = await state.provider?.data?.provider?.request!({
-      method: 'eth_chainId',
-      params: [],
-    });
-    return chainId;
+  const getBalance = async (
+    address?: string | null
+  ): Promise<{
+    assetBalance: ethers.BigNumber;
+    chainBalance: ethers.BigNumber;
+  }> => {
+    let assetBalance = ethers.BigNumber.from(0);
+    if (address) {
+      const contract = new ethers.Contract(
+        address,
+        new ethers.utils.Interface(erc20Abi),
+        state.provider?.data
+      );
+      assetBalance = await contract.balanceOf(state.account.data);
+    }
+    const chainBalance =
+      (await state.provider?.data?.getBalance(state.account.data || '')) ||
+      ethers.BigNumber.from(0);
+
+    return { assetBalance, chainBalance };
+  };
+
+  const getChainId = async () => {
+    const chainId = await state.provider?.data?.send?.('eth_chainId', []);
+    return Number(chainId);
   };
 
   const switchChain = async (chainId: number) => {
-    await state.provider?.data?.provider.request!({
-      method: 'wallet_switchEthereumChain',
-      params: [
-        {
-          chainId: toHex(chainId),
-        },
-      ],
-    });
+    await state.provider?.data?.send?.('wallet_switchEthereumChain', [
+      {
+        chainId: toHex(chainId),
+      },
+    ]);
   };
 
   const addChain = async () => {
     if (!state.network) {
-      throw new Error('No network');
+      throw new Error('No network selected.');
     }
 
     if (!state.network.identifiers?.chainId) {
-      throw new Error('No chainId');
+      throw new Error('No chainId.');
     }
-
-    const rpcs: { [key in number]: any } = await fetch(
-      (process.env.CONSOLE_API_URL || CONSOLE_API_URL) + '/chainlistRPCs'
-    ).then((res) => res.json());
 
     const params = [
       {
@@ -102,84 +115,82 @@ export const useWeb3 = () => {
           name: state.network.name,
           symbol: state.network.symbol,
         },
-        rpcUrls: rpcs[state.network.identifiers.chainId].rpcs,
+        rpcUrls: [
+          `${CONSOLE_API_URL}/rpcProxy?chainId=${state.network.identifiers?.chainId}`,
+        ],
       },
     ];
 
-    await state.provider?.data?.provider.request!({
-      method: 'wallet_addEthereumChain',
-      params,
-    });
+    await state.provider?.data?.send?.('wallet_addEthereumChain', params);
   };
 
-  const sendTransaction = async (
-    amount: string,
-    address: string,
-    memo?: string,
-    isErc20?: boolean,
-    assetContract?: string | null
-  ) => {
+  const sendTransaction = async (amount: string, assetContract?: string) => {
     if (!state.account.data) {
       throw new Error('No account');
     }
 
-    if (isErc20 && !assetContract) {
-      throw new Error('No asset contract');
-    }
-
-    const extraGas = memo ? (memo.length / 2) * 16 : 0;
-
-    const txParams = {
-      data: memo || '0x',
-      from: state.account.data,
-      gas: ethers.utils.hexlify(21_000 + extraGas),
-      to: address,
-      value: ethers.utils.parseEther(amount).toHexString(),
-    };
-
-    if (isErc20) {
-      txParams.data =
-        new ethers.utils.Interface(erc20Abi).encodeFunctionData('transfer', [
-          address,
-          ethers.utils.parseUnits(amount, state.asset?.decimals!),
-        ]) +
-        (typeof memo === 'string' ? (memo as string).replace('0x', '') : '');
-
-      txParams.to = assetContract!;
-      txParams.value = '0x0';
-      txParams.gas = ethers.utils.hexlify(100_000 + extraGas);
-    }
-
-    // @ts-ignore
-    if (!isMobile && !state.method?.value === 'isWalletConnect') {
-      dispatch({ type: 'SET_TRANSACTION_LOADING' });
-    }
     let hash;
+
+    const decimals = state.asset?.decimals;
+
+    if (!decimals) {
+      throw new Error('No decimals.');
+    }
+
+    if (!state.prebuiltTx.data?.tx.to) {
+      throw new Error('No recipient address.');
+    }
+
+    let finalTx = buildTx({
+      address: state.prebuiltTx.data.tx.to,
+      amount,
+      assetContract,
+      decimals,
+      from: state.account.data,
+      memo: state.prebuiltTx.data.memo,
+    });
+
     try {
-      hash = await state.provider?.data?.provider.request!({
-        method: 'eth_sendTransaction',
-        params: [txParams],
-      });
+      if (isMobile && state.method?.walletConnect?.mobile?.native) {
+        window.location.href = state.method?.walletConnect?.mobile?.native;
+      }
+      hash = await state.provider?.data?.send?.('eth_sendTransaction', [
+        {
+          ...finalTx,
+          gas: toHex(state.prebuiltTx.data?.gasLimit),
+          gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
+        },
+      ]);
       if (!hash) {
         throw new Error('No transaction hash.');
       }
 
-      dispatch({ type: 'SET_TRANSACTION_LOADING' });
-      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-      await state.provider?.data?.waitForTransaction(hash, 1);
+      return hash;
     } catch (e: any) {
-      dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
       throw e;
     }
-    dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
+  };
+
+  const waitForTransaction = async (hash: string, confirmations: number) => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    const tx = await state.provider?.data?.waitForTransaction(
+      hash,
+      confirmations
+    );
+    return tx;
   };
 
   return {
     addChain,
     authorizeTransactionProxy,
-    getChainID,
+    getBalance,
+    getChainId,
     providers,
     sendTransaction,
     switchChain,
+    waitForTransaction,
   };
 };

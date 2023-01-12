@@ -1,5 +1,8 @@
 import { generateTestingUtils } from 'eth-testing';
+import { ethers } from 'ethers';
 
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
+import { web3Mock } from '~/jest/__mocks__/web3Mock';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -10,20 +13,34 @@ import EnterAmount from '.';
 
 const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
 
+const getBalanceMock = jest.fn().mockImplementation(() => ({
+  assetBalance: ethers.BigNumber.from('100000000'),
+  chainBalance: ethers.BigNumber.from('20000000000000000000'),
+}));
+
+jest.mock('ethers', () => {
+  const originalModule = jest.requireActual('ethers');
+  return {
+    ...originalModule,
+    ethers: {
+      ...originalModule.ethers,
+      Contract: jest.fn(() => {
+        return {
+          balanceOf: jest.fn(),
+          estimateGas: {
+            transfer: jest.fn(() => {
+              return ethers.BigNumber.from(21_000);
+            }),
+          },
+        };
+      }),
+    },
+  };
+});
+
 describe('Enter Amount', () => {
   beforeEach(async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
+    render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     act(() => {
@@ -155,11 +172,10 @@ describe('window.ethereum', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async () => {
             throw 'Error generating deposit address.';
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -319,9 +335,7 @@ describe('window.ethereum', () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
-      const error = await screen.findByText(
-        'Error generating a deposit address.'
-      );
+      const error = await screen.findByText('Deposit address not found.');
       expect(error).toBeInTheDocument();
     });
   });
@@ -331,21 +345,20 @@ describe('window.ethereum > ERC20', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
-      getChainID: jest.fn(),
-      providers: {},
+      ...web3Mock,
+      getBalance: getBalanceMock,
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           generateDepositAddress: async () => {
-            return { address: '0x123', memo: 'memo' };
+            return {
+              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+              memo: 'memo',
+            };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -373,52 +386,49 @@ describe('window.ethereum > ERC20', () => {
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
+      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('should handle erc20 transaction', async () => {
+      await screen.findByText(/Max: 100/);
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
       expect(mockSendTransaction).toHaveBeenCalledWith(
         '1.000000',
-        '0x123',
-        'memo',
-        true,
-        '0x123ElonAddress'
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
       );
-      expect(
-        await screen.findByText('Transaction Submitted')
-      ).toBeInTheDocument();
+      expect(await screen.findByText('Submitted')).toBeInTheDocument();
     });
   });
 });
 
-describe('txAuth', () => {
+describe('txAuth - Failure', () => {
   const mockAuthTransactionProxy = jest.fn();
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
-      getChainID: jest.fn(),
-      providers: {},
+      getBalance: getBalanceMock,
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           authorizeTransaction: async () => {
             return false;
           },
           generateDepositAddress: async () => {
-            return { address: '0x123', memo: 'memo' };
+            return {
+              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+              memo: 'memo',
+            };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -440,22 +450,20 @@ describe('txAuth', () => {
 
   describe('transaction auth failure', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+
     beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
+      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    it('should authorize transaction', async () => {
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+    it('should not authorize transaction', async () => {
+      await screen.findByText(/Max: 100/);
       act(() => {
         const form = screen.getByTestId('enter-amount-form');
         fireEvent.submit(form);
@@ -475,24 +483,24 @@ describe('txAuth - Success', () => {
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
-      addChain: jest.fn(),
+      ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
-      getChainID: jest.fn(),
-      providers: {},
+      getBalance: getBalanceMock,
       sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
     }));
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
+          ...mockConfig,
           authorizeTransaction: async () => {
             return true;
           },
           generateDepositAddress: async () => {
-            return { address: '0x123', memo: 'memo' };
+            return {
+              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+              memo: 'memo',
+            };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -520,16 +528,13 @@ describe('txAuth - Success', () => {
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
+      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('should authorize transaction', async () => {
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+      await screen.findByText(/Max: 100/);
       await act(async () => {
         const form = screen.getByTestId('enter-amount-form');
         fireEvent.submit(form);
@@ -540,116 +545,6 @@ describe('txAuth - Success', () => {
         '1.000000'
       );
       expect(mockSendTransaction).toHaveBeenCalled();
-    });
-  });
-});
-
-describe('Add Chain', () => {
-  const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
-  beforeEach(async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          authorizeTransaction: async () => {
-            return true;
-          },
-          generateDepositAddress: async () => {
-            return { address: '0x123', memo: 'memo' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
-
-    await screen.findByText('Loading...');
-    const elonCoin = await screen.findByText('ElonCoin');
-    fireEvent.click(elonCoin);
-    const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
-    const metaMask = await screen.findByText('MetaMask');
-    fireEvent.click(metaMask);
-
-    const input = await screen.findByTestId('input');
-    act(() => {
-      fireEvent.change(input, { target: { value: '1' } });
-    });
-  });
-  describe('add chain success', () => {
-    beforeAll(async () => {
-      global.window.ethereum = testingUtils.getProvider();
-      global.window.ethereum.providers = [testingUtils.getProvider()];
-      testingUtils.mockConnectedWallet([
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      ]);
-    });
-    afterEach(() => {
-      testingUtils.clearAllMocks();
-    });
-    it('should addChain', async () => {
-      const addChainMock = jest.fn();
-      const switchChainMock = jest.fn().mockImplementationOnce(() => {
-        throw new Error('Unrecognized chain ID');
-      });
-      web3MockSpy.mockImplementationOnce(() => ({
-        addChain: addChainMock,
-        authorizeTransactionProxy: jest.fn(),
-        getChainID: jest.fn(),
-        providers: {},
-        sendTransaction: jest.fn(),
-        switchChain: switchChainMock,
-      }));
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
-      await act(async () => {
-        const form = screen.getByTestId('enter-amount-form');
-        fireEvent.submit(form);
-      });
-      expect(addChainMock).toHaveBeenCalled();
-    });
-  });
-
-  describe('add chain error', () => {
-    beforeAll(async () => {
-      global.window.ethereum = testingUtils.getProvider();
-      global.window.ethereum.providers = [testingUtils.getProvider()];
-      testingUtils.mockConnectedWallet([
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      ]);
-    });
-    afterEach(() => {
-      testingUtils.clearAllMocks();
-    });
-    it('should handle error', async () => {
-      jest.spyOn(console, 'error');
-      const addChainMock = jest.fn().mockImplementationOnce(() => {
-        throw new Error('Some other error');
-      });
-      const switchChainMock = jest.fn().mockImplementationOnce(() => {
-        throw new Error('Unrecognized chain ID');
-      });
-      web3MockSpy.mockImplementationOnce(() => ({
-        addChain: addChainMock,
-        authorizeTransactionProxy: jest.fn(),
-        getChainID: jest.fn(),
-        providers: {},
-        sendTransaction: jest.fn(),
-        switchChain: switchChainMock,
-      }));
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
-      await act(async () => {
-        const form = screen.getByTestId('enter-amount-form');
-        fireEvent.submit(form);
-      });
-      expect(console.error).toHaveBeenCalled();
     });
   });
 });

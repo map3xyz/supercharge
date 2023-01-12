@@ -1,4 +1,6 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
+import { ethers } from 'ethers';
+import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
@@ -9,12 +11,15 @@ import WindowEthereum, {
   ConnectHandler,
 } from '../../components/methods/WindowEthereum';
 import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
-import { useDepositAddress } from '../../hooks/useDepositAddress';
+import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
-const CHAIN_MISSING = 'Unrecognized chain ID';
+const DECIMAL_FALLBACK = 8;
+const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
+// TODO: configure through console
+const MIN_CONFIRMATIONS = 3;
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -43,14 +48,9 @@ const EnterAmount: React.FC<Props> = () => {
       },
     });
 
-  const {
-    addChain,
-    authorizeTransactionProxy,
-    getChainID,
-    sendTransaction,
-    switchChain,
-  } = useWeb3();
-  const { getDepositAddress } = useDepositAddress();
+  const { authorizeTransactionProxy, sendTransaction, waitForTransaction } =
+    useWeb3();
+  const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
     if (!dummyInputRef.current || !dummySymbolRef.current) return;
@@ -96,17 +96,59 @@ const EnterAmount: React.FC<Props> = () => {
       quote:
         formValue.inputSelected === 'crypto'
           ? quote.toFixed(2)
-          : quote.toFixed(8),
+          : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK),
     }));
 
     if (base === 0) return setAmount('0');
 
     setAmount(
       formValue.inputSelected === 'crypto'
-        ? base.toFixed(state.asset?.decimals || 8)
-        : quote.toFixed(state.asset?.decimals || 8)
+        ? base.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
+        : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
     );
   }, [formValue.base]);
+
+  useEffect(() => {
+    if (!formValue.base || !formValue.quote) {
+      setFormError(undefined);
+      return;
+    }
+    if (!state.prebuiltTx.data?.maxLimitFormatted) return;
+    const { maxLimitRaw } = state.prebuiltTx.data;
+    const cryptoAmt =
+      formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
+    const cryptoAmtWei = ethers.utils.parseUnits(
+      cryptoAmt,
+      state.asset?.decimals || DECIMAL_FALLBACK
+    );
+
+    if (maxLimitRaw.lt(cryptoAmtWei)) {
+      setFormError(INSUFFICIENT_FUNDS + state.asset?.symbol + ' balance.');
+    } else {
+      setFormError(undefined);
+    }
+  }, [formValue.base, formValue.quote, state.prebuiltTx.data?.maxLimitRaw]);
+
+  useEffect(() => {
+    if (loading || error) return;
+
+    const run = async () => {
+      prebuildTx(amount, data?.assetByMappedAssetIdAndNetworkCode?.address);
+    };
+
+    run();
+  }, [state.provider?.status, state.account.status, loading, error]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: 'GENERATE_DEPOSIT_ADDRESS_IDLE',
+      });
+      dispatch({
+        type: 'SET_PREBUILT_TX_IDLE',
+      });
+    };
+  }, []);
 
   const toggleBase = () => {
     if (inputRef.current) {
@@ -121,6 +163,17 @@ const EnterAmount: React.FC<Props> = () => {
     }
   };
 
+  const setMax = () => {
+    if (!inputRef.current) return;
+    if (formValue.inputSelected === 'fiat') toggleBase();
+    inputRef.current.value = state.prebuiltTx.data!.maxLimitFormatted;
+    setFormValue({
+      ...formValue,
+      base: state.prebuiltTx.data!.maxLimitFormatted,
+      inputSelected: 'crypto',
+    });
+  };
+
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     try {
       e?.preventDefault();
@@ -131,46 +184,100 @@ const EnterAmount: React.FC<Props> = () => {
         return;
       }
 
+      if (state.depositAddress.status !== 'success') {
+        throw new Error('Deposit address not found.');
+      }
+
+      if (state.prebuiltTx.status !== 'success') {
+        throw new Error('Prebuilt transaction not found.');
+      }
+
+      if (
+        state.asset?.type === 'asset' &&
+        !data?.assetByMappedAssetIdAndNetworkCode?.address
+      ) {
+        throw new Error('Asset contract not found.');
+      }
+
       await authorizeTransactionProxy(
         state.account.data,
         state.network?.networkCode,
         amount
       );
 
-      const currentChainId = await getChainID();
-
-      if (
-        state.network?.identifiers?.chainId &&
-        Number(currentChainId) !== state.network?.identifiers?.chainId
-      ) {
-        await switchChain(state.network?.identifiers?.chainId);
-      }
-
-      const { address, memo } = await getDepositAddress(
-        state.method?.flags?.memo || false
-      );
-
-      await sendTransaction(
-        amount,
-        address,
-        memo,
-        state.asset?.type === 'asset',
-        data?.assetByMappedAssetIdAndNetworkCode?.address
-      );
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-    } catch (e: any) {
-      if (e.message?.includes(CHAIN_MISSING)) {
-        try {
-          await addChain();
-          handleSubmit();
-          return;
-        } catch (addChainError) {
-          e = addChainError as Error;
-        }
-      }
 
+      dispatch({
+        payload: amount + ' ' + state.asset?.symbol,
+        type: 'SET_TX_AMOUNT',
+      });
+      dispatch({
+        payload: {
+          data: `Please confirm the transaction on ${state.method?.name}.`,
+          status: 'loading',
+          step: 'Submitted',
+        },
+        type: 'SET_TX',
+      });
+      const hash: string = await sendTransaction(
+        amount,
+        data?.assetByMappedAssetIdAndNetworkCode?.address as string
+      );
+      dispatch({ payload: hash, type: 'SET_TX_HASH' });
+      dispatch({
+        payload: {
+          data: new Date().toLocaleString(),
+          status: 'success',
+          step: 'Submitted',
+        },
+        type: 'SET_TX',
+      });
+      dispatch({
+        payload: {
+          data: 'Waiting for the first on-chain confirmation.',
+          status: 'loading',
+          step: 'Confirming',
+        },
+        type: 'SET_TX',
+      });
+      let response;
+      while (!response) {
+        response = await state.provider?.data?.getTransaction(hash);
+      }
+      dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
+      const receipt = await waitForTransaction(hash, 1);
+      dispatch({
+        payload: {
+          data: 'Transaction included in block ' + receipt.blockNumber + '.',
+          status: 'success',
+          step: 'Confirming',
+        },
+        type: 'SET_TX',
+      });
+      dispatch({
+        payload: {
+          data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
+          status: 'loading',
+          step: 'Confirmed',
+        },
+        type: 'SET_TX',
+      });
+      await waitForTransaction(hash, MIN_CONFIRMATIONS);
+      dispatch({
+        payload: {
+          data: '🚀 Transaction confirmed!',
+          status: 'success',
+          step: 'Confirmed',
+        },
+        type: 'SET_TX',
+      });
+    } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
+        dispatch({
+          payload: { error: e.message, status: 'error', step: 'Submitted' },
+          type: 'SET_TX',
+        });
       }
       console.error(e);
     }
@@ -257,7 +364,11 @@ const EnterAmount: React.FC<Props> = () => {
                   step={
                     formValue.inputSelected === 'fiat'
                       ? '0.01'
-                      : '0.' + '0'.repeat((state.asset.decimals || 8) - 1) + '1'
+                      : '0.' +
+                        '0'.repeat(
+                          (state.asset.decimals || DECIMAL_FALLBACK) - 1
+                        ) +
+                        '1'
                   }
                   style={{ minWidth: `${BASE_FONT_SIZE}px` }}
                   type="number"
@@ -312,19 +423,65 @@ const EnterAmount: React.FC<Props> = () => {
               </div>
             </div>
             <div className="relative w-full">
-              {formError ? (
-                <span className="absolute -top-2 left-1/2 w-full -translate-x-1/2 -translate-y-full">
+              <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
+                {formError?.includes(INSUFFICIENT_FUNDS) ? (
+                  <motion.span
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    onClick={setMax}
+                    role="button"
+                  >
+                    <Badge color="red" dot>
+                      {formError}
+                    </Badge>
+                  </motion.span>
+                ) : formError ? (
                   <Badge color="red" dot>
                     {formError}
                   </Badge>
-                </span>
-              ) : null}
+                ) : state.prebuiltTx.status === 'loading' ? (
+                  <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
+                    {<i className="fa fa-gear text-xs" />}
+                  </span>
+                ) : state.prebuiltTx.data?.feeError ? (
+                  <Badge color="red" dot>
+                    {`You need at least ${ethers.utils.formatEther(
+                      state.prebuiltTx.data.gasPrice *
+                        state.prebuiltTx.data.gasLimit
+                    )} ${state.network?.symbol} to complete this transaction.`}
+                  </Badge>
+                ) : state.prebuiltTx.status === 'error' ? (
+                  <Badge color="red">
+                    {state.prebuiltTx.error ||
+                      'Unknown error building transaction.'}
+                  </Badge>
+                ) : state.prebuiltTx.status === 'success' ? (
+                  <motion.span
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                    onClick={setMax}
+                    role="button"
+                  >
+                    <Badge color="blue">
+                      {/* @ts-ignore */}
+                      <span className="whitespace-nowrap">
+                        Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
+                        {state.asset.symbol}
+                      </span>
+                    </Badge>
+                  </motion.span>
+                ) : null}
+              </span>
               {state.method.value !== 'isWalletConnect' ? (
                 <WindowEthereum
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
-                    state.transaction?.status === 'loading'
+                    state.prebuiltTx.status !== 'success' ||
+                    state.prebuiltTx.data?.feeError ||
+                    !!formError?.includes(INSUFFICIENT_FUNDS)
                   }
                   ref={connectRef}
                   setFormError={setFormError}
@@ -332,7 +489,12 @@ const EnterAmount: React.FC<Props> = () => {
               ) : (
                 <WalletConnect
                   amount={amount}
-                  disabled={state.depositAddress.status === 'loading'}
+                  disabled={
+                    state.depositAddress.status === 'loading' ||
+                    state.prebuiltTx.status !== 'success' ||
+                    state.prebuiltTx.data?.feeError ||
+                    !!formError?.includes(INSUFFICIENT_FUNDS)
+                  }
                 />
               )}
             </div>

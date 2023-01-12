@@ -463,6 +463,13 @@ export type GetMappedNetworksForAssetQueryVariables = Exact<{
 
 export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
+export type GetNetworkByChainIdQueryVariables = Exact<{
+  chainId: Scalars['Int'];
+}>;
+
+
+export type GetNetworkByChainIdQuery = { __typename?: 'Query', networkByChainId?: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null };
+
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -683,6 +690,41 @@ export function useGetMappedNetworksForAssetLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetMappedNetworksForAssetQueryHookResult = ReturnType<typeof useGetMappedNetworksForAssetQuery>;
 export type GetMappedNetworksForAssetLazyQueryHookResult = ReturnType<typeof useGetMappedNetworksForAssetLazyQuery>;
 export type GetMappedNetworksForAssetQueryResult = Apollo.QueryResult<GetMappedNetworksForAssetQuery, GetMappedNetworksForAssetQueryVariables>;
+export const GetNetworkByChainIdDocument = gql`
+    query GetNetworkByChainId($chainId: Int!) {
+  networkByChainId(chainId: $chainId) {
+    ...NetworkFields
+  }
+}
+    ${NetworkFieldsFragmentDoc}`;
+
+/**
+ * __useGetNetworkByChainIdQuery__
+ *
+ * To run a query within a React component, call `useGetNetworkByChainIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNetworkByChainIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNetworkByChainIdQuery({
+ *   variables: {
+ *      chainId: // value for 'chainId'
+ *   },
+ * });
+ */
+export function useGetNetworkByChainIdQuery(baseOptions: Apollo.QueryHookOptions<GetNetworkByChainIdQuery, GetNetworkByChainIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetNetworkByChainIdQuery, GetNetworkByChainIdQueryVariables>(GetNetworkByChainIdDocument, options);
+      }
+export function useGetNetworkByChainIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNetworkByChainIdQuery, GetNetworkByChainIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetNetworkByChainIdQuery, GetNetworkByChainIdQueryVariables>(GetNetworkByChainIdDocument, options);
+        }
+export type GetNetworkByChainIdQueryHookResult = ReturnType<typeof useGetNetworkByChainIdQuery>;
+export type GetNetworkByChainIdLazyQueryHookResult = ReturnType<typeof useGetNetworkByChainIdLazyQuery>;
+export type GetNetworkByChainIdQueryResult = Apollo.QueryResult<GetNetworkByChainIdQuery, GetNetworkByChainIdQueryVariables>;
 export const GetNetworksDocument = gql`
     query GetNetworks {
   networks {

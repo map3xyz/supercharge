@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { render as RTLRender } from '@testing-library/react';
 
 import { assetsForOrganizationMockResult } from '~/jest/__mocks__/assets';
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
@@ -10,18 +11,7 @@ import NetworkSelection from '.';
 
 describe('Network Selection', () => {
   it('renders', async () => {
-    render(
-      <App
-        config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async () => {
-            return { address: '0x0000000000000000000000000000000000000000' };
-          },
-          theme: 'dark',
-        }}
-        onClose={() => {}}
-      />
-    );
+    render(<App config={mockConfig} onClose={() => {}} />);
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
@@ -52,11 +42,10 @@ describe('Network Selection', () => {
       >
         <App
           config={{
-            anonKey: process.env.CONSOLE_ANON_KEY || '',
+            ...mockConfig,
             generateDepositAddress: async () => {
               return { address: '0x0000000000000000000000000000000000000000' };
             },
-            theme: 'dark',
           }}
           onClose={() => {}}
         />

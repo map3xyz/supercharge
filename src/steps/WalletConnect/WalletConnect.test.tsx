@@ -1,9 +1,10 @@
-import * as reactDeviceDetect from 'react-device-detect';
+import { ethers } from 'ethers';
 
+// import * as reactDeviceDetect from 'react-device-detect';
+import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import * as useWeb3Mock from '../../hooks/useWeb3';
 import { wait } from '../../utils/wait';
 
 const TIMEOUT_BEFORE_MOCK_CONNECT = 100;
@@ -23,12 +24,12 @@ const defaults = {
     chainId: 1,
     connected: false,
     createSession: jest.fn(),
-    killSession: jest.fn(),
     on: mockConnect,
     peerMeta: {},
     uri: 'wc:123@1?bridge=bridge.org&key=456',
   },
   enable: jest.fn(),
+  updateRpcUrl: jest.fn(),
 };
 
 const mockDefault = jest.fn(() => defaults);
@@ -44,6 +45,15 @@ jest.mock('ethers', () => {
     ...originalModule,
     ethers: {
       ...originalModule.ethers,
+      Contract: jest.fn(() => {
+        return {
+          estimateGas: {
+            transfer: jest.fn(() => {
+              return ethers.BigNumber.from(21_000);
+            }),
+          },
+        };
+      }),
       providers: {
         ...originalModule.ethers.providers,
         Web3Provider: jest.fn(),
@@ -57,17 +67,10 @@ describe('WalletConnect', () => {
     render(
       <App
         config={{
-          anonKey: process.env.CONSOLE_ANON_KEY || '',
-          generateDepositAddress: async (_asset, _network, memoEnabled) => {
-            if (memoEnabled) {
-              return {
-                address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-                memo: '123456',
-              };
-            }
+          ...mockConfig,
+          generateDepositAddress: async (_asset, _network) => {
             return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
           },
-          theme: 'dark',
         }}
         onClose={() => {}}
       />
@@ -104,76 +107,6 @@ describe('WalletConnect', () => {
       await fireEvent.submit(form);
     });
   });
-  it('populates address AND memo if the wallet is vetted/enabled', async () => {
-    const mockSendTransaction = jest.fn();
-    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
-      getChainID: jest.fn(),
-      providers: {},
-      sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
-    }));
-
-    const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
-    await screen.findByTestId('scan-wallet-connect');
-    await act(async () => {
-      await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
-    });
-    expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
-    expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
-    const input = await screen.findByTestId('input');
-    act(() => {
-      fireEvent.change(input, { target: { value: '1' } });
-    });
-    const form = await screen.findByTestId('enter-amount-form');
-    await act(async () => {
-      await fireEvent.submit(form);
-    });
-    expect(mockSendTransaction).toHaveBeenCalledWith(
-      '0.00005000',
-      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      '123456',
-      false,
-      undefined
-    );
-  });
-  it('populates ONLY address if the wallet is not vetted/enabled', async () => {
-    const mockSendTransaction = jest.fn();
-    jest.spyOn(useWeb3Mock, 'useWeb3').mockImplementation(() => ({
-      addChain: jest.fn(),
-      authorizeTransactionProxy: jest.fn(),
-      getChainID: jest.fn(),
-      providers: {},
-      sendTransaction: mockSendTransaction,
-      switchChain: jest.fn(),
-    }));
-
-    const walletConnect = await screen.findByText('Spot');
-    fireEvent.click(walletConnect);
-    await screen.findByTestId('scan-wallet-connect');
-    await act(async () => {
-      await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
-    });
-    expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
-    expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
-    const input = await screen.findByTestId('input');
-    act(() => {
-      fireEvent.change(input, { target: { value: '1' } });
-    });
-    const form = await screen.findByTestId('enter-amount-form');
-    await act(async () => {
-      await fireEvent.submit(form);
-    });
-    expect(mockSendTransaction).toHaveBeenCalledWith(
-      '0.00005000',
-      '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-      undefined,
-      false,
-      undefined
-    );
-  });
   it('handles previous connection', async () => {
     const walletConnect = await screen.findByText('Rainbow');
     fireEvent.click(walletConnect);
@@ -186,48 +119,6 @@ describe('WalletConnect', () => {
       },
     }));
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
-  });
-  it('kills session', async () => {
-    const killSessionMock = jest.fn();
-    const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
-    mockDefault.mockImplementationOnce(() => ({
-      ...defaults,
-      connector: {
-        ...defaults.connector,
-        peerMeta: { name: 'Rainbow' },
-      },
-    }));
-    await act(async () => {
-      await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
-    });
-    expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
-    await act(async () => {
-      const back = await screen.findByLabelText('Back');
-      fireEvent.click(back);
-    });
-    mockDefault.mockImplementationOnce(() => ({
-      ...defaults,
-      connector: {
-        ...defaults.connector,
-        connected: true,
-        killSession: killSessionMock,
-        peerMeta: { name: 'Rainbow' },
-      },
-    }));
-    const spot = await screen.findByText('Spot');
-    fireEvent.click(spot);
-    mockDefault.mockImplementationOnce(() => ({
-      ...defaults,
-      connector: {
-        ...defaults.connector,
-        peerMeta: { name: 'Spot' },
-      },
-    }));
-    expect(
-      await screen.findByTestId('scan-wallet-connect')
-    ).toBeInTheDocument();
-    expect(killSessionMock).toHaveBeenCalled();
   });
   it('handles connection error', async () => {
     const walletConnect = await screen.findByText('Rainbow');
@@ -287,81 +178,82 @@ describe('WalletConnect', () => {
     expect(await screen.findByText('WalletConnect Error')).toBeInTheDocument();
   });
 
-  describe('Mobile Deeplink', () => {
-    Object.defineProperties(reactDeviceDetect, {
-      BrowserView: {
-        get: () => () => null,
-      },
-      MobileView: {
-        get:
-          () =>
-          ({ children }: any) =>
-            <>{children}</>,
-      },
-      isBrowser: { get: () => false },
-      isMobile: { get: () => true },
-    });
-    it('displays a deeplink on mobile', async () => {
-      const walletConnect = await screen.findByText('Rainbow');
-      fireEvent.click(walletConnect);
-      mockConnect.mockImplementation((event: string, callback: () => void) => {
-        if (event === 'disconnect') {
-          setTimeout(() => {
-            callback();
-          }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
-        }
-      });
-      const rainbow = await screen.findByText('Connect Rainbow');
-      expect(rainbow).toBeInTheDocument();
-    });
-    it('encodes the connector uri if method is not MetaMask', async () => {
-      const walletConnect = await screen.findByText('MetaMask (Mobile)');
-      fireEvent.click(walletConnect);
-      const connectBtn = await screen.findByTestId('connect-app');
-      expect(connectBtn.getAttribute('href')).toBe(
-        'metamask://wc?uri=wc:123@1?bridge=bridge.org&key=456'
-      );
-      const back = await screen.findByLabelText('Back');
-      fireEvent.click(back);
-      const rainbow = await screen.findByText('Rainbow');
-      fireEvent.click(rainbow);
-      const connectBtn2 = await screen.findByTestId('connect-app');
-      expect(connectBtn2.getAttribute('href')).toBe(
-        'rainbow://wc?uri=wc%3A123%401%3Fbridge%3Dbridge.org%26key%3D456'
-      );
-    });
-  });
-
-  describe('Install App', () => {
-    Object.defineProperties(reactDeviceDetect, {
-      BrowserView: {
-        get: () => () => null,
-      },
-      MobileView: {
-        get:
-          () =>
-          ({ children }: any) =>
-            <>{children}</>,
-      },
-      isBrowser: { get: () => false },
-      isIOS: { get: () => true },
-      isMobile: { get: () => true },
-    });
-    it('displays install app button after 1.2 seconds', async () => {
-      const walletConnect = await screen.findByText('Rainbow');
-      fireEvent.click(walletConnect);
-      const rainbow = await screen.findByText('Connect Rainbow');
-      fireEvent.click(rainbow);
-      await act(async () => {
-        await wait(1201);
-      });
-      expect(await screen.findByTestId('install-app')).toBeInTheDocument();
-      expect(
-        await screen.findByLabelText('app-store-badge')
-      ).toBeInTheDocument();
-      expect(
-        await screen.queryByLabelText('google-play-badge')
-      ).not.toBeInTheDocument();
-    });
-  });
+  // TODO: support walletconnect on mobile
+  // describe('Mobile Deeplink', () => {
+  //   Object.defineProperties(reactDeviceDetect, {
+  //     BrowserView: {
+  //       get: () => () => null,
+  //     },
+  //     MobileView: {
+  //       get:
+  //         () =>
+  //         ({ children }: any) =>
+  //           <>{children}</>,
+  //     },
+  //     isBrowser: { get: () => false },
+  //     isMobile: { get: () => true },
+  //   });
+  //   it('displays a deeplink on mobile', async () => {
+  //     const walletConnect = await screen.findByText('Rainbow');
+  //     fireEvent.click(walletConnect);
+  //     mockConnect.mockImplementation((event: string, callback: () => void) => {
+  //       if (event === 'disconnect') {
+  //         setTimeout(() => {
+  //           callback();
+  //         }, TIMEOUT_BEFORE_MOCK_DISCONNECT);
+  //       }
+  //     });
+  //     const rainbow = await screen.findByText('Connect Rainbow');
+  //     expect(rainbow).toBeInTheDocument();
+  //   });
+  //   it('encodes the connector uri if method is not MetaMask', async () => {
+  //     const walletConnect = await screen.findByText('MetaMask (Mobile)');
+  //     fireEvent.click(walletConnect);
+  //     const connectBtn = await screen.findByTestId('connect-app');
+  //     expect(connectBtn.getAttribute('href')).toBe(
+  //       'metamask://wc?uri=wc:123@1?bridge=bridge.org&key=456'
+  //     );
+  //     const back = await screen.findByLabelText('Back');
+  //     fireEvent.click(back);
+  //     const rainbow = await screen.findByText('Rainbow');
+  //     fireEvent.click(rainbow);
+  //     const connectBtn2 = await screen.findByTestId('connect-app');
+  //     expect(connectBtn2.getAttribute('href')).toBe(
+  //       'rainbow://wc?uri=wc%3A123%401%3Fbridge%3Dbridge.org%26key%3D456'
+  //     );
+  //   });
+  // });
+  // TODO: support walletconnect on mobile
+  // describe('Install App', () => {
+  //   Object.defineProperties(reactDeviceDetect, {
+  //     BrowserView: {
+  //       get: () => () => null,
+  //     },
+  //     MobileView: {
+  //       get:
+  //         () =>
+  //         ({ children }: any) =>
+  //           <>{children}</>,
+  //     },
+  //     isBrowser: { get: () => false },
+  //     isIOS: { get: () => true },
+  //     isMobile: { get: () => true },
+  //   });
+  //   it('displays install app button after 1.2 seconds', async () => {
+  //     const walletConnect = await screen.findByText('Rainbow');
+  //     fireEvent.click(walletConnect);
+  //     const rainbow = await screen.findByText('Connect Rainbow');
+  //     fireEvent.click(rainbow);
+  //     await act(async () => {
+  //       await wait(1201);
+  //     });
+  //     expect(await screen.findByTestId('install-app')).toBeInTheDocument();
+  //     expect(
+  //       await screen.findByLabelText('app-store-badge')
+  //     ).toBeInTheDocument();
+  //     expect(
+  //       await screen.queryByLabelText('google-play-badge')
+  //     ).not.toBeInTheDocument();
+  //   });
+  // });
 });
