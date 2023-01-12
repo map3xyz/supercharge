@@ -21,11 +21,10 @@ export enum Steps {
 }
 
 export enum TransactionSteps {
-  'Created' = 0,
+  'Detected' = 0,
   'Submitted' = 1,
-  'Pending' = 2,
-  '1st Confirmation' = 3,
-  'Confirmed' = 4,
+  'Confirming' = 2,
+  'Crediting' = 3,
 }
 
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
@@ -43,6 +42,7 @@ type State = {
     status: RemoteType;
   };
   asset?: AssetWithPrice;
+  block?: number;
   colors?: {
     progressBar?: string;
     scrollBar?: string;
@@ -97,6 +97,7 @@ type Action =
   | { type: 'RESET_STATE' }
   | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
+  | { payload?: number; type: 'SET_BLOCK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
@@ -200,22 +201,17 @@ const initialState: State = {
   theme: undefined,
   transaction: {
     progress: {
-      '1st Confirmation': {
+      Confirming: {
         data: undefined,
         error: undefined,
         status: 'idle',
       },
-      Confirmed: {
+      Crediting: {
         data: undefined,
         error: undefined,
         status: 'idle',
       },
-      Created: {
-        data: undefined,
-        error: undefined,
-        status: 'idle',
-      },
-      Pending: {
+      Detected: {
         data: undefined,
         error: undefined,
         status: 'idle',
@@ -227,7 +223,7 @@ const initialState: State = {
       },
     },
     step: 0,
-    steps: ['Created', 'Submitted', 'Pending', '1st Confirmation', 'Confirmed'],
+    steps: ['Submitted', 'Confirming', 'Crediting'],
   },
 };
 
@@ -283,6 +279,8 @@ export const Store: React.FC<
           return { ...state, asset: action.payload };
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
+        case 'SET_BLOCK':
+          return { ...state, block: action.payload };
         case 'SET_STEP':
           return {
             ...state,

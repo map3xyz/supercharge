@@ -15,16 +15,27 @@ const Result: React.FC<Props> = () => {
   }
 
   useEffect(() => {
-    if (state.transaction.progress.Submitted?.status === 'success') {
+    const success = Object.keys(state.transaction.progress).every(
+      (key) =>
+        state.transaction.progress[key as unknown as TransactionSteps]
+          ?.status === 'success'
+    );
+    const error = Object.keys(state.transaction.progress).find(
+      (key) =>
+        state.transaction.progress[key as unknown as TransactionSteps]
+          ?.status === 'error'
+    );
+
+    if (success) {
       onSuccess?.(
-        state.transaction?.progress.Submitted.data || '',
+        state.transaction.hash || '',
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
-    }
-    if (state.transaction?.progress.Submitted?.status === 'error') {
+    } else if (error) {
       onFailure?.(
-        state.transaction.progress.Submitted.error || '',
+        state.transaction.progress[error as unknown as TransactionSteps].data ||
+          '',
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
@@ -112,7 +123,7 @@ const Result: React.FC<Props> = () => {
                   </div>
                   <div
                     className={`relative my-1 h-full w-[1px] opacity-50 ${
-                      i === state.steps.length - 1 ? 'hidden' : ''
+                      i === state.transaction.steps.length - 1 ? 'hidden' : ''
                     } ${
                       TransactionSteps[step] < state.transaction.step
                         ? 'bg-green-500'
@@ -124,7 +135,8 @@ const Result: React.FC<Props> = () => {
                   <div className="text-sm font-semibold dark:text-white">
                     {step}
                   </div>
-                  {state.transaction.progress[step].status === 'success' ? (
+                  {state.transaction.progress[step].status === 'success' ||
+                  state.transaction.progress[step].status === 'loading' ? (
                     <div className="text-xs text-neutral-500">
                       {state.transaction.progress[step].data}
                     </div>

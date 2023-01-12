@@ -18,6 +18,8 @@ import { Context, Steps } from '../../providers/Store';
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
+// TODO: configure through console
+const MIN_CONFIRMATIONS = 3;
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -203,21 +205,18 @@ const EnterAmount: React.FC<Props> = () => {
         amount
       );
 
+      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+
       dispatch({
         payload: amount + ' ' + state.asset?.symbol,
         type: 'SET_TRANSACTION_AMOUNT',
       });
       dispatch({
         payload: {
-          data: new Date().toLocaleString(),
-          status: 'success',
-          step: 'Created',
+          data: `Please confirm the transaction on ${state.method?.name}.`,
+          status: 'loading',
+          step: 'Submitted',
         },
-        type: 'SET_TRANSACTION',
-      });
-      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-      dispatch({
-        payload: { status: 'loading', step: 'Submitted' },
         type: 'SET_TRANSACTION',
       });
       const hash: string = await sendTransaction(
@@ -235,9 +234,9 @@ const EnterAmount: React.FC<Props> = () => {
       });
       dispatch({
         payload: {
-          data: 'Waiting for your transaction to hit the mempool.',
+          data: 'Waiting for the first on-chain confirmation.',
           status: 'loading',
-          step: 'Pending',
+          step: 'Confirming',
         },
         type: 'SET_TRANSACTION',
       });
@@ -246,45 +245,29 @@ const EnterAmount: React.FC<Props> = () => {
         response = await state.provider?.data?.getTransaction(hash);
       }
       dispatch({ payload: response, type: 'SET_TRANSACTION_RESPONSE' });
-      dispatch({
-        payload: {
-          data: 'Transaction detected in mempool.',
-          status: 'success',
-          step: 'Pending',
-        },
-        type: 'SET_TRANSACTION',
-      });
-      dispatch({
-        payload: {
-          data: 'Waiting for the first on-chain confirmation.',
-          status: 'loading',
-          step: '1st Confirmation',
-        },
-        type: 'SET_TRANSACTION',
-      });
       const receipt = await waitForTransaction(hash, 1);
       dispatch({
         payload: {
           data: 'Transaction included in block ' + receipt.blockNumber + '.',
           status: 'success',
-          step: '1st Confirmation',
+          step: 'Confirming',
         },
         type: 'SET_TRANSACTION',
       });
       dispatch({
         payload: {
-          data: 'Waiting for 3 confirmations.',
+          data: `Waiting for ${MIN_CONFIRMATIONS} confirmations. Current block: ${state.block}.`,
           status: 'loading',
-          step: 'Confirmed',
+          step: 'Crediting',
         },
         type: 'SET_TRANSACTION',
       });
-      await waitForTransaction(hash, 3);
+      await waitForTransaction(hash, MIN_CONFIRMATIONS);
       dispatch({
         payload: {
           data: '🚀 Transaction confirmed!',
           status: 'success',
-          step: 'Confirmed',
+          step: 'Crediting',
         },
         type: 'SET_TRANSACTION',
       });

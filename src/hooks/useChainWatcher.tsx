@@ -13,10 +13,17 @@ export const useChainWatcher = () => {
     const run = async () => {
       const chainId = await getChainId();
 
+      if (chainId !== state.providerChainId) {
+        dispatch({ payload: undefined, type: 'SET_BLOCK' });
+      }
+
       dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
 
       state.provider?.data?.on?.('network', ({ chainId }) => {
         dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
+      });
+      state.provider?.data?.on('block', (block) => {
+        dispatch({ payload: block, type: 'SET_BLOCK' });
       });
     };
 
