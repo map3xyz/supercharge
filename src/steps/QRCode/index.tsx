@@ -59,8 +59,9 @@ const QRCode: React.FC<Props> = () => {
       state.depositAddress.status === 'success' &&
       state.depositAddress.data
     ) {
-      listenToWatchedAddress(state.depositAddress.data, (payload: any) =>
-        console.log(payload)
+      listenToWatchedAddress(
+        state.depositAddress.data.address,
+        (payload: any) => console.log(payload)
       );
     }
   }, []);
