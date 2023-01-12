@@ -61,7 +61,9 @@ describe('Result', () => {
         ...web3Mock,
         getBalance: getBalanceMock,
         sendTransaction: jest.fn().mockImplementation(() => {
-          return Promise.resolve('0x1');
+          return Promise.resolve(
+            '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
+          );
         }),
       }));
       global.window.ethereum = testingUtils.getProvider();
@@ -75,7 +77,10 @@ describe('Result', () => {
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
       testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
-      testingUtils.lowLevel.mockRequest('eth_sendTransaction', '0x1');
+      testingUtils.lowLevel.mockRequest(
+        'eth_sendTransaction',
+        '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
+      );
       await screen.findByText('Loading...');
       const elonCoin = await screen.findByText('ElonCoin');
       fireEvent.click(elonCoin);
