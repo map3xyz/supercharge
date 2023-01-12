@@ -26,7 +26,7 @@ export function listenToWatchedAddress(
       'postgres_changes',
       {
         event: 'UPDATE',
-        // filter: `id=eq.${watchedAddressId}`,
+        filter: `id=eq.${watchedAddressId}`,
         schema: 'public',
         table: 'watched_address',
       },

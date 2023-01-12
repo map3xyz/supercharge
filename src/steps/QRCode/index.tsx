@@ -4,6 +4,7 @@ import React, { useContext, useEffect } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import { useAddWatchedAddressMutation } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
@@ -15,6 +16,8 @@ const QRCode: React.FC<Props> = () => {
 
   const { width } = useModalSize();
 
+  const [addWatchedAddress] = useAddWatchedAddressMutation();
+
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
@@ -23,7 +26,25 @@ const QRCode: React.FC<Props> = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        await getDepositAddress(false);
+        const { address } = await getDepositAddress(false);
+
+        const { data } = await addWatchedAddress({
+          variables: {
+            address,
+            assetId: state.asset!.id!,
+            confirmationsToWatch: 3,
+          },
+        });
+
+        if (!data?.addWatchedAddress) {
+          throw new Error('Unable to watch address.');
+        }
+
+        console.log(data.addWatchedAddress);
+
+        listenToWatchedAddress(data.addWatchedAddress, (payload: any) => {
+          console.log(payload);
+        });
       } catch (e) {
         console.error(e);
       }
@@ -33,9 +54,16 @@ const QRCode: React.FC<Props> = () => {
     return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
   }, []);
 
-  if (state.depositAddress.status === 'success' && state.depositAddress.data) {
-    listenToWatchedAddress(state.depositAddress.data, (payload) => console.log);
-  }
+  useEffect(() => {
+    if (
+      state.depositAddress.status === 'success' &&
+      state.depositAddress.data
+    ) {
+      listenToWatchedAddress(state.depositAddress.data, (payload: any) =>
+        console.log(payload)
+      );
+    }
+  }, []);
 
   return (
     <div className="flex h-full flex-col">
@@ -132,6 +160,3 @@ const QRCode: React.FC<Props> = () => {
 type Props = {};
 
 export default QRCode;
-function subscribeToWatchedAdress(data: string) {
-  throw new Error('Function not implemented.');
-}
