@@ -2,7 +2,6 @@ import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -205,6 +204,10 @@ const EnterAmount: React.FC<Props> = () => {
       );
 
       dispatch({
+        payload: amount + ' ' + state.asset?.symbol,
+        type: 'SET_TRANSACTION_AMOUNT',
+      });
+      dispatch({
         payload: {
           data: new Date().toLocaleString(),
           status: 'success',
@@ -221,6 +224,7 @@ const EnterAmount: React.FC<Props> = () => {
         amount,
         data?.assetByMappedAssetIdAndNetworkCode?.address as string
       );
+      dispatch({ payload: hash, type: 'SET_TRANSACTION_HASH' });
       dispatch({
         payload: {
           data: new Date().toLocaleString(),
@@ -237,10 +241,11 @@ const EnterAmount: React.FC<Props> = () => {
         },
         type: 'SET_TRANSACTION',
       });
-      let transaction;
-      while (!transaction) {
-        transaction = await state.provider?.data?.getTransaction(hash);
+      let response;
+      while (!response) {
+        response = await state.provider?.data?.getTransaction(hash);
       }
+      dispatch({ payload: response, type: 'SET_TRANSACTION_RESPONSE' });
       dispatch({
         payload: {
           data: 'Transaction detected in mempool.',
@@ -257,10 +262,10 @@ const EnterAmount: React.FC<Props> = () => {
         },
         type: 'SET_TRANSACTION',
       });
-      const txReceipt = await waitForTransaction(hash, 1);
+      const receipt = await waitForTransaction(hash, 1);
       dispatch({
         payload: {
-          data: 'Transaction included in block ' + txReceipt.blockNumber + '.',
+          data: 'Transaction included in block ' + receipt.blockNumber + '.',
           status: 'success',
           step: '1st Confirmation',
         },
@@ -269,7 +274,6 @@ const EnterAmount: React.FC<Props> = () => {
       dispatch({
         payload: {
           data: 'Waiting for 3 confirmations.',
-          displayType: 'text',
           status: 'loading',
           step: 'Confirmed',
         },
@@ -278,8 +282,7 @@ const EnterAmount: React.FC<Props> = () => {
       await waitForTransaction(hash, 3);
       dispatch({
         payload: {
-          data: hash,
-          displayType: 'readonly',
+          data: '🚀 Transaction confirmed!',
           status: 'success',
           step: 'Confirmed',
         },

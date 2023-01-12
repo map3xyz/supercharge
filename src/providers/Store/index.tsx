@@ -78,14 +78,16 @@ type State = {
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
   transaction: {
+    amount?: string;
+    hash?: string;
     progress: {
       [key in keyof typeof TransactionSteps]: {
         data?: string;
-        displayType: 'readonly' | 'text';
         error?: string;
         status: RemoteType;
       };
     };
+    response?: ethers.providers.TransactionResponse;
     step: number;
     steps: (keyof typeof TransactionSteps)[];
   };
@@ -146,12 +148,17 @@ type Action =
   | {
       payload: {
         data?: string;
-        displayType?: 'readonly' | 'text';
         error?: string;
         status: RemoteType;
         step: keyof typeof TransactionSteps;
       };
       type: 'SET_TRANSACTION';
+    }
+  | { payload: string; type: 'SET_TRANSACTION_HASH' }
+  | { payload: string; type: 'SET_TRANSACTION_AMOUNT' }
+  | {
+      payload: ethers.providers.TransactionResponse;
+      type: 'SET_TRANSACTION_RESPONSE';
     }
   | {
       type: 'RESET_TRANSACTION';
@@ -195,31 +202,26 @@ const initialState: State = {
     progress: {
       '1st Confirmation': {
         data: undefined,
-        displayType: 'text',
         error: undefined,
         status: 'idle',
       },
       Confirmed: {
         data: undefined,
-        displayType: 'readonly',
         error: undefined,
         status: 'idle',
       },
       Created: {
         data: undefined,
-        displayType: 'text',
         error: undefined,
         status: 'idle',
       },
       Pending: {
         data: undefined,
-        displayType: 'text',
         error: undefined,
         status: 'idle',
       },
       Submitted: {
         data: undefined,
-        displayType: 'text',
         error: undefined,
         status: 'idle',
       },
@@ -447,6 +449,30 @@ export const Store: React.FC<
                 },
               },
               step: TransactionSteps[action.payload.step],
+            },
+          };
+        case 'SET_TRANSACTION_HASH':
+          return {
+            ...state,
+            transaction: {
+              ...state.transaction,
+              hash: action.payload,
+            },
+          };
+        case 'SET_TRANSACTION_AMOUNT':
+          return {
+            ...state,
+            transaction: {
+              ...state.transaction,
+              amount: action.payload,
+            },
+          };
+        case 'SET_TRANSACTION_RESPONSE':
+          return {
+            ...state,
+            transaction: {
+              ...state.transaction,
+              response: action.payload,
             },
           };
         case 'RESET_TRANSACTION':

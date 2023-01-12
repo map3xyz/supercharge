@@ -1,5 +1,5 @@
 import { Badge, CryptoAddress, ReadOnlyText } from '@map3xyz/components';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
@@ -7,6 +7,7 @@ import { Context, Steps, TransactionSteps } from '../../providers/Store';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
+  const [toggleDetails, setToggleDetails] = useState(false);
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -75,7 +76,9 @@ const Result: React.FC<Props> = () => {
           </Badge>
         </div>
       </div>
-      <InnerWrapper className="h-full">
+      <InnerWrapper
+        className={`h-full transition-all ${toggleDetails ? 'h-0 p-0' : ''}`}
+      >
         {state.transaction.steps.map((step, i) => {
           return (
             <div
@@ -118,34 +121,71 @@ const Result: React.FC<Props> = () => {
                   ></div>
                 </div>
                 <div className="ml-2 mb-2 w-full">
-                  <div className="mb-0.5 text-sm font-semibold dark:text-white">
+                  <div className="text-sm font-semibold dark:text-white">
                     {step}
                   </div>
-                  {state.transaction.progress[step].status === 'success' &&
-                  state.transaction.progress[step].displayType ===
-                    'readonly' ? (
-                    <ReadOnlyText
-                      copyButton
-                      value={state.transaction.progress[step].data}
-                    />
-                  ) : (
+                  {state.transaction.progress[step].status === 'success' ? (
                     <div className="text-xs text-neutral-500">
                       {state.transaction.progress[step].data}
                     </div>
-                  )}
-                  {state.transaction.progress[step].status === 'error' && (
+                  ) : state.transaction.progress[step].status === 'error' ? (
                     <div className="text-xs text-red-500">
                       {state.transaction.progress[step].error}
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </div>
           );
         })}
       </InnerWrapper>
-      <InnerWrapper className="border-t border-neutral-200 bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800">
-        Transaction Details
+      <InnerWrapper
+        className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
+          toggleDetails ? 'h-full' : 'h-[48px]'
+        } ${
+          state.transaction.response
+            ? 'visible opacity-100'
+            : 'invisible opacity-0'
+        }`}
+      >
+        <>
+          <div
+            className="flex cursor-pointer items-center justify-between text-sm font-semibold dark:text-white"
+            onClick={() => setToggleDetails((toggle) => !toggle)}
+          >
+            <div className="flex items-center gap-1">
+              <i className="fa fa-receipt" />
+              Transaction Details
+            </div>
+            <i
+              className={`fa fa-chevron-up transition-transform ${
+                toggleDetails ? 'rotate-180' : ''
+              }`}
+            />
+          </div>
+          <div className="mt-3 mb-0.5 text-xs font-semibold dark:text-white">
+            Amount
+          </div>
+          <div className="text-xs font-medium dark:text-white">
+            {state.transaction.amount}
+          </div>
+          <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
+            From
+          </div>
+          <ReadOnlyText copyButton value={state.transaction.response?.from} />
+          <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
+            To
+          </div>
+          <ReadOnlyText copyButton value={state.transaction.response?.to} />
+          {state.transaction.hash ? (
+            <>
+              <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
+                Hash
+              </div>
+              <ReadOnlyText copyButton value={state.transaction.hash} />
+            </>
+          ) : null}
+        </>
       </InnerWrapper>
     </div>
   );
