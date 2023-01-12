@@ -20,6 +20,12 @@ export enum Steps {
   __LENGTH,
 }
 
+export enum TxSteps {
+  'Submitted' = 0,
+  'Confirming' = 1,
+  'Confirmed' = 2,
+}
+
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
 
 export type AlertType = {
@@ -69,10 +75,19 @@ type State = {
   step: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
-  transaction?: {
-    error?: string;
+  tx: {
+    amount?: string;
     hash?: string;
-    status: RemoteType;
+    progress: {
+      [key in keyof typeof TxSteps]: {
+        data?: string;
+        error?: string;
+        status: RemoteType;
+      };
+    };
+    response?: ethers.providers.TransactionResponse;
+    step: number;
+    steps: (keyof typeof TxSteps)[];
   };
 };
 
@@ -98,9 +113,6 @@ type Action =
   | { type: 'SET_PROVIDER_LOADING' }
   | { payload: any; type: 'SET_PROVIDER_SUCCESS' }
   | { payload: string; type: 'SET_PROVIDER_ERROR' }
-  | { payload: string; type: 'SET_TRANSACTION_SUCCESS' }
-  | { payload: string; type: 'SET_TRANSACTION_ERROR' }
-  | { type: 'SET_TRANSACTION_LOADING' }
   | { type: 'SET_BALANCE_LOADING' }
   | {
       payload: {
@@ -126,7 +138,29 @@ type Action =
     }
   | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
   | { type: 'SET_PREBUILT_TX_IDLE' }
-  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' };
+  | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
+  | {
+      payload: { steps: (keyof typeof TxSteps)[] };
+      type: 'SET_TX_PROGRESS_STEPS';
+    }
+  | {
+      payload: {
+        data?: string;
+        error?: string;
+        status: RemoteType;
+        step: keyof typeof TxSteps;
+      };
+      type: 'SET_TX';
+    }
+  | { payload: string; type: 'SET_TX_HASH' }
+  | { payload: string; type: 'SET_TX_AMOUNT' }
+  | {
+      payload: ethers.providers.TransactionResponse;
+      type: 'SET_TX_RESPONSE';
+    }
+  | {
+      type: 'RESET_TX';
+    };
 
 const initialState: State = {
   account: {
@@ -162,6 +196,27 @@ const initialState: State = {
     'Result',
   ],
   theme: undefined,
+  tx: {
+    progress: {
+      Confirmed: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+      Confirming: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+      Submitted: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+    },
+    step: 0,
+    steps: ['Submitted', 'Confirming', 'Confirmed'],
+  },
 };
 
 export const Store: React.FC<
@@ -369,31 +424,50 @@ export const Store: React.FC<
             ...state,
             providerChainId: action.payload,
           };
-        case 'SET_TRANSACTION_SUCCESS':
+        case 'SET_TX':
           return {
             ...state,
-            transaction: {
-              error: undefined,
+            tx: {
+              ...state.tx,
+              progress: {
+                ...state.tx.progress,
+                [action.payload.step]: {
+                  ...state.tx.progress[action.payload.step],
+                  ...action.payload,
+                },
+              },
+              step: TxSteps[action.payload.step],
+            },
+          };
+        case 'SET_TX_HASH':
+          return {
+            ...state,
+            tx: {
+              ...state.tx,
               hash: action.payload,
-              status: 'success',
             },
           };
-        case 'SET_TRANSACTION_ERROR':
+        case 'SET_TX_AMOUNT':
           return {
             ...state,
-            transaction: {
-              error: action.payload,
-              hash: undefined,
-              status: 'error',
+            tx: {
+              ...state.tx,
+              amount: action.payload,
             },
           };
-        case 'SET_TRANSACTION_LOADING':
+        case 'SET_TX_RESPONSE':
           return {
             ...state,
-            transaction: {
-              error: undefined,
-              hash: undefined,
-              status: 'loading',
+            tx: {
+              ...state.tx,
+              response: action.payload,
+            },
+          };
+        case 'RESET_TX':
+          return {
+            ...state,
+            tx: {
+              ...initialState.tx,
             },
           };
         case 'RESET_STATE': {

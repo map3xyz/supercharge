@@ -2,7 +2,6 @@ import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -19,6 +18,8 @@ import { Context, Steps } from '../../providers/Store';
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
+// TODO: configure through console
+const MIN_CONFIRMATIONS = 3;
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -204,21 +205,79 @@ const EnterAmount: React.FC<Props> = () => {
         amount
       );
 
-      if (!isMobile && state.method?.value !== 'isWalletConnect') {
-        dispatch({ type: 'SET_TRANSACTION_LOADING' });
-      }
-      const hash = await sendTransaction(
+      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+
+      dispatch({
+        payload: amount + ' ' + state.asset?.symbol,
+        type: 'SET_TX_AMOUNT',
+      });
+      dispatch({
+        payload: {
+          data: `Please confirm the transaction on ${state.method?.name}.`,
+          status: 'loading',
+          step: 'Submitted',
+        },
+        type: 'SET_TX',
+      });
+      const hash: string = await sendTransaction(
         amount,
         data?.assetByMappedAssetIdAndNetworkCode?.address as string
       );
-      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-      dispatch({ type: 'SET_TRANSACTION_LOADING' });
-      await waitForTransaction(hash, 1);
-      dispatch({ payload: hash, type: 'SET_TRANSACTION_SUCCESS' });
+      dispatch({ payload: hash, type: 'SET_TX_HASH' });
+      dispatch({
+        payload: {
+          data: new Date().toLocaleString(),
+          status: 'success',
+          step: 'Submitted',
+        },
+        type: 'SET_TX',
+      });
+      dispatch({
+        payload: {
+          data: 'Waiting for the first on-chain confirmation.',
+          status: 'loading',
+          step: 'Confirming',
+        },
+        type: 'SET_TX',
+      });
+      let response;
+      while (!response) {
+        response = await state.provider?.data?.getTransaction(hash);
+      }
+      dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
+      const receipt = await waitForTransaction(hash, 1);
+      dispatch({
+        payload: {
+          data: 'Transaction included in block ' + receipt.blockNumber + '.',
+          status: 'success',
+          step: 'Confirming',
+        },
+        type: 'SET_TX',
+      });
+      dispatch({
+        payload: {
+          data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
+          status: 'loading',
+          step: 'Confirmed',
+        },
+        type: 'SET_TX',
+      });
+      await waitForTransaction(hash, MIN_CONFIRMATIONS);
+      dispatch({
+        payload: {
+          data: '🚀 Transaction confirmed!',
+          status: 'success',
+          step: 'Confirmed',
+        },
+        type: 'SET_TX',
+      });
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
-        dispatch({ payload: e.message, type: 'SET_TRANSACTION_ERROR' });
+        dispatch({
+          payload: { error: e.message, status: 'error', step: 'Submitted' },
+          type: 'SET_TX',
+        });
       }
       console.error(e);
     }
@@ -420,7 +479,6 @@ const EnterAmount: React.FC<Props> = () => {
                   amount={amount}
                   disabled={
                     state.depositAddress.status === 'loading' ||
-                    state.transaction?.status === 'loading' ||
                     state.prebuiltTx.status !== 'success' ||
                     state.prebuiltTx.data?.feeError ||
                     !!formError?.includes(INSUFFICIENT_FUNDS)

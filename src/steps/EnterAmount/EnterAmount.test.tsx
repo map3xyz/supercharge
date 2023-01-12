@@ -401,9 +401,7 @@ describe('window.ethereum > ERC20', () => {
         '1.000000',
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
       );
-      expect(
-        await screen.findByText('Transaction Submitted')
-      ).toBeInTheDocument();
+      expect(await screen.findByText('Submitted')).toBeInTheDocument();
     });
   });
 });

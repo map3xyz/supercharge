@@ -36,7 +36,7 @@
     "tailwindcss/no-custom-classname": [
       1,
       {
-        "whitelist": ["map3"]
+        "whitelist": ["map3", "sbui-badge--.*"]
       }
     ],
     "simple-import-sort/exports": "error",
