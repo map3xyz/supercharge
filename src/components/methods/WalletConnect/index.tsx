@@ -17,14 +17,10 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
         (state.account.status === 'error' &&
           state.account.data === 'No provider found.') ||
         (state.account.status === 'success' && amount === '0') ||
-        state.account.status === 'loading' ||
-        state.transaction?.status === 'loading'
+        state.account.status === 'loading'
       }
       htmlType="submit"
-      loading={
-        state.account.status === 'loading' ||
-        state.transaction?.status === 'loading'
-      }
+      loading={state.account.status === 'loading'}
       size="medium"
       type={'default'}
     >
