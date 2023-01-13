@@ -11,13 +11,6 @@ import WindowEthereum from '../../components/methods/WindowEthereum';
 import * as useWeb3Mock from '../../hooks/useWeb3';
 import EnterAmount from '.';
 
-const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
-
-const getBalanceMock = jest.fn().mockImplementation(() => ({
-  assetBalance: ethers.BigNumber.from('100000000'),
-  chainBalance: ethers.BigNumber.from('20000000000000000000'),
-}));
-
 jest.mock('ethers', () => {
   const originalModule = jest.requireActual('ethers');
   return {
@@ -53,9 +46,7 @@ describe('Enter Amount', () => {
     });
     await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
-    act(() => {
-      fireEvent.click(metaMask);
-    });
+    fireEvent.click(metaMask);
   });
 
   it('renders', async () => {
@@ -128,11 +119,9 @@ describe('Enter Amount', () => {
     });
     it('handles submission', async () => {
       await screen.findAllByText('Connect Wallet');
-      await act(() => {
-        testingUtils.mockAccountsChanged([
-          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-        ]);
-      });
+      testingUtils.mockAccountsChanged([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
@@ -187,6 +176,7 @@ describe('window.ethereum', () => {
     await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
+    await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
@@ -342,6 +332,12 @@ describe('window.ethereum', () => {
 });
 
 describe('window.ethereum > ERC20', () => {
+  const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
+  const getBalanceMock = jest.fn().mockImplementation(() => ({
+    assetBalance: ethers.BigNumber.from('100000000'),
+    chainBalance: ethers.BigNumber.from('20000000000000000000'),
+  }));
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
@@ -407,6 +403,13 @@ describe('window.ethereum > ERC20', () => {
 });
 
 describe('txAuth - Failure', () => {
+  const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
+  const getBalanceMock = jest.fn().mockImplementation(() => ({
+    assetBalance: ethers.BigNumber.from('100000000'),
+    chainBalance: ethers.BigNumber.from('20000000000000000000'),
+  }));
+
   const mockAuthTransactionProxy = jest.fn();
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
@@ -479,6 +482,13 @@ describe('txAuth - Failure', () => {
 });
 
 describe('txAuth - Success', () => {
+  const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
+  const getBalanceMock = jest.fn().mockImplementation(() => ({
+    assetBalance: ethers.BigNumber.from('100000000'),
+    chainBalance: ethers.BigNumber.from('20000000000000000000'),
+  }));
+
   const mockAuthTransactionProxy = jest.fn();
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
