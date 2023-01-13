@@ -437,6 +437,13 @@ export type AddWatchedAddressMutationVariables = Exact<{
 
 export type AddWatchedAddressMutation = { __typename?: 'Mutation', addWatchedAddress?: string | null };
 
+export type RemoveWatchedAddressMutationVariables = Exact<{
+  watchedAddressId: Scalars['ID'];
+}>;
+
+
+export type RemoveWatchedAddressMutation = { __typename?: 'Mutation', removeWatchedAddress?: string | null };
+
 export type GetAssetByMappedAssetIdAndNetworkCodeQueryVariables = Exact<{
   mappedAssetId?: InputMaybe<Scalars['String']>;
   networkCode?: InputMaybe<Scalars['String']>;
@@ -571,6 +578,37 @@ export function useAddWatchedAddressMutation(baseOptions?: Apollo.MutationHookOp
 export type AddWatchedAddressMutationHookResult = ReturnType<typeof useAddWatchedAddressMutation>;
 export type AddWatchedAddressMutationResult = Apollo.MutationResult<AddWatchedAddressMutation>;
 export type AddWatchedAddressMutationOptions = Apollo.BaseMutationOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
+export const RemoveWatchedAddressDocument = gql`
+    mutation RemoveWatchedAddress($watchedAddressId: ID!) {
+  removeWatchedAddress(watchedAddressId: $watchedAddressId)
+}
+    `;
+export type RemoveWatchedAddressMutationFn = Apollo.MutationFunction<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>;
+
+/**
+ * __useRemoveWatchedAddressMutation__
+ *
+ * To run a mutation, you first call `useRemoveWatchedAddressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveWatchedAddressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeWatchedAddressMutation, { data, loading, error }] = useRemoveWatchedAddressMutation({
+ *   variables: {
+ *      watchedAddressId: // value for 'watchedAddressId'
+ *   },
+ * });
+ */
+export function useRemoveWatchedAddressMutation(baseOptions?: Apollo.MutationHookOptions<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>(RemoveWatchedAddressDocument, options);
+      }
+export type RemoveWatchedAddressMutationHookResult = ReturnType<typeof useRemoveWatchedAddressMutation>;
+export type RemoveWatchedAddressMutationResult = Apollo.MutationResult<RemoveWatchedAddressMutation>;
+export type RemoveWatchedAddressMutationOptions = Apollo.BaseMutationOptions<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>;
 export const GetAssetByMappedAssetIdAndNetworkCodeDocument = gql`
     query GetAssetByMappedAssetIdAndNetworkCode($mappedAssetId: String, $networkCode: String) {
   assetByMappedAssetIdAndNetworkCode(

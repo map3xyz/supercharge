@@ -1,10 +1,14 @@
-import { Badge, ReadOnlyText } from '@map3xyz/components';
+import { Badge, CryptoAddress, Pill, ReadOnlyText } from '@map3xyz/components';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import { useAddWatchedAddressMutation } from '../../generated/apollo-gql';
+import { MIN_CONFIRMATIONS } from '../../constants';
+import {
+  useAddWatchedAddressMutation,
+  useRemoveWatchedAddressMutation,
+} from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
@@ -13,15 +17,23 @@ import { listenToWatchedAddress } from '../../utils/supabase';
 const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
+  const [isWatching, setIsWatching] = React.useState<boolean>(false);
 
   const { width } = useModalSize();
 
   const [addWatchedAddress] = useAddWatchedAddressMutation();
+  const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
     return null;
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsWatching(true);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     const run = async () => {
@@ -32,19 +44,84 @@ const QRCode: React.FC<Props> = () => {
           variables: {
             address,
             assetId: state.asset!.id!,
-            confirmationsToWatch: 3,
+            confirmationsToWatch: MIN_CONFIRMATIONS,
           },
         });
 
-        if (!data?.addWatchedAddress) {
+        if (typeof data?.addWatchedAddress !== 'string') {
           throw new Error('Unable to watch address.');
         }
 
-        console.log(data.addWatchedAddress);
-
-        listenToWatchedAddress(data.addWatchedAddress, (payload: any) => {
-          console.log(payload);
-        });
+        let submmitedDate: string | undefined;
+        listenToWatchedAddress(
+          data.addWatchedAddress,
+          (payload: WatchAddressPayload) => {
+            console.log(payload);
+            dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+            switch (payload.new.state) {
+              case 'confirming':
+                dispatch({
+                  payload: payload.new.tx_id,
+                  type: 'SET_TX_HASH',
+                });
+                dispatch({
+                  payload: payload.new.tx_formatted_amount,
+                  type: 'SET_TX_AMOUNT',
+                });
+                submmitedDate = submmitedDate || new Date().toLocaleString();
+                dispatch({
+                  payload: {
+                    data: submmitedDate,
+                    status: 'success',
+                    step: 'Submitted',
+                  },
+                  type: 'SET_TX',
+                });
+                dispatch({
+                  payload: {
+                    data:
+                      state.tx.progress.Confirming.data ||
+                      `Transaction included in block ${payload.new.tx_block_height}.`,
+                    status: 'success',
+                    step: 'Confirming',
+                  },
+                  type: 'SET_TX',
+                });
+                const currentBlock =
+                  payload.new.tx_block_height + payload.new.tx_confirmations;
+                const requiredBlock =
+                  payload.new.tx_block_height + MIN_CONFIRMATIONS;
+                const remainingBlocks = Math.max(
+                  0,
+                  requiredBlock - currentBlock
+                );
+                const remainingBlocksText =
+                  remainingBlocks === 1 ? 'block' : 'blocks';
+                dispatch({
+                  payload: {
+                    data: `Current block height: ${currentBlock}. ${remainingBlocks} more ${remainingBlocksText} required for confirmation.`,
+                    status: 'loading',
+                    step: 'Confirmed',
+                  },
+                  type: 'SET_TX',
+                });
+                break;
+              case 'confirmed':
+                dispatch({
+                  payload: {
+                    data: '🚀 Transaction confirmed!',
+                    status: 'success',
+                    step: 'Confirmed',
+                  },
+                  type: 'SET_TX',
+                });
+                removeWatchedAddress({
+                  variables: { watchedAddressId: data.addWatchedAddress! },
+                });
+                break;
+            }
+          }
+        );
       } catch (e) {
         console.error(e);
       }
@@ -52,18 +129,6 @@ const QRCode: React.FC<Props> = () => {
     run();
 
     return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
-  }, []);
-
-  useEffect(() => {
-    if (
-      state.depositAddress.status === 'success' &&
-      state.depositAddress.data
-    ) {
-      listenToWatchedAddress(
-        state.depositAddress.data.address,
-        (payload: any) => console.log(payload)
-      );
-    }
   }, []);
 
   return (
@@ -123,6 +188,18 @@ const QRCode: React.FC<Props> = () => {
                 Only send {state.asset.name} on the {state.network?.symbol}{' '}
                 Network to this address.
               </div>
+              {isWatching && state.depositAddress.data && (
+                <Pill
+                  color="yellow"
+                  icon={<i className="fa fa-spinner animate-spin" />}
+                >
+                  Monitoring{' '}
+                  <CryptoAddress hint={false}>
+                    {state.depositAddress.data.address}
+                  </CryptoAddress>{' '}
+                  for deposits.
+                </Pill>
+              )}
               <div className="flex w-full justify-center">
                 <QRCodeSVG
                   bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
