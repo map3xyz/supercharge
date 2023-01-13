@@ -10,6 +10,7 @@ import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum, {
   ConnectHandler,
 } from '../../components/methods/WindowEthereum';
+import { MIN_CONFIRMATIONS } from '../../constants';
 import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
 import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
@@ -18,8 +19,6 @@ import { Context, Steps } from '../../providers/Store';
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
-// TODO: configure through console
-const MIN_CONFIRMATIONS = 3;
 
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);

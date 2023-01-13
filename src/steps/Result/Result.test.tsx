@@ -28,30 +28,28 @@ jest.mock('ethers', () => {
   };
 });
 
-const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
-
-const getBalanceMock = jest.fn().mockImplementation(() => ({
-  assetBalance: ethers.BigNumber.from('100000000'),
-  chainBalance: ethers.BigNumber.from('20000000000000000000'),
-}));
-
-const onSuccessMock = jest.fn();
-const onFailureMock = jest.fn();
-
-beforeEach(() => {
-  render(
-    <App
-      config={{
-        ...mockConfig,
-        onFailure: onFailureMock,
-        onSuccess: onSuccessMock,
-      }}
-      onClose={() => {}}
-    />
-  );
-});
-
 describe('Result', () => {
+  const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
+  const getBalanceMock = jest.fn().mockImplementation(() => ({
+    assetBalance: ethers.BigNumber.from('100000000'),
+    chainBalance: ethers.BigNumber.from('20000000000000000000'),
+  }));
+
+  const onSuccessMock = jest.fn();
+  const onFailureMock = jest.fn();
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          onFailure: onFailureMock,
+          onSuccess: onSuccessMock,
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
   describe('success', () => {
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',

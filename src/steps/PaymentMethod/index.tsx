@@ -176,6 +176,7 @@ const PaymentMethod: React.FC<Props> = () => {
                           'NetworkSelection',
                           'PaymentMethod',
                           'QRCode',
+                          'Result',
                         ],
                         type: 'SET_STEPS',
                       });

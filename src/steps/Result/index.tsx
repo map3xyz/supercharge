@@ -61,8 +61,10 @@ const Result: React.FC<Props> = () => {
           via
           <Badge
             color={
-              state.account.status === 'loading' ||
-              state.account.status === 'idle'
+              state.method.value === 'qr'
+                ? 'blue'
+                : state.account.status === 'loading' ||
+                  state.account.status === 'idle'
                 ? 'yellow'
                 : state.account.status === 'error'
                 ? 'red'
@@ -147,10 +149,8 @@ const Result: React.FC<Props> = () => {
       </InnerWrapper>
       <InnerWrapper
         className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
-          toggleDetails && state.tx.response ? 'h-full' : 'h-[48px]'
-        } ${
-          state.tx.response ? 'opacity-100' : 'cursor-not-allowed opacity-20'
-        }`}
+          toggleDetails && state.tx.hash ? 'h-full' : 'h-[48px]'
+        } ${state.tx.hash ? 'opacity-100' : 'cursor-not-allowed opacity-20'}`}
       >
         <div className="flex h-full flex-col justify-between">
           <div>
@@ -174,14 +174,18 @@ const Result: React.FC<Props> = () => {
             <div className="text-xs font-medium dark:text-white">
               <ReadOnlyText value={state.tx.amount} />
             </div>
-            <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
-              From
-            </div>
-            <ReadOnlyText copyButton value={state.tx.response?.from} />
-            <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
-              To
-            </div>
-            <ReadOnlyText copyButton value={state.tx.response?.to} />
+            {state.tx.response ? (
+              <>
+                <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
+                  From
+                </div>
+                <ReadOnlyText copyButton value={state.tx.response?.from} />
+                <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
+                  To
+                </div>
+                <ReadOnlyText copyButton value={state.tx.response?.to} />
+              </>
+            ) : null}
             {state.tx.hash ? (
               <>
                 <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">

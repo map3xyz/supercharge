@@ -1,0 +1,7 @@
+mutation RemoveWatchedAddress(
+  $watchedAddressId: ID!
+) {
+  removeWatchedAddress(
+    watchedAddressId: $watchedAddressId
+  )
+}

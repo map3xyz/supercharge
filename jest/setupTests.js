@@ -1,5 +1,12 @@
 require('jest-fetch-mock').enableMocks();
 
+jest.mock('../src/utils/supabase', () => ({
+  __esModule: true,
+  supabase: {
+    createClient: jest.fn(),
+  },
+}));
+
 global.CSS = {
   supports: (k, v) => false,
 };
