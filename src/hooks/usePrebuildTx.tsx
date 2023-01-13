@@ -91,7 +91,6 @@ export const usePrebuildTx = () => {
         type: 'SET_PREBUILT_TX_SUCCESS',
       });
     } catch (e: any) {
-      console.log(e);
       dispatch({ payload: e.message, type: 'SET_PREBUILT_TX_ERROR' });
     }
   };

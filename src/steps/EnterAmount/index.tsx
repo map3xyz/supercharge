@@ -38,6 +38,26 @@ const EnterAmount: React.FC<Props> = () => {
   const quoteRef = useRef<HTMLSpanElement>(null);
   const connectRef = useRef<ConnectHandler>(null);
 
+  useEffect(() => {
+    if (!state.requiredAmount) return;
+
+    if (inputRef.current) {
+      inputRef.current.value = state.requiredAmount;
+    }
+
+    if (state.prebuiltTx.data?.maxLimitFormatted) {
+      setFormValue({
+        base: state.requiredAmount,
+        inputSelected: 'crypto',
+        quote: (Number(state.requiredAmount) * (rate || 0)).toFixed(2),
+      });
+    }
+  }, [
+    inputRef.current,
+    state.requiredAmount,
+    state.prebuiltTx.data?.maxLimitFormatted,
+  ]);
+
   const { data, error, loading } =
     useGetAssetByMappedAssetIdAndNetworkCodeQuery({
       skip: state.asset?.type !== 'asset',
@@ -164,6 +184,7 @@ const EnterAmount: React.FC<Props> = () => {
 
   const setMax = () => {
     if (!inputRef.current) return;
+    if (state.requiredAmount) return;
     if (formValue.inputSelected === 'fiat') toggleBase();
     inputRef.current.value = state.prebuiltTx.data!.maxLimitFormatted;
     setFormValue({
@@ -357,6 +378,7 @@ const EnterAmount: React.FC<Props> = () => {
                   autoFocus
                   className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
                   data-testid="input"
+                  disabled={!!state.requiredAmount}
                   name="base"
                   placeholder="0"
                   ref={inputRef}
