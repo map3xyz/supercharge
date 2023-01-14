@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
 import { initMap3Sdk } from '.';
-import { CONSOLE_ANON_KEY } from './constants';
 
 const container = document.getElementById('app');
 
@@ -12,7 +11,7 @@ root.render(
       onClick={() => {
         const map3 = initMap3Sdk({
           amount: '0.1',
-          anonKey: process.env.CONSOLE_ANON_KEY || CONSOLE_ANON_KEY,
+          anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
