@@ -41,17 +41,15 @@ const EnterAmount: React.FC<Props> = () => {
   useEffect(() => {
     if (!state.requiredAmount) return;
 
-    if (inputRef.current) {
+    if (inputRef.current && dummyInputRef.current) {
       inputRef.current.value = state.requiredAmount;
     }
 
-    if (state.prebuiltTx.data?.maxLimitFormatted) {
-      setFormValue({
-        base: state.requiredAmount,
-        inputSelected: 'crypto',
-        quote: (Number(state.requiredAmount) * (rate || 0)).toFixed(2),
-      });
-    }
+    setFormValue({
+      base: state.requiredAmount,
+      inputSelected: 'crypto',
+      quote: (Number(state.requiredAmount) * (rate || 0)).toFixed(2),
+    });
   }, [
     inputRef.current,
     state.requiredAmount,
