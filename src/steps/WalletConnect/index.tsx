@@ -10,7 +10,6 @@ import GooglePlayBadge from 'url:../../assets/google-play-badge.png';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import { CONSOLE_API_URL } from '../../constants';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
