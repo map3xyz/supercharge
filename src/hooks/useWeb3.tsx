@@ -3,7 +3,6 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { CONSOLE_API_URL } from '../constants';
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
@@ -116,7 +115,7 @@ export const useWeb3 = () => {
           symbol: state.network.symbol,
         },
         rpcUrls: [
-          `${CONSOLE_API_URL}/rpcProxy?chainId=${state.network.identifiers?.chainId}`,
+          `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${state.network.identifiers?.chainId}`,
         ],
       },
     ];

@@ -56,7 +56,6 @@ const QRCode: React.FC<Props> = () => {
         listenToWatchedAddress(
           data.addWatchedAddress,
           (payload: WatchAddressPayload) => {
-            console.log(payload);
             dispatch({ payload: Steps.Result, type: 'SET_STEP' });
             switch (payload.new.state) {
               case 'confirming':
