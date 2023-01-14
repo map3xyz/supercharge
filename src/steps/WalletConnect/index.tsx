@@ -54,7 +54,7 @@ const WalletConnect: React.FC<Props> = () => {
       if (!chainId) {
         throw new Error('No chainId.');
       }
-      const rpc = `${CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
+      const rpc = `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
 
       const externalProvider = await new WalletConnectProvider({
         bridge: 'https://bridge.walletconnect.org',
