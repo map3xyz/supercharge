@@ -10,8 +10,8 @@ enabling cross-chain deposits and increasing volumes.
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@latest/dist/global/index.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@latest/dist/index.css"></link>
+        <script src="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/global/index.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/index.css"></link>
     </head>
 
     <body>
