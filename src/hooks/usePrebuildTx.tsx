@@ -7,6 +7,8 @@ import { buildTx } from '../utils/transactions/evm';
 import { useDepositAddress } from './useDepositAddress';
 import { useWeb3 } from './useWeb3';
 
+const INSUFFICIENT_FUNDS_FOR_GAS = 'insufficient funds for gas * price + value';
+
 export const usePrebuildTx = () => {
   const [state, dispatch] = useContext(Context);
   const { getBalance } = useWeb3();
@@ -91,8 +93,11 @@ export const usePrebuildTx = () => {
         type: 'SET_PREBUILT_TX_SUCCESS',
       });
     } catch (e: any) {
-      console.log(e);
-      dispatch({ payload: e.message, type: 'SET_PREBUILT_TX_ERROR' });
+      let message = e?.message;
+      if (message?.includes(INSUFFICIENT_FUNDS_FOR_GAS)) {
+        message = 'Insufficient funds.';
+      }
+      dispatch({ payload: message, type: 'SET_PREBUILT_TX_ERROR' });
     }
   };
 

@@ -53,6 +53,8 @@ const PaymentMethod: React.FC<Props> = () => {
 
     if (!searchMatch) return false;
 
+    if (state.requiredAmount && method?.value === 'qr') return false;
+
     const supportsChain =
       method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
       method?.walletConnect?.chains?.length === 0;

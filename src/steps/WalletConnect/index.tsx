@@ -122,7 +122,6 @@ const WalletConnect: React.FC<Props> = () => {
 
       setUri(externalProvider.connector.uri);
     } catch (e: any) {
-      console.log(e);
       dispatch({ payload: e.message, type: 'SET_PROVIDER_ERROR' });
     }
   };

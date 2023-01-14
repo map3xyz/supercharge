@@ -71,6 +71,7 @@ type State = {
     status: RemoteType;
   };
   providerChainId?: number;
+  requiredAmount?: string;
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
@@ -221,6 +222,7 @@ const initialState: State = {
 
 export const Store: React.FC<
   PropsWithChildren<{
+    amount?: string;
     asset?: AssetWithPrice;
     authorizeTransaction?: (
       fromAddress: string,
@@ -243,6 +245,7 @@ export const Store: React.FC<
     theme?: 'dark' | 'light';
   }>
 > = ({
+  amount,
   asset,
   authorizeTransaction,
   children,
@@ -479,7 +482,16 @@ export const Store: React.FC<
           return state;
       }
     },
-    { ...initialState, asset, colors, fiat, network, step, theme }
+    {
+      ...initialState,
+      asset,
+      colors,
+      fiat,
+      network,
+      requiredAmount: amount,
+      step,
+      theme,
+    }
   );
 
   return (

@@ -7,6 +7,7 @@ import { CONSOLE_API_URL } from './constants';
 
 export interface Map3InitConfig {
   address?: string;
+  amount?: string;
   anonKey: string;
   assetId?: string;
   authorizeTransaction?: (
@@ -61,6 +62,13 @@ export class Map3 {
         'Warning: networkCode is required when address is provided. Falling back to asset selection.'
       );
       config.address = undefined;
+    }
+
+    if (config.amount && !config.networkCode) {
+      console.warn(
+        'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
+      );
+      config.amount = undefined;
     }
 
     if (config.rainbowRoad) {
