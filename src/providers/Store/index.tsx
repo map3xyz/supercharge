@@ -57,8 +57,10 @@ type State = {
       feeError: boolean;
       gasLimit: number;
       gasPrice: number;
+      maxFeePerGas?: BigNumber;
       maxLimitFormatted: string;
       maxLimitRaw: BigNumber;
+      maxPriorityFeePerGas?: BigNumber;
       memo?: string;
       tx: PrebuiltTx;
     };

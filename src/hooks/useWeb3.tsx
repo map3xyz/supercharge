@@ -153,11 +153,22 @@ export const useWeb3 = () => {
       if (isMobile && state.method?.walletConnect?.mobile?.native) {
         window.location.href = state.method?.walletConnect?.mobile?.native;
       }
+
+      const gasParams = state.prebuiltTx.data?.maxFeePerGas
+        ? {
+            maxFeePerGas: state.prebuiltTx.data?.maxFeePerGas.toHexString(),
+            maxPriorityFeePerGas:
+              state.prebuiltTx.data?.maxPriorityFeePerGas?.toHexString(),
+          }
+        : {
+            gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
+          };
+
       hash = await state.provider?.data?.send?.('eth_sendTransaction', [
         {
           ...finalTx,
+          ...gasParams,
           gas: toHex(state.prebuiltTx.data?.gasLimit),
-          gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
         },
       ]);
       if (!hash) {

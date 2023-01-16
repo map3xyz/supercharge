@@ -47,28 +47,39 @@ export const usePrebuildTx = () => {
       } else {
         estimatedGas = await state.provider?.data?.estimateGas?.(tx);
       }
-      const gasPrice: number = await state.provider?.data?.send(
+      const eth_gasPrice: number = await state.provider?.data?.send(
         'eth_gasPrice',
         []
       );
+      const feeData = await state.provider.data.getFeeData();
+      let gasPriceGwei = ethers.utils.formatUnits(eth_gasPrice || 0, 'gwei');
+      // https://www.blocknative.com/blog/eip-1559-fees
+      // maxFeePerGas = (2 * lastBaseFeePerGas) + maxPriorityFeePerGas
+      if (feeData.lastBaseFeePerGas && feeData.maxPriorityFeePerGas) {
+        if (feeData.maxFeePerGas) {
+          gasPriceGwei = ethers.utils.formatUnits(
+            feeData.maxFeePerGas.toString(),
+            'gwei'
+          );
+        }
+      }
+      const gasPrice = ethers.utils.parseUnits(gasPriceGwei, 'gwei').toNumber();
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
       const extraGas = memo ? (memo.length / 2) * 16 : 0;
-
       const gasLimit = estimatedGas.toNumber() + extraGas;
-      const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
-      const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(0);
+      // Is there a better way to ensure this is a valid gwei value?
+      const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(9);
       const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
 
       if (state.asset?.type === 'asset') {
         max = assetBalance;
-        maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
       } else {
         max = chainBalance.sub(feeWei);
-        maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
       }
+      maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
 
       const feeError = chainBalance.sub(feeWei).lte(0);
       let maxLimitFormatted = ethers.utils.formatUnits(
@@ -82,6 +93,7 @@ export const usePrebuildTx = () => {
 
       dispatch({
         payload: {
+          ...feeData,
           feeError,
           gasLimit,
           gasPrice,
