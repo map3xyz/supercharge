@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, FixedNumber } from 'ethers';
 import { useContext } from 'react';
 
 import { Context } from '../providers/Store';
@@ -47,32 +47,31 @@ export const usePrebuildTx = () => {
       } else {
         estimatedGas = await state.provider?.data?.estimateGas?.(tx);
       }
-      const eth_gasPrice: number = await state.provider?.data?.send(
+      const gasPrice: number = await state.provider?.data?.send(
         'eth_gasPrice',
         []
       );
-      const feeData = await state.provider.data.getFeeData();
-      let gasPriceGwei = ethers.utils.formatUnits(eth_gasPrice || 0, 'gwei');
+      const feeData = await state.provider.data.getFeeData?.();
+      const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
       // https://www.blocknative.com/blog/eip-1559-fees
       // maxFeePerGas = (2 * lastBaseFeePerGas) + maxPriorityFeePerGas
-      if (feeData.lastBaseFeePerGas && feeData.maxPriorityFeePerGas) {
-        if (feeData.maxFeePerGas) {
-          gasPriceGwei = ethers.utils.formatUnits(
-            feeData.maxFeePerGas.toString(),
-            'gwei'
-          );
-        }
+      let maxFeePerGasGwei;
+      if (feeData.maxFeePerGas) {
+        maxFeePerGasGwei = ethers.utils.formatUnits(
+          feeData.maxFeePerGas.toString(),
+          'gwei'
+        );
       }
-      const gasPrice = ethers.utils.parseUnits(gasPriceGwei, 'gwei').toNumber();
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
-      const extraGas = memo ? (memo.length / 2) * 16 : 0;
-      const gasLimit = estimatedGas.toNumber() + extraGas;
-      // Is there a better way to ensure this is a valid gwei value?
-      const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(9);
-      const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
+      const extraGas = BigNumber.from(memo ? (memo.length / 2) * 16 : 0);
+      const gasLimit = estimatedGas.add(extraGas).toNumber();
+      const feeGwei = FixedNumber.from(
+        maxFeePerGasGwei || gasPriceGwei
+      ).mulUnsafe(FixedNumber.from(gasLimit));
+      const feeWei = ethers.utils.parseUnits(feeGwei.toString(), 'gwei');
 
       if (state.asset?.type === 'asset') {
         max = assetBalance;
