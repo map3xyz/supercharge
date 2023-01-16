@@ -52,12 +52,9 @@ export const usePrebuildTx = () => {
         []
       );
       const feeData = (await getFeeData()) || {};
-      const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
-      // https://www.blocknative.com/blog/eip-1559-fees
-      // maxFeePerGas = (2 * lastBaseFeePerGas) + maxPriorityFeePerGas
-      let maxFeePerGasGwei;
+      let gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
       if (feeData.maxFeePerGas) {
-        maxFeePerGasGwei = ethers.utils.formatUnits(
+        gasPriceGwei = ethers.utils.formatUnits(
           feeData.maxFeePerGas.toString(),
           'gwei'
         );
@@ -68,9 +65,8 @@ export const usePrebuildTx = () => {
 
       const extraGas = BigNumber.from(memo ? (memo.length / 2) * 16 : 0);
       const gasLimit = estimatedGas.add(extraGas).toNumber();
-      const feeGwei = FixedNumber.from(
-        maxFeePerGasGwei || gasPriceGwei
-      ).mulUnsafe(FixedNumber.from(gasLimit));
+      const gasLimitFixed = FixedNumber.from(gasLimit);
+      const feeGwei = FixedNumber.from(gasPriceGwei).mulUnsafe(gasLimitFixed);
       const feeWei = ethers.utils.parseUnits(feeGwei.toString(), 'gwei');
 
       if (state.asset?.type === 'asset') {
