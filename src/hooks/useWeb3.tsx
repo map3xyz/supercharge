@@ -195,11 +195,20 @@ export const useWeb3 = () => {
     return tx;
   };
 
+  const getFeeData = async () => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    return await state.provider.data.getFeeData();
+  };
+
   return {
     addChain,
     authorizeTransactionProxy,
     getBalance,
     getChainId,
+    getFeeData,
     providers,
     sendTransaction,
     switchChain,

@@ -3,6 +3,7 @@ export const web3Mock = {
   authorizeTransactionProxy: jest.fn(),
   getBalance: jest.fn(),
   getChainId: jest.fn(),
+  getFeeData: jest.fn(),
   providers: {},
   sendTransaction: jest.fn(),
   switchChain: jest.fn(),

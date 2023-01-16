@@ -11,7 +11,7 @@ const INSUFFICIENT_FUNDS_FOR_GAS = 'insufficient funds for gas * price + value';
 
 export const usePrebuildTx = () => {
   const [state, dispatch] = useContext(Context);
-  const { getBalance } = useWeb3();
+  const { getBalance, getFeeData } = useWeb3();
   const { getDepositAddress } = useDepositAddress();
 
   const prebuildTx = async (amount: string, assetContract?: string | null) => {
@@ -51,7 +51,7 @@ export const usePrebuildTx = () => {
         'eth_gasPrice',
         []
       );
-      const feeData = await state.provider.data.getFeeData?.();
+      const feeData = (await getFeeData()) || {};
       const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
       // https://www.blocknative.com/blog/eip-1559-fees
       // maxFeePerGas = (2 * lastBaseFeePerGas) + maxPriorityFeePerGas

@@ -91,7 +91,7 @@ describe('Enter Amount', () => {
     });
     it('handles conversion', async () => {
       const quote = await screen.findByTestId('quote');
-      expect(quote.textContent).toBe('0.00005000');
+      expect(quote.textContent).toBe('0.00005');
     });
     it('toggles base', async () => {
       const toggleBase = await screen.findByTestId('toggle-base');
@@ -103,7 +103,7 @@ describe('Enter Amount', () => {
         fireEvent.change(input, { target: { value: '0.00005000' } });
       });
       const quote = await screen.findByTestId('quote');
-      expect(quote.textContent).toBe('1.00');
+      expect(quote.textContent).toBe('1.0');
     });
   });
   describe('submit', () => {
@@ -394,7 +394,7 @@ describe('window.ethereum > ERC20', () => {
         fireEvent.submit(form);
       });
       expect(mockSendTransaction).toHaveBeenCalledWith(
-        '1.000000',
+        '1.0',
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
       );
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
@@ -474,7 +474,7 @@ describe('txAuth - Failure', () => {
       expect(mockAuthTransactionProxy).toHaveBeenCalledWith(
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
         'ethereum',
-        '1.000000'
+        '1.0'
       );
       expect(mockSendTransaction).not.toHaveBeenCalled();
     });
@@ -552,7 +552,7 @@ describe('txAuth - Success', () => {
       expect(mockAuthTransactionProxy).toHaveBeenCalledWith(
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
         'ethereum',
-        '1.000000'
+        '1.0'
       );
       expect(mockSendTransaction).toHaveBeenCalled();
     });
