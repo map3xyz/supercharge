@@ -11,7 +11,7 @@ const INSUFFICIENT_FUNDS_FOR_GAS = 'insufficient funds for gas * price + value';
 
 export const usePrebuildTx = () => {
   const [state, dispatch] = useContext(Context);
-  const { getBalance, getFeeData } = useWeb3();
+  const { estimateGas, getBalance, getFeeData } = useWeb3();
   const { getDepositAddress } = useDepositAddress();
 
   const prebuildTx = async (amount: string, assetContract?: string | null) => {
@@ -45,7 +45,7 @@ export const usePrebuildTx = () => {
           ethers.utils.parseUnits(amount, decimals).toString()
         );
       } else {
-        estimatedGas = await state.provider?.data?.estimateGas?.(tx);
+        estimatedGas = await estimateGas(tx);
       }
       const gasPrice: number = await state.provider?.data?.send(
         'eth_gasPrice',

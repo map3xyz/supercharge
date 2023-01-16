@@ -559,6 +559,87 @@ describe('txAuth - Success', () => {
   });
 });
 
+describe('EnterAmount - MaxLimit', () => {
+  const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
+  const getBalanceMock = jest.fn().mockImplementation(() => ({
+    assetBalance: ethers.BigNumber.from('100000000'),
+    chainBalance: ethers.BigNumber.from('2000000000000000000'), // 2000000000 gwei
+  }));
+
+  const mockAuthTransactionProxy = jest.fn();
+  const mockSendTransaction = jest.fn();
+  beforeEach(async () => {
+    // @ts-ignore
+    web3MockSpy.mockImplementation(() => ({
+      ...web3Mock,
+      authorizeTransactionProxy: mockAuthTransactionProxy,
+      estimateGas: jest.fn(() =>
+        Promise.resolve(ethers.BigNumber.from('21000'))
+      ),
+      getBalance: getBalanceMock,
+      getFeeData: jest.fn(() => ({
+        maxFeePerGas: ethers.BigNumber.from('2000000000'), // 2 gwei
+        maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'), // 1.5 gwei
+      })),
+      sendTransaction: mockSendTransaction,
+    }));
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          authorizeTransaction: async () => {
+            return true;
+          },
+          generateDepositAddress: async () => {
+            return {
+              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+            };
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const ethCoin = await screen.findByText('Ether');
+    fireEvent.click(ethCoin);
+    await screen.findByText('Fetching Networks...');
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = await screen.findByText('MetaMask');
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+
+  describe('max amount', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(async () => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    // chainBalance = 2000000000 gwei
+    // gasLimit = 21000 units
+    // maxFeePerGas = 2 gwei
+    // 2000000000 - 21000 * 2 = 1999958000 gwei
+    // 1999958000 gwei = 1.999958 ETH
+    it('should show max amount', async () => {
+      await screen.findByText(/Max: 1.999958 ETH/);
+    });
+  });
+});
+
 describe('Enter Amount Errors', () => {
   it('renders', () => {
     render(<EnterAmount />);

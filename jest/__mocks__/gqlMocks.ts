@@ -28,6 +28,7 @@ export const mocks: MockedResponse[] = [
   searchAssetsMock(),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
+  getMappedNetworksForOrgMock({ assetId: 'ethereum123' }),
   getNetworkByChainIdMock(1),
   getNetworkByChainIdMock(137),
   getNetworksMock(),
