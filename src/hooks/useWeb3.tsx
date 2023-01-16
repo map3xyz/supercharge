@@ -154,15 +154,17 @@ export const useWeb3 = () => {
         window.location.href = state.method?.walletConnect?.mobile?.native;
       }
 
-      const gasParams = state.prebuiltTx.data?.maxFeePerGas
-        ? {
-            maxFeePerGas: state.prebuiltTx.data?.maxFeePerGas.toHexString(),
-            maxPriorityFeePerGas:
-              state.prebuiltTx.data?.maxPriorityFeePerGas?.toHexString(),
-          }
-        : {
-            gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
-          };
+      const gasParams =
+        state.prebuiltTx.data?.maxFeePerGas &&
+        state.prebuiltTx.data?.maxPriorityFeePerGas
+          ? {
+              maxFeePerGas: state.prebuiltTx.data?.maxFeePerGas.toHexString(),
+              maxPriorityFeePerGas:
+                state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
+            }
+          : {
+              gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
+            };
 
       hash = await state.provider?.data?.send?.('eth_sendTransaction', [
         {
