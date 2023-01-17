@@ -55,8 +55,8 @@ type State = {
   prebuiltTx: {
     data?: {
       feeError: boolean;
-      gasLimit: number;
-      gasPrice: number;
+      gasLimit: BigNumber;
+      gasPrice: BigNumber;
       maxFeePerGas?: BigNumber;
       maxLimitFormatted: string;
       maxLimitRaw: BigNumber;
@@ -130,8 +130,8 @@ type Action =
   | {
       payload: {
         feeError: boolean;
-        gasLimit: number;
-        gasPrice: number;
+        gasLimit: BigNumber;
+        gasPrice: BigNumber;
         maxLimitFormatted: string;
         maxLimitRaw: BigNumber;
         memo?: string;

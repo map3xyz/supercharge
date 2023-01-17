@@ -1,4 +1,4 @@
-import { BigNumber, ethers, FixedNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useContext } from 'react';
 
 import { Context } from '../providers/Store';
@@ -47,36 +47,29 @@ export const usePrebuildTx = () => {
       } else {
         estimatedGas = await estimateGas(tx);
       }
-      const gasPrice: number = await state.provider?.data?.send(
+      const eth_gasPrice: string = await state.provider?.data?.send(
         'eth_gasPrice',
         []
       );
       const feeData = (await getFeeData()) || {};
-      let gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
-      if (feeData.maxFeePerGas) {
-        gasPriceGwei = ethers.utils.formatUnits(
-          feeData.maxFeePerGas.toString(),
-          'gwei'
-        );
-      }
+      const maxFeePerGas = feeData.maxFeePerGas;
+      const gasPrice = maxFeePerGas || BigNumber.from(eth_gasPrice);
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
       const extraGas = BigNumber.from(memo ? (memo.length / 2) * 16 : 0);
-      const gasLimit = estimatedGas.add(extraGas).toNumber();
-      const gasLimitFixed = FixedNumber.from(gasLimit);
-      const feeGwei = FixedNumber.from(gasPriceGwei).mulUnsafe(gasLimitFixed);
-      const feeWei = ethers.utils.parseUnits(feeGwei.toString(), 'gwei');
+      const gasLimit = estimatedGas.add(extraGas);
+      const fee = gasLimit.mul(gasPrice);
 
       if (state.asset?.type === 'asset') {
         max = assetBalance;
       } else {
-        max = chainBalance.sub(feeWei);
+        max = chainBalance.sub(fee);
       }
       maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
 
-      const feeError = chainBalance.sub(feeWei).lte(0);
+      const feeError = chainBalance.sub(fee).lte(0);
       let maxLimitFormatted = ethers.utils.formatUnits(
         maxLimitRaw.toString(),
         state.asset?.decimals || 'ether'

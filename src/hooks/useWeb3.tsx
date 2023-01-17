@@ -163,14 +163,14 @@ export const useWeb3 = () => {
                 state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
             }
           : {
-              gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
+              gasPrice: state.prebuiltTx.data?.gasPrice.toHexString(),
             };
 
       hash = await state.provider?.data?.send?.('eth_sendTransaction', [
         {
           ...finalTx,
           ...gasParams,
-          gas: toHex(state.prebuiltTx.data?.gasLimit),
+          gas: state.prebuiltTx.data?.gasLimit.toHexString(),
         },
       ]);
       if (!hash) {

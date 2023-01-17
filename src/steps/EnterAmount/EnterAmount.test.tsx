@@ -564,7 +564,7 @@ describe('EnterAmount - MaxLimit', () => {
 
   const getBalanceMock = jest.fn().mockImplementation(() => ({
     assetBalance: ethers.BigNumber.from('100000000'),
-    chainBalance: ethers.BigNumber.from('2000000000000000000'), // 2000000000 gwei
+    chainBalance: ethers.BigNumber.from('2000000000000000000'),
   }));
 
   const mockAuthTransactionProxy = jest.fn();
@@ -579,8 +579,8 @@ describe('EnterAmount - MaxLimit', () => {
       ),
       getBalance: getBalanceMock,
       getFeeData: jest.fn(() => ({
-        maxFeePerGas: ethers.BigNumber.from('2000000000'), // 2 gwei
-        maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'), // 1.5 gwei
+        maxFeePerGas: ethers.BigNumber.from('2000000000'),
+        maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'),
       })),
       sendTransaction: mockSendTransaction,
     }));
@@ -629,11 +629,11 @@ describe('EnterAmount - MaxLimit', () => {
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    // chainBalance = 2000000000 gwei
+    // chainBalance = 20000000000000000000 wei
     // gasLimit = 21000 units
-    // maxFeePerGas = 2 gwei
-    // 2000000000 - 21000 * 2 = 1999958000 gwei
-    // 1999958000 gwei = 1.999958 ETH
+    // maxFeePerGas = 2000000000 wei
+    // 20000000000000000000 - 21000 * 2000000000 = 1999958000000000000
+    // 1999958000000000000 = 1.999958 ETH
     it('should show max amount', async () => {
       await screen.findByText(/Max: 1.999958 ETH/);
     });
