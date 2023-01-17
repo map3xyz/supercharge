@@ -2,7 +2,11 @@ import { MockedResponse } from '@apollo/client/testing';
 
 import { addWatchedAddressMock } from './add-watched-address';
 import { getAssetByMappedAssetIdAndNetworkCodeMock } from './asset';
-import { getAssetsForOrgMock, searchAssetsMock } from './assets';
+import {
+  getAssetByAddressAndNetworkCodeMock,
+  getAssetsForOrgMock,
+  searchAssetsMock,
+} from './assets';
 import {
   getMappedNetworksForOrgMock,
   getNetworkByChainIdMock,
@@ -25,6 +29,10 @@ export const mocks: MockedResponse[] = [
   getAssetByMappedAssetIdAndNetworkCodeMock({
     mappedAssetId: 'elon123',
     networkCode: 'polygon',
+  }),
+  getAssetByAddressAndNetworkCodeMock({
+    address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+    networkCode: 'ethereum',
   }),
   searchAssetsMock(),
   addWatchedAddressMock({

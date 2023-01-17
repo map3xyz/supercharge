@@ -22,8 +22,6 @@ const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     variables: { address: config.address, networkCode: config.networkCode },
   });
 
-  console.log(assetData?.assetByAddressAndNetworkCodeForOrganization);
-
   if (loading || assetLoading) return <LoadingWrapper />;
 
   const network = data?.networks?.find(
