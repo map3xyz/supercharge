@@ -1,5 +1,6 @@
 import { MockedResponse } from '@apollo/client/testing';
 
+import { addWatchedAddressMock } from './add-watched-address';
 import { getAssetByMappedAssetIdAndNetworkCodeMock } from './asset';
 import { getAssetsForOrgMock, searchAssetsMock } from './assets';
 import {
@@ -26,6 +27,11 @@ export const mocks: MockedResponse[] = [
     networkCode: 'polygon',
   }),
   searchAssetsMock(),
+  addWatchedAddressMock({
+    address: '0x0000000000000000000000000000000000000000',
+    assetId: 'satoshi123',
+    confirmationsToWatch: 3,
+  }),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
   getMappedNetworksForOrgMock({ assetId: 'ethereum123' }),

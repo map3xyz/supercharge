@@ -7,19 +7,17 @@ export const useChainWatcher = () => {
   const [state, dispatch] = useContext(Context);
   const { getChainId } = useWeb3();
 
+  const run = async () => {
+    const chainId = await getChainId();
+
+    dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
+
+    state.provider?.data?.on?.('network', ({ chainId }) => {
+      dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
+    });
+  };
   useEffect(() => {
     if (state.provider?.status !== 'success') return;
-
-    const run = async () => {
-      const chainId = await getChainId();
-
-      dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
-
-      state.provider?.data?.on?.('network', ({ chainId }) => {
-        dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
-      });
-    };
-
     run();
   }, [state.provider?.status]);
 
