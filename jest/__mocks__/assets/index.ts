@@ -31,6 +31,30 @@ export const assetsForOrganizationMockResult = [
   },
   {
     __typename: 'AssetWithPrice',
+    address: null,
+    config: {
+      mappedAssetId: 'ethereum123',
+    },
+    decimals: 18,
+    id: 'ethereum123',
+    logo: {
+      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+    },
+    name: 'Ether',
+    networkCode: 'ethereum',
+    networks: {
+      name: 'Ethereum',
+      networkCode: 'ethereum',
+    },
+    price: {
+      price: 1_000,
+    },
+    symbol: 'ETH',
+    type: 'network',
+  },
+  {
+    __typename: 'AssetWithPrice',
     address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
     config: {
       mappedAssetId: 'elon123',

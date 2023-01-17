@@ -103,25 +103,28 @@ const EnterAmount: React.FC<Props> = () => {
   ]);
 
   useEffect(() => {
-    const base = parseFloat(formValue.base || '0');
+    const base = ethers.FixedNumber.from(formValue.base || '0');
+    const fixedRate = ethers.FixedNumber.from(rate?.toString() || '0');
+    const decimals = state.asset?.decimals || DECIMAL_FALLBACK;
+
     const quote =
       formValue.inputSelected === 'crypto'
-        ? base * (rate || 0)
-        : base / (rate || 0);
+        ? base.mulUnsafe(fixedRate)
+        : base.divUnsafe(fixedRate);
     setFormValue((formValue) => ({
       ...formValue,
       quote:
         formValue.inputSelected === 'crypto'
-          ? quote.toFixed(2)
-          : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK),
+          ? quote.round(2).toString()
+          : quote.round(decimals).toString(),
     }));
 
-    if (base === 0) return setAmount('0');
+    if (base.isZero()) return setAmount('0');
 
     setAmount(
       formValue.inputSelected === 'crypto'
-        ? base.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
-        : quote.toFixed(state.asset?.decimals || DECIMAL_FALLBACK)
+        ? base.round(decimals).toString()
+        : quote.round(decimals).toString()
     );
   }, [formValue.base]);
 
@@ -134,10 +137,21 @@ const EnterAmount: React.FC<Props> = () => {
     const { maxLimitRaw } = state.prebuiltTx.data;
     const cryptoAmt =
       formValue.inputSelected === 'crypto' ? formValue.base : formValue.quote;
-    const cryptoAmtWei = ethers.utils.parseUnits(
-      cryptoAmt,
-      state.asset?.decimals || DECIMAL_FALLBACK
-    );
+    let cryptoAmtWei: ethers.BigNumber;
+    try {
+      cryptoAmtWei = ethers.utils.parseUnits(
+        cryptoAmt,
+        state.asset?.decimals || DECIMAL_FALLBACK
+      );
+    } catch (e) {
+      const decimals = cryptoAmt
+        .split('.')[1]
+        .slice(0, state.asset?.decimals || DECIMAL_FALLBACK);
+      cryptoAmtWei = ethers.utils.parseUnits(
+        cryptoAmt.split('.')[0] + '.' + decimals,
+        state.asset?.decimals || DECIMAL_FALLBACK
+      );
+    }
 
     if (maxLimitRaw.lt(cryptoAmtWei)) {
       setFormError(INSUFFICIENT_FUNDS + state.asset?.symbol + ' balance.');
@@ -466,8 +480,9 @@ const EnterAmount: React.FC<Props> = () => {
                 ) : state.prebuiltTx.data?.feeError ? (
                   <Badge color="red" dot>
                     {`You need at least ${ethers.utils.formatEther(
-                      state.prebuiltTx.data.gasPrice *
+                      state.prebuiltTx.data.gasPrice.mul(
                         state.prebuiltTx.data.gasLimit
+                      )
                     )} ${state.network?.symbol} to complete this transaction.`}
                   </Badge>
                 ) : state.prebuiltTx.status === 'error' ? (
