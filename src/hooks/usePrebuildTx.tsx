@@ -52,8 +52,7 @@ export const usePrebuildTx = () => {
         []
       );
       const feeData = (await getFeeData()) || {};
-      const maxFeePerGas = feeData.maxFeePerGas;
-      const gasPrice = maxFeePerGas || BigNumber.from(eth_gasPrice);
+      const gasPrice = feeData.maxFeePerGas || BigNumber.from(eth_gasPrice);
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
