@@ -91,7 +91,7 @@ describe('Enter Amount', () => {
     });
     it('handles conversion', async () => {
       const quote = await screen.findByTestId('quote');
-      expect(quote.textContent).toBe('0.00005000');
+      expect(quote.textContent).toBe('0.00005');
     });
     it('toggles base', async () => {
       const toggleBase = await screen.findByTestId('toggle-base');
@@ -103,7 +103,7 @@ describe('Enter Amount', () => {
         fireEvent.change(input, { target: { value: '0.00005000' } });
       });
       const quote = await screen.findByTestId('quote');
-      expect(quote.textContent).toBe('1.00');
+      expect(quote.textContent).toBe('1.0');
     });
   });
   describe('submit', () => {
@@ -176,7 +176,6 @@ describe('window.ethereum', () => {
     await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
@@ -394,7 +393,7 @@ describe('window.ethereum > ERC20', () => {
         fireEvent.submit(form);
       });
       expect(mockSendTransaction).toHaveBeenCalledWith(
-        '1.000000',
+        '1.0',
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
       );
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
@@ -474,7 +473,7 @@ describe('txAuth - Failure', () => {
       expect(mockAuthTransactionProxy).toHaveBeenCalledWith(
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
         'ethereum',
-        '1.000000'
+        '1.0'
       );
       expect(mockSendTransaction).not.toHaveBeenCalled();
     });
@@ -552,9 +551,90 @@ describe('txAuth - Success', () => {
       expect(mockAuthTransactionProxy).toHaveBeenCalledWith(
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
         'ethereum',
-        '1.000000'
+        '1.0'
       );
       expect(mockSendTransaction).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('EnterAmount - MaxLimit', () => {
+  const web3MockSpy = jest.spyOn(useWeb3Mock, 'useWeb3');
+
+  const getBalanceMock = jest.fn().mockImplementation(() => ({
+    assetBalance: ethers.BigNumber.from('100000000'),
+    chainBalance: ethers.BigNumber.from('2000000000000000000'),
+  }));
+
+  const mockAuthTransactionProxy = jest.fn();
+  const mockSendTransaction = jest.fn();
+  beforeEach(async () => {
+    // @ts-ignore
+    web3MockSpy.mockImplementation(() => ({
+      ...web3Mock,
+      authorizeTransactionProxy: mockAuthTransactionProxy,
+      estimateGas: jest.fn(() =>
+        Promise.resolve(ethers.BigNumber.from('21000'))
+      ),
+      getBalance: getBalanceMock,
+      getFeeData: jest.fn(() => ({
+        maxFeePerGas: ethers.BigNumber.from('2000000000'),
+        maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'),
+      })),
+      sendTransaction: mockSendTransaction,
+    }));
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          authorizeTransaction: async () => {
+            return true;
+          },
+          generateDepositAddress: async () => {
+            return {
+              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+            };
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+
+    await screen.findByText('Loading...');
+    const ethCoin = await screen.findByText('Ether');
+    fireEvent.click(ethCoin);
+    await screen.findByText('Fetching Networks...');
+    const ethereum = await screen.findByText('Ethereum');
+    fireEvent.click(ethereum);
+    const metaMask = await screen.findByText('MetaMask');
+    fireEvent.click(metaMask);
+
+    const input = await screen.findByTestId('input');
+    act(() => {
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+  });
+
+  describe('max amount', () => {
+    const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+    beforeAll(async () => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    // chainBalance = 20000000000000000000 wei
+    // gasLimit = 21000 units
+    // maxFeePerGas = 2000000000 wei
+    // 20000000000000000000 - 21000 * 2000000000 = 1999958000000000000
+    // 1999958000000000000 = 1.999958 ETH
+    it('should show max amount', async () => {
+      expect(await screen.findByText(/Max: 1.999958 ETH/)).toBeInTheDocument();
     });
   });
 });

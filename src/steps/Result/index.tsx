@@ -150,13 +150,17 @@ const Result: React.FC<Props> = () => {
       <InnerWrapper
         className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
           toggleDetails && state.tx.hash ? 'h-full' : 'h-[48px]'
-        } ${state.tx.hash ? 'opacity-100' : 'cursor-not-allowed opacity-20'}`}
+        }`}
       >
         <div className="flex h-full flex-col justify-between">
           <div>
             <div
-              className="flex cursor-pointer items-center justify-between text-sm font-semibold dark:text-white"
-              onClick={() => setToggleDetails((toggle) => !toggle)}
+              className={`flex cursor-pointer items-center justify-between text-sm font-semibold dark:text-white ${
+                state.tx.hash ? 'opacity-100' : 'cursor-not-allowed opacity-20'
+              }`}
+              onClick={() =>
+                state.tx.hash ? setToggleDetails((toggle) => !toggle) : null
+              }
             >
               <div className="flex items-center gap-1">
                 <i className="fa fa-receipt" />

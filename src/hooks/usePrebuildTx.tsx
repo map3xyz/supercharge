@@ -11,7 +11,7 @@ const INSUFFICIENT_FUNDS_FOR_GAS = 'insufficient funds for gas * price + value';
 
 export const usePrebuildTx = () => {
   const [state, dispatch] = useContext(Context);
-  const { getBalance } = useWeb3();
+  const { estimateGas, getBalance, getFeeData } = useWeb3();
   const { getDepositAddress } = useDepositAddress();
 
   const prebuildTx = async (amount: string, assetContract?: string | null) => {
@@ -45,32 +45,30 @@ export const usePrebuildTx = () => {
           ethers.utils.parseUnits(amount, decimals).toString()
         );
       } else {
-        estimatedGas = await state.provider?.data?.estimateGas?.(tx);
+        estimatedGas = await estimateGas(tx);
       }
-      const gasPrice: number = await state.provider?.data?.send(
+      const eth_gasPrice: string = await state.provider?.data?.send(
         'eth_gasPrice',
         []
       );
+      const feeData = (await getFeeData()) || {};
+      const gasPrice = feeData.maxFeePerGas || BigNumber.from(eth_gasPrice);
 
       let max: BigNumber | undefined;
       let maxLimitRaw: BigNumber | undefined;
 
-      const extraGas = memo ? (memo.length / 2) * 16 : 0;
-
-      const gasLimit = estimatedGas.toNumber() + extraGas;
-      const gasPriceGwei = ethers.utils.formatUnits(gasPrice || 0, 'gwei');
-      const feeGwei = (parseFloat(gasPriceGwei) * gasLimit).toFixed(0);
-      const feeWei = ethers.utils.parseUnits(feeGwei, 'gwei');
+      const extraGas = BigNumber.from(memo ? (memo.length / 2) * 16 : 0);
+      const gasLimit = estimatedGas.add(extraGas);
+      const fee = gasLimit.mul(gasPrice);
 
       if (state.asset?.type === 'asset') {
         max = assetBalance;
-        maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
       } else {
-        max = chainBalance.sub(feeWei);
-        maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
+        max = chainBalance.sub(fee);
       }
+      maxLimitRaw = max?.gt(0) ? max : BigNumber.from(0);
 
-      const feeError = chainBalance.sub(feeWei).lte(0);
+      const feeError = chainBalance.sub(fee).lte(0);
       let maxLimitFormatted = ethers.utils.formatUnits(
         maxLimitRaw.toString(),
         state.asset?.decimals || 'ether'
@@ -82,6 +80,7 @@ export const usePrebuildTx = () => {
 
       dispatch({
         payload: {
+          ...feeData,
           feeError,
           gasLimit,
           gasPrice,

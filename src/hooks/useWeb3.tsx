@@ -6,7 +6,7 @@ import { isMobile } from 'react-device-detect';
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
-import { buildTx } from '../utils/transactions/evm';
+import { buildTx, PrebuiltTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
   const [state, _, { authorizeTransaction }] = useContext(Context);
@@ -153,11 +153,24 @@ export const useWeb3 = () => {
       if (isMobile && state.method?.walletConnect?.mobile?.native) {
         window.location.href = state.method?.walletConnect?.mobile?.native;
       }
+
+      const gasParams =
+        state.prebuiltTx.data?.maxFeePerGas &&
+        state.prebuiltTx.data?.maxPriorityFeePerGas
+          ? {
+              maxFeePerGas: state.prebuiltTx.data?.maxFeePerGas.toHexString(),
+              maxPriorityFeePerGas:
+                state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
+            }
+          : {
+              gasPrice: state.prebuiltTx.data?.gasPrice.toHexString(),
+            };
+
       hash = await state.provider?.data?.send?.('eth_sendTransaction', [
         {
           ...finalTx,
-          gas: toHex(state.prebuiltTx.data?.gasLimit),
-          gasPrice: toHex(state.prebuiltTx.data?.gasPrice),
+          ...gasParams,
+          gas: state.prebuiltTx.data?.gasLimit.toHexString(),
         },
       ]);
       if (!hash) {
@@ -182,11 +195,29 @@ export const useWeb3 = () => {
     return tx;
   };
 
+  const getFeeData = async () => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    return await state.provider.data.getFeeData();
+  };
+
+  const estimateGas = async (tx: PrebuiltTx) => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    return await state.provider.data.estimateGas(tx);
+  };
+
   return {
     addChain,
     authorizeTransactionProxy,
+    estimateGas,
     getBalance,
     getChainId,
+    getFeeData,
     providers,
     sendTransaction,
     switchChain,

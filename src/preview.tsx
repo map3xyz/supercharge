@@ -10,7 +10,6 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
-          amount: '0.1',
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));

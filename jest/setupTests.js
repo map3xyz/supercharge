@@ -2,6 +2,7 @@ require('jest-fetch-mock').enableMocks();
 
 jest.mock('../src/utils/supabase', () => ({
   __esModule: true,
+  listenToWatchedAddress: jest.fn(),
   supabase: {
     createClient: jest.fn(),
   },
