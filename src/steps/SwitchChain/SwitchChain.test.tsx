@@ -36,10 +36,6 @@ describe('SwitchChain', () => {
     assetBalance: ethers.BigNumber.from('100000000'),
     chainBalance: ethers.BigNumber.from('20000000000000000000'),
   }));
-  it('renders', () => {
-    render(<SwitchChain />);
-    expect(true).toBe(true);
-  });
   beforeEach(async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
@@ -49,6 +45,10 @@ describe('SwitchChain', () => {
     fireEvent.click(polygon);
     const metamask = await screen.findByText('MetaMask');
     fireEvent.click(metamask);
+  });
+  it('renders', () => {
+    render(<SwitchChain />);
+    expect(true).toBe(true);
   });
   describe('Step', () => {
     const testingUtils = generateTestingUtils({
@@ -113,6 +113,7 @@ describe('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
+      testingUtils.mockChainId(1);
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
@@ -153,6 +154,7 @@ describe('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
+      testingUtils.mockChainId(1);
     });
     afterEach(() => {
       testingUtils.clearAllMocks();

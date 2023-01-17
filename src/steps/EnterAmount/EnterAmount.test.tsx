@@ -176,7 +176,6 @@ describe('window.ethereum', () => {
     await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
     fireEvent.click(ethereum);
-    await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
