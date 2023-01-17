@@ -218,6 +218,7 @@ export type Price = {
 export type Query = {
   __typename?: 'Query';
   assetByAddressAndNetworkCode?: Maybe<Asset>;
+  assetByAddressAndNetworkCodeForOrganization?: Maybe<AssetWithPrice>;
   assetById?: Maybe<Asset>;
   assetByMappedAssetIdAndNetworkCode?: Maybe<Asset>;
   assets?: Maybe<Array<Maybe<Asset>>>;
@@ -240,6 +241,12 @@ export type Query = {
 
 
 export type QueryAssetByAddressAndNetworkCodeArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  networkCode?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryAssetByAddressAndNetworkCodeForOrganizationArgs = {
   address?: InputMaybe<Scalars['String']>;
   networkCode?: InputMaybe<Scalars['String']>;
 };
@@ -418,6 +425,7 @@ export type WatchedAddress = {
   txBlockHash?: Maybe<Scalars['String']>;
   txBlockHeight?: Maybe<Scalars['Int']>;
   txCreatedAt?: Maybe<Scalars['String']>;
+  txFormattedAmount?: Maybe<Scalars['String']>;
   txId?: Maybe<Scalars['String']>;
   unsubscribed?: Maybe<Scalars['Boolean']>;
   updated?: Maybe<Scalars['String']>;
@@ -443,6 +451,14 @@ export type RemoveWatchedAddressMutationVariables = Exact<{
 
 
 export type RemoveWatchedAddressMutation = { __typename?: 'Mutation', removeWatchedAddress?: string | null };
+
+export type GetAssetByAddressAndNetworkCodeQueryVariables = Exact<{
+  address?: InputMaybe<Scalars['String']>;
+  networkCode?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetAssetByAddressAndNetworkCodeQuery = { __typename?: 'Query', assetByAddressAndNetworkCodeForOrganization?: { __typename?: 'AssetWithPrice', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, price?: { __typename?: 'Price', price?: number | null } | null } | null };
 
 export type GetAssetByMappedAssetIdAndNetworkCodeQueryVariables = Exact<{
   mappedAssetId?: InputMaybe<Scalars['String']>;
@@ -609,6 +625,45 @@ export function useRemoveWatchedAddressMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveWatchedAddressMutationHookResult = ReturnType<typeof useRemoveWatchedAddressMutation>;
 export type RemoveWatchedAddressMutationResult = Apollo.MutationResult<RemoveWatchedAddressMutation>;
 export type RemoveWatchedAddressMutationOptions = Apollo.BaseMutationOptions<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>;
+export const GetAssetByAddressAndNetworkCodeDocument = gql`
+    query GetAssetByAddressAndNetworkCode($address: String, $networkCode: String) {
+  assetByAddressAndNetworkCodeForOrganization(
+    address: $address
+    networkCode: $networkCode
+  ) {
+    ...AssetFields
+  }
+}
+    ${AssetFieldsFragmentDoc}`;
+
+/**
+ * __useGetAssetByAddressAndNetworkCodeQuery__
+ *
+ * To run a query within a React component, call `useGetAssetByAddressAndNetworkCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAssetByAddressAndNetworkCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAssetByAddressAndNetworkCodeQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      networkCode: // value for 'networkCode'
+ *   },
+ * });
+ */
+export function useGetAssetByAddressAndNetworkCodeQuery(baseOptions?: Apollo.QueryHookOptions<GetAssetByAddressAndNetworkCodeQuery, GetAssetByAddressAndNetworkCodeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAssetByAddressAndNetworkCodeQuery, GetAssetByAddressAndNetworkCodeQueryVariables>(GetAssetByAddressAndNetworkCodeDocument, options);
+      }
+export function useGetAssetByAddressAndNetworkCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAssetByAddressAndNetworkCodeQuery, GetAssetByAddressAndNetworkCodeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAssetByAddressAndNetworkCodeQuery, GetAssetByAddressAndNetworkCodeQueryVariables>(GetAssetByAddressAndNetworkCodeDocument, options);
+        }
+export type GetAssetByAddressAndNetworkCodeQueryHookResult = ReturnType<typeof useGetAssetByAddressAndNetworkCodeQuery>;
+export type GetAssetByAddressAndNetworkCodeLazyQueryHookResult = ReturnType<typeof useGetAssetByAddressAndNetworkCodeLazyQuery>;
+export type GetAssetByAddressAndNetworkCodeQueryResult = Apollo.QueryResult<GetAssetByAddressAndNetworkCodeQuery, GetAssetByAddressAndNetworkCodeQueryVariables>;
 export const GetAssetByMappedAssetIdAndNetworkCodeDocument = gql`
     query GetAssetByMappedAssetIdAndNetworkCode($mappedAssetId: String, $networkCode: String) {
   assetByMappedAssetIdAndNetworkCode(

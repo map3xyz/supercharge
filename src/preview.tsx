@@ -10,6 +10,7 @@ root.render(
     <button
       onClick={() => {
         const map3 = initMap3Sdk({
+          address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
           amount: '0.1',
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async (_coin, _network) => {
@@ -20,7 +21,7 @@ root.render(
               memo: '0x666f',
             };
           },
-          networkCode: 'goerli',
+          networkCode: 'polygon',
           rainbowRoad: true,
           theme: 'dark',
           userId: 'preview-user-id',

@@ -4,7 +4,7 @@ import { AppProps } from './App';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import {
-  useGetAssetsForOrgQuery,
+  useGetAssetByAddressAndNetworkCodeQuery,
   useGetNetworksQuery,
 } from './generated/apollo-gql';
 import { Store } from './providers/Store';
@@ -17,21 +17,19 @@ const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     error: assetError,
     loading: assetLoading,
     refetch: assetRefetch,
-  } = useGetAssetsForOrgQuery({
+  } = useGetAssetByAddressAndNetworkCodeQuery({
     fetchPolicy: 'no-cache',
-    variables: { address: config.address },
+    variables: { address: config.address, networkCode: config.networkCode },
   });
+
+  console.log(assetData?.assetByAddressAndNetworkCodeForOrganization);
 
   if (loading || assetLoading) return <LoadingWrapper />;
 
   const network = data?.networks?.find(
     (network) => network?.networkCode === config.networkCode
   );
-  const asset = assetData?.assetsForOrganization?.find(
-    (asset) =>
-      asset?.address === config.address &&
-      asset?.networkCode === config.networkCode
-  );
+  const asset = assetData?.assetByAddressAndNetworkCodeForOrganization;
 
   if (error || assetError || !network || !asset)
     return (
