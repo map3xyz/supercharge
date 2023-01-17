@@ -31,6 +31,12 @@
         ]
       }
     ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "prettier/prettier": "error",
     "react/jsx-sort-props": "error",
     "tailwindcss/no-custom-classname": [

@@ -1,4 +1,6 @@
 import {
+  GetAssetByAddressAndNetworkCodeDocument,
+  GetAssetByAddressAndNetworkCodeQueryVariables,
   GetAssetsForOrgDocument,
   GetAssetsForOrgQueryVariables,
   SearchAssetsDocument,
@@ -104,3 +106,21 @@ export const searchAssetsMock = () => ({
     },
   },
 });
+
+export const getAssetByAddressAndNetworkCodeMock = (
+  variables: GetAssetByAddressAndNetworkCodeQueryVariables
+) => {
+  return {
+    request: {
+      query: GetAssetByAddressAndNetworkCodeDocument,
+      variables,
+    },
+    result: {
+      __typename: 'Query',
+      data: {
+        assetByAddressAndNetworkCodeForOrganization:
+          assetsForOrganizationMockResult[2],
+      },
+    },
+  };
+};

@@ -1,0 +1,5 @@
+query GetAssetByAddressAndNetworkCode($address: String, $networkCode: String) {
+  assetByAddressAndNetworkCodeForOrganization(address: $address, networkCode: $networkCode) {
+    ...AssetFields
+  }
+}
