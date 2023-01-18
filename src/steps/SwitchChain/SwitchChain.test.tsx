@@ -47,6 +47,7 @@ describe('SwitchChain', () => {
       // wallet is connected to chainId 1 instead of 137
       ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
     );
+    testingUtils.mockChainChanged('0x1');
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
@@ -93,6 +94,7 @@ describe('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
+      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
@@ -135,6 +137,7 @@ describe('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
+      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
