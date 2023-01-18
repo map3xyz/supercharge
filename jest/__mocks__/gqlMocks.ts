@@ -19,7 +19,7 @@ export const mocks: MockedResponse[] = [
   getAssetsForOrgMock({ currency: undefined, limit: 10, offset: 0 }),
   getAssetsForOrgMock({ assetId: 'satoshi123' }),
   getAssetsForOrgMock({
-    address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+    address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
   }),
   getAssetsForOrgMock({}),
   getAssetByMappedAssetIdAndNetworkCodeMock({
@@ -31,7 +31,7 @@ export const mocks: MockedResponse[] = [
     networkCode: 'polygon',
   }),
   getAssetByAddressAndNetworkCodeMock({
-    address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+    address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
     networkCode: 'ethereum',
   }),
   searchAssetsMock(),

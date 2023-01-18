@@ -183,6 +183,21 @@ describe('Map3Sdk', () => {
       'Warning: invalid key passed to colors. Valid keys are: progressBar, scrollBar'
     );
   });
+  it('should warn if amount is passed without at least networkCode', () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+    const initFn = () => {
+      initMap3Sdk({
+        amount: '100',
+        anonKey: 'test',
+        generateDepositAddress: async () => ({ address: '0x000000' }),
+        userId: 'test',
+      });
+    };
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
+    );
+  });
   it('should check valid config.colors.scrollBar', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () =>
@@ -201,5 +216,19 @@ describe('Map3Sdk', () => {
     expect(warnSpy).toBeCalledWith(
       'Warning: invalid value passed to colors.scrollBar. Falling back to default.'
     );
+    const initFn2 = () =>
+      initMap3Sdk({
+        anonKey: 'test',
+        colors: {
+          scrollBar: 'supported',
+        },
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x000000' };
+        },
+        userId: 'test',
+      });
+
+    expect(initFn2).not.toThrow();
   });
 });

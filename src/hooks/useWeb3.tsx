@@ -87,6 +87,22 @@ export const useWeb3 = () => {
     return Number(chainId);
   };
 
+  const getTransaction = async (hash: string) => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    return await state.provider?.data?.getTransaction(hash);
+  };
+
+  const getFeeData = async () => {
+    if (!state.provider?.data) {
+      throw new Error('No provider.');
+    }
+
+    return await state.provider.data.getFeeData();
+  };
+
   const switchChain = async (chainId: number) => {
     await state.provider?.data?.send?.('wallet_switchEthereumChain', [
       {
@@ -195,14 +211,6 @@ export const useWeb3 = () => {
     return tx;
   };
 
-  const getFeeData = async () => {
-    if (!state.provider?.data) {
-      throw new Error('No provider.');
-    }
-
-    return await state.provider.data.getFeeData();
-  };
-
   const estimateGas = async (tx: PrebuiltTx) => {
     if (!state.provider?.data) {
       throw new Error('No provider.');
@@ -218,6 +226,7 @@ export const useWeb3 = () => {
     getBalance,
     getChainId,
     getFeeData,
+    getTransaction,
     providers,
     sendTransaction,
     switchChain,

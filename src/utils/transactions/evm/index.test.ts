@@ -20,7 +20,7 @@ describe('EVM transactions', () => {
     });
     it('builds erc20 transaction', () => {
       const result = buildTx({
-        address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
         amount: '1',
         assetContract: '0xabc',
         decimals: 18,
@@ -28,7 +28,7 @@ describe('EVM transactions', () => {
         memo: '0x678',
       });
       expect(result).toEqual({
-        data: '0xa9059cbb000000000000000000000000f61b443a155b07d2b2caea2d99715dc84e839eef0000000000000000000000000000000000000000000000000de0b6b3a7640000678',
+        data: '0xa9059cbb0000000000000000000000002791bca1f2de4661ed88a30c99a7a9449aa841740000000000000000000000000000000000000000000000000de0b6b3a7640000678',
         from: '0x456',
         to: '0xabc',
         value: '0x0',

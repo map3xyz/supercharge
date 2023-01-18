@@ -5,6 +5,7 @@ export const web3Mock = {
   getBalance: jest.fn(),
   getChainId: jest.fn(),
   getFeeData: jest.fn(),
+  getTransaction: jest.fn(),
   providers: {},
   sendTransaction: jest.fn(),
   switchChain: jest.fn(),

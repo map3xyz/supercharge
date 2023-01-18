@@ -97,7 +97,7 @@ describe('Result', () => {
         fireEvent.submit(form);
       });
     });
-    it.skip('renders', async () => {
+    it('renders', async () => {
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
       expect(await screen.findByText('Confirming')).toBeInTheDocument();
       expect(await screen.findByText('Confirmed')).toBeInTheDocument();
