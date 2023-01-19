@@ -9,13 +9,13 @@ const MethodIcon: React.FC<Props> = ({ method }) => {
     <>
       {method.value === 'isMetaMask' ? (
         <img
-          aria-label="metamask logo"
+          aria-label="MetaMask logo"
           className="h-4 w-4"
           src={MetaMaskLogo}
         />
       ) : method.value === 'isCoinbaseWallet' ? (
         <img
-          aria-label="coinbase logo"
+          aria-label="Coinbase logo"
           className="h-4 w-4"
           src={CoinbaseWalletLogo}
         />
