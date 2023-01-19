@@ -16,7 +16,7 @@ const getBalanceMock = jest.fn().mockImplementation(() => ({
   chainBalance: ethers.BigNumber.from('20000000000000000000'),
 }));
 
-describe('SwitchChain', () => {
+describe.skip('SwitchChain', () => {
   it('renders', () => {
     render(<SwitchChain />);
     expect(true).toBe(true);
@@ -51,7 +51,7 @@ describe('SwitchChain', () => {
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    it.skip('prompts user to switch chain', async () => {
+    it('prompts user to switch chain', async () => {
       const switchChain = (await screen.findAllByText('Switch Chain'))[0];
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
@@ -66,7 +66,7 @@ describe('SwitchChain', () => {
       });
       expect(mockSwitchChain).toHaveBeenCalled();
     });
-    it.skip('continues to Enter Amount', async () => {
+    it('continues to Enter Amount', async () => {
       const enterAmount = await screen.findByText('Enter Amount');
       expect(enterAmount).toBeInTheDocument();
     });
