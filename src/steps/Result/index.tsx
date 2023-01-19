@@ -50,9 +50,9 @@ const Result: React.FC<Props> = () => {
     <div className="flex h-full flex-col items-center">
       <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-          Send{' '}
+          Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.asset?.symbol || ''}
+            {state.requiredAmount} {state.asset?.symbol || ''}
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
