@@ -144,7 +144,7 @@ const PaymentMethod: React.FC<Props> = () => {
           {isEmptySearch ? (
             <ErrorWrapper
               description="We couldn't find any payment methods that matched your search."
-              header="No Payment Methods Found"
+              header="Payment Method Not Found"
               retry={() => {
                 if (!formRef.current) return;
                 const input = formRef.current.getElementsByTagName('input')[0];
