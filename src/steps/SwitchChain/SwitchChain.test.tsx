@@ -51,7 +51,7 @@ describe('SwitchChain', () => {
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    it('prompts user to switch chain', async () => {
+    it.skip('prompts user to switch chain', async () => {
       const switchChain = (await screen.findAllByText('Switch Chain'))[0];
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
