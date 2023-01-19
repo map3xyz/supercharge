@@ -141,13 +141,13 @@ const QRCode: React.FC<Props> = () => {
         </h3>
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Send{' '}
+        Send {/* @ts-ignore */}
         <Badge color="blue" size="large">
-          {state.asset?.name || ''}
+          {state.requiredAmount} {state.asset.symbol || ''}
         </Badge>{' '}
         on the {/* @ts-ignore */}
         <Badge color="blue" size="large">
-          {state.network?.symbol || ''} Network
+          {state.network?.name || ''} Network
         </Badge>{' '}
         via {/* @ts-ignore */}
         <Badge color="blue" size="large">
@@ -184,7 +184,7 @@ const QRCode: React.FC<Props> = () => {
           state.depositAddress.data && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
               <div className="text-xs text-neutral-400">
-                Only send {state.asset.name} on the {state.network?.symbol}{' '}
+                Only send {state.asset.name} on the {state.network?.name}{' '}
                 Network to this address.
               </div>
               {isWatching && state.depositAddress.data && (

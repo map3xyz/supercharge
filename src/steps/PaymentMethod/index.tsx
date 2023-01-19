@@ -53,8 +53,6 @@ const PaymentMethod: React.FC<Props> = () => {
 
     if (!searchMatch) return false;
 
-    if (state.requiredAmount && method?.value === 'qr') return false;
-
     const supportsChain =
       method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
       method?.walletConnect?.chains?.length === 0;
@@ -128,9 +126,9 @@ const PaymentMethod: React.FC<Props> = () => {
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-          Send{' '}
+          Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.asset?.symbol || ''}
+            {state.requiredAmount} {state.asset.symbol || ''}
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
@@ -144,7 +142,7 @@ const PaymentMethod: React.FC<Props> = () => {
           {isEmptySearch ? (
             <ErrorWrapper
               description="We couldn't find any payment methods that matched your search."
-              header="No Payment Methods Found"
+              header="Payment Method Not Found"
               retry={() => {
                 if (!formRef.current) return;
                 const input = formRef.current.getElementsByTagName('input')[0];
@@ -172,17 +170,35 @@ const PaymentMethod: React.FC<Props> = () => {
                       type: 'SET_PAYMENT_METHOD',
                     });
                     if (method.value === 'qr') {
-                      dispatch({
-                        payload: [
-                          'AssetSelection',
-                          'NetworkSelection',
-                          'PaymentMethod',
-                          'QRCode',
-                          'Result',
-                        ],
-                        type: 'SET_STEPS',
-                      });
-                      dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                      if (state.requiredAmount) {
+                        dispatch({
+                          payload: [
+                            'AssetSelection',
+                            'NetworkSelection',
+                            'PaymentMethod',
+                            'ConfirmRequiredAmount',
+                            'QRCode',
+                            'Result',
+                          ],
+                          type: 'SET_STEPS',
+                        });
+                        dispatch({
+                          payload: Steps.ConfirmRequiredAmount,
+                          type: 'SET_STEP',
+                        });
+                      } else {
+                        dispatch({
+                          payload: [
+                            'AssetSelection',
+                            'NetworkSelection',
+                            'PaymentMethod',
+                            'QRCode',
+                            'Result',
+                          ],
+                          type: 'SET_STEPS',
+                        });
+                        dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                      }
                     } else if (method.value === 'isWalletConnect') {
                       dispatch({
                         payload: [

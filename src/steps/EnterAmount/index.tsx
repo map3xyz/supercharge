@@ -335,9 +335,9 @@ const EnterAmount: React.FC<Props> = () => {
         </h3>
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Send{' '}
+        Send {/* @ts-ignore */}
         <Badge color="blue" size="large">
-          {state.asset.symbol || ''}
+          {state.requiredAmount} {state.asset.symbol || ''}
         </Badge>{' '}
         on the {/* @ts-ignore */}
         <Badge color="blue" size="large">
@@ -441,15 +441,17 @@ const EnterAmount: React.FC<Props> = () => {
                       ) : null}
                     </div>
                     <div className="ml-4 flex items-center justify-center">
-                      <div
-                        className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
-                        data-testid="toggle-base"
-                        onClick={toggleBase}
-                        role="button"
-                      >
-                        <i className="fa fa-chevron-up" />
-                        <i className="fa fa-chevron-down" />
-                      </div>
+                      {state.requiredAmount ? null : (
+                        <div
+                          className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
+                          data-testid="toggle-base"
+                          onClick={toggleBase}
+                          role="button"
+                        >
+                          <i className="fa fa-chevron-up" />
+                          <i className="fa fa-chevron-down" />
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : (
