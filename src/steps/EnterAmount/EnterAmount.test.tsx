@@ -122,6 +122,9 @@ describe('Enter Amount', () => {
       testingUtils.mockAccountsChanged([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
+      await act(async () => {
+        testingUtils.mockChainChanged('0x1');
+      });
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
@@ -194,9 +197,7 @@ describe('window.ethereum', () => {
       global.window.ethereum.providers = [testingUtils.getProvider()];
       act(() => {
         testingUtils.lowLevel.mockRequest('eth_accounts', []);
-        testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
-          '0x123EthReqAccounts',
-        ]);
+        testingUtils.mockChainChanged('0x1');
       });
     });
     afterEach(() => {
@@ -204,53 +205,26 @@ describe('window.ethereum', () => {
     });
 
     it('should connect', async () => {
+      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
+        '0x123EthReqAccounts',
+      ]);
       expect(await screen.findByText('Connecting...')).toBeInTheDocument();
       expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     });
 
     it('should handle accounts disconnecting', async () => {
-      act(() => {
+      await act(async () => {
         testingUtils.mockNotConnectedWallet();
+        testingUtils.mockRequestAccounts([]);
         testingUtils.mockAccountsChanged(['0x123willDisconnect']);
-        testingUtils.mockAccountsChanged([]);
       });
-      global.window.ethereum.emit('accountsChanged', ['0x123willDisconnect']);
       const confirm = await screen.findByText('Confirm Payment');
       expect(confirm).toBeInTheDocument();
-      act(() => {
-        global.window.ethereum.emit('accountsChanged', []);
+      await act(async () => {
+        testingUtils.mockAccountsChanged([]);
       });
       const connectWallet = await screen.findByText('Connect Wallet');
       expect(connectWallet).toBeInTheDocument();
-    });
-  });
-
-  describe('Connection declined', () => {
-    const consoleSpy = jest.spyOn(console, 'error');
-    const testingUtils = generateTestingUtils({
-      providerType: 'MetaMask',
-    });
-    beforeAll(() => {
-      global.window.ethereum = testingUtils.getProvider();
-      global.window.ethereum.providers = [testingUtils.getProvider()];
-      testingUtils.lowLevel.mockRequest(
-        'eth_requestAccounts',
-        [
-          {
-            message:
-              'Really long error message that will cause an ugly UI display. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-          },
-        ],
-        { shouldThrow: true }
-      );
-    });
-    afterEach(() => {
-      testingUtils.clearAllMocks();
-    });
-
-    it('should console error', async () => {
-      await screen.findByText('Connecting...');
-      expect(consoleSpy).toHaveBeenCalled();
     });
   });
 
@@ -285,6 +259,7 @@ describe('window.ethereum', () => {
           shouldThrow: true,
         }
       );
+      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
@@ -337,11 +312,13 @@ describe('window.ethereum > ERC20', () => {
     assetBalance: ethers.BigNumber.from('100000000'),
     chainBalance: ethers.BigNumber.from('20000000000000000000'),
   }));
+  const getTransactionMock = jest.fn().mockImplementation(() => true);
   const mockSendTransaction = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       getBalance: getBalanceMock,
+      getTransaction: getTransactionMock,
       sendTransaction: mockSendTransaction,
     }));
     render(
@@ -375,18 +352,21 @@ describe('window.ethereum > ERC20', () => {
 
   describe('transaction', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
-    beforeAll(() => {
+    testingUtils.mockConnectedWallet([
+      '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+    ]);
+    testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
+    beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
-      testingUtils.mockConnectedWallet([
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      ]);
-      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('should handle erc20 transaction', async () => {
+      await act(async () => {
+        testingUtils.mockChainChanged('0x1');
+      });
       await screen.findByText(/Max: 100/);
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');
@@ -394,7 +374,7 @@ describe('window.ethereum > ERC20', () => {
       });
       expect(mockSendTransaction).toHaveBeenCalledWith(
         '1.0',
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf'
+        '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
       );
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
     });
@@ -634,7 +614,12 @@ describe('EnterAmount - MaxLimit', () => {
     // 20000000000000000000 - 21000 * 2000000000 = 1999958000000000000
     // 1999958000000000000 = 1.999958 ETH
     it('should show max amount', async () => {
-      expect(await screen.findByText(/Max: 1.999958 ETH/)).toBeInTheDocument();
+      const max = await screen.findByText(/Max: 1.999958 ETH/);
+      expect(max).toBeInTheDocument();
+      fireEvent.click(max);
+      const input = await screen.findByTestId('input');
+      // @ts-ignore
+      expect(input.value).toBe('1.999958');
     });
   });
 });

@@ -65,8 +65,12 @@ const EnterAmount: React.FC<Props> = () => {
       },
     });
 
-  const { authorizeTransactionProxy, sendTransaction, waitForTransaction } =
-    useWeb3();
+  const {
+    authorizeTransactionProxy,
+    getTransaction,
+    sendTransaction,
+    waitForTransaction,
+  } = useWeb3();
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
@@ -274,7 +278,7 @@ const EnterAmount: React.FC<Props> = () => {
       });
       let response;
       while (!response) {
-        response = await state.provider?.data?.getTransaction(hash);
+        response = await getTransaction(hash);
       }
       dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
       const receipt = await waitForTransaction(hash, 1);

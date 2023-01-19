@@ -79,8 +79,6 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
             ) {
               dispatch({ payload: e.message, type: 'SET_ACCOUNT_ERROR' });
               setFormError(e.message);
-            } else {
-              console.error(e);
             }
           }
         }

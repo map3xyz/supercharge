@@ -35,7 +35,7 @@ describe('App', () => {
       <App
         config={{
           ...mockConfig,
-          address: '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+          address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
           networkCode: 'ethereum',
         }}
         onClose={() => {}}

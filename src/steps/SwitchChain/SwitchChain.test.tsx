@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { web3Mock } from '~/jest/__mocks__/web3Mock';
-import { fireEvent, render, screen } from '~/jest/test-utils';
+import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 import * as useWeb3Mock from '../../hooks/useWeb3';
@@ -16,7 +16,7 @@ const getBalanceMock = jest.fn().mockImplementation(() => ({
   chainBalance: ethers.BigNumber.from('20000000000000000000'),
 }));
 
-describe.skip('SwitchChain', () => {
+describe('SwitchChain', () => {
   it('renders', () => {
     render(<SwitchChain />);
     expect(true).toBe(true);
@@ -47,10 +47,11 @@ describe.skip('SwitchChain', () => {
       // wallet is connected to chainId 1 instead of 137
       ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
     );
+    testingUtils.mockChainChanged('0x1');
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    it('prompts user to switch chain', async () => {
+    it.skip('prompts user to switch chain', async () => {
       const switchChain = (await screen.findAllByText('Switch Chain'))[0];
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
@@ -60,7 +61,9 @@ describe.skip('SwitchChain', () => {
       const confirmSwitchChain = (
         await screen.findAllByText('Switch Chain')
       )[1];
-      fireEvent.click(confirmSwitchChain);
+      await act(async () => {
+        fireEvent.click(confirmSwitchChain);
+      });
       expect(mockSwitchChain).toHaveBeenCalled();
     });
     it('continues to Enter Amount', async () => {
@@ -91,6 +94,7 @@ describe.skip('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
+      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
@@ -105,7 +109,9 @@ describe.skip('SwitchChain', () => {
       const confirmSwitchChain = (
         await screen.findAllByText('Switch Chain')
       )[1];
-      fireEvent.click(confirmSwitchChain);
+      await act(async () => {
+        fireEvent.click(confirmSwitchChain);
+      });
       expect(mockSwitchChain).toHaveBeenCalledWith(137);
       expect(addChainMock).toHaveBeenCalledTimes(1);
     });
@@ -131,6 +137,7 @@ describe.skip('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
+      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
@@ -145,7 +152,9 @@ describe.skip('SwitchChain', () => {
       const confirmSwitchChain = (
         await screen.findAllByText('Switch Chain')
       )[1];
-      fireEvent.click(confirmSwitchChain);
+      await act(async () => {
+        fireEvent.click(confirmSwitchChain);
+      });
       expect(mockSwitchChain).toHaveBeenCalledWith(137);
       expect(addChainMock).toHaveBeenCalled();
     });
