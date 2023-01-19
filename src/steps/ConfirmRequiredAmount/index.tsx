@@ -55,48 +55,52 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
           </div>
         </div>
       </InnerWrapper>
-      <InnerWrapper>
-        <div className="flex gap-2">
-          <input
-            id="checkbox"
-            onChange={(e) => {
-              setAcknowledged((a) => !a);
-            }}
-            type="checkbox"
-          />
-          <label
-            className="text-xs leading-3 text-neutral-400"
-            htmlFor="checkbox"
+      <form
+        onSubmit={() => {
+          dispatch({
+            payload: [
+              'AssetSelection',
+              'NetworkSelection',
+              'PaymentMethod',
+              'QRCode',
+              'Result',
+            ],
+            type: 'SET_STEPS',
+          });
+          dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+        }}
+      >
+        <InnerWrapper>
+          <div className="flex gap-2">
+            <input
+              id="checkbox"
+              onChange={(e) => {
+                setAcknowledged(e.target.checked);
+              }}
+              type="checkbox"
+            />
+            <label
+              className="text-xs leading-3 text-neutral-400"
+              htmlFor="checkbox"
+            >
+              By clicking this checkbox I acknowledge I must send exactly{' '}
+              <b>
+                {state.requiredAmount} {state.asset?.symbol}
+              </b>{' '}
+              on the <b>{state.network?.name} Network</b>.
+            </label>
+          </div>
+          <Button
+            block
+            className="mt-2"
+            disabled={!acknowledged}
+            htmlType="submit"
+            type="default"
           >
-            By clicking this checkbox I acknowledge I must send exactly{' '}
-            <b>
-              {state.requiredAmount} {state.asset?.symbol}
-            </b>{' '}
-            on the <b>{state.network?.name} Network</b>.
-          </label>
-        </div>
-        <Button
-          block
-          className="mt-2"
-          disabled={!acknowledged}
-          onClick={() => {
-            dispatch({
-              payload: [
-                'AssetSelection',
-                'NetworkSelection',
-                'PaymentMethod',
-                'QRCode',
-                'Result',
-              ],
-              type: 'SET_STEPS',
-            });
-            dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
-          }}
-          type="default"
-        >
-          Acknowledge Amount
-        </Button>
-      </InnerWrapper>
+            Acknowledge Amount
+          </Button>
+        </InnerWrapper>
+      </form>
     </div>
   );
 };
