@@ -614,7 +614,12 @@ describe('EnterAmount - MaxLimit', () => {
     // 20000000000000000000 - 21000 * 2000000000 = 1999958000000000000
     // 1999958000000000000 = 1.999958 ETH
     it('should show max amount', async () => {
-      expect(await screen.findByText(/Max: 1.999958 ETH/)).toBeInTheDocument();
+      const max = await screen.findByText(/Max: 1.999958 ETH/);
+      expect(max).toBeInTheDocument();
+      fireEvent.click(max);
+      const input = await screen.findByTestId('input');
+      // @ts-ignore
+      expect(input.value).toBe('1.999958');
     });
   });
 });
