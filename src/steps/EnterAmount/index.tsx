@@ -441,15 +441,17 @@ const EnterAmount: React.FC<Props> = () => {
                       ) : null}
                     </div>
                     <div className="ml-4 flex items-center justify-center">
-                      <div
-                        className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
-                        data-testid="toggle-base"
-                        onClick={toggleBase}
-                        role="button"
-                      >
-                        <i className="fa fa-chevron-up" />
-                        <i className="fa fa-chevron-down" />
-                      </div>
+                      {state.requiredAmount ? null : (
+                        <div
+                          className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
+                          data-testid="toggle-base"
+                          onClick={toggleBase}
+                          role="button"
+                        >
+                          <i className="fa fa-chevron-up" />
+                          <i className="fa fa-chevron-down" />
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : (
