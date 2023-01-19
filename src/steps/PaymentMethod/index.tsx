@@ -53,8 +53,6 @@ const PaymentMethod: React.FC<Props> = () => {
 
     if (!searchMatch) return false;
 
-    if (state.requiredAmount && method?.value === 'qr') return false;
-
     const supportsChain =
       method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
       method?.walletConnect?.chains?.length === 0;
@@ -172,17 +170,35 @@ const PaymentMethod: React.FC<Props> = () => {
                       type: 'SET_PAYMENT_METHOD',
                     });
                     if (method.value === 'qr') {
-                      dispatch({
-                        payload: [
-                          'AssetSelection',
-                          'NetworkSelection',
-                          'PaymentMethod',
-                          'QRCode',
-                          'Result',
-                        ],
-                        type: 'SET_STEPS',
-                      });
-                      dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                      if (state.requiredAmount) {
+                        dispatch({
+                          payload: [
+                            'AssetSelection',
+                            'NetworkSelection',
+                            'PaymentMethod',
+                            'ConfirmRequiredAmount',
+                            'QRCode',
+                            'Result',
+                          ],
+                          type: 'SET_STEPS',
+                        });
+                        dispatch({
+                          payload: Steps.ConfirmRequiredAmount,
+                          type: 'SET_STEP',
+                        });
+                      } else {
+                        dispatch({
+                          payload: [
+                            'AssetSelection',
+                            'NetworkSelection',
+                            'PaymentMethod',
+                            'QRCode',
+                            'Result',
+                          ],
+                          type: 'SET_STEPS',
+                        });
+                        dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                      }
                     } else if (method.value === 'isWalletConnect') {
                       dispatch({
                         payload: [

@@ -15,8 +15,9 @@ export enum Steps {
   'SwitchChain' = 3,
   'EnterAmount' = 4,
   'WalletConnect' = 5,
-  'QRCode' = 6,
-  'Result' = 7,
+  'ConfirmRequiredAmount' = 6,
+  'QRCode' = 7,
+  'Result' = 8,
   __LENGTH,
 }
 
