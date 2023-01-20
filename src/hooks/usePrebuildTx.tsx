@@ -40,10 +40,7 @@ export const usePrebuildTx = () => {
           new ethers.utils.Interface(erc20Abi),
           state.provider?.data.getSigner()
         );
-        estimatedGas = await contract.estimateGas.transfer(
-          address,
-          ethers.utils.parseUnits(amount, decimals).toString()
-        );
+        estimatedGas = await contract.estimateGas.transfer(address, 0);
       } else {
         estimatedGas = await estimateGas(tx);
       }
