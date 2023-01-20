@@ -10,11 +10,7 @@ jest.mock('../src/utils/supabase', () => ({
 
 global.CSS = {
   supports: (k, v) => {
-    if (v === 'supported') {
-      return true;
-    }
-
-    return false;
+    return v === 'supported';
   },
 };
 
