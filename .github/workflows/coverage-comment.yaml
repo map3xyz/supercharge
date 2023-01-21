@@ -15,6 +15,6 @@ jobs:
       run: yarn install
     - name: Run tests
       run: |
-        npx jest --coverage --coverageReporters json-summary
+        npx jest --runInBand --coverage --coverageReporters json-summary
     - name: Jest coverage comment
       uses: MishaKav/jest-coverage-comment@main
