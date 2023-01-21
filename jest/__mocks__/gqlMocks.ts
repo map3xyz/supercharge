@@ -40,11 +40,6 @@ export const mocks: MockedResponse[] = [
     assetId: 'satoshi123',
     confirmationsToWatch: 3,
   }),
-  addWatchedAddressMock({
-    address: '0x0000000000000000000000000000000000000000',
-    assetId: 'satoshi123',
-    confirmationsToWatch: 3,
-  }),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
   getMappedNetworksForOrgMock({ assetId: 'ethereum123' }),
