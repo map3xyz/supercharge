@@ -1,17 +1,11 @@
 import { useContext, useEffect } from 'react';
 
 import { Context, Steps } from '../providers/Store';
-import { useWeb3 } from './useWeb3';
 
 export const useChainWatcher = () => {
   const [state, dispatch] = useContext(Context);
-  const { getChainId } = useWeb3();
 
   const run = async () => {
-    const chainId = await getChainId();
-
-    dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
-
     state.provider?.data?.on?.('network', ({ chainId }) => {
       dispatch({ payload: chainId, type: 'SET_PROVIDER_CHAIN_ID' });
     });

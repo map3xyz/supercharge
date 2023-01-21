@@ -1,5 +1,5 @@
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
-import { render, screen } from '~/jest/test-utils';
+import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from './App';
 
@@ -93,8 +93,10 @@ describe('App', () => {
 
     const closeButton = await screen.findByLabelText('Close');
     expect(closeButton).toBeInTheDocument();
-    closeButton.click();
-    jest.advanceTimersByTime(1000);
+    await act(async () => {
+      fireEvent.click(closeButton);
+      jest.advanceTimersByTime(1000);
+    });
     expect(closeMock).toHaveBeenCalled();
   });
 });

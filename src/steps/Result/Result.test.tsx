@@ -55,14 +55,19 @@ describe('Result', () => {
       providerType: 'MetaMask',
     });
     beforeAll(() => {
+      const waitForTransactionMock = jest.fn().mockImplementation(() => ({
+        blockNumber: 1,
+      }));
+      const mockSendTransaction = jest.fn().mockImplementation(() => {
+        return Promise.resolve(
+          '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
+        );
+      });
       web3MockSpy.mockImplementation(() => ({
         ...web3Mock,
         getBalance: getBalanceMock,
-        sendTransaction: jest.fn().mockImplementation(() => {
-          return Promise.resolve(
-            '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
-          );
-        }),
+        sendTransaction: mockSendTransaction,
+        waitForTransaction: waitForTransactionMock,
       }));
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
@@ -87,7 +92,7 @@ describe('Result', () => {
       const metamaskExtension = await screen.findByText('MetaMask');
       fireEvent.click(metamaskExtension);
       const input = await screen.findByTestId('input');
-      act(() => {
+      await act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
       await screen.findByText(/Max: 100 ELON/);
@@ -97,7 +102,7 @@ describe('Result', () => {
         fireEvent.submit(form);
       });
     });
-    it.skip('renders', async () => {
+    it('renders', async () => {
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
       expect(await screen.findByText('Confirming')).toBeInTheDocument();
       expect(await screen.findByText('Confirmed')).toBeInTheDocument();

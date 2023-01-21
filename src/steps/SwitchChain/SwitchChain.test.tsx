@@ -16,7 +16,7 @@ const getBalanceMock = jest.fn().mockImplementation(() => ({
   chainBalance: ethers.BigNumber.from('20000000000000000000'),
 }));
 
-describe.skip('SwitchChain', () => {
+describe('SwitchChain', () => {
   it('renders', () => {
     render(<SwitchChain />);
     expect(true).toBe(true);
@@ -47,7 +47,6 @@ describe.skip('SwitchChain', () => {
       // wallet is connected to chainId 1 instead of 137
       ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
     );
-    testingUtils.mockChainChanged('0x1');
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
@@ -94,12 +93,11 @@ describe.skip('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
-      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    it.skip('attempts to add chain if none exists', async () => {
+    it('attempts to add chain if none exists', async () => {
       const switchChain = (await screen.findAllByText('Switch Chain'))[0];
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
@@ -137,7 +135,6 @@ describe.skip('SwitchChain', () => {
         // wallet is connected to chainId 1 instead of 137
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
-      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();

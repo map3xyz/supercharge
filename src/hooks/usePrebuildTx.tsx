@@ -93,7 +93,10 @@ export const usePrebuildTx = () => {
       if (message?.includes(INSUFFICIENT_FUNDS_FOR_GAS)) {
         message = 'Insufficient funds.';
       }
-      dispatch({ payload: message, type: 'SET_PREBUILT_TX_ERROR' });
+      dispatch({
+        payload: 'Error calculating max limit.',
+        type: 'SET_PREBUILT_TX_ERROR',
+      });
     }
   };
 
