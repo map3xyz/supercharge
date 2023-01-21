@@ -18,6 +18,7 @@ const ProgressBar: React.FC<Props> = ({ progress }) => {
     <div className="relative h-1 w-full rounded-lg bg-neutral-100 dark:bg-neutral-800">
       <div
         className="rainbow-background absolute left-0 h-full rounded-lg bg-orange-600 transition-all duration-150"
+        data-testid="progress-bar"
         id="progress-bar"
         style={{ width: progress * 100 + '%' }}
       ></div>

@@ -85,6 +85,21 @@ describe('App', () => {
     const assetSelection = await screen.findByText('Select Asset');
     expect(assetSelection).toBeInTheDocument();
   });
+  it('accepts custom theme colors', async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          colors: {
+            progressBar: 'blue',
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+    const progressBar = await screen.findByTestId('progress-bar');
+    expect(progressBar).toHaveStyle('background-color: blue');
+  });
   it('handles close', async () => {
     jest.useFakeTimers();
     const closeMock = jest.fn();
