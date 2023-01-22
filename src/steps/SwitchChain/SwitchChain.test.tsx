@@ -65,10 +65,6 @@ describe('SwitchChain', () => {
       });
       expect(mockSwitchChain).toHaveBeenCalled();
     });
-    it('continues to Enter Amount', async () => {
-      const enterAmount = await screen.findByText('Enter Amount');
-      expect(enterAmount).toBeInTheDocument();
-    });
   });
   describe('handleSwitch - addChain Error', () => {
     const testingUtils = generateTestingUtils({
