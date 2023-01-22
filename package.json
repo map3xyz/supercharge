@@ -37,7 +37,7 @@
     "lint": "eslint \"{**/*,*}.{ts,tsx}\"",
     "lint:fix": "eslint \"{**/*,*}.{ts,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
-    "test": "jest --runInBand"
+    "test": "jest"
   },
   "resolutions": {
     "typescript": "~4.7",
