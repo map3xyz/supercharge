@@ -37,8 +37,7 @@
     "lint": "eslint \"{**/*,*}.{ts,tsx}\"",
     "lint:fix": "eslint \"{**/*,*}.{ts,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
-    "test": "jest --runInBand",
-    "test:coverage": "jest --runInBand --coverage --coverageReporters json-summary"
+    "test": "jest --runInBand"
   },
   "resolutions": {
     "typescript": "~4.7",
