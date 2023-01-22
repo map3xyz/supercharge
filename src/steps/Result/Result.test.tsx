@@ -72,11 +72,6 @@ describe('Result', () => {
       }));
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
-    });
-    afterEach(() => {
-      testingUtils.clearAllMocks();
-    });
-    beforeEach(async () => {
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
@@ -85,6 +80,11 @@ describe('Result', () => {
         'eth_sendTransaction',
         '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
       );
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    beforeEach(async () => {
       await screen.findByText('Loading...');
       const elonCoin = await screen.findByText('ElonCoin');
       fireEvent.click(elonCoin);
@@ -107,8 +107,6 @@ describe('Result', () => {
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
       expect(await screen.findByText('Confirming')).toBeInTheDocument();
       expect(await screen.findByText('Confirmed')).toBeInTheDocument();
-    });
-    it('toggles details', async () => {
       const toggle = await screen.findByText('Transaction Details');
       await act(async () => {
         fireEvent.click(toggle);
