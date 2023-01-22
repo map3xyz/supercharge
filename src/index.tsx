@@ -22,7 +22,9 @@ export interface Map3InitConfig {
   generateDepositAddress: (
     asset?: string,
     network?: string
-  ) => Promise<{ address: string; memo?: string }>;
+  ) =>
+    | Promise<{ address: string; memo?: string }>
+    | { address: string; memo?: string };
   networkCode?: string;
   onClose?: () => void;
   onFailure?: (error: string, networkCode: string, address?: string) => void;

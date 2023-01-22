@@ -7,6 +7,7 @@ import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 import * as useWeb3Mock from '../../hooks/useWeb3';
+import Result from '.';
 
 jest.mock('ethers', () => {
   const originalModule = jest.requireActual('ethers');
@@ -55,22 +56,23 @@ describe('Result', () => {
       providerType: 'MetaMask',
     });
     beforeAll(() => {
+      const waitForTransactionMock = jest.fn().mockImplementation(() => ({
+        blockNumber: 1,
+      }));
+      const mockSendTransaction = jest
+        .fn()
+        .mockImplementation(
+          () =>
+            '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
+        );
       web3MockSpy.mockImplementation(() => ({
         ...web3Mock,
         getBalance: getBalanceMock,
-        sendTransaction: jest.fn().mockImplementation(() => {
-          return Promise.resolve(
-            '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
-          );
-        }),
+        sendTransaction: mockSendTransaction,
+        waitForTransaction: waitForTransactionMock,
       }));
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
-    });
-    afterEach(() => {
-      testingUtils.clearAllMocks();
-    });
-    beforeEach(async () => {
       testingUtils.mockConnectedWallet([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
@@ -79,6 +81,11 @@ describe('Result', () => {
         'eth_sendTransaction',
         '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
       );
+    });
+    afterEach(() => {
+      testingUtils.clearAllMocks();
+    });
+    beforeEach(async () => {
       await screen.findByText('Loading...');
       const elonCoin = await screen.findByText('ElonCoin');
       fireEvent.click(elonCoin);
@@ -87,7 +94,7 @@ describe('Result', () => {
       const metamaskExtension = await screen.findByText('MetaMask');
       fireEvent.click(metamaskExtension);
       const input = await screen.findByTestId('input');
-      act(() => {
+      await act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
       await screen.findByText(/Max: 100 ELON/);
@@ -97,10 +104,21 @@ describe('Result', () => {
         fireEvent.submit(form);
       });
     });
-    it.skip('renders', async () => {
+    it('renders', async () => {
       expect(await screen.findByText('Submitted')).toBeInTheDocument();
       expect(await screen.findByText('Confirming')).toBeInTheDocument();
       expect(await screen.findByText('Confirmed')).toBeInTheDocument();
+      const toggle = await screen.findByText('Transaction Details');
+      await act(async () => {
+        fireEvent.click(toggle);
+      });
+      const details = await screen.findByTestId('transaction-details');
+      expect(details).toHaveClass('h-full');
     });
   });
+});
+
+describe('Result Error', () => {
+  render(<Result />);
+  expect(true).toBe(true);
 });

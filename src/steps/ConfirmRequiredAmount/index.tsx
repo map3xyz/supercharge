@@ -73,6 +73,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
         <InnerWrapper>
           <div className="flex gap-2">
             <input
+              data-testid="acknowledge-checkbox"
               id="checkbox"
               onChange={(e) => {
                 setAcknowledged(e.target.checked);

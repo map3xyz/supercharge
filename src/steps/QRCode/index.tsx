@@ -184,8 +184,8 @@ const QRCode: React.FC<Props> = () => {
           state.depositAddress.data && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
               <div className="text-xs text-neutral-400">
-                Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
-                {state.network?.name} Network to this address.
+                Only send {state.asset.name} on the {state.network?.name}{' '}
+                Network to this address.
               </div>
               {isWatching && state.depositAddress.data && (
                 <Pill

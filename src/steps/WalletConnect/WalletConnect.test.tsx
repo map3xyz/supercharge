@@ -99,7 +99,7 @@ describe('WalletConnect', () => {
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
     const input = await screen.findByTestId('input');
-    act(() => {
+    await act(() => {
       fireEvent.change(input, { target: { value: '1' } });
     });
     const form = await screen.findByTestId('enter-amount-form');

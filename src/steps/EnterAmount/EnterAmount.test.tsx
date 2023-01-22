@@ -36,12 +36,12 @@ describe('Enter Amount', () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
-    act(() => {
+    await act(() => {
       fireEvent.click(bitcoin);
     });
     await screen.findByText('Fetching Networks...');
     const ethereum = await screen.findByText('Ethereum');
-    act(() => {
+    await act(() => {
       fireEvent.click(ethereum);
     });
     await screen.findByText('Fetching Payment Methods...');
@@ -55,26 +55,26 @@ describe('Enter Amount', () => {
   });
   it('handles no pricing available', async () => {
     const back = await screen.findByLabelText('Back');
-    act(() => {
+    await act(() => {
       fireEvent.click(back);
     });
-    act(() => {
+    await act(() => {
       fireEvent.click(back);
     });
-    act(() => {
+    await act(() => {
       fireEvent.click(back);
     });
     await screen.findByText('Loading...');
     const elonCoin = await screen.findByText('ElonCoin');
-    act(() => {
+    await act(() => {
       fireEvent.click(elonCoin);
     });
     const ethereum = await screen.findByText('Ethereum');
-    act(() => {
+    await act(() => {
       fireEvent.click(ethereum);
     });
     const metaMask = await screen.findByText('MetaMask');
-    act(() => {
+    await act(() => {
       fireEvent.click(metaMask);
     });
     const warning = await screen.findByText(
@@ -85,7 +85,7 @@ describe('Enter Amount', () => {
   describe('input', () => {
     beforeEach(async () => {
       const input = await screen.findByTestId('input');
-      act(() => {
+      await act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
     });
@@ -95,11 +95,11 @@ describe('Enter Amount', () => {
     });
     it('toggles base', async () => {
       const toggleBase = await screen.findByTestId('toggle-base');
-      act(() => {
+      await act(() => {
         fireEvent.click(toggleBase);
       });
       const input = await screen.findByTestId('input');
-      act(() => {
+      await act(() => {
         fireEvent.change(input, { target: { value: '0.00005000' } });
       });
       const quote = await screen.findByTestId('quote');
@@ -122,13 +122,10 @@ describe('Enter Amount', () => {
       testingUtils.mockAccountsChanged([
         '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
       ]);
-      await act(async () => {
-        testingUtils.mockChainChanged('0x1');
-      });
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
-      act(() => {
+      await act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
       await act(async () => {
@@ -165,7 +162,7 @@ describe('window.ethereum', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             throw 'Error generating deposit address.';
           },
         }}
@@ -183,7 +180,7 @@ describe('window.ethereum', () => {
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
-    act(() => {
+    await act(() => {
       fireEvent.change(input, { target: { value: '1' } });
     });
   });
@@ -192,23 +189,19 @@ describe('window.ethereum', () => {
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
     });
-    beforeAll(() => {
+    beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
-      act(() => {
-        testingUtils.lowLevel.mockRequest('eth_accounts', []);
-        testingUtils.mockChainChanged('0x1');
-      });
+      testingUtils.lowLevel.mockRequest('eth_accounts', []);
+      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
+        '0x123EthReqAccounts',
+      ]);
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
 
     it('should connect', async () => {
-      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
-        '0x123EthReqAccounts',
-      ]);
-      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
       expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     });
 
@@ -230,7 +223,7 @@ describe('window.ethereum', () => {
 
   describe('Previous Connection', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
-    beforeAll(() => {
+    beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.mockConnectedWallet([
@@ -259,7 +252,6 @@ describe('window.ethereum', () => {
           shouldThrow: true,
         }
       );
-      testingUtils.mockChainChanged('0x1');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
@@ -277,7 +269,7 @@ describe('window.ethereum', () => {
 
   describe('Address generation error', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
-    beforeAll(() => {
+    beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.mockConnectedWallet([
@@ -292,7 +284,7 @@ describe('window.ethereum', () => {
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
-      act(() => {
+      await act(() => {
         fireEvent.change(input, { target: { value: '1' } });
       });
       await act(async () => {
@@ -313,19 +305,19 @@ describe('window.ethereum > ERC20', () => {
     chainBalance: ethers.BigNumber.from('20000000000000000000'),
   }));
   const getTransactionMock = jest.fn().mockImplementation(() => true);
-  const mockSendTransaction = jest.fn();
+  const sendTransactionMock = jest.fn();
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       getBalance: getBalanceMock,
       getTransaction: getTransactionMock,
-      sendTransaction: mockSendTransaction,
+      sendTransaction: sendTransactionMock,
     }));
     render(
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
@@ -345,34 +337,31 @@ describe('window.ethereum > ERC20', () => {
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
-    act(() => {
+    await act(() => {
       fireEvent.change(input, { target: { value: '1' } });
     });
   });
 
   describe('transaction', () => {
     const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
-    testingUtils.mockConnectedWallet([
-      '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-    ]);
-    testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
     beforeAll(async () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
+      testingUtils.lowLevel.mockRequest('eth_gasPrice', () => '0x10cd96a16e');
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('should handle erc20 transaction', async () => {
-      await act(async () => {
-        testingUtils.mockChainChanged('0x1');
-      });
       await screen.findByText(/Max: 100/);
       await act(async () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
-      expect(mockSendTransaction).toHaveBeenCalledWith(
+      expect(sendTransactionMock).toHaveBeenCalledWith(
         '1.0',
         '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
       );
@@ -389,23 +378,30 @@ describe('txAuth - Failure', () => {
     chainBalance: ethers.BigNumber.from('20000000000000000000'),
   }));
 
-  const mockAuthTransactionProxy = jest.fn();
-  const mockSendTransaction = jest.fn();
+  const mockAuthTransactionProxy = jest.fn().mockImplementationOnce(() => {
+    throw new Error('Unable to authorize transaction.');
+  });
+  const sendTransactionMock = jest.fn();
+  const mockWaitForTransaction = jest.fn().mockImplementation(() => ({
+    blockNumber: 1,
+  }));
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      sendTransaction: mockSendTransaction,
+      sendTransaction: sendTransactionMock,
+      waitForTransaction: mockWaitForTransaction,
     }));
     render(
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
+          // @ts-ignore
+          authorizeTransaction: () => {
             return false;
           },
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
@@ -425,7 +421,7 @@ describe('txAuth - Failure', () => {
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
-    act(() => {
+    await act(() => {
       fireEvent.change(input, { target: { value: '1' } });
     });
   });
@@ -446,7 +442,7 @@ describe('txAuth - Failure', () => {
     });
     it('should not authorize transaction', async () => {
       await screen.findByText(/Max: 100/);
-      act(() => {
+      await act(async () => {
         const form = screen.getByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
@@ -455,7 +451,7 @@ describe('txAuth - Failure', () => {
         'ethereum',
         '1.0'
       );
-      expect(mockSendTransaction).not.toHaveBeenCalled();
+      expect(sendTransactionMock).not.toHaveBeenCalled();
     });
   });
 });
@@ -469,22 +465,28 @@ describe('txAuth - Success', () => {
   }));
 
   const mockAuthTransactionProxy = jest.fn();
-  const mockSendTransaction = jest.fn();
+  const sendTransactionMock = jest.fn();
+  const mockWaitForTransaction = jest.fn().mockImplementation(() => ({
+    blockNumber: 1,
+  }));
+
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
-      sendTransaction: mockSendTransaction,
+      sendTransaction: sendTransactionMock,
+      waitForTransaction: mockWaitForTransaction,
     }));
     render(
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
+          // @ts-ignore
+          authorizeTransaction: () => {
             return true;
           },
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
@@ -504,7 +506,7 @@ describe('txAuth - Success', () => {
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
-    act(() => {
+    await act(() => {
       fireEvent.change(input, { target: { value: '1' } });
     });
   });
@@ -533,7 +535,7 @@ describe('txAuth - Success', () => {
         'ethereum',
         '1.0'
       );
-      expect(mockSendTransaction).toHaveBeenCalled();
+      expect(sendTransactionMock).toHaveBeenCalled();
     });
   });
 });
@@ -547,30 +549,29 @@ describe('EnterAmount - MaxLimit', () => {
   }));
 
   const mockAuthTransactionProxy = jest.fn();
-  const mockSendTransaction = jest.fn();
+  const sendTransactionMock = jest.fn();
   beforeEach(async () => {
     // @ts-ignore
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
-      estimateGas: jest.fn(() =>
-        Promise.resolve(ethers.BigNumber.from('21000'))
-      ),
+      estimateGas: jest.fn(() => ethers.BigNumber.from('21000')),
       getBalance: getBalanceMock,
       getFeeData: jest.fn(() => ({
         maxFeePerGas: ethers.BigNumber.from('2000000000'),
         maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'),
       })),
-      sendTransaction: mockSendTransaction,
+      sendTransaction: sendTransactionMock,
     }));
     render(
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
+          // @ts-ignore
+          authorizeTransaction: () => {
             return true;
           },
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
             };
@@ -590,7 +591,7 @@ describe('EnterAmount - MaxLimit', () => {
     fireEvent.click(metaMask);
 
     const input = await screen.findByTestId('input');
-    act(() => {
+    await act(() => {
       fireEvent.change(input, { target: { value: '1' } });
     });
   });

@@ -3,9 +3,12 @@ import React, { PropsWithChildren } from 'react';
 const InnerWrapper: React.FC<PropsWithChildren<Props>> = ({
   children,
   className,
+  ...rest
 }) => {
   return (
-    <div className={`w-full px-4 py-3 ${className || ''}`}>{children}</div>
+    <div {...rest} className={`w-full px-4 py-3 ${className || ''}`}>
+      {children}
+    </div>
   );
 };
 

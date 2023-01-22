@@ -40,6 +40,7 @@ export const useWeb3 = () => {
     return setProviders({});
   }, []);
 
+  // TODO: move this to a separate hook
   const authorizeTransactionProxy = async (
     fromAddress?: string,
     network?: Maybe<string> | undefined,

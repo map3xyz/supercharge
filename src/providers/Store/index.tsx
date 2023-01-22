@@ -96,7 +96,6 @@ type State = {
 };
 
 type Action =
-  | { type: 'RESET_STATE' }
   | { payload: AssetWithPrice; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
@@ -241,7 +240,9 @@ export const Store: React.FC<
       asset?: string,
       network?: string,
       memoEnabled?: boolean
-    ) => Promise<{ address: string; memo?: string }>;
+    ) =>
+      | Promise<{ address: string; memo?: string }>
+      | { address: string; memo?: string };
     network?: Network;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
@@ -476,9 +477,6 @@ export const Store: React.FC<
               ...initialState.tx,
             },
           };
-        case 'RESET_STATE': {
-          return { ...initialState, asset, fiat, network, step, theme };
-        }
         /* istanbul ignore next */
         default:
           /* istanbul ignore next */
@@ -524,7 +522,9 @@ export const Context = createContext<
         asset?: string,
         network?: string,
         memoEnabled?: boolean
-      ) => Promise<{ address: string; memo?: string }>;
+      ) =>
+        | Promise<{ address: string; memo?: string }>
+        | { address: string; memo?: string };
       onFailure?: (
         error: string,
         networkCode: string,

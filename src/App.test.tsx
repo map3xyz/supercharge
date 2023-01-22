@@ -1,5 +1,5 @@
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
-import { render, screen } from '~/jest/test-utils';
+import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from './App';
 
@@ -85,6 +85,21 @@ describe('App', () => {
     const assetSelection = await screen.findByText('Select Asset');
     expect(assetSelection).toBeInTheDocument();
   });
+  it('accepts custom theme colors', async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          colors: {
+            progressBar: 'blue',
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+    const progressBar = await screen.findByTestId('progress-bar');
+    expect(progressBar).toHaveStyle('background-color: blue');
+  });
   it('handles close', async () => {
     jest.useFakeTimers();
     const closeMock = jest.fn();
@@ -93,8 +108,10 @@ describe('App', () => {
 
     const closeButton = await screen.findByLabelText('Close');
     expect(closeButton).toBeInTheDocument();
-    closeButton.click();
-    jest.advanceTimersByTime(1000);
+    await act(async () => {
+      fireEvent.click(closeButton);
+      jest.advanceTimersByTime(1000);
+    });
     expect(closeMock).toHaveBeenCalled();
   });
 });
