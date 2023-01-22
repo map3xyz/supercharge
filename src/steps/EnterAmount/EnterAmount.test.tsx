@@ -193,15 +193,15 @@ describe('window.ethereum', () => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.lowLevel.mockRequest('eth_accounts', []);
+      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
+        '0x123EthReqAccounts',
+      ]);
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
 
     it('should connect', async () => {
-      testingUtils.lowLevel.mockRequest('eth_requestAccounts', [
-        '0x123EthReqAccounts',
-      ]);
       expect(await screen.findByText('Connecting...')).toBeInTheDocument();
       expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     });
