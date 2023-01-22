@@ -151,6 +151,7 @@ const Result: React.FC<Props> = () => {
         className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
           toggleDetails && state.tx.hash ? 'h-full' : 'h-[48px]'
         }`}
+        data-testid="transaction-details"
       >
         <div className="flex h-full flex-col justify-between">
           <div>

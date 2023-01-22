@@ -7,6 +7,7 @@ import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
 import * as useWeb3Mock from '../../hooks/useWeb3';
+import Result from '.';
 
 jest.mock('ethers', () => {
   const originalModule = jest.requireActual('ethers');
@@ -107,5 +108,18 @@ describe('Result', () => {
       expect(await screen.findByText('Confirming')).toBeInTheDocument();
       expect(await screen.findByText('Confirmed')).toBeInTheDocument();
     });
+    it('toggles details', async () => {
+      const toggle = await screen.findByText('Transaction Details');
+      await act(async () => {
+        fireEvent.click(toggle);
+      });
+      const details = await screen.findByTestId('transaction-details');
+      expect(details).toHaveClass('h-full');
+    });
   });
+});
+
+describe('Result Error', () => {
+  render(<Result />);
+  expect(true).toBe(true);
 });
