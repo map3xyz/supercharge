@@ -162,7 +162,7 @@ describe('window.ethereum', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             throw 'Error generating deposit address.';
           },
         }}
@@ -317,7 +317,7 @@ describe('window.ethereum > ERC20', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
@@ -397,10 +397,11 @@ describe('txAuth - Failure', () => {
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
+          // @ts-ignore
+          authorizeTransaction: () => {
             return false;
           },
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
@@ -481,10 +482,11 @@ describe('txAuth - Success', () => {
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
+          // @ts-ignore
+          authorizeTransaction: () => {
             return true;
           },
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
               memo: 'memo',
@@ -565,10 +567,11 @@ describe('EnterAmount - MaxLimit', () => {
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
+          // @ts-ignore
+          authorizeTransaction: () => {
             return true;
           },
-          generateDepositAddress: async () => {
+          generateDepositAddress: () => {
             return {
               address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
             };

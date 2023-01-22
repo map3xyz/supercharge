@@ -240,7 +240,9 @@ export const Store: React.FC<
       asset?: string,
       network?: string,
       memoEnabled?: boolean
-    ) => Promise<{ address: string; memo?: string }>;
+    ) =>
+      | Promise<{ address: string; memo?: string }>
+      | { address: string; memo?: string };
     network?: Network;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
@@ -520,7 +522,9 @@ export const Context = createContext<
         asset?: string,
         network?: string,
         memoEnabled?: boolean
-      ) => Promise<{ address: string; memo?: string }>;
+      ) =>
+        | Promise<{ address: string; memo?: string }>
+        | { address: string; memo?: string };
       onFailure?: (
         error: string,
         networkCode: string,
