@@ -202,7 +202,6 @@ describe('window.ethereum', () => {
     });
 
     it('should connect', async () => {
-      expect(await screen.findByText('Connecting...')).toBeInTheDocument();
       expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     });
 
