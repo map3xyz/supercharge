@@ -13,6 +13,7 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'json-summary', 'text', 'text-summary'],
+  maxWorkers: 1,
   moduleNameMapper: {
     '@walletconnect/qrcode-modal': '<rootDir>/jest/__mocks__/fileMock.js',
     '\\.(css|less)$': '<rootDir>/jest/__mocks__/styleMock.js',
