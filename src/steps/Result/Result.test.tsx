@@ -59,11 +59,12 @@ describe('Result', () => {
       const waitForTransactionMock = jest.fn().mockImplementation(() => ({
         blockNumber: 1,
       }));
-      const mockSendTransaction = jest.fn().mockImplementation(() => {
-        return Promise.resolve(
-          '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
+      const mockSendTransaction = jest
+        .fn()
+        .mockImplementation(
+          () =>
+            '0x0766849abf0e1d3288512c3a3580193b28036e6e7765362868a679435f275f1e'
         );
-      });
       web3MockSpy.mockImplementation(() => ({
         ...web3Mock,
         getBalance: getBalanceMock,
