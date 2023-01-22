@@ -17,10 +17,6 @@ const getBalanceMock = jest.fn().mockImplementation(() => ({
 }));
 
 describe('SwitchChain', () => {
-  it('renders', () => {
-    render(<SwitchChain />);
-    expect(true).toBe(true);
-  });
   beforeEach(async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
@@ -35,13 +31,13 @@ describe('SwitchChain', () => {
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
     });
-    const mockSwitchChain = jest.fn();
-    web3MockSpy.mockImplementation(() => ({
-      ...web3Mock,
-      getBalance: getBalanceMock,
-      switchChain: mockSwitchChain,
-    }));
-    beforeEach(() => {
+    const switchChainMock = jest.fn();
+    beforeAll(() => {
+      web3MockSpy.mockImplementation(() => ({
+        ...web3Mock,
+        getBalance: getBalanceMock,
+        switchChain: switchChainMock,
+      }));
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
       testingUtils.mockConnectedWallet(
@@ -49,6 +45,7 @@ describe('SwitchChain', () => {
         ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
       );
     });
+
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
@@ -65,7 +62,7 @@ describe('SwitchChain', () => {
       await act(async () => {
         fireEvent.click(confirmSwitchChain);
       });
-      expect(mockSwitchChain).toHaveBeenCalled();
+      expect(switchChainMock).toHaveBeenCalled();
     });
   });
   describe('handleSwitch - addChain Error', () => {
@@ -153,5 +150,12 @@ describe('SwitchChain', () => {
       expect(mockSwitchChain).toHaveBeenCalledWith(137);
       expect(addChainMock).toHaveBeenCalled();
     });
+  });
+});
+
+describe('Switch Chain Error', () => {
+  it('renders', () => {
+    render(<SwitchChain />);
+    expect(true).toBe(true);
   });
 });
