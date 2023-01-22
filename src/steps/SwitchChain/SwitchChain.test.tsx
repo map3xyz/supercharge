@@ -17,17 +17,17 @@ const getBalanceMock = jest.fn().mockImplementation(() => ({
 }));
 
 describe('SwitchChain', () => {
-  beforeEach(async () => {
-    render(<App config={mockConfig} onClose={() => {}} />);
-    await screen.findByText('Loading...');
-    const elonCoin = await screen.findByText('ElonCoin');
-    fireEvent.click(elonCoin);
-    const polygon = await screen.findByText('Polygon');
-    fireEvent.click(polygon);
-    const metamask = await screen.findByText('MetaMask');
-    fireEvent.click(metamask);
-  });
   describe('Step', () => {
+    beforeEach(async () => {
+      render(<App config={mockConfig} onClose={() => {}} />);
+      await screen.findByText('Loading...');
+      const elonCoin = await screen.findByText('ElonCoin');
+      fireEvent.click(elonCoin);
+      const polygon = await screen.findByText('Polygon');
+      fireEvent.click(polygon);
+      const metamask = await screen.findByText('MetaMask');
+      fireEvent.click(metamask);
+    });
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
     });
@@ -66,6 +66,16 @@ describe('SwitchChain', () => {
     });
   });
   describe('handleSwitch - addChain Error', () => {
+    beforeEach(async () => {
+      render(<App config={mockConfig} onClose={() => {}} />);
+      await screen.findByText('Loading...');
+      const elonCoin = await screen.findByText('ElonCoin');
+      fireEvent.click(elonCoin);
+      const polygon = await screen.findByText('Polygon');
+      fireEvent.click(polygon);
+      const metamask = await screen.findByText('MetaMask');
+      fireEvent.click(metamask);
+    });
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
     });
@@ -110,6 +120,16 @@ describe('SwitchChain', () => {
     });
   });
   describe('handleSwitch - Success', () => {
+    beforeEach(async () => {
+      render(<App config={mockConfig} onClose={() => {}} />);
+      await screen.findByText('Loading...');
+      const elonCoin = await screen.findByText('ElonCoin');
+      fireEvent.click(elonCoin);
+      const polygon = await screen.findByText('Polygon');
+      fireEvent.click(polygon);
+      const metamask = await screen.findByText('MetaMask');
+      fireEvent.click(metamask);
+    });
     const testingUtils = generateTestingUtils({
       providerType: 'MetaMask',
     });
