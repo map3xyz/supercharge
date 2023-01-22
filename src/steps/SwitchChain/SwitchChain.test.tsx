@@ -41,12 +41,14 @@ describe('SwitchChain', () => {
       getBalance: getBalanceMock,
       switchChain: mockSwitchChain,
     }));
-    global.window.ethereum = testingUtils.getProvider();
-    global.window.ethereum.providers = [testingUtils.getProvider()];
-    testingUtils.mockConnectedWallet(
-      // wallet is connected to chainId 1 instead of 137
-      ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
-    );
+    beforeEach(() => {
+      global.window.ethereum = testingUtils.getProvider();
+      global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet(
+        // wallet is connected to chainId 1 instead of 137
+        ['0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf']
+      );
+    });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
