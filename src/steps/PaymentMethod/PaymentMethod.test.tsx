@@ -1,5 +1,6 @@
 import { generateTestingUtils } from 'eth-testing';
 import * as reactDeviceDetect from 'react-device-detect';
+import { act } from 'react-dom/test-utils';
 
 import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { fireEvent, render, screen } from '~/jest/test-utils';
@@ -46,6 +47,14 @@ describe('Payment Selection', () => {
       const metamask = await screen.findByText('MetaMask');
       expect(metamask).toBeInTheDocument();
       expect(rainbow).not.toBeInTheDocument();
+      fireEvent.change(searchInput, { target: { value: 'superduperwallet' } });
+      await screen.findByText('Payment Method Not Found');
+      const retry = await screen.findByText('click here');
+      await act(() => {
+        fireEvent.click(retry);
+      });
+      // @ts-expect-error
+      expect(searchInput.value).toBe('');
     });
   });
   describe('Method filtering', () => {

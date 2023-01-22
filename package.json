@@ -38,8 +38,7 @@
     "lint:fix": "eslint \"{**/*,*}.{ts,tsx}\" --fix",
     "codegen": "graphql-codegen --config codegen.ts",
     "test": "jest --runInBand",
-    "test:ci": "jest --ci --maxWorkers=2",
-    "test:coverage": "jest --maxWorkers=2 --coverage --coverageReporters json-summary"
+    "test:coverage": "jest --runInBand --coverage --coverageReporters json-summary"
   },
   "resolutions": {
     "typescript": "~4.7",
