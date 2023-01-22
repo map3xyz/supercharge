@@ -553,9 +553,7 @@ describe('EnterAmount - MaxLimit', () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       authorizeTransactionProxy: mockAuthTransactionProxy,
-      estimateGas: jest.fn(() =>
-        Promise.resolve(ethers.BigNumber.from('21000'))
-      ),
+      estimateGas: jest.fn(() => ethers.BigNumber.from('21000')),
       getBalance: getBalanceMock,
       getFeeData: jest.fn(() => ({
         maxFeePerGas: ethers.BigNumber.from('2000000000'),
