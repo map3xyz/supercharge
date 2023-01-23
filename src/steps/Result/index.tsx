@@ -204,7 +204,7 @@ const Result: React.FC<Props> = () => {
             {state.tx.hash ? (
               <a
                 className="text-xs text-blue-600 underline"
-                href={`${state.network?.links?.explorer}tx/${state.tx.hash}`}
+                href={`${state.network?.links?.explorer}/tx/${state.tx.hash}`}
                 target="_blank"
               >
                 View on Explorer
