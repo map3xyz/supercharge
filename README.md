@@ -1,7 +1,16 @@
-# 💸 Supercharge
+<h1 align='center'>💸 Supercharge</h1>
 
-The Map3 Supercharge SDK connects crypto apps to Wallets, Exchanges & Bridges,
-enabling cross-chain deposits and increasing volumes.
+<div align='center'>The Map3 Supercharge SDK connects<br/>crypto apps to Wallets, Exchanges & Bridges,
+enabling<br/>cross-chain deposits and increasing volumes.</div>
+<br/>
+<div align="center">
+<a href="https://map3.xyz/supercharge">Website</a> 
+<span> · </span>
+<a href="https://github.com/map3xyz/supercharge">GitHub</a> 
+<span> · </span>
+<a href="https://cal.com/amadeo-map3/discovery">Contact</a>
+</div>
+<br/>
 
 ## Getting Started
 
