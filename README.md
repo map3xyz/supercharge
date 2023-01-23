@@ -1,4 +1,4 @@
-# Map3 Payments SDK
+# 💸 Supercharge
 
 The Map3 Payments SDK connects crypto apps to Wallets, Exchanges & Bridges,
 enabling cross-chain deposits and increasing volumes.
