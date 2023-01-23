@@ -29,6 +29,6 @@ export class Map3 {
     open(): void;
     close(): void;
 }
-export const initMap3Sdk: (args: Map3InitConfig) => Map3;
+export const initMap3Supercharge: (args: Map3InitConfig) => Map3;
 
 //# sourceMappingURL=types.d.ts.map

@@ -10,8 +10,8 @@ enabling cross-chain deposits and increasing volumes.
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/global/index.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/index.css"></link>
+        <script src="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/global/index.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/index.css"></link>
     </head>
 
     <body>
@@ -19,7 +19,7 @@ enabling cross-chain deposits and increasing volumes.
     </body>
     <script>
     function openSdk() {
-        const map3 = initMap3Sdk({
+        const supercharge = initMap3Supercharge({
           theme: 'dark',
           anonKey: '<ANON_KEY>',
           generateDepositAddress: async (coin, network) => {
@@ -28,14 +28,14 @@ enabling cross-chain deposits and increasing volumes.
             return {address: '0x0000000000000000000000000000000000000000'};
           }
         })
-        map3.open()
+        supercharge.open()
     }
   </script>
 </html>
 ```
 
 ### Examples
-[![Edit map3-sdk-cdn-demo-l9t2x5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/map3-sdk-cdn-demo-l9t2x5)
+[![Edit map3-supercharge-cdn-demo-l9t2x5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/map3-supercharge-cdn-demo-l9t2x5)
 
 ### Generating Anon Keys
 

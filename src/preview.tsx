@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-import { initMap3Sdk } from '.';
+import { initMap3Supercharge } from '.';
 
 const container = document.getElementById('app');
 
@@ -9,7 +9,7 @@ root.render(
   <div className="p-2">
     <button
       onClick={() => {
-        const map3 = initMap3Sdk({
+        const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -23,7 +23,7 @@ root.render(
           theme: 'dark',
           userId: 'preview-user-id',
         });
-        map3.open();
+        supercharge.open();
       }}
     >
       Open SDK

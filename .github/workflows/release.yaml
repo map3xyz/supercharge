@@ -28,7 +28,7 @@ jobs:
       if: steps.get_changes.outputs.changed != 0
       run: |
         git commit -a -m "chore: release 🚀"
-        git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/payments-sdk HEAD:master --follow-tags
+        git push https://${{ secrets.BOT_ACCESS_TOKEN }}@github.com/map3xyz/supercharge HEAD:master --follow-tags
     - name: Release
       if: steps.get_changes.outputs.changed != 0
       env:
@@ -39,6 +39,6 @@ jobs:
       uses: gacts/purge-jsdelivr-cache@v1
       with:
         url: |
-          https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/global/index.js
-          https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/index.css
+          https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/global/index.js
+          https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/index.css
 
