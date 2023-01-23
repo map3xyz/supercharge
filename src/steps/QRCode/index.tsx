@@ -220,9 +220,9 @@ const QRCode: React.FC<Props> = () => {
                   fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
                   imageSettings={{
                     excavate: false,
-                    height: 40,
-                    src: state.asset.logo?.svg || state.asset.logo?.png || '',
-                    width: 40,
+                    height: 32,
+                    src: state.asset.logo?.png || state.asset.logo?.svg || '',
+                    width: 32,
                   }}
                   includeMargin={true}
                   size={width ? width - 200 : 0}
