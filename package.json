@@ -1,5 +1,5 @@
 {
-  "name": "@map3xyz/payments-sdk",
+  "name": "@map3xyz/supercharge",
   "version": "1.3.2",
   "private": false,
   "types": "dist/types.d.ts",

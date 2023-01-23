@@ -1,7 +1,16 @@
-# 💸 Supercharge
+<h1 align='center'>💸 Supercharge</h1>
 
-The Map3 Supercharge SDK connects crypto apps to Wallets, Exchanges & Bridges,
-enabling cross-chain deposits and increasing volumes.
+<div align='center'>The Map3 Supercharge SDK connects<br/>crypto apps to Wallets, Exchanges & Bridges,
+enabling<br/>cross-chain deposits and increasing volumes.</div>
+<br/>
+<div align="center">
+<a href="https://map3.xyz/supercharge">Website</a> 
+<span> · </span>
+<a href="https://github.com/map3xyz/supercharge">GitHub</a> 
+<span> · </span>
+<a href="https://cal.com/amadeo-map3/discovery">Contact</a>
+</div>
+<br/>
 
 ## Getting Started
 
@@ -10,8 +19,8 @@ enabling cross-chain deposits and increasing volumes.
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/global/index.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/payments-sdk@1/dist/index.css"></link>
+        <script src="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/global/index.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/index.css"></link>
     </head>
 
     <body>
@@ -19,7 +28,7 @@ enabling cross-chain deposits and increasing volumes.
     </body>
     <script>
     function openSdk() {
-        const map3 = initMap3Sdk({
+        const supercharge = initMap3Supercharge({
           theme: 'dark',
           anonKey: '<ANON_KEY>',
           generateDepositAddress: async (coin, network) => {
@@ -28,14 +37,14 @@ enabling cross-chain deposits and increasing volumes.
             return {address: '0x0000000000000000000000000000000000000000'};
           }
         })
-        map3.open()
+        supercharge.open()
     }
   </script>
 </html>
 ```
 
 ### Examples
-[![Edit map3-sdk-cdn-demo-l9t2x5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/map3-sdk-cdn-demo-l9t2x5)
+[![Edit map3-supercharge-cdn-demo-l9t2x5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/map3-supercharge-cdn-demo-l9t2x5)
 
 ### Generating Anon Keys
 
