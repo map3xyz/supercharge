@@ -1,4 +1,5 @@
 import { Badge, CryptoAddress, Pill, ReadOnlyText } from '@map3xyz/components';
+import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect } from 'react';
 
@@ -40,7 +41,7 @@ const QRCode: React.FC<Props> = () => {
       try {
         const { address } = await getDepositAddress();
 
-        const { data } = await addWatchedAddress({
+        const { data, errors } = await addWatchedAddress({
           variables: {
             address,
             assetId: state.asset!.id!,
@@ -48,7 +49,7 @@ const QRCode: React.FC<Props> = () => {
           },
         });
 
-        if (typeof data?.addWatchedAddress !== 'string') {
+        if (typeof data?.addWatchedAddress !== 'string' || errors?.length) {
           throw new Error('Unable to watch address.');
         }
 
@@ -66,6 +67,13 @@ const QRCode: React.FC<Props> = () => {
                 dispatch({
                   payload: payload.new.tx_formatted_amount,
                   type: 'SET_TX_AMOUNT',
+                });
+                dispatch({
+                  // @ts-expect-error
+                  payload: {
+                    to: payload.new.address,
+                  },
+                  type: 'SET_TX_RESPONSE',
                 });
                 submmitedDate = submmitedDate || new Date().toLocaleString();
                 dispatch({
@@ -183,21 +191,27 @@ const QRCode: React.FC<Props> = () => {
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-              <div className="text-xs text-neutral-400">
-                Only send {state.asset.name} on the {state.network?.name}{' '}
-                Network to this address.
+              <div className="text-center text-xs text-neutral-400">
+                Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
+                {state.network?.name} Network to this address.
               </div>
               {isWatching && state.depositAddress.data && (
-                <Pill
-                  color="yellow"
-                  icon={<i className="fa fa-spinner animate-spin" />}
+                <motion.div
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
                 >
-                  Monitoring{' '}
-                  <CryptoAddress hint={false}>
-                    {state.depositAddress.data.address}
-                  </CryptoAddress>{' '}
-                  for deposits.
-                </Pill>
+                  <Pill
+                    color="yellow"
+                    icon={<i className="fa fa-spinner animate-spin" />}
+                  >
+                    Monitoring{' '}
+                    <CryptoAddress hint={false}>
+                      {state.depositAddress.data.address}
+                    </CryptoAddress>{' '}
+                    for deposits.
+                  </Pill>
+                </motion.div>
               )}
               <div className="flex w-full justify-center">
                 <QRCodeSVG
@@ -206,12 +220,12 @@ const QRCode: React.FC<Props> = () => {
                   fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
                   imageSettings={{
                     excavate: false,
-                    height: 40,
-                    src: state.asset.logo?.svg || state.asset.logo?.png || '',
-                    width: 40,
+                    height: 32,
+                    src: state.asset.logo?.png || state.asset.logo?.svg || '',
+                    width: 32,
                   }}
                   includeMargin={true}
-                  size={width ? width - 160 : 0}
+                  size={width ? width - 200 : 0}
                   style={{
                     border:
                       state.theme === 'dark'
