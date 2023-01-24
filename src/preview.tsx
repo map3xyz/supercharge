@@ -19,7 +19,7 @@ root.render(
             };
           },
           networkCode: 'goerli',
-          theme: 'dark',
+          theme: 'light',
           userId: 'preview-user-id',
         });
         supercharge.open();
