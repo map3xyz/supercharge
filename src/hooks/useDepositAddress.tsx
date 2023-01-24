@@ -19,7 +19,7 @@ export const useDepositAddress = () => {
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
       const { address, memo } = await generateDepositAddress(
         state.asset?.symbol as string,
-        state.network?.symbol as string
+        state.network?.networkCode as string
       );
       dispatch({
         payload: { address, memo },
