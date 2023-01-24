@@ -19,7 +19,6 @@ root.render(
             };
           },
           networkCode: 'goerli',
-          rainbowRoad: true,
           theme: 'dark',
           userId: 'preview-user-id',
         });

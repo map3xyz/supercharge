@@ -43,7 +43,7 @@ const Layout = ({
 
   return (
     <div
-      className={`map3 absolute overflow-hidden rounded-md dark:bg-neutral-900`}
+      className={`map3 absolute overflow-hidden rounded-md border bg-white dark:border-neutral-700 dark:bg-neutral-900`}
       style={{
         height: config.embed.height || '500px',
         left: `-${offsetLeft}px`,
