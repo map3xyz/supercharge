@@ -50,6 +50,11 @@ type State = {
     data?: { address: string; memo?: string };
     status: RemoteType;
   };
+  embed?: {
+    height?: string;
+    id?: string;
+    width?: string;
+  };
   fiat?: string;
   method?: PaymentMethod & { description?: string };
   network?: Network;
@@ -235,6 +240,11 @@ export const Store: React.FC<
       progressBar?: string;
       scrollBar?: string;
     };
+    embed?: {
+      height?: string;
+      id?: string;
+      width?: string;
+    };
     fiat?: string;
     generateDepositAddress: (
       asset?: string,
@@ -254,6 +264,7 @@ export const Store: React.FC<
   authorizeTransaction,
   children,
   colors,
+  embed,
   fiat,
   generateDepositAddress,
   network,
@@ -487,6 +498,7 @@ export const Store: React.FC<
       ...initialState,
       asset,
       colors,
+      embed,
       fiat,
       network,
       requiredAmount: amount,

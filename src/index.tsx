@@ -18,6 +18,11 @@ export interface Map3InitConfig {
     progressBar?: string;
     scrollBar?: string;
   };
+  embed?: {
+    height?: string;
+    id?: string;
+    width?: string;
+  };
   fiat?: string;
   generateDepositAddress: (
     asset?: string,
@@ -111,8 +116,16 @@ export class Map3 {
     };
 
     const element = document.createElement('div');
-    element.id = 'map3';
-    document.body.appendChild(element);
+    const embed = config.embed?.id
+      ? document.getElementById(config.embed.id)
+      : null;
+
+    if (embed) {
+      embed.appendChild(element);
+      embed.classList.add('map3');
+    } else {
+      document.body.appendChild(element);
+    }
 
     if (config.theme === 'dark' && !document.body.classList.contains('dark')) {
       document.body.classList.add('dark');

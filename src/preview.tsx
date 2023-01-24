@@ -28,5 +28,9 @@ root.render(
     >
       Open SDK
     </button>
+    <div
+      id="supercharge"
+      style={{ left: '50%', position: 'absolute', top: '50%' }}
+    ></div>
   </div>
 );

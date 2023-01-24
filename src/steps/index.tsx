@@ -24,7 +24,9 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
 
   return (
     <div
-      className="flex h-full w-full flex-col justify-between sm:!h-[520px]"
+      className={`flex h-full w-full flex-col justify-between ${
+        state.embed?.id ? '' : 'sm:!h-[520px]'
+      }`}
       id="map3-modal-stepper"
     >
       <>

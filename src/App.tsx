@@ -9,10 +9,56 @@ import { useWindowSize } from './hooks/useWindowSize';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
+const Layout = ({
+  children,
+  config,
+  handleClose,
+  visible,
+}: {
+  children: React.ReactNode;
+  config: Map3InitConfig;
+  handleClose: () => void;
+  visible: boolean;
+}) => {
+  const { minWidth } = useWindowSize();
+
+  if (!config.embed?.id) {
+    return (
+      <Modal
+        className={`${minWidth('sm') ? 'map3' : 'map3 h-full w-full'}`}
+        footerBackground
+        onCancel={handleClose}
+        size="tiny"
+        visible={visible}
+      >
+        {children}
+      </Modal>
+    );
+  }
+
+  const height = config.embed.height || '500px';
+  const width = config.embed.width || '320px';
+  const offsetLeft = parseFloat(width) / 2;
+  const offsetTop = parseFloat(height) / 2;
+
+  return (
+    <div
+      className={`map3 absolute overflow-hidden rounded-md dark:bg-neutral-900`}
+      style={{
+        height: config.embed.height || '500px',
+        left: `-${offsetLeft}px`,
+        top: `-${offsetTop}px`,
+        width: config.embed.width || '320px',
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const App: React.FC<AppProps> = ({ config, onClose }) => {
   const { address, assetId, networkCode } = config;
   const [visible, setVisible] = useState(false);
-  const { minWidth } = useWindowSize();
 
   useEffect(() => {
     setVisible(true);
@@ -31,13 +77,7 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
 
   return (
     <div data-testid="map3-modal">
-      <Modal
-        className={`${minWidth('sm') ? 'map3' : 'map3 h-full w-full'}`}
-        footerBackground
-        onCancel={handleClose}
-        size="tiny"
-        visible={visible}
-      >
+      <Layout config={config} handleClose={handleClose} visible={visible}>
         {assetId ? (
           <AppWithAssetId config={config} onClose={handleClose} />
         ) : address && networkCode ? (
@@ -49,7 +89,7 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
             <Map3SdkSteps onClose={handleClose} />
           </Store>
         )}
-      </Modal>
+      </Layout>
     </div>
   );
 };
