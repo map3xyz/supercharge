@@ -27,8 +27,10 @@ const AssetSelection: React.FC<Props> = () => {
     },
   });
 
-  const [search, { data: searchData, loading: searching }] =
-    useSearchAssetsLazyQuery();
+  const [
+    search,
+    { data: searchData, loading: searching },
+  ] = useSearchAssetsLazyQuery();
 
   const debouncedSearch = useCallback(debounce(search, 100), []);
 
@@ -171,11 +173,7 @@ const AssetSelection: React.FC<Props> = () => {
                 searching ||
                 error ||
                 isEmptySearch ||
-                isSearch ? null : atAssetLimit ? (
-                  <span className="text-xs text-neutral-500">
-                    No more assets.
-                  </span>
-                ) : (
+                isSearch ? null : atAssetLimit ? null : (
                   <i className="fa fa-gear animate-spin text-neutral-500" />
                 )}
               </div>

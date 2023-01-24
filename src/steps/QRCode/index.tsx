@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect } from 'react';
 
+import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
+import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
@@ -167,26 +169,20 @@ const QRCode: React.FC<Props> = () => {
       </div>
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
-          <div className="flex h-64 items-center justify-center text-sm">
-            <div className="flex flex-col items-center gap-2 font-semibold text-neutral-500">
-              <div className="animate-spin ">
-                <i className="fa fa-gear"></i>
-              </div>
-              <span>Generating Address...</span>
-            </div>
-          </div>
+          <LoadingWrapper message="Generating Address..." />
         )}
         {state.depositAddress.status === 'error' && (
-          <div className="flex h-64 items-center justify-center text-sm">
-            <div className="flex flex-col items-center gap-2 font-semibold">
-              <div className="animate-spin font-semibold text-red-600">
-                <i className="fa fa-circle-xmark"></i>
-              </div>
-              <span className="text-red-600">
-                Error generating deposit address.
-              </span>
-            </div>
-          </div>
+          <ErrorWrapper
+            description={state.depositAddress.error || ''}
+            header="Error Generating Address"
+            retry={() => {
+              try {
+                getDepositAddress();
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          />
         )}
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
