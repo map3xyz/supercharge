@@ -2,6 +2,8 @@ import { useContext } from 'react';
 
 import { Context } from '../providers/Store';
 
+const NO_ADDRESS = 'No address generated. Please contact support.';
+
 export const useDepositAddress = () => {
   const [state, dispatch, { generateDepositAddress }] = useContext(Context);
 
@@ -21,15 +23,21 @@ export const useDepositAddress = () => {
         state.asset?.symbol as string,
         state.network?.networkCode as string
       );
+      if (!address) {
+        throw new Error(NO_ADDRESS);
+      }
       dispatch({
         payload: { address, memo },
         type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
       });
 
       return { address, memo };
-    } catch (e) {
-      dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' });
-      throw new Error('Error generating a deposit address.');
+    } catch (e: any) {
+      dispatch({
+        payload: e.message,
+        type: 'GENERATE_DEPOSIT_ADDRESS_ERROR',
+      });
+      throw e;
     }
   };
 

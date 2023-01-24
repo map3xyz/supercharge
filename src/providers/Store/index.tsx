@@ -48,6 +48,7 @@ type State = {
   };
   depositAddress: {
     data?: { address: string; memo?: string };
+    error?: string;
     status: RemoteType;
   };
   embed?: {
@@ -110,7 +111,7 @@ type Action =
       payload: { address: string; memo?: string };
       type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS';
     }
-  | { type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
+  | { payload: string; type: 'GENERATE_DEPOSIT_ADDRESS_ERROR' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' }
   | { type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' }
   | { type: 'SET_ACCOUNT_IDLE' }
@@ -314,6 +315,7 @@ export const Store: React.FC<
             ...state,
             depositAddress: {
               data: undefined,
+              error: action.payload,
               status: 'error',
             },
           };

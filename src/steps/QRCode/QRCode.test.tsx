@@ -53,7 +53,7 @@ describe('QR Code Errors', () => {
     fireEvent.click(ethereum);
     const qrCode = await screen.findByText('Scan QR Code');
     fireEvent.click(qrCode);
-    const error = await screen.findByText('Error generating deposit address.');
+    const error = await screen.findByText('Error Generating Address');
     expect(error).toBeInTheDocument();
   });
 });
