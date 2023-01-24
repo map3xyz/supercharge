@@ -8,6 +8,11 @@ export interface Map3InitConfig {
         progressBar?: string;
         scrollBar?: string;
     };
+    embed?: {
+        height?: string;
+        id?: string;
+        width?: string;
+    };
     fiat?: string;
     generateDepositAddress: (asset?: string, network?: string) => Promise<{
         address: string;
