@@ -1,4 +1,5 @@
 import { Modal } from '@map3xyz/components';
+import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 
 import { Map3InitConfig } from '.';
@@ -42,17 +43,25 @@ const Layout = ({
   const offsetTop = parseFloat(height) / 2;
 
   return (
-    <div
+    <motion.div
+      animate={{ opacity: 1, scale: 1 }}
       className={`map3 absolute overflow-hidden rounded-md border bg-white dark:border-neutral-700 dark:bg-neutral-900`}
+      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, scale: 0.5 }}
       style={{
         height: config.embed.height || '500px',
         left: `-${offsetLeft}px`,
         top: `-${offsetTop}px`,
         width: config.embed.width || '320px',
       }}
+      transition={{
+        damping: 20,
+        stiffness: 260,
+        type: 'spring',
+      }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 

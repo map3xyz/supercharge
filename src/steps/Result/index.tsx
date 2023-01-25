@@ -17,10 +17,11 @@ const Result: React.FC<Props> = () => {
   useEffect(() => {
     const success = Object.keys(state.tx.progress).every(
       (key) =>
-        state.tx.progress[key as unknown as TxSteps]?.status === 'success'
+        state.tx.progress[(key as unknown) as TxSteps]?.status === 'success'
     );
     const error = Object.keys(state.tx.progress).find(
-      (key) => state.tx.progress[key as unknown as TxSteps]?.status === 'error'
+      (key) =>
+        state.tx.progress[(key as unknown) as TxSteps]?.status === 'error'
     );
 
     if (success) {
@@ -31,7 +32,7 @@ const Result: React.FC<Props> = () => {
       );
     } else if (error) {
       onFailure?.(
-        state.tx.progress[error as unknown as TxSteps].data || '',
+        state.tx.progress[(error as unknown) as TxSteps].data || '',
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
@@ -101,10 +102,10 @@ const Result: React.FC<Props> = () => {
                   <div
                     className={`flex h-5 min-h-[1.25rem] w-5 items-center justify-center rounded-full border ${
                       state.tx.progress[step].status === 'success'
-                        ? 'border-green-800 bg-green-900/50 text-green-500'
+                        ? 'border-green-300 bg-green-300/50 text-green-700 dark:border-green-800 dark:bg-green-900/50 dark:text-green-500'
                         : state.tx.progress[step].status === 'error'
-                        ? 'border-red-800 bg-red-900/50 text-red-500'
-                        : 'border-gray-600 bg-gray-600/50 text-gray-400'
+                        ? 'border-red-300 bg-red-300/50 text-red-700 dark:border-red-800 dark:bg-red-900/50 dark:text-red-500'
+                        : 'border-gray-300 bg-gray-300/50 text-gray-700 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-500'
                     }`}
                   >
                     {state.tx.progress[step].status === 'success' && (

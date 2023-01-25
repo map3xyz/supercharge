@@ -11,6 +11,9 @@ root.render(
       onClick={() => {
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
+          embed: {
+            id: 'supercharge',
+          },
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -18,8 +21,8 @@ root.render(
               address: '0x388c818ca8b9251b393131c08a736a67ccb19297',
             };
           },
-          networkCode: 'goerli',
-          theme: 'light',
+          networkCode: 'ethereum',
+          theme: 'dark',
           userId: 'preview-user-id',
         });
         supercharge.open();
