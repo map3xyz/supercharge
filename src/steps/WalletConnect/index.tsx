@@ -3,7 +3,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { BrowserView, isIOS, isMobile, MobileView } from 'react-device-detect';
 import GooglePlayBadge from 'url:../../assets/google-play-badge.png';
 
@@ -18,8 +18,9 @@ const WalletConnect: React.FC<Props> = () => {
   const [deeplink, setDeeplink] = useState<string | undefined>();
   const [uri, setUri] = useState<string | undefined>();
   const [showInstall, setShowInstall] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  const { width } = useModalSize();
+  const { width } = useModalSize(ref);
 
   const handleConnected = (
     provider: ethers.providers.Web3Provider,
@@ -140,8 +141,11 @@ const WalletConnect: React.FC<Props> = () => {
     );
   }
 
-  return uri ? (
-    <div className="flex h-full flex-col items-center justify-between py-2">
+  return (
+    <div
+      className="flex h-full flex-col items-center justify-between py-2"
+      ref={ref}
+    >
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
         <div>
           <div className="flex items-center gap-2">
@@ -153,144 +157,147 @@ const WalletConnect: React.FC<Props> = () => {
           </div>
         </div>
       </div>
-      <div className="flex h-full w-full flex-col items-center justify-between">
-        <InnerWrapper className="flex items-center gap-2 dark:text-white">
-          <i className="fa fa-handshake" />{' '}
-          <div
-            className="text-xs font-bold leading-4"
-            data-testid="scan-wallet-connect"
-          >
-            <MobileView>
-              <>
-                Click the button below to connect with{' '}
-                <b>{state.method?.name}</b>. You will be redirected to the app.
-              </>
-            </MobileView>
-            <BrowserView>
-              <>
-                Open <b>{state.method?.name}</b> on your mobile device and scan
-                the QR Code to connect.{' '}
-              </>
-              {state.method?.walletConnect?.desktop?.native ? (
+      {uri ? (
+        <div className="flex h-full w-full flex-col items-center justify-between">
+          <InnerWrapper className="flex items-center gap-2 dark:text-white">
+            <i className="fa fa-handshake" />{' '}
+            <div
+              className="text-xs font-bold leading-4"
+              data-testid="scan-wallet-connect"
+            >
+              <MobileView>
                 <>
-                  Or{' '}
-                  <a
-                    className="text-blue-500"
-                    href={state.method.walletConnect.desktop.native + uri}
-                  >
-                    click here <i className="fa fa-external-link" />{' '}
-                  </a>{' '}
-                  to connect with the desktop app.
+                  Click the button below to connect with{' '}
+                  <b>{state.method?.name}</b>. You will be redirected to the
+                  app.
                 </>
-              ) : null}
-            </BrowserView>
-          </div>
-        </InnerWrapper>
-        <MobileView className="w-full">
-          <InnerWrapper className="w-full">
-            {deeplink ? (
-              <Button block size="xlarge" type="default">
-                <a
-                  data-testid="connect-app"
-                  href={deeplink}
-                  onClick={() => {
-                    setTimeout(() => {
-                      setShowInstall(true);
-                    }, 1200);
-                  }}
-                >
-                  <span className="flex items-center gap-2">
-                    <img className="h-6" src={state.method?.logo || ''} />{' '}
-                    Connect {state.method?.name}
-                  </span>
-                </a>
-              </Button>
-            ) : null}
-            {showInstall ? (
-              <div className="text-center text-xs">
-                <Divider className="my-3">Or</Divider>
-                <a
-                  className="flex w-full justify-center"
-                  data-testid="install-app"
-                  href={
-                    (isIOS
-                      ? state.method?.walletConnect?.app?.ios
-                      : state.method?.walletConnect?.app?.android) ||
-                    state.method?.walletConnect?.mobile?.universal ||
-                    ''
-                  }
-                >
-                  {isIOS ? (
-                    <AppStoreBadge aria-label="app-store-badge" />
-                  ) : (
-                    <img
-                      aria-label="google-play-badge"
-                      className="block w-1/2"
-                      src={GooglePlayBadge}
-                    />
-                  )}
-                </a>
-              </div>
-            ) : null}
+              </MobileView>
+              <BrowserView>
+                <>
+                  Open <b>{state.method?.name}</b> on your mobile device and
+                  scan the QR Code to connect.{' '}
+                </>
+                {state.method?.walletConnect?.desktop?.native ? (
+                  <>
+                    Or{' '}
+                    <a
+                      className="text-blue-500"
+                      href={state.method.walletConnect.desktop.native + uri}
+                    >
+                      click here <i className="fa fa-external-link" />{' '}
+                    </a>{' '}
+                    to connect with the desktop app.
+                  </>
+                ) : null}
+              </BrowserView>
+            </div>
           </InnerWrapper>
-        </MobileView>
-        <BrowserView>
-          <QRCodeSVG
-            bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
-            className="rounded-lg"
-            fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
-            imageSettings={{
-              excavate: false,
-              height: 40,
-              src: state.method?.logo || '',
-              width: 40,
-            }}
-            includeMargin={true}
-            size={width ? width - 96 : 0}
-            style={{
-              border:
-                state.theme === 'dark'
-                  ? '1px solid #404040'
-                  : '1px solid #e5e5e5',
-            }}
-            value={uri}
-          />
-        </BrowserView>
-        <InnerWrapper>
-          <MobileView className="mb-3">
-            {/* @ts-ignore */}
-            <Badge color="blue" dot>
-              {/* @ts-ignore */}
-              <span className="leading-4">
-                Having trouble connecting? Please{' '}
-                <a
-                  className="underline"
-                  href="https://support.map3.xyz"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  click here
-                </a>{' '}
-                to contact support. Or{' '}
-                <a
-                  className="underline"
-                  onClick={async () => {
-                    await localStorage.removeItem('walletconnect');
-                    run();
-                  }}
-                >
-                  here
-                </a>{' '}
-                to create a new WalletConnect session.
-              </span>
-            </Badge>
+          <MobileView className="w-full">
+            <InnerWrapper className="w-full">
+              {deeplink ? (
+                <Button block size="xlarge" type="default">
+                  <a
+                    data-testid="connect-app"
+                    href={deeplink}
+                    onClick={() => {
+                      setTimeout(() => {
+                        setShowInstall(true);
+                      }, 1200);
+                    }}
+                  >
+                    <span className="flex items-center gap-2">
+                      <img className="h-6" src={state.method?.logo || ''} />{' '}
+                      Connect {state.method?.name}
+                    </span>
+                  </a>
+                </Button>
+              ) : null}
+              {showInstall ? (
+                <div className="text-center text-xs">
+                  <Divider className="my-3">Or</Divider>
+                  <a
+                    className="flex w-full justify-center"
+                    data-testid="install-app"
+                    href={
+                      (isIOS
+                        ? state.method?.walletConnect?.app?.ios
+                        : state.method?.walletConnect?.app?.android) ||
+                      state.method?.walletConnect?.mobile?.universal ||
+                      ''
+                    }
+                  >
+                    {isIOS ? (
+                      <AppStoreBadge aria-label="app-store-badge" />
+                    ) : (
+                      <img
+                        aria-label="google-play-badge"
+                        className="block w-1/2"
+                        src={GooglePlayBadge}
+                      />
+                    )}
+                  </a>
+                </div>
+              ) : null}
+            </InnerWrapper>
           </MobileView>
-          <ReadOnlyText copyButton value={uri} />
-        </InnerWrapper>
-      </div>
+          <BrowserView>
+            <QRCodeSVG
+              bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
+              className="rounded-lg"
+              fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
+              imageSettings={{
+                excavate: false,
+                height: 40,
+                src: state.method?.logo || '',
+                width: 40,
+              }}
+              includeMargin={true}
+              size={width ? width - 96 : 0}
+              style={{
+                border:
+                  state.theme === 'dark'
+                    ? '1px solid #404040'
+                    : '1px solid #e5e5e5',
+              }}
+              value={uri}
+            />
+          </BrowserView>
+          <InnerWrapper>
+            <MobileView className="mb-3">
+              {/* @ts-ignore */}
+              <Badge color="blue" dot>
+                {/* @ts-ignore */}
+                <span className="leading-4">
+                  Having trouble connecting? Please{' '}
+                  <a
+                    className="underline"
+                    href="https://support.map3.xyz"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    click here
+                  </a>{' '}
+                  to contact support. Or{' '}
+                  <a
+                    className="underline"
+                    onClick={async () => {
+                      await localStorage.removeItem('walletconnect');
+                      run();
+                    }}
+                  >
+                    here
+                  </a>{' '}
+                  to create a new WalletConnect session.
+                </span>
+              </Badge>
+            </MobileView>
+            <ReadOnlyText copyButton value={uri} />
+          </InnerWrapper>
+        </div>
+      ) : (
+        <LoadingWrapper />
+      )}
     </div>
-  ) : (
-    <LoadingWrapper />
   );
 };
 
