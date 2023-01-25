@@ -1,7 +1,7 @@
 import { Badge, CryptoAddress, Pill, ReadOnlyText } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -21,8 +21,9 @@ const QRCode: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
   const [isWatching, setIsWatching] = React.useState<boolean>(false);
+  const ref = useRef<HTMLDivElement | null>(null);
 
-  const { width } = useModalSize();
+  const { width } = useModalSize(ref);
 
   const [addWatchedAddress] = useAddWatchedAddressMutation();
   const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
@@ -139,7 +140,7 @@ const QRCode: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col" ref={ref}>
       <InnerWrapper className="!pt-0">
         <h3
           className="text-lg font-semibold dark:text-white"

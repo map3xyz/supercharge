@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 
-export const useModalSize = () => {
+export const useModalSize = (
+  ref: React.MutableRefObject<HTMLDivElement | null>
+) => {
   const [modalSize, setModalSize] = useState<{
     height?: number;
     width?: number;
@@ -10,11 +12,8 @@ export const useModalSize = () => {
   });
   useEffect(() => {
     function handleResize() {
-      const modal = document.getElementById(
-        'map3-modal-stepper'
-      ) as HTMLElement;
-      if (!modal || !modal.getBoundingClientRect()) return;
-      const { height, width } = modal.getBoundingClientRect();
+      if (!ref.current || !ref.current.getBoundingClientRect()) return;
+      const { height, width } = ref.current.getBoundingClientRect();
 
       setModalSize({
         height: height,

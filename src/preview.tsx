@@ -11,9 +11,6 @@ root.render(
       onClick={() => {
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
-          embed: {
-            id: 'supercharge',
-          },
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
