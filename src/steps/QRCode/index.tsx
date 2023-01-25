@@ -33,12 +33,6 @@ const QRCode: React.FC<Props> = () => {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsWatching(true);
-    }, 3000);
-  }, []);
-
-  useEffect(() => {
     const run = async () => {
       try {
         const { address } = await getDepositAddress();
@@ -53,6 +47,10 @@ const QRCode: React.FC<Props> = () => {
 
         if (typeof data?.addWatchedAddress !== 'string' || errors?.length) {
           throw new Error('Unable to watch address.');
+        } else {
+          setTimeout(() => {
+            setIsWatching(true);
+          }, 2000);
         }
 
         let submmitedDate: string | undefined;
