@@ -1,11 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
-import {
-  AssetWithPrice,
-  Network,
-  PaymentMethod,
-} from '../../generated/apollo-gql';
+import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
 import { PrebuiltTx } from '../../utils/transactions/evm';
 
 export enum Steps {
@@ -41,7 +37,7 @@ type State = {
     data: string | undefined;
     status: RemoteType;
   };
-  asset?: AssetWithPrice;
+  asset?: Asset;
   colors?: {
     progressBar?: string;
     scrollBar?: string;
@@ -102,7 +98,7 @@ type State = {
 };
 
 type Action =
-  | { payload: AssetWithPrice; type: 'SET_ASSET' }
+  | { payload: Asset; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
@@ -231,7 +227,7 @@ const initialState: State = {
 export const Store: React.FC<
   PropsWithChildren<{
     amount?: string;
-    asset?: AssetWithPrice;
+    asset?: Asset;
     authorizeTransaction?: (
       fromAddress: string,
       network: string,

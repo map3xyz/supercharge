@@ -11,7 +11,10 @@ import WindowEthereum, {
   ConnectHandler,
 } from '../../components/methods/WindowEthereum';
 import { MIN_CONFIRMATIONS } from '../../constants';
-import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../../generated/apollo-gql';
+import {
+  useGetAssetByMappedAssetIdAndNetworkCodeQuery,
+  useGetAssetPriceQuery,
+} from '../../generated/apollo-gql';
 import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
@@ -20,16 +23,14 @@ const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 
-const EnterAmount: React.FC<Props> = () => {
+const EnterAmountForm: React.FC<{ price?: number | null }> = ({ price }) => {
   const [state, dispatch] = useContext(Context);
-  const rate = state.asset?.price?.price;
-
   const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
     inputSelected: 'crypto' | 'fiat';
     quote: string;
-  }>({ base: '0', inputSelected: rate ? 'fiat' : 'crypto', quote: '0' });
+  }>({ base: '0', inputSelected: price ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<string>('0');
   const dummyInputRef = useRef<HTMLSpanElement>(null);
   const dummySymbolRef = useRef<HTMLSpanElement>(null);
@@ -48,7 +49,7 @@ const EnterAmount: React.FC<Props> = () => {
     setFormValue({
       base: state.requiredAmount,
       inputSelected: 'crypto',
-      quote: (Number(state.requiredAmount) * (rate || 0)).toFixed(2),
+      quote: (Number(state.requiredAmount) * (price || 0)).toFixed(2),
     });
   }, [
     inputRef.current,
@@ -56,14 +57,17 @@ const EnterAmount: React.FC<Props> = () => {
     state.prebuiltTx.data?.maxLimitFormatted,
   ]);
 
-  const { data, error, loading } =
-    useGetAssetByMappedAssetIdAndNetworkCodeQuery({
-      skip: state.asset?.type !== 'asset',
-      variables: {
-        mappedAssetId: state.asset?.config?.mappedAssetId,
-        networkCode: state.network?.networkCode,
-      },
-    });
+  const {
+    data,
+    error,
+    loading,
+  } = useGetAssetByMappedAssetIdAndNetworkCodeQuery({
+    skip: state.asset?.type !== 'asset',
+    variables: {
+      mappedAssetId: state.asset?.config?.mappedAssetId,
+      networkCode: state.network?.networkCode,
+    },
+  });
 
   const {
     authorizeTransactionProxy,
@@ -108,7 +112,7 @@ const EnterAmount: React.FC<Props> = () => {
 
   useEffect(() => {
     const base = ethers.FixedNumber.from(formValue.base || '0');
-    const fixedRate = ethers.FixedNumber.from(rate?.toString() || '0');
+    const fixedRate = ethers.FixedNumber.from(price || '0');
     const decimals = state.asset?.decimals || DECIMAL_FALLBACK;
 
     const quote =
@@ -325,6 +329,200 @@ const EnterAmount: React.FC<Props> = () => {
   }
 
   return (
+    <InnerWrapper className="h-full">
+      {loading || !!error ? (
+        <LoadingWrapper />
+      ) : (
+        <form
+          className="flex h-full flex-col items-center justify-between text-5xl font-semibold dark:text-white"
+          data-testid="enter-amount-form"
+          onChange={(event) => {
+            const target = event.target as HTMLInputElement;
+            setFormValue((formValue) => ({
+              ...formValue,
+              [target.name]: target.value,
+            }));
+          }}
+          onSubmit={handleSubmit}
+          ref={formRef}
+        >
+          <div />
+          <div className="w-full">
+            <div className="relative box-border flex max-w-full items-center justify-center">
+              {formValue.inputSelected === 'fiat' ? (
+                <span className="text-inherit">$</span>
+              ) : null}
+              <input
+                autoFocus
+                className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
+                data-testid="input"
+                disabled={!!state.requiredAmount}
+                name="base"
+                placeholder="0"
+                ref={inputRef}
+                step={
+                  formValue.inputSelected === 'fiat'
+                    ? '0.01'
+                    : '0.' +
+                      '0'.repeat(
+                        (state.asset.decimals || DECIMAL_FALLBACK) - 1
+                      ) +
+                      '1'
+                }
+                style={{ minWidth: `${BASE_FONT_SIZE}px` }}
+                type="number"
+              />
+              <span
+                className="invisible absolute -left-96 -top-96 pr-3 !text-5xl"
+                ref={dummyInputRef}
+              />
+              <span
+                className="invisible absolute -left-96 -top-96 !text-5xl"
+                ref={dummySymbolRef}
+              >
+                {formValue.inputSelected === 'crypto'
+                  ? state.asset.symbol
+                  : '$'}
+              </span>
+              {formValue.inputSelected === 'crypto' ? (
+                <span className="text-inherit">{state.asset.symbol}</span>
+              ) : null}
+            </div>
+            <div className="mt-8 flex items-center justify-center text-neutral-400">
+              {price ? (
+                <>
+                  <div className="text-xs">
+                    {formValue.inputSelected === 'crypto' ? (
+                      <span>$&nbsp;</span>
+                    ) : null}
+                    <span data-testid="quote" ref={quoteRef}>
+                      {formValue.quote}
+                    </span>
+                    {formValue.inputSelected === 'fiat' ? (
+                      <span>&nbsp;{state.asset.symbol}</span>
+                    ) : null}
+                  </div>
+                  <div className="ml-4 flex items-center justify-center">
+                    {state.requiredAmount ? null : (
+                      <div
+                        className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
+                        data-testid="toggle-base"
+                        onClick={toggleBase}
+                        role="button"
+                      >
+                        <i className="fa fa-chevron-up" />
+                        <i className="fa fa-chevron-down" />
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Badge color="yellow">
+                  No pricing available for this asset.
+                </Badge>
+              )}
+            </div>
+          </div>
+          <div className="relative w-full">
+            <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
+              {formError?.includes(INSUFFICIENT_FUNDS) ? (
+                <motion.span
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
+                  onClick={setMax}
+                  role="button"
+                >
+                  <Badge color="red" dot>
+                    {formError}
+                  </Badge>
+                </motion.span>
+              ) : formError ? (
+                <Badge color="red" dot>
+                  {formError}
+                </Badge>
+              ) : state.prebuiltTx.status === 'loading' ? (
+                <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
+                  {<i className="fa fa-gear text-xs" />}
+                </span>
+              ) : state.prebuiltTx.data?.feeError ? (
+                <Badge color="red" dot>
+                  {`You need at least ${ethers.utils.formatEther(
+                    state.prebuiltTx.data.gasPrice.mul(
+                      state.prebuiltTx.data.gasLimit
+                    )
+                  )} ${state.network?.symbol} to complete this transaction.`}
+                </Badge>
+              ) : state.prebuiltTx.status === 'error' ? (
+                <Badge color="red">
+                  {state.prebuiltTx.error ||
+                    'Unknown error building transaction.'}
+                </Badge>
+              ) : state.prebuiltTx.status === 'success' ? (
+                <motion.span
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
+                  onClick={setMax}
+                  role="button"
+                >
+                  <Badge color="blue">
+                    {/* @ts-ignore */}
+                    <span className="whitespace-nowrap">
+                      Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
+                      {state.asset.symbol}
+                    </span>
+                  </Badge>
+                </motion.span>
+              ) : null}
+            </span>
+            {state.method.value !== 'isWalletConnect' ? (
+              <WindowEthereum
+                amount={amount}
+                disabled={
+                  state.depositAddress.status === 'loading' ||
+                  state.prebuiltTx.status !== 'success' ||
+                  state.prebuiltTx.data?.feeError ||
+                  !!formError?.includes(INSUFFICIENT_FUNDS)
+                }
+                ref={connectRef}
+                setFormError={setFormError}
+              />
+            ) : (
+              <WalletConnect
+                amount={amount}
+                disabled={
+                  state.depositAddress.status === 'loading' ||
+                  state.prebuiltTx.status !== 'success' ||
+                  state.prebuiltTx.data?.feeError ||
+                  !!formError?.includes(INSUFFICIENT_FUNDS)
+                }
+              />
+            )}
+          </div>
+        </form>
+      )}
+    </InnerWrapper>
+  );
+};
+
+type Props = {};
+
+const EnterAmount: React.FC<Props> = () => {
+  const [state, dispatch] = useContext(Context);
+  const { data, loading } = useGetAssetPriceQuery({
+    variables: {
+      assetId: state.asset?.id,
+      currency: state.fiat,
+    },
+  });
+
+  if (!state.asset || !state.network || !state.method) {
+    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    return null;
+  }
+
+  return (
     <div className="flex h-full flex-col">
       <InnerWrapper className="!pt-0">
         <h3
@@ -367,184 +565,13 @@ const EnterAmount: React.FC<Props> = () => {
           </span>
         </Badge>
       </div>
-      <InnerWrapper className="h-full">
-        {loading || !!error ? (
-          <LoadingWrapper />
-        ) : (
-          <form
-            className="flex h-full flex-col items-center justify-between text-5xl font-semibold dark:text-white"
-            data-testid="enter-amount-form"
-            onChange={(event) => {
-              const target = event.target as HTMLInputElement;
-              setFormValue((formValue) => ({
-                ...formValue,
-                [target.name]: target.value,
-              }));
-            }}
-            onSubmit={handleSubmit}
-            ref={formRef}
-          >
-            <div />
-            <div className="w-full">
-              <div className="relative box-border flex max-w-full items-center justify-center">
-                {formValue.inputSelected === 'fiat' ? (
-                  <span className="text-inherit">$</span>
-                ) : null}
-                <input
-                  autoFocus
-                  className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
-                  data-testid="input"
-                  disabled={!!state.requiredAmount}
-                  name="base"
-                  placeholder="0"
-                  ref={inputRef}
-                  step={
-                    formValue.inputSelected === 'fiat'
-                      ? '0.01'
-                      : '0.' +
-                        '0'.repeat(
-                          (state.asset.decimals || DECIMAL_FALLBACK) - 1
-                        ) +
-                        '1'
-                  }
-                  style={{ minWidth: `${BASE_FONT_SIZE}px` }}
-                  type="number"
-                />
-                <span
-                  className="invisible absolute -left-96 -top-96 pr-3 !text-5xl"
-                  ref={dummyInputRef}
-                />
-                <span
-                  className="invisible absolute -left-96 -top-96 !text-5xl"
-                  ref={dummySymbolRef}
-                >
-                  {formValue.inputSelected === 'crypto'
-                    ? state.asset.symbol
-                    : '$'}
-                </span>
-                {formValue.inputSelected === 'crypto' ? (
-                  <span className="text-inherit">{state.asset.symbol}</span>
-                ) : null}
-              </div>
-              <div className="mt-8 flex items-center justify-center text-neutral-400">
-                {rate ? (
-                  <>
-                    <div className="text-xs">
-                      {formValue.inputSelected === 'crypto' ? (
-                        <span>$&nbsp;</span>
-                      ) : null}
-                      <span data-testid="quote" ref={quoteRef}>
-                        {formValue.quote}
-                      </span>
-                      {formValue.inputSelected === 'fiat' ? (
-                        <span>&nbsp;{state.asset.symbol}</span>
-                      ) : null}
-                    </div>
-                    <div className="ml-4 flex items-center justify-center">
-                      {state.requiredAmount ? null : (
-                        <div
-                          className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
-                          data-testid="toggle-base"
-                          onClick={toggleBase}
-                          role="button"
-                        >
-                          <i className="fa fa-chevron-up" />
-                          <i className="fa fa-chevron-down" />
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <Badge color="yellow">
-                    No pricing available for this asset.
-                  </Badge>
-                )}
-              </div>
-            </div>
-            <div className="relative w-full">
-              <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
-                {formError?.includes(INSUFFICIENT_FUNDS) ? (
-                  <motion.span
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    initial={{ opacity: 0 }}
-                    onClick={setMax}
-                    role="button"
-                  >
-                    <Badge color="red" dot>
-                      {formError}
-                    </Badge>
-                  </motion.span>
-                ) : formError ? (
-                  <Badge color="red" dot>
-                    {formError}
-                  </Badge>
-                ) : state.prebuiltTx.status === 'loading' ? (
-                  <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
-                    {<i className="fa fa-gear text-xs" />}
-                  </span>
-                ) : state.prebuiltTx.data?.feeError ? (
-                  <Badge color="red" dot>
-                    {`You need at least ${ethers.utils.formatEther(
-                      state.prebuiltTx.data.gasPrice.mul(
-                        state.prebuiltTx.data.gasLimit
-                      )
-                    )} ${state.network?.symbol} to complete this transaction.`}
-                  </Badge>
-                ) : state.prebuiltTx.status === 'error' ? (
-                  <Badge color="red">
-                    {state.prebuiltTx.error ||
-                      'Unknown error building transaction.'}
-                  </Badge>
-                ) : state.prebuiltTx.status === 'success' ? (
-                  <motion.span
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    initial={{ opacity: 0 }}
-                    onClick={setMax}
-                    role="button"
-                  >
-                    <Badge color="blue">
-                      {/* @ts-ignore */}
-                      <span className="whitespace-nowrap">
-                        Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
-                        {state.asset.symbol}
-                      </span>
-                    </Badge>
-                  </motion.span>
-                ) : null}
-              </span>
-              {state.method.value !== 'isWalletConnect' ? (
-                <WindowEthereum
-                  amount={amount}
-                  disabled={
-                    state.depositAddress.status === 'loading' ||
-                    state.prebuiltTx.status !== 'success' ||
-                    state.prebuiltTx.data?.feeError ||
-                    !!formError?.includes(INSUFFICIENT_FUNDS)
-                  }
-                  ref={connectRef}
-                  setFormError={setFormError}
-                />
-              ) : (
-                <WalletConnect
-                  amount={amount}
-                  disabled={
-                    state.depositAddress.status === 'loading' ||
-                    state.prebuiltTx.status !== 'success' ||
-                    state.prebuiltTx.data?.feeError ||
-                    !!formError?.includes(INSUFFICIENT_FUNDS)
-                  }
-                />
-              )}
-            </div>
-          </form>
-        )}
-      </InnerWrapper>
+      {loading ? (
+        <LoadingWrapper />
+      ) : (
+        <EnterAmountForm price={data?.assetPrice?.price || 0} />
+      )}
     </div>
   );
 };
-
-type Props = {};
 
 export default EnterAmount;

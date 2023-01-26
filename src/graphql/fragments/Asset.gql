@@ -1,4 +1,4 @@
-fragment AssetFields on AssetWithPrice {
+fragment AssetFields on Asset {
   address
   decimals
   id
@@ -16,8 +16,5 @@ fragment AssetFields on AssetWithPrice {
   logo {
     png
     svg
-  }
-  price {
-    price
   }
 }

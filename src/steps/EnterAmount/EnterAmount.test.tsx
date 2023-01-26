@@ -47,6 +47,7 @@ describe('Enter Amount', () => {
     await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
+    await screen.findByText('Loading...');
   });
 
   it('renders', async () => {
@@ -113,15 +114,14 @@ describe('Enter Amount', () => {
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
+      testingUtils.mockConnectedWallet([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('handles submission', async () => {
-      await screen.findAllByText('Connect Wallet');
-      testingUtils.mockAccountsChanged([
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      ]);
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');

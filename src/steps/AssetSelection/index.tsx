@@ -6,7 +6,7 @@ import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import {
-  AssetWithPrice,
+  Asset,
   useGetAssetsForOrgQuery,
   useSearchAssetsLazyQuery,
 } from '../../generated/apollo-gql';
@@ -114,7 +114,7 @@ const AssetSelection: React.FC<Props> = () => {
                   key={asset?.name}
                   onClick={() => {
                     dispatch({
-                      payload: asset as AssetWithPrice,
+                      payload: asset as Asset,
                       type: 'SET_ASSET',
                     });
                     dispatch({
