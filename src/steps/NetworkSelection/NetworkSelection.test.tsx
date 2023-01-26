@@ -27,6 +27,7 @@ describe('Network Selection', () => {
             request: {
               query: GetAssetsForOrgDocument,
               variables: {
+                currency: 'USD',
                 limit: 10,
                 offset: 0,
               },

@@ -1,0 +1,11 @@
+query GetAssetPrice(
+  $assetId: String
+  $currency: String
+) {
+  assetPrice(
+    assetId: $assetId
+    currency: $currency
+  ) {
+    price
+  }
+}

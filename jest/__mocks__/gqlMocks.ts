@@ -1,7 +1,10 @@
 import { MockedResponse } from '@apollo/client/testing';
 
 import { addWatchedAddressMock } from './add-watched-address';
-import { getAssetByMappedAssetIdAndNetworkCodeMock } from './asset';
+import {
+  getAssetByMappedAssetIdAndNetworkCodeMock,
+  getAssetPrice,
+} from './asset';
 import {
   getAssetByAddressAndNetworkCodeMock,
   getAssetsForOrgMock,
@@ -15,8 +18,8 @@ import {
 import { getMethodsMock } from './payment-methods';
 
 export const mocks: MockedResponse[] = [
-  getAssetsForOrgMock({ currency: undefined, limit: 10, offset: 0 }),
-  getAssetsForOrgMock({ currency: undefined, limit: 10, offset: 0 }),
+  getAssetsForOrgMock({ currency: 'USD', limit: 10, offset: 0 }),
+  getAssetsForOrgMock({ currency: 'USD', limit: 10, offset: 0 }),
   getAssetsForOrgMock({ assetId: 'satoshi123' }),
   getAssetsForOrgMock({
     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
@@ -40,6 +43,7 @@ export const mocks: MockedResponse[] = [
     assetId: 'satoshi123',
     confirmationsToWatch: 3,
   }),
+  getAssetPrice({ assetId: 'satoshi123', currency: 'USD' }),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
   getMappedNetworksForOrgMock({ assetId: 'ethereum123' }),

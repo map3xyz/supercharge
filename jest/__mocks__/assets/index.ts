@@ -8,7 +8,7 @@ import {
 
 export const assetsForOrganizationMockResult = [
   {
-    __typename: 'AssetWithPrice',
+    __typename: 'Asset',
     address: null,
     config: {
       mappedAssetId: 'satoshi123',
@@ -16,8 +16,10 @@ export const assetsForOrganizationMockResult = [
     decimals: 8,
     id: 'satoshi123',
     logo: {
-      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
-      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
     },
     name: 'Bitcoin',
     networkCode: 'bitcoin',
@@ -25,14 +27,11 @@ export const assetsForOrganizationMockResult = [
       name: 'Bitcoin',
       networkCode: 'bitcoin',
     },
-    price: {
-      price: 20_000,
-    },
     symbol: 'BTC',
     type: 'network',
   },
   {
-    __typename: 'AssetWithPrice',
+    __typename: 'Asset',
     address: null,
     config: {
       mappedAssetId: 'ethereum123',
@@ -40,8 +39,10 @@ export const assetsForOrganizationMockResult = [
     decimals: 18,
     id: 'ethereum123',
     logo: {
-      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
-      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
     },
     name: 'Ether',
     networkCode: 'ethereum',
@@ -49,14 +50,11 @@ export const assetsForOrganizationMockResult = [
       name: 'Ethereum',
       networkCode: 'ethereum',
     },
-    price: {
-      price: 1_000,
-    },
     symbol: 'ETH',
     type: 'network',
   },
   {
-    __typename: 'AssetWithPrice',
+    __typename: 'Asset',
     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
     config: {
       mappedAssetId: 'elon123',
@@ -64,8 +62,10 @@ export const assetsForOrganizationMockResult = [
     decimals: 6,
     id: 'elon123',
     logo: {
-      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
-      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
     },
     name: 'ElonCoin',
     networkCode: 'ethereum',
@@ -73,7 +73,6 @@ export const assetsForOrganizationMockResult = [
       name: 'Ethereum',
       networkCode: 'ethereum',
     },
-    price: null,
     symbol: 'ELON',
     type: 'asset',
   },
