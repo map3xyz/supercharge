@@ -112,7 +112,7 @@ const EnterAmountForm: React.FC<{ price?: number | null }> = ({ price }) => {
 
   useEffect(() => {
     const base = ethers.FixedNumber.from(formValue.base || '0');
-    const fixedRate = ethers.FixedNumber.from(price || '0');
+    const fixedRate = ethers.FixedNumber.from(price?.toString());
     const decimals = state.asset?.decimals || DECIMAL_FALLBACK;
 
     const quote =
