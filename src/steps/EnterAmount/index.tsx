@@ -176,7 +176,13 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     };
 
     run();
-  }, [state.provider?.status, state.account.status, loading, error]);
+  }, [
+    state.provider?.status,
+    state.account.status,
+    state.account.data,
+    loading,
+    error,
+  ]);
 
   useEffect(() => {
     return () => {
