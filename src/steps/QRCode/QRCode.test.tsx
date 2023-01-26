@@ -10,8 +10,6 @@ describe('QR Code', () => {
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
     const qrCode = await screen.findByText('Scan QR Code');
     fireEvent.click(qrCode);
   });
@@ -49,8 +47,6 @@ describe('QR Code Errors', () => {
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
     const qrCode = await screen.findByText('Scan QR Code');
     fireEvent.click(qrCode);
     const error = await screen.findByText('Error Generating Address');

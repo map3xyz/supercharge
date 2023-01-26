@@ -5,6 +5,29 @@ import {
   GetNetworksDocument,
 } from '../../../src/generated/apollo-gql';
 
+const bitcoinNetwork = [
+  {
+    __typename: 'Network',
+    decimals: 8,
+    id: 'bitcoinId',
+    identifiers: {
+      chainId: null,
+    },
+    links: {
+      explorer: 'https://blockstream.info',
+    },
+    logo: {
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+    },
+    name: 'Bitcoin',
+    networkCode: 'bitcoin',
+    symbol: 'BTC',
+  },
+];
+
 export const networksForAssetMockResult = [
   {
     __typename: 'Network',
@@ -17,8 +40,10 @@ export const networksForAssetMockResult = [
       explorer: 'https://etherscan.io',
     },
     logo: {
-      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
-      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
     },
     name: 'Ethereum',
     networkCode: 'ethereum',
@@ -34,8 +59,10 @@ export const networksForAssetMockResult = [
       explorer: 'https://polygon.io',
     },
     logo: {
-      png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.png',
-      svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.svg',
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.svg',
     },
     name: 'Polygon',
     networkCode: 'polygon',
@@ -53,7 +80,12 @@ export const getMappedNetworksForOrgMock = (
   result: {
     data: {
       __typename: 'Query',
-      mappedNetworksForAssetByOrg: networksForAssetMockResult,
+      mappedNetworksForAssetByOrg:
+        variables.assetId === 'satoshi123'
+          ? bitcoinNetwork
+          : variables.assetId === 'ethereum123'
+          ? [networksForAssetMockResult[0]]
+          : networksForAssetMockResult,
     },
   },
 });
@@ -94,8 +126,10 @@ export const getNetworksMock = () => ({
             explorer: 'https://etherscan.io',
           },
           logo: {
-            png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
-            svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
+            png:
+              'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.png',
+            svg:
+              'https://raw.githubusercontent.com/map3xyz/assets/master/networks/bitcoin/logo.svg',
           },
           name: 'Bitcoin',
           networkCode: 'bitcoin',
@@ -111,8 +145,10 @@ export const getNetworksMock = () => ({
             explorer: 'https://etherscan.io',
           },
           logo: {
-            png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
-            svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
+            png:
+              'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.png',
+            svg:
+              'https://raw.githubusercontent.com/map3xyz/assets/master/networks/ethereum/logo.svg',
           },
           name: 'Ethereum',
           networkCode: 'ethereum',
@@ -128,8 +164,10 @@ export const getNetworksMock = () => ({
             explorer: 'https://polygon.io',
           },
           logo: {
-            png: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.png',
-            svg: 'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.svg',
+            png:
+              'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.png',
+            svg:
+              'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.svg',
           },
           name: 'Polygon',
           networkCode: 'polygon',

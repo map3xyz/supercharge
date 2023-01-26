@@ -44,6 +44,7 @@ export const mocks: MockedResponse[] = [
     confirmationsToWatch: 3,
   }),
   getAssetPrice({ assetId: 'satoshi123', currency: 'USD' }),
+  getAssetPrice({ assetId: 'ethereum123', currency: 'USD' }),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
   getMappedNetworksForOrgMock({ assetId: 'ethereum123' }),
