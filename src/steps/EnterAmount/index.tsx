@@ -23,7 +23,7 @@ const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 
-const EnterAmountForm: React.FC<{ price?: number | null }> = ({ price }) => {
+const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const [state, dispatch] = useContext(Context);
   const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
@@ -112,7 +112,7 @@ const EnterAmountForm: React.FC<{ price?: number | null }> = ({ price }) => {
 
   useEffect(() => {
     const base = ethers.FixedNumber.from(formValue.base || '0');
-    const fixedRate = ethers.FixedNumber.from(price?.toString());
+    const fixedRate = ethers.FixedNumber.from(price.toString());
     const decimals = state.asset?.decimals || DECIMAL_FALLBACK;
 
     const quote =

@@ -36,7 +36,7 @@ export const getAssetPrice = (variables: GetAssetPriceQueryVariables) => {
         __typename: 'Query',
         assetPrice: {
           __typename: 'AssetPrice',
-          price: 20_000,
+          price: 20_000.11111111,
         },
       },
     },
