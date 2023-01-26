@@ -18,7 +18,6 @@ root.render(
               address: '0x388c818ca8b9251b393131c08a736a67ccb19297',
             };
           },
-          networkCode: 'ethereum',
           theme: 'dark',
           userId: 'preview-user-id',
         });

@@ -77,9 +77,7 @@ describe('WalletConnect', () => {
     );
 
     await screen.findByText('Loading...');
-    const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
-    const ethereum = await screen.findByText('Ethereum');
+    const ethereum = await screen.findByText('Ether');
     fireEvent.click(ethereum);
   });
   it('renders', async () => {

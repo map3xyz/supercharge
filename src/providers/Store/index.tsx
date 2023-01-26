@@ -70,6 +70,7 @@ type State = {
     error?: string;
     status: RemoteType;
   };
+  prevStep: number;
   provider?: {
     data?: ethers.providers.Web3Provider;
     error?: string;
@@ -185,6 +186,7 @@ const initialState: State = {
     error: undefined,
     status: 'idle',
   },
+  prevStep: Steps.AssetSelection,
   provider: {
     data: undefined,
     error: undefined,
@@ -289,6 +291,7 @@ export const Store: React.FC<
         case 'SET_STEP':
           return {
             ...state,
+            prevStep: state.step,
             step: state.steps.indexOf(
               Steps[action.payload] as keyof typeof Steps
             ),

@@ -35,19 +35,12 @@ describe('Enter Amount', () => {
   beforeEach(async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
-    const bitcoin = await screen.findByText('Bitcoin');
+    const ether = await screen.findByText('Ether');
     await act(() => {
-      fireEvent.click(bitcoin);
+      fireEvent.click(ether);
     });
-    await screen.findByText('Fetching Networks...');
-    const ethereum = await screen.findByText('Ethereum');
-    await act(() => {
-      fireEvent.click(ethereum);
-    });
-    await screen.findByText('Fetching Payment Methods...');
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
-    await screen.findByText('Loading...');
   });
 
   it('renders', async () => {
@@ -92,7 +85,7 @@ describe('Enter Amount', () => {
     });
     it('handles conversion', async () => {
       const quote = await screen.findByTestId('quote');
-      expect(quote.textContent).toBe('0.00005');
+      expect(quote.textContent).toBe('0.001');
     });
     it('toggles base', async () => {
       const toggleBase = await screen.findByTestId('toggle-base');
@@ -104,7 +97,7 @@ describe('Enter Amount', () => {
         fireEvent.change(input, { target: { value: '0.00005000' } });
       });
       const quote = await screen.findByTestId('quote');
-      expect(quote.textContent).toBe('1.0');
+      expect(quote.textContent).toBe('0.05');
     });
   });
   describe('submit', () => {
@@ -114,14 +107,15 @@ describe('Enter Amount', () => {
     beforeAll(() => {
       global.window.ethereum = testingUtils.getProvider();
       global.window.ethereum.providers = [testingUtils.getProvider()];
-      testingUtils.mockConnectedWallet([
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      ]);
     });
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
     it('handles submission', async () => {
+      await screen.findAllByText('Connect Wallet');
+      testingUtils.mockAccountsChanged([
+        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+      ]);
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');
@@ -584,9 +578,6 @@ describe('EnterAmount - MaxLimit', () => {
     await screen.findByText('Loading...');
     const ethCoin = await screen.findByText('Ether');
     fireEvent.click(ethCoin);
-    await screen.findByText('Fetching Networks...');
-    const ethereum = await screen.findByText('Ethereum');
-    fireEvent.click(ethereum);
     const metaMask = await screen.findByText('MetaMask');
     fireEvent.click(metaMask);
 
