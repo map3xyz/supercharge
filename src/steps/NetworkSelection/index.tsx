@@ -1,5 +1,5 @@
 import { Badge, CoinLogo } from '@map3xyz/components';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -15,6 +15,25 @@ const NetworkSelection: React.FC<Props> = () => {
       assetId: state.asset?.config?.mappedAssetId,
     },
   });
+
+  useEffect(() => {
+    if (
+      data?.mappedNetworksForAssetByOrg?.length === 1 &&
+      data.mappedNetworksForAssetByOrg[0]
+    ) {
+      if (state.prevStep >= Steps.NetworkSelection) {
+        dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+      } else {
+        dispatch({
+          payload: data.mappedNetworksForAssetByOrg[0],
+          type: 'SET_NETWORK',
+        });
+        dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+      }
+    }
+  }, [data?.mappedNetworksForAssetByOrg?.length]);
+
+  if (data?.mappedNetworksForAssetByOrg?.length === 1) return null;
 
   if (!state.asset) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });

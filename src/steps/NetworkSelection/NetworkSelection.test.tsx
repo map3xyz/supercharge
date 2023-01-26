@@ -13,9 +13,8 @@ describe('Network Selection', () => {
   it('renders', async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
-    const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
-    await screen.findByText('Fetching Networks...');
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
     const networkSelection = await screen.findByText('Select Network');
     expect(networkSelection).toBeInTheDocument();
   });
@@ -56,6 +55,20 @@ describe('Network Selection', () => {
     fireEvent.click(bitcoin);
     const error = await screen.findByText('Error Fetching Networks');
     expect(error).toBeInTheDocument();
+  });
+});
+
+describe('Network Selection Skip', () => {
+  beforeEach(async () => {
+    render(<App config={mockConfig} onClose={() => {}} />);
+    const bitcoin = await screen.findByText('Bitcoin');
+    fireEvent.click(bitcoin);
+  });
+
+  it('skips network selection if asset is a network', async () => {
+    await screen.findByText('Fetching Networks...');
+    const paymentMethod = await screen.findByText('Payment Method');
+    expect(paymentMethod).toBeInTheDocument();
   });
 });
 
