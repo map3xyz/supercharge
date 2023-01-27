@@ -19,7 +19,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
         <a className="cursor-pointer text-blue-600 underline" onClick={retry}>
           click here
         </a>{' '}
-        to retry. If the error persists, please contact support.
+        to retry.
       </div>
       {stacktrace ? (
         <details className="mt-2 text-xs text-white">

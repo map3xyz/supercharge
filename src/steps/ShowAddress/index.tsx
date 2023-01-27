@@ -1,4 +1,4 @@
-import { Badge, CryptoAddress, Pill, ReadOnlyText } from '@map3xyz/components';
+import { Pill, ReadOnlyText } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef } from 'react';
@@ -148,16 +148,6 @@ const ShowAddress: React.FC<Props> = () => {
           Pay to Address
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Send {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {state.requiredAmount} {state.asset.symbol || ''}
-        </Badge>{' '}
-        on the {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {state.network.name || ''} Network
-        </Badge>
-      </div>
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
           <LoadingWrapper message="Generating Address..." />
@@ -178,7 +168,7 @@ const ShowAddress: React.FC<Props> = () => {
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-              <div className="text-center text-xs text-neutral-400">
+              <div className="px-4 text-center text-xs font-bold text-neutral-400">
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
                 {state.network?.name} Network to this address.
               </div>
@@ -192,11 +182,7 @@ const ShowAddress: React.FC<Props> = () => {
                     color="yellow"
                     icon={<i className="fa fa-spinner animate-spin" />}
                   >
-                    Monitoring{' '}
-                    <CryptoAddress hint={false}>
-                      {state.depositAddress.data.address}
-                    </CryptoAddress>{' '}
-                    for deposits.
+                    Monitoring for deposits.
                   </Pill>
                 </motion.div>
               )}
@@ -212,7 +198,7 @@ const ShowAddress: React.FC<Props> = () => {
                     width: 32,
                   }}
                   includeMargin={true}
-                  size={width ? width - 200 : 0}
+                  size={width ? width - 160 : 0}
                   style={{
                     border:
                       state.theme === 'dark'
@@ -223,6 +209,17 @@ const ShowAddress: React.FC<Props> = () => {
                 />
               </div>
               <div className="w-full">
+                {state.requiredAmount ? (
+                  <div className="mb-1">
+                    <label className="text-xs text-neutral-500 dark:text-white">
+                      Amount:
+                    </label>
+                    <ReadOnlyText
+                      copyButton
+                      value={`${state.requiredAmount} ${state.asset.symbol}`}
+                    />
+                  </div>
+                ) : null}
                 <label className="text-xs text-neutral-500 dark:text-white">
                   Address:
                 </label>
