@@ -69,24 +69,26 @@ const AssetSelection: React.FC<Props> = () => {
           >
             Select Asset
           </h3>
-          <form
-            className="mt-2"
-            onChange={(e) => setFormValue(new FormData(e.currentTarget))}
-          >
-            <Input
-              icon={<i className="fa fa-search" />}
-              name="asset-search"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                debouncedSearch({
-                  variables: {
-                    query: e.target.value,
-                  },
-                })
-              }
-              placeholder="Search for an asset..."
-              rounded
-            />
-          </form>
+          {assets?.length && assets.length > 6 ? (
+            <form
+              className="mt-2"
+              onChange={(e) => setFormValue(new FormData(e.currentTarget))}
+            >
+              <Input
+                icon={<i className="fa fa-search" />}
+                name="asset-search"
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  debouncedSearch({
+                    variables: {
+                      query: e.target.value,
+                    },
+                  })
+                }
+                placeholder="Search for an asset..."
+                rounded
+              />
+            </form>
+          ) : null}
         </InnerWrapper>
       </div>
       <div className="flex h-full flex-col overflow-hidden">

@@ -108,20 +108,22 @@ const PaymentMethod: React.FC<Props> = () => {
           >
             Payment Method
           </h3>
-          <form
-            className="mt-2"
-            onChange={(e) => setFormValue(new FormData(e.currentTarget))}
-            ref={formRef}
-          >
-            <Input
-              autoFocus
-              data-testid="method-search"
-              icon={<i className="fa fa-search" />}
-              name="method-search"
-              placeholder="Search for a payment method..."
-              rounded
-            />
-          </form>
+          {methodsForNetwork?.length && methodsForNetwork.length > 6 ? (
+            <form
+              className="mt-2"
+              onChange={(e) => setFormValue(new FormData(e.currentTarget))}
+              ref={formRef}
+            >
+              <Input
+                autoFocus
+                data-testid="method-search"
+                icon={<i className="fa fa-search" />}
+                name="method-search"
+                placeholder="Search for a payment method..."
+                rounded
+              />
+            </form>
+          ) : null}
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
