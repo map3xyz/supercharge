@@ -2,7 +2,6 @@ import { Badge, Button } from '@map3xyz/components';
 import React, { useContext, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import { Context, Steps } from '../../providers/Store';
 
 const ConfirmRequiredAmount: React.FC<Props> = () => {
@@ -31,13 +30,6 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.network?.name || ''} Network
-          </Badge>{' '}
-          via
-          <Badge color={'blue'} size="large">
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}
-            </span>
           </Badge>
         </div>
       </div>
@@ -62,12 +54,12 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               'AssetSelection',
               'NetworkSelection',
               'PaymentMethod',
-              'QRCode',
+              'ShowAddress',
               'Result',
             ],
             type: 'SET_STEPS',
           });
-          dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+          dispatch({ payload: Steps.ShowAddress, type: 'SET_STEP' });
         }}
       >
         <InnerWrapper>

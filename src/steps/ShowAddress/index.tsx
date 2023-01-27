@@ -6,7 +6,6 @@ import React, { useContext, useEffect, useRef } from 'react';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useAddWatchedAddressMutation,
@@ -17,7 +16,7 @@ import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 import { listenToWatchedAddress } from '../../utils/supabase';
 
-const QRCode: React.FC<Props> = () => {
+const ShowAddress: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
   const [isWatching, setIsWatching] = React.useState<boolean>(false);
@@ -144,9 +143,9 @@ const QRCode: React.FC<Props> = () => {
       <InnerWrapper className="!pt-0">
         <h3
           className="text-lg font-semibold dark:text-white"
-          data-testid="qrcode-method"
+          data-testid="show-address-method"
         >
-          Scan QR Code
+          Pay to Address
         </h3>
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
@@ -156,14 +155,7 @@ const QRCode: React.FC<Props> = () => {
         </Badge>{' '}
         on the {/* @ts-ignore */}
         <Badge color="blue" size="large">
-          {state.network?.name || ''}
-        </Badge>{' '}
-        via {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {/* @ts-ignore */}
-          <span className="flex items-center gap-1">
-            <MethodIcon method={state.method} /> {state.method.name}
-          </span>
+          {state.network.name || ''} Network
         </Badge>
       </div>
       <InnerWrapper className="h-full">
@@ -188,7 +180,7 @@ const QRCode: React.FC<Props> = () => {
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
               <div className="text-center text-xs text-neutral-400">
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
-                {state.network?.name} to this address.
+                {state.network?.name} Network to this address.
               </div>
               {isWatching && state.depositAddress.data && (
                 <motion.div
@@ -232,7 +224,7 @@ const QRCode: React.FC<Props> = () => {
               </div>
               <div className="w-full">
                 <label className="text-xs text-neutral-500 dark:text-white">
-                  Deposit Address
+                  Address:
                 </label>
                 <ReadOnlyText
                   copyButton
@@ -248,4 +240,4 @@ const QRCode: React.FC<Props> = () => {
 
 type Props = {};
 
-export default QRCode;
+export default ShowAddress;

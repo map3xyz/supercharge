@@ -12,7 +12,7 @@ export enum Steps {
   'EnterAmount' = 4,
   'WalletConnect' = 5,
   'ConfirmRequiredAmount' = 6,
-  'QRCode' = 7,
+  'ShowAddress' = 7,
   'Result' = 8,
   __LENGTH,
 }

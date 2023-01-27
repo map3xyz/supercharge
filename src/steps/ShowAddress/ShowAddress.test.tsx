@@ -2,20 +2,20 @@ import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import QRCode from '.';
+import ShowAddress from '.';
 
-describe('QR Code', () => {
+describe('Show Address', () => {
   beforeEach(async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const qrCode = await screen.findByText('Scan QR Code');
-    fireEvent.click(qrCode);
+    const showAddress = await screen.findByText('Show Address');
+    fireEvent.click(showAddress);
   });
   it('renders', async () => {
-    const qrCodeMethod = await screen.findByTestId('qrcode-method');
-    expect(qrCodeMethod).toBeInTheDocument();
+    const showAddressMethod = await screen.findByTestId('show-address-method');
+    expect(showAddressMethod).toBeInTheDocument();
   });
   it('goes back to the correct step', async () => {
     const back = await screen.findByLabelText('Back');
@@ -27,9 +27,9 @@ describe('QR Code', () => {
   });
 });
 
-describe('QR Code Errors', () => {
+describe('Show Address Errors', () => {
   it('renders', async () => {
-    render(<QRCode />);
+    render(<ShowAddress />);
     expect(true).toBe(true);
   });
   it('handles errors generating address', async () => {
@@ -47,8 +47,8 @@ describe('QR Code Errors', () => {
     await screen.findByText('Loading...');
     const bitcoin = await screen.findByText('Bitcoin');
     fireEvent.click(bitcoin);
-    const qrCode = await screen.findByText('Scan QR Code');
-    fireEvent.click(qrCode);
+    const showAddress = await screen.findByText('Show Address');
+    fireEvent.click(showAddress);
     const error = await screen.findByText('Error Generating Address');
     expect(error).toBeInTheDocument();
   });

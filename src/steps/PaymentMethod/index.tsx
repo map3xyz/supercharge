@@ -131,7 +131,7 @@ const PaymentMethod: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''}
+            {state.network.name || ''} Network
           </Badge>{' '}
           via
         </div>
@@ -176,7 +176,7 @@ const PaymentMethod: React.FC<Props> = () => {
                             'NetworkSelection',
                             'PaymentMethod',
                             'ConfirmRequiredAmount',
-                            'QRCode',
+                            'ShowAddress',
                             'Result',
                           ],
                           type: 'SET_STEPS',
@@ -191,12 +191,15 @@ const PaymentMethod: React.FC<Props> = () => {
                             'AssetSelection',
                             'NetworkSelection',
                             'PaymentMethod',
-                            'QRCode',
+                            'ShowAddress',
                             'Result',
                           ],
                           type: 'SET_STEPS',
                         });
-                        dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                        dispatch({
+                          payload: Steps.ShowAddress,
+                          type: 'SET_STEP',
+                        });
                       }
                     } else if (method.value === 'isWalletConnect') {
                       dispatch({

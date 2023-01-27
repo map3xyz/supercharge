@@ -63,7 +63,7 @@ const SwitchChain: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''}
+            {state.network?.name || ''} Network
           </Badge>{' '}
           via
           <Badge
