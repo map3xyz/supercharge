@@ -54,9 +54,6 @@ const SwitchChain: React.FC<Props> = () => {
           <h3 className="text-lg font-semibold dark:text-white">
             Switch Chain
           </h3>
-          <h5 className="text-xs text-neutral-400">
-            Allow {window.location.host} to switch the network.
-          </h5>
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">

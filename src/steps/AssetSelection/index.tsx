@@ -69,9 +69,6 @@ const AssetSelection: React.FC<Props> = () => {
           >
             Select Asset
           </h3>
-          <h5 className="text-xs text-neutral-400">
-            Select the <b>Asset</b> you want to send.
-          </h5>
           <form
             className="mt-2"
             onChange={(e) => setFormValue(new FormData(e.currentTarget))}

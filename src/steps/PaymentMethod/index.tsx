@@ -108,7 +108,6 @@ const PaymentMethod: React.FC<Props> = () => {
           >
             Payment Method
           </h3>
-          <h5 className="text-xs text-neutral-400">How do you want to send?</h5>
           <form
             className="mt-2"
             onChange={(e) => setFormValue(new FormData(e.currentTarget))}
@@ -169,7 +168,7 @@ const PaymentMethod: React.FC<Props> = () => {
                       payload: method,
                       type: 'SET_PAYMENT_METHOD',
                     });
-                    if (method.value === 'qr') {
+                    if (method.value === 'show-address') {
                       if (state.requiredAmount) {
                         dispatch({
                           payload: [

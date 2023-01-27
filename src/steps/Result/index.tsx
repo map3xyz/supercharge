@@ -62,7 +62,7 @@ const Result: React.FC<Props> = () => {
           via
           <Badge
             color={
-              state.method.value === 'qr'
+              state.method.value === 'show-address'
                 ? 'blue'
                 : state.account.status === 'loading' ||
                   state.account.status === 'idle'
