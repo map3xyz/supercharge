@@ -113,9 +113,11 @@ describe('Enter Amount', () => {
     });
     it('handles submission', async () => {
       await screen.findAllByText('Connect Wallet');
-      testingUtils.mockAccountsChanged([
-        '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
-      ]);
+      await act(async () => {
+        testingUtils.mockAccountsChanged([
+          '0xf61B443A155b07D2b2cAeA2d99715dC84E839EEf',
+        ]);
+      });
       const confirmPayment = await screen.findByText('Confirm Payment');
       expect(confirmPayment).toBeInTheDocument();
       const input = await screen.findByTestId('input');

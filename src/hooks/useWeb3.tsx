@@ -10,9 +10,11 @@ import { buildTx, PrebuiltTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
   const [state, _, { authorizeTransaction }] = useContext(Context);
-  const [providers, setProviders] = useState<{
-    [key in string]: boolean;
-  }>({});
+  const [providers, setProviders] = useState<
+    {
+      [key in string]: boolean;
+    }
+  >({});
 
   useEffect(() => {
     if (window.ethereum?.providers) {
@@ -176,8 +178,7 @@ export const useWeb3 = () => {
         state.prebuiltTx.data?.maxPriorityFeePerGas
           ? {
               maxFeePerGas: state.prebuiltTx.data?.maxFeePerGas.toHexString(),
-              maxPriorityFeePerGas:
-                state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
+              maxPriorityFeePerGas: state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
             }
           : {
               gasPrice: state.prebuiltTx.data?.gasPrice.toHexString(),

@@ -43,6 +43,11 @@ export const mocks: MockedResponse[] = [
     assetId: 'satoshi123',
     confirmationsToWatch: 3,
   }),
+  addWatchedAddressMock({
+    address: '0x0000000000000000000000000000000000000000',
+    assetId: 'satoshi123',
+    confirmationsToWatch: 3,
+  }),
   getAssetPrice({ assetId: 'satoshi123', currency: 'USD' }),
   getAssetPrice({ assetId: 'ethereum123', currency: 'USD' }),
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),

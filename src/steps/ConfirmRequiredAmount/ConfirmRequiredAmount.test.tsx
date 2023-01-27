@@ -15,14 +15,13 @@ describe('ConfirmRequiredAmount', () => {
             generateDepositAddress: async (_asset, _network) => {
               return { address: '0x0000000000000000000000000000000000000000' };
             },
+            networkCode: 'ethereum',
           }}
           onClose={() => {}}
         />
       );
 
       await screen.findByText('Loading...');
-      const bitcoin = await screen.findByText('Bitcoin');
-      fireEvent.click(bitcoin);
       const qrCode = await screen.findByText('Scan QR Code');
       fireEvent.click(qrCode);
     });
