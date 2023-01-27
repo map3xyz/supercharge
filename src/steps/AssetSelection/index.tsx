@@ -167,15 +167,15 @@ const AssetSelection: React.FC<Props> = () => {
                 }
               }
             >
-              <div className="flex w-full items-center justify-center py-2">
-                {loading ||
-                searching ||
-                error ||
-                isEmptySearch ||
-                isSearch ? null : atAssetLimit ? null : (
+              {loading ||
+              searching ||
+              error ||
+              isEmptySearch ||
+              isSearch ? null : atAssetLimit ? null : (
+                <div className="flex w-full items-center justify-center py-2">
                   <i className="fa fa-gear animate-spin text-neutral-500" />
-                )}
-              </div>
+                </div>
+              )}
             </InView>
           ) : null}
         </div>
