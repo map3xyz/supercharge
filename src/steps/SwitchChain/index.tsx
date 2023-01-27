@@ -16,10 +16,12 @@ const SwitchChain: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const { data: currentChain, loading: loadingCurrentChain } =
-    useGetNetworkByChainIdQuery({
-      variables: { chainId: Number(state.providerChainId) },
-    });
+  const {
+    data: currentChain,
+    loading: loadingCurrentChain,
+  } = useGetNetworkByChainIdQuery({
+    variables: { chainId: Number(state.providerChainId) },
+  });
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -64,7 +66,7 @@ const SwitchChain: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
+            {state.network?.name || ''}
           </Badge>{' '}
           via
           <Badge
