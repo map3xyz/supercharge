@@ -108,7 +108,8 @@ const PaymentMethod: React.FC<Props> = () => {
           >
             Payment Method
           </h3>
-          {methodsForNetwork?.length && methodsForNetwork.length > 6 ? (
+          {data?.methodsForNetwork?.length &&
+          data?.methodsForNetwork.length > 6 ? (
             <form
               className="mt-2"
               onChange={(e) => setFormValue(new FormData(e.currentTarget))}

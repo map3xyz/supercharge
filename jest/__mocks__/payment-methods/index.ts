@@ -175,6 +175,37 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
               {
                 flags: {
                   enabled: true,
+                  memo: true,
+                },
+                icon: '',
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                name: 'Trust Wallet',
+                value: 'isWalletConnect',
+                walletConnect: {
+                  app: {
+                    android:
+                      'https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp',
+                    ios:
+                      'https://apps.apple.com/us/app/trust-wallet/id1288339409',
+                  },
+                  chains: [],
+                  description:
+                    'Trust Wallet is a mobile & secure non-custodial wallet for Ethereum, Polygon, Solana, Bitcoin, Tezos & NFTs. Access web3 & DeFi with WalletConnect.',
+                  desktop: {
+                    native: null,
+                    universal: null,
+                  },
+                  mobile: {
+                    native: 'trust:',
+                    universal: 'https://trustwallet.com/',
+                  },
+                  name: 'Trust Wallet',
+                },
+              },
+              {
+                flags: {
+                  enabled: true,
                   memo: false,
                 },
                 icon: '',
