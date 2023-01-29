@@ -300,12 +300,16 @@ describe('window.ethereum > ERC20', () => {
   }));
   const getTransactionMock = jest.fn().mockImplementation(() => true);
   const sendTransactionMock = jest.fn();
+  const waitForTransactionMock = jest.fn().mockImplementation(() => ({
+    blockNumber: 1,
+  }));
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
       getBalance: getBalanceMock,
       getTransaction: getTransactionMock,
       sendTransaction: sendTransactionMock,
+      waitForTransaction: waitForTransactionMock,
     }));
     render(
       <App

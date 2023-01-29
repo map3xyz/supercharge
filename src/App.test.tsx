@@ -102,6 +102,7 @@ describe('App', () => {
   });
   it('handles close', async () => {
     jest.useFakeTimers();
+    jest.spyOn(window, 'confirm').mockImplementationOnce(() => true);
     const closeMock = jest.fn();
 
     render(<App config={mockConfig} onClose={closeMock} />);

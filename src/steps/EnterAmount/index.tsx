@@ -2,13 +2,7 @@ import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-  isChrome,
-  isChromium,
-  isEdge,
-  isFirefox,
-  isOpera,
-} from 'react-device-detect';
+import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -48,7 +42,15 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const connectRef = useRef<ConnectHandler>(null);
   const extensionLink =
     state.method?.links?.[
-      isChrome ? 'chrome' : isEdge ? 'edge' : 'isFirefox' ? 'firefox' : 'chrome'
+      isChrome
+        ? 'chrome'
+        : isEdge
+        ? 'edge'
+        : isFirefox
+        ? 'firefox'
+        : isOpera
+        ? 'opera'
+        : 'chrome'
     ];
 
   useEffect(() => {

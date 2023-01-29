@@ -19,6 +19,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: 'fa fa-qrcode',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo: '',
                 name: 'Show Address',
                 value: 'show-address',
@@ -54,8 +61,11 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                 },
                 icon: 'coinbase',
                 links: {
-                  chrome:
-                    'https://chrome.google.com/webstore/detail/coinbase-wallet-extension/hnfanknocfeofbddgcijnmhnfnkdnaad',
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
                 },
                 logo: '',
                 name: 'Coinbase Wallet',
@@ -68,6 +78,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo:
                   'https://explorer-api.walletconnect.com/v3/logo/md/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Rainbow',
@@ -104,6 +121,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo:
                   'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Spot',
@@ -135,6 +159,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo:
                   'https://explorer-api.walletconnect.com/v3/logo/md/5195e9db-94d8-4579-6f11-ef553be95100?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'MetaMask',
@@ -164,6 +195,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo:
                   'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'No-Trust Wallet',
@@ -194,6 +232,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo:
                   'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Trust Wallet',
@@ -225,6 +270,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo:
                   'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Mt Gox',
@@ -266,6 +318,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: 'fa fa-qrcode',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo: '',
                 name: 'Show Address',
                 value: 'show-address',
