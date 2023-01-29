@@ -90,6 +90,7 @@ type State = {
         data?: string;
         error?: string;
         status: RemoteType;
+        title?: string;
       };
     };
     response?: ethers.providers.TransactionResponse;
@@ -155,6 +156,7 @@ type Action =
         error?: string;
         status: RemoteType;
         step: keyof typeof TxSteps;
+        title?: string;
       };
       type: 'SET_TX';
     }

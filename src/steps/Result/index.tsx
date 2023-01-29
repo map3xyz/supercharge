@@ -130,7 +130,7 @@ const Result: React.FC<Props> = () => {
                 </div>
                 <div className="ml-2 mb-2 w-full">
                   <div className="flex items-center gap-1 text-sm font-semibold dark:text-white">
-                    {step}
+                    {state.tx.progress[step].title || step}
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (

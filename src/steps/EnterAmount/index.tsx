@@ -262,6 +262,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           data: `Please confirm the transaction on ${state.method?.name}.`,
           status: 'loading',
           step: 'Submitted',
+          title: 'Awaiting Submission',
         },
         type: 'SET_TX',
       });
@@ -275,6 +276,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           data: new Date().toLocaleString(),
           status: 'success',
           step: 'Submitted',
+          title: 'Submitted',
         },
         type: 'SET_TX',
       });
@@ -321,7 +323,12 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       if (e.message) {
         setFormError(e.message);
         dispatch({
-          payload: { error: e.message, status: 'error', step: 'Submitted' },
+          payload: {
+            error: e.message,
+            status: 'error',
+            step: 'Submitted',
+            title: 'Action Denied',
+          },
           type: 'SET_TX',
         });
       }
