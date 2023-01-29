@@ -2,6 +2,13 @@ import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import {
+  isChrome,
+  isChromium,
+  isEdge,
+  isFirefox,
+  isOpera,
+} from 'react-device-detect';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -22,6 +29,7 @@ import { Context, Steps } from '../../providers/Store';
 const BASE_FONT_SIZE = 48;
 const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
+export const DOWNLOAD_EXTENSION = 'Download Extension';
 
 const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const [state, dispatch] = useContext(Context);
@@ -38,6 +46,10 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
   const connectRef = useRef<ConnectHandler>(null);
+  const extensionLink =
+    state.method?.links?.[
+      isChrome ? 'chrome' : isEdge ? 'edge' : 'isFirefox' ? 'firefox' : 'chrome'
+    ];
 
   useEffect(() => {
     if (!state.requiredAmount) return;
@@ -451,9 +463,34 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   </Badge>
                 </motion.span>
               ) : formError ? (
-                <Badge color="red" dot>
-                  {formError}
-                </Badge>
+                formError.includes(DOWNLOAD_EXTENSION) ? (
+                  extensionLink ? (
+                    <Badge color="yellow" dot>
+                      {/* @ts-ignore */}
+                      <span>
+                        Please{' '}
+                        <a
+                          className="text-blue-600 underline"
+                          href={extensionLink}
+                          target="_blank"
+                        >
+                          download
+                        </a>{' '}
+                        the {state.method.name} extension. After installing
+                        please refresh.
+                      </span>
+                    </Badge>
+                  ) : (
+                    // @ts-ignore
+                    <Badge color="yellow" dot>
+                      Please download the {state.method.name} extension.
+                    </Badge>
+                  )
+                ) : (
+                  <Badge color="red" dot>
+                    {formError}
+                  </Badge>
+                )
               ) : state.prebuiltTx.status === 'loading' ? (
                 <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
                   {<i className="fa fa-gear text-xs" />}

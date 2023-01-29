@@ -57,6 +57,15 @@ export type Config = {
   mappedAssetId?: Maybe<Scalars['String']>;
 };
 
+export type ExtensionLinks = {
+  __typename?: 'ExtensionLinks';
+  brave?: Maybe<Scalars['String']>;
+  chrome?: Maybe<Scalars['String']>;
+  edge?: Maybe<Scalars['String']>;
+  firefox?: Maybe<Scalars['String']>;
+  opera?: Maybe<Scalars['String']>;
+};
+
 export type GetBridgeQuoteParams = {
   __typename?: 'GetBridgeQuoteParams';
   amount?: Maybe<Scalars['String']>;
@@ -168,6 +177,7 @@ export type PaymentMethod = {
   __typename?: 'PaymentMethod';
   flags?: Maybe<PaymentMethodFlags>;
   icon?: Maybe<Scalars['String']>;
+  links?: Maybe<ExtensionLinks>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
@@ -492,7 +502,7 @@ export type GetPaymentMethodsQueryVariables = Exact<{
 }>;
 
 
-export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, app?: { __typename?: 'WalletConnectAppType', ios?: string | null, android?: string | null } | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null, universal?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
+export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, links?: { __typename?: 'ExtensionLinks', brave?: string | null, chrome?: string | null, edge?: string | null, firefox?: string | null, opera?: string | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, app?: { __typename?: 'WalletConnectAppType', ios?: string | null, android?: string | null } | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null, universal?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -884,6 +894,13 @@ export const GetPaymentMethodsDocument = gql`
     flags {
       enabled
       memo
+    }
+    links {
+      brave
+      chrome
+      edge
+      firefox
+      opera
     }
     walletConnect {
       description

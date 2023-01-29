@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 
 import { Context } from '../../../providers/Store';
+import { DOWNLOAD_EXTENSION } from '../../../steps/EnterAmount';
 import MethodIcon from '../../MethodIcon';
 
 export type ConnectHandler = {
@@ -31,7 +32,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
       ) {
         dispatch({ payload: 'No provider found.', type: 'SET_ACCOUNT_ERROR' });
         dispatch({ payload: 'No provider found.', type: 'SET_PROVIDER_ERROR' });
-        setFormError(`Please download the ${state.method?.name} extension.`);
+        setFormError(DOWNLOAD_EXTENSION);
 
         return;
       }

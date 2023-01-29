@@ -30,6 +30,18 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: 'metamask',
+                links: {
+                  brave:
+                    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+                  chrome:
+                    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+                  edge:
+                    'https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm',
+                  firefox:
+                    'https://addons.mozilla.org/en-US/firefox/addon/ether-metamask',
+                  opera:
+                    'https://addons.opera.com/en-gb/extensions/details/metamask-10',
+                },
                 logo: '',
                 name: 'MetaMask',
                 value: 'isMetaMask',
@@ -41,6 +53,10 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: 'coinbase',
+                links: {
+                  chrome:
+                    'https://chrome.google.com/webstore/detail/coinbase-wallet-extension/hnfanknocfeofbddgcijnmhnfnkdnaad',
+                },
                 logo: '',
                 name: 'Coinbase Wallet',
                 value: 'isCoinbaseWallet',
