@@ -273,7 +273,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       dispatch({ payload: hash, type: 'SET_TX_HASH' });
       dispatch({
         payload: {
-          data: new Date().toLocaleString(),
+          data: `Transaction submitted at ${new Date().toLocaleString()}.`,
           status: 'success',
           step: 'Submitted',
           title: 'Submitted',
@@ -282,7 +282,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       });
       dispatch({
         payload: {
-          data: 'Waiting for the first on-chain confirmation.',
+          data: 'Waiting for transaction to be included in a block.',
           status: 'loading',
           step: 'Confirming',
         },
