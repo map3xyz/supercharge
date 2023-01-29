@@ -10,9 +10,11 @@ import { buildTx, PrebuiltTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
   const [state, _, { authorizeTransaction }] = useContext(Context);
-  const [providers, setProviders] = useState<{
-    [key in string]: boolean;
-  }>({});
+  const [providers, setProviders] = useState<
+    {
+      [key in string]: boolean;
+    }
+  >({});
 
   useEffect(() => {
     if (window.ethereum?.providers) {
@@ -153,17 +155,16 @@ export const useWeb3 = () => {
       throw new Error('No decimals.');
     }
 
-    if (!state.prebuiltTx.data?.tx.to) {
+    if (!state.depositAddress.data?.address) {
       throw new Error('No recipient address.');
     }
 
     let finalTx = buildTx({
-      address: state.prebuiltTx.data.tx.to,
       amount,
       assetContract,
       decimals,
       from: state.account.data,
-      memo: state.prebuiltTx.data.memo,
+      ...state.depositAddress.data,
     });
 
     try {
@@ -176,8 +177,7 @@ export const useWeb3 = () => {
         state.prebuiltTx.data?.maxPriorityFeePerGas
           ? {
               maxFeePerGas: state.prebuiltTx.data?.maxFeePerGas.toHexString(),
-              maxPriorityFeePerGas:
-                state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
+              maxPriorityFeePerGas: state.prebuiltTx.data?.maxPriorityFeePerGas.toHexString(),
             }
           : {
               gasPrice: state.prebuiltTx.data?.gasPrice.toHexString(),

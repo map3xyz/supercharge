@@ -600,18 +600,19 @@ describe('EnterAmount - MaxLimit', () => {
     afterEach(() => {
       testingUtils.clearAllMocks();
     });
-    // chainBalance = 20000000000000000000 wei
-    // gasLimit = 21000 units
+    // chainBalance = 2000000000000000000 wei
+    // unpaddedGasLimit = 21000 units
+    // gasLimit = 42000 units
     // maxFeePerGas = 2000000000 wei
-    // 20000000000000000000 - 21000 * 2000000000 = 1999958000000000000
-    // 1999958000000000000 = 1.999958 ETH
+    // 2000000000000000000 - 42000 * 2000000000 = 1999916000000000000
+    // 1999916000000000000 = 1.999916 ETH
     it('should show max amount', async () => {
-      const max = await screen.findByText(/Max: 1.999958 ETH/);
+      const max = await screen.findByText(/Max: 1.999916 ETH/);
       expect(max).toBeInTheDocument();
       fireEvent.click(max);
       const input = await screen.findByTestId('input');
       // @ts-ignore
-      expect(input.value).toBe('1.999958');
+      expect(input.value).toBe('1.999916');
     });
   });
 });
