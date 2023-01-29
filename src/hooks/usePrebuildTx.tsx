@@ -56,7 +56,7 @@ export const usePrebuildTx = () => {
 
       const extraGas = BigNumber.from(memo ? (memo.length / 2) * 16 : 0);
       const unpaddedGasLimit = estimatedGas.add(extraGas);
-      const gasLimit = unpaddedGasLimit.add(unpaddedGasLimit.div(5));
+      const gasLimit = unpaddedGasLimit.mul(2);
       const fee = gasLimit.mul(gasPrice);
 
       if (state.asset?.type === 'asset') {
