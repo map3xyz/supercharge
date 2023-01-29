@@ -55,7 +55,8 @@ export const usePrebuildTx = () => {
       let maxLimitRaw: BigNumber | undefined;
 
       const extraGas = BigNumber.from(memo ? (memo.length / 2) * 16 : 0);
-      const gasLimit = estimatedGas.add(extraGas);
+      const unpaddedGasLimit = estimatedGas.add(extraGas);
+      const gasLimit = unpaddedGasLimit.mul(2);
       const fee = gasLimit.mul(gasPrice);
 
       if (state.asset?.type === 'asset') {

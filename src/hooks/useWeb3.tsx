@@ -155,17 +155,16 @@ export const useWeb3 = () => {
       throw new Error('No decimals.');
     }
 
-    if (!state.prebuiltTx.data?.tx.to) {
+    if (!state.depositAddress.data?.address) {
       throw new Error('No recipient address.');
     }
 
     let finalTx = buildTx({
-      address: state.prebuiltTx.data.tx.to,
       amount,
       assetContract,
       decimals,
       from: state.account.data,
-      memo: state.prebuiltTx.data.memo,
+      ...state.depositAddress.data,
     });
 
     try {
