@@ -19,8 +19,11 @@ enabling<br/>cross-chain deposits and increasing volumes.</div>
 <html lang="en">
     <head>
         ...
-        <script src="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/global/index.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/map3xyz/supercharge@1/dist/index.css"></link>
+        <script src="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/global/index.js"></script>
+        <link
+          href="https://api.map3.xyz/console/relay/gh/supercharge/master/dist/index.css"
+          rel="stylesheet"
+        ></link>
     </head>
 
     <body>
@@ -44,6 +47,7 @@ enabling<br/>cross-chain deposits and increasing volumes.</div>
 ```
 
 ### Examples
+
 [![Edit map3-supercharge-cdn-demo-l9t2x5](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/map3-supercharge-cdn-demo-l9t2x5)
 
 ### Generating Anon Keys
