@@ -2,6 +2,7 @@ fragment NetworkFields on Network {
   decimals
   name
   networkCode
+  networkName
   logo {
     png
     svg

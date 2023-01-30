@@ -63,7 +63,7 @@ const SwitchChain: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
+            {state.network?.networkName || ''}
           </Badge>{' '}
           via
           <Badge
@@ -119,13 +119,13 @@ const SwitchChain: React.FC<Props> = () => {
               </div>
               <CoinLogo
                 height="h-12"
-                name={state.network?.name!}
+                name={state.network?.networkName!}
                 png={state.network?.logo?.png || undefined}
                 svg={state.network?.logo?.svg || undefined}
                 width="w-12"
               />
               <div className="mt-2 w-28 text-center font-semibold dark:text-white">
-                {state.network?.name}
+                {state.network?.networkName}
               </div>
             </div>
           </div>

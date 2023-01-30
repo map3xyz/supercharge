@@ -23,7 +23,7 @@ describe('SwitchChain', () => {
       await screen.findByText('Loading...');
       const elonCoin = await screen.findByText('ElonCoin');
       fireEvent.click(elonCoin);
-      const polygon = await screen.findByText('Polygon');
+      const polygon = await screen.findByText('Polygon Chain');
       fireEvent.click(polygon);
       const metamask = await screen.findByText('MetaMask');
       fireEvent.click(metamask);
@@ -54,7 +54,7 @@ describe('SwitchChain', () => {
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
       expect(oldChain).toBeInTheDocument();
-      const newChain = await screen.findByText('Polygon');
+      const newChain = (await screen.findAllByText('Polygon Chain'))[0];
       expect(newChain).toBeInTheDocument();
       const confirmSwitchChain = (
         await screen.findAllByText('Switch Chain')
@@ -71,7 +71,7 @@ describe('SwitchChain', () => {
       await screen.findByText('Loading...');
       const elonCoin = await screen.findByText('ElonCoin');
       fireEvent.click(elonCoin);
-      const polygon = await screen.findByText('Polygon');
+      const polygon = await screen.findByText('Polygon Chain');
       fireEvent.click(polygon);
       const metamask = await screen.findByText('MetaMask');
       fireEvent.click(metamask);
@@ -107,7 +107,7 @@ describe('SwitchChain', () => {
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
       expect(oldChain).toBeInTheDocument();
-      const newChain = await screen.findByText('Polygon');
+      const newChain = (await screen.findAllByText('Polygon Chain'))[0];
       expect(newChain).toBeInTheDocument();
       const confirmSwitchChain = (
         await screen.findAllByText('Switch Chain')
@@ -125,7 +125,7 @@ describe('SwitchChain', () => {
       await screen.findByText('Loading...');
       const elonCoin = await screen.findByText('ElonCoin');
       fireEvent.click(elonCoin);
-      const polygon = await screen.findByText('Polygon');
+      const polygon = await screen.findByText('Polygon Chain');
       fireEvent.click(polygon);
       const metamask = await screen.findByText('MetaMask');
       fireEvent.click(metamask);
@@ -159,7 +159,7 @@ describe('SwitchChain', () => {
       expect(switchChain).toBeInTheDocument();
       const oldChain = await screen.findByText('Ethereum');
       expect(oldChain).toBeInTheDocument();
-      const newChain = await screen.findByText('Polygon');
+      const newChain = (await screen.findAllByText('Polygon Chain'))[0];
       expect(newChain).toBeInTheDocument();
       const confirmSwitchChain = (
         await screen.findAllByText('Switch Chain')

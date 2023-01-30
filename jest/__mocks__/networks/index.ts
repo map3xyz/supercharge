@@ -24,6 +24,7 @@ const bitcoinNetwork = [
     },
     name: 'Bitcoin',
     networkCode: 'bitcoin',
+    networkName: 'Bitcoin',
     symbol: 'BTC',
   },
 ];
@@ -47,6 +48,7 @@ export const networksForAssetMockResult = [
     },
     name: 'Ethereum',
     networkCode: 'ethereum',
+    networkName: 'Ethereum',
     symbol: 'ETH',
   },
   {
@@ -66,6 +68,7 @@ export const networksForAssetMockResult = [
     },
     name: 'Polygon',
     networkCode: 'polygon',
+    networkName: 'Polygon Chain',
     symbol: 'MATIC',
   },
 ];
@@ -123,7 +126,7 @@ export const getNetworksMock = () => ({
             chainId: null,
           },
           links: {
-            explorer: 'https://etherscan.io',
+            explorer: 'https://blockchain.info',
           },
           logo: {
             png:
@@ -133,6 +136,7 @@ export const getNetworksMock = () => ({
           },
           name: 'Bitcoin',
           networkCode: 'bitcoin',
+          networkName: 'Bitcoin',
           symbol: 'BTC',
         },
         {
@@ -152,6 +156,7 @@ export const getNetworksMock = () => ({
           },
           name: 'Ethereum',
           networkCode: 'ethereum',
+          networkName: 'Ethereum',
           symbol: 'ETH',
         },
         {
@@ -171,6 +176,7 @@ export const getNetworksMock = () => ({
           },
           name: 'Polygon',
           networkCode: 'polygon',
+          networkName: 'Polygon Chain',
           symbol: 'MATIC',
         },
       ],

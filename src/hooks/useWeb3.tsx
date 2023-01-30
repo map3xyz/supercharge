@@ -127,10 +127,10 @@ export const useWeb3 = () => {
       {
         blockExplorerUrls: [state.network.links?.explorer],
         chainId: toHex(state.network.identifiers.chainId),
-        chainName: state.network.name,
+        chainName: state.network.networkName,
         nativeCurrency: {
           decimals: state.network.decimals,
-          name: state.network.name,
+          name: state.network.networkName,
           symbol: state.network.symbol,
         },
         rpcUrls: [
