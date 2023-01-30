@@ -29,7 +29,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
+            {state.network?.networkName || ''}
           </Badge>
         </div>
       </div>
@@ -42,7 +42,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
             <b>
               {state.requiredAmount} {state.asset?.symbol}
             </b>{' '}
-            on the <b>{state.network?.name} Network</b> or your payment may be
+            on the <b>{state.network?.networkName}</b> or your payment may be
             delayed, returned or lost.
           </div>
         </div>
@@ -80,7 +80,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               <b>
                 {state.requiredAmount} {state.asset?.symbol}
               </b>{' '}
-              on the <b>{state.network?.name} Network</b>.
+              on the <b>{state.network?.networkName}</b>.
             </label>
           </div>
           <Button

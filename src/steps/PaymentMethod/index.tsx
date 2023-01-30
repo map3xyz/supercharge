@@ -134,7 +134,7 @@ const PaymentMethod: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network.name || ''} Network
+            {state.network.networkName || ''}
           </Badge>{' '}
           via
         </div>
