@@ -2,6 +2,7 @@ export interface Map3InitConfig {
     address?: string;
     amount?: string;
     anonKey: string;
+    appName?: string;
     assetId?: string;
     authorizeTransaction?: (fromAddress: string, network: string, amount: string) => Promise<Boolean>;
     colors?: {
