@@ -231,4 +231,17 @@ describe('Map3Sdk', () => {
 
     expect(initFn2).not.toThrow();
   });
+  it('allows optional parameter appName', () => {
+    const initFn = () =>
+      initMap3Supercharge({
+        anonKey: 'test',
+        appName: 'awesome-app',
+        generateDepositAddress: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return { address: '0x000000' };
+        },
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+  });
 });
