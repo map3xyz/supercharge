@@ -1,6 +1,8 @@
 import { Badge, CryptoAddress, ReadOnlyText } from '@map3xyz/components';
+import lottie from 'lottie-web';
 import React, { useContext, useEffect, useState } from 'react';
 
+import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { Context, Steps, TxSteps } from '../../providers/Store';
@@ -30,6 +32,15 @@ const Result: React.FC<Props> = () => {
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
+
+      const animation = lottie?.loadAnimation({
+        animationData: tadaAnimation,
+        autoplay: false,
+        container: document.getElementById('tada')!,
+        loop: false,
+        renderer: 'svg',
+      });
+      animation?.play();
     } else if (error) {
       onFailure?.(
         state.tx.progress[(error as unknown) as TxSteps].data || '',
@@ -37,7 +48,10 @@ const Result: React.FC<Props> = () => {
         state.asset?.address || undefined
       );
     }
-  }, [state.tx?.progress.Submitted?.status]);
+  }, [
+    state.tx.progress.Submitted.status,
+    state.tx?.progress.Confirmed?.status,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -97,7 +111,7 @@ const Result: React.FC<Props> = () => {
               }`}
               key={step}
             >
-              <div className="flex flex-1">
+              <div className="relative flex flex-1">
                 <div className="flex flex-col items-center">
                   <div
                     className={`flex h-5 min-h-[1.25rem] w-5 items-center justify-center rounded-full border ${
@@ -144,6 +158,10 @@ const Result: React.FC<Props> = () => {
                   ) : null}
                 </div>
               </div>
+              <div
+                className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2"
+                id="tada"
+              />
             </div>
           );
         })}

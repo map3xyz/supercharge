@@ -17,6 +17,7 @@ module.exports = {
   moduleNameMapper: {
     '@walletconnect/qrcode-modal': '<rootDir>/jest/__mocks__/fileMock.js',
     '\\.(css|less)$': '<rootDir>/jest/__mocks__/styleMock.js',
+    '^.+\\.json$': '<rootDir>/jest/__mocks__/jsonMock.js',
     '^.+\\.png$': '<rootDir>/jest/__mocks__/fileMock.js',
     '^.+\\.svg$': '<rootDir>/jest/__mocks__/svgMock.js',
     '^~/jest/(.*)$': '<rootDir>/jest/$1',
