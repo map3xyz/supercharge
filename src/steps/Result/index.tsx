@@ -33,14 +33,14 @@ const Result: React.FC<Props> = () => {
         state.asset?.address || undefined
       );
 
-      const animation = lottie.loadAnimation({
+      const animation = lottie?.loadAnimation({
         animationData: tadaAnimation,
         autoplay: false,
         container: document.getElementById('tada')!,
         loop: false,
         renderer: 'svg',
       });
-      animation.play();
+      animation?.play();
     } else if (error) {
       onFailure?.(
         state.tx.progress[(error as unknown) as TxSteps].data || '',
