@@ -108,21 +108,23 @@ const PaymentMethod: React.FC<Props> = () => {
           >
             Payment Method
           </h3>
-          <h5 className="text-xs text-neutral-400">How do you want to send?</h5>
-          <form
-            className="mt-2"
-            onChange={(e) => setFormValue(new FormData(e.currentTarget))}
-            ref={formRef}
-          >
-            <Input
-              autoFocus
-              data-testid="method-search"
-              icon={<i className="fa fa-search" />}
-              name="method-search"
-              placeholder="Search for a payment method..."
-              rounded
-            />
-          </form>
+          {data?.methodsForNetwork?.length &&
+          data?.methodsForNetwork.length > 6 ? (
+            <form
+              className="mt-2"
+              onChange={(e) => setFormValue(new FormData(e.currentTarget))}
+              ref={formRef}
+            >
+              <Input
+                autoFocus
+                data-testid="method-search"
+                icon={<i className="fa fa-search" />}
+                name="method-search"
+                placeholder="Search for a payment method..."
+                rounded
+              />
+            </form>
+          ) : null}
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
@@ -132,7 +134,7 @@ const PaymentMethod: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
+            {state.network.name || ''} Network
           </Badge>{' '}
           via
         </div>
@@ -169,7 +171,7 @@ const PaymentMethod: React.FC<Props> = () => {
                       payload: method,
                       type: 'SET_PAYMENT_METHOD',
                     });
-                    if (method.value === 'qr') {
+                    if (method.value === 'show-address') {
                       if (state.requiredAmount) {
                         dispatch({
                           payload: [
@@ -177,7 +179,7 @@ const PaymentMethod: React.FC<Props> = () => {
                             'NetworkSelection',
                             'PaymentMethod',
                             'ConfirmRequiredAmount',
-                            'QRCode',
+                            'ShowAddress',
                             'Result',
                           ],
                           type: 'SET_STEPS',
@@ -192,12 +194,15 @@ const PaymentMethod: React.FC<Props> = () => {
                             'AssetSelection',
                             'NetworkSelection',
                             'PaymentMethod',
-                            'QRCode',
+                            'ShowAddress',
                             'Result',
                           ],
                           type: 'SET_STEPS',
                         });
-                        dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+                        dispatch({
+                          payload: Steps.ShowAddress,
+                          type: 'SET_STEP',
+                        });
                       }
                     } else if (method.value === 'isWalletConnect') {
                       dispatch({

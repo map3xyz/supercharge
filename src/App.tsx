@@ -78,6 +78,9 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
   }, []);
 
   const handleClose = () => {
+    const yes = window.confirm('Are you sure you want to exit?');
+    if (!yes) return;
+
     setVisible(false);
     setTimeout(() => {
       onClose();

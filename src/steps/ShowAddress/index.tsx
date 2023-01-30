@@ -1,4 +1,4 @@
-import { Badge, CryptoAddress, Pill, ReadOnlyText } from '@map3xyz/components';
+import { Pill, ReadOnlyText } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef } from 'react';
@@ -6,7 +6,6 @@ import React, { useContext, useEffect, useRef } from 'react';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useAddWatchedAddressMutation,
@@ -17,7 +16,7 @@ import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 import { listenToWatchedAddress } from '../../utils/supabase';
 
-const QRCode: React.FC<Props> = () => {
+const ShowAddress: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
   const [isWatching, setIsWatching] = React.useState<boolean>(false);
@@ -144,28 +143,11 @@ const QRCode: React.FC<Props> = () => {
       <InnerWrapper className="!pt-0">
         <h3
           className="text-lg font-semibold dark:text-white"
-          data-testid="qrcode-method"
+          data-testid="show-address-method"
         >
-          Scan QR Code
+          Pay to Address
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Send {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {state.requiredAmount} {state.asset.symbol || ''}
-        </Badge>{' '}
-        on the {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {state.network?.name || ''} Network
-        </Badge>{' '}
-        via {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {/* @ts-ignore */}
-          <span className="flex items-center gap-1">
-            <MethodIcon method={state.method} /> {state.method.name}
-          </span>
-        </Badge>
-      </div>
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
           <LoadingWrapper message="Generating Address..." />
@@ -186,7 +168,7 @@ const QRCode: React.FC<Props> = () => {
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-              <div className="text-center text-xs text-neutral-400">
+              <div className="px-4 text-center text-xs font-bold text-neutral-400">
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
                 {state.network?.name} Network to this address.
               </div>
@@ -200,11 +182,7 @@ const QRCode: React.FC<Props> = () => {
                     color="yellow"
                     icon={<i className="fa fa-spinner animate-spin" />}
                   >
-                    Monitoring{' '}
-                    <CryptoAddress hint={false}>
-                      {state.depositAddress.data.address}
-                    </CryptoAddress>{' '}
-                    for deposits.
+                    Monitoring for deposits.
                   </Pill>
                 </motion.div>
               )}
@@ -220,7 +198,7 @@ const QRCode: React.FC<Props> = () => {
                     width: 32,
                   }}
                   includeMargin={true}
-                  size={width ? width - 200 : 0}
+                  size={width ? width - 160 : 0}
                   style={{
                     border:
                       state.theme === 'dark'
@@ -231,8 +209,19 @@ const QRCode: React.FC<Props> = () => {
                 />
               </div>
               <div className="w-full">
+                {state.requiredAmount ? (
+                  <div className="mb-1">
+                    <label className="text-xs text-neutral-500 dark:text-white">
+                      Amount:
+                    </label>
+                    <ReadOnlyText
+                      copyButton
+                      value={`${state.requiredAmount} ${state.asset.symbol}`}
+                    />
+                  </div>
+                ) : null}
                 <label className="text-xs text-neutral-500 dark:text-white">
-                  Deposit Address
+                  Address:
                 </label>
                 <ReadOnlyText
                   copyButton
@@ -248,4 +237,4 @@ const QRCode: React.FC<Props> = () => {
 
 type Props = {};
 
-export default QRCode;
+export default ShowAddress;

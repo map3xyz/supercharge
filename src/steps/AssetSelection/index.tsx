@@ -69,27 +69,26 @@ const AssetSelection: React.FC<Props> = () => {
           >
             Select Asset
           </h3>
-          <h5 className="text-xs text-neutral-400">
-            Select the <b>Asset</b> you want to send.
-          </h5>
-          <form
-            className="mt-2"
-            onChange={(e) => setFormValue(new FormData(e.currentTarget))}
-          >
-            <Input
-              icon={<i className="fa fa-search" />}
-              name="asset-search"
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                debouncedSearch({
-                  variables: {
-                    query: e.target.value,
-                  },
-                })
-              }
-              placeholder="Search for an asset..."
-              rounded
-            />
-          </form>
+          {assets?.length && assets.length > 6 ? (
+            <form
+              className="mt-2"
+              onChange={(e) => setFormValue(new FormData(e.currentTarget))}
+            >
+              <Input
+                icon={<i className="fa fa-search" />}
+                name="asset-search"
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  debouncedSearch({
+                    variables: {
+                      query: e.target.value,
+                    },
+                  })
+                }
+                placeholder="Search for an asset..."
+                rounded
+              />
+            </form>
+          ) : null}
         </InnerWrapper>
       </div>
       <div className="flex h-full flex-col overflow-hidden">
@@ -168,15 +167,15 @@ const AssetSelection: React.FC<Props> = () => {
                 }
               }
             >
-              <div className="flex w-full items-center justify-center py-2">
-                {loading ||
-                searching ||
-                error ||
-                isEmptySearch ||
-                isSearch ? null : atAssetLimit ? null : (
+              {loading ||
+              searching ||
+              error ||
+              isEmptySearch ||
+              isSearch ? null : atAssetLimit ? null : (
+                <div className="flex w-full items-center justify-center py-2">
                   <i className="fa fa-gear animate-spin text-neutral-500" />
-                )}
-              </div>
+                </div>
+              )}
             </InView>
           ) : null}
         </div>

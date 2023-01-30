@@ -19,9 +19,16 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: 'fa fa-qrcode',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo: '',
-                name: 'Scan QR Code',
-                value: 'qr',
+                name: 'Show Address',
+                value: 'show-address',
                 walletConnect: null,
               },
               {
@@ -30,6 +37,18 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: 'metamask',
+                links: {
+                  brave:
+                    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+                  chrome:
+                    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+                  edge:
+                    'https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm',
+                  firefox:
+                    'https://addons.mozilla.org/en-US/firefox/addon/ether-metamask',
+                  opera:
+                    'https://addons.opera.com/en-gb/extensions/details/metamask-10',
+                },
                 logo: '',
                 name: 'MetaMask',
                 value: 'isMetaMask',
@@ -41,6 +60,13 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: 'coinbase',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo: '',
                 name: 'Coinbase Wallet',
                 value: 'isCoinbaseWallet',
@@ -52,14 +78,23 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: true,
                 },
                 icon: '',
-                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/6089655c-cb7e-414b-f742-01fdc154be00?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Rainbow',
                 value: 'isWalletConnect',
                 walletConnect: {
                   app: {
                     android:
                       'https://play.google.com/store/apps/details?id=co.rainbow',
-                    ios: 'https://apps.apple.com/us/app/rainbow-wallet/id1477376905',
+                    ios:
+                      'https://apps.apple.com/us/app/rainbow-wallet/id1477376905',
                   },
                   chains: [
                     'eip155:1',
@@ -86,14 +121,23 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
-                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Spot',
                 value: 'isWalletConnect',
                 walletConnect: {
                   app: {
                     android:
                       'https://play.google.com/store/apps/details?id=com.spotwallet',
-                    ios: 'https://apps.apple.com/us/app/spot-wallet/id1558385728',
+                    ios:
+                      'https://apps.apple.com/us/app/spot-wallet/id1558385728',
                   },
                   chains: [],
                   description:
@@ -115,7 +159,15 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
-                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/5195e9db-94d8-4579-6f11-ef553be95100?projectId=75f2c16d7fce6364075928d3c6462f87',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/5195e9db-94d8-4579-6f11-ef553be95100?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'MetaMask',
                 value: 'isWalletConnect',
                 walletConnect: {
@@ -143,14 +195,23 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: '',
-                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'No-Trust Wallet',
                 value: 'isWalletConnect',
                 walletConnect: {
                   app: {
                     android:
                       'https://play.google.com/store/apps/details?id=com.notrustwallet',
-                    ios: 'https://apps.apple.com/us/app/no-trust-wallet/id1500000000',
+                    ios:
+                      'https://apps.apple.com/us/app/no-trust-wallet/id1500000000',
                   },
                   chains: [],
                   description:
@@ -168,10 +229,56 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
               {
                 flags: {
                   enabled: true,
+                  memo: true,
+                },
+                icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                name: 'Trust Wallet',
+                value: 'isWalletConnect',
+                walletConnect: {
+                  app: {
+                    android:
+                      'https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp',
+                    ios:
+                      'https://apps.apple.com/us/app/trust-wallet/id1288339409',
+                  },
+                  chains: [],
+                  description:
+                    'Trust Wallet is a mobile & secure non-custodial wallet for Ethereum, Polygon, Solana, Bitcoin, Tezos & NFTs. Access web3 & DeFi with WalletConnect.',
+                  desktop: {
+                    native: null,
+                    universal: null,
+                  },
+                  mobile: {
+                    native: 'trust:',
+                    universal: 'https://trustwallet.com/',
+                  },
+                  name: 'Trust Wallet',
+                },
+              },
+              {
+                flags: {
+                  enabled: true,
                   memo: false,
                 },
                 icon: '',
-                logo: 'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo:
+                  'https://explorer-api.walletconnect.com/v3/logo/md/1bf33a89-b049-4a1c-d1f6-4dd7419ee400?projectId=75f2c16d7fce6364075928d3c6462f87',
                 name: 'Mt Gox',
                 value: 'isWalletConnect',
                 walletConnect: {
@@ -211,9 +318,16 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
                   memo: false,
                 },
                 icon: 'fa fa-qrcode',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
                 logo: '',
-                name: 'Scan QR Code',
-                value: 'qr',
+                name: 'Show Address',
+                value: 'show-address',
                 walletConnect: null,
               },
             ],

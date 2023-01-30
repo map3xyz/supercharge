@@ -62,7 +62,7 @@ const Result: React.FC<Props> = () => {
           via
           <Badge
             color={
-              state.method.value === 'qr'
+              state.method.value === 'show-address'
                 ? 'blue'
                 : state.account.status === 'loading' ||
                   state.account.status === 'idle'
@@ -130,7 +130,7 @@ const Result: React.FC<Props> = () => {
                 </div>
                 <div className="ml-2 mb-2 w-full">
                   <div className="flex items-center gap-1 text-sm font-semibold dark:text-white">
-                    {step}
+                    {state.tx.progress[step].title || step}
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (
@@ -150,7 +150,11 @@ const Result: React.FC<Props> = () => {
       </InnerWrapper>
       <InnerWrapper
         className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
-          toggleDetails && state.tx.hash ? 'h-full' : 'h-[48px]'
+          toggleDetails && state.tx.hash
+            ? 'h-full'
+            : state.tx.hash
+            ? 'h-[48px]'
+            : 'hidden'
         }`}
         data-testid="transaction-details"
       >
