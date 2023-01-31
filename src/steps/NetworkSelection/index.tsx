@@ -61,9 +61,6 @@ const NetworkSelection: React.FC<Props> = () => {
           >
             Select Network
           </h3>
-          <h5 className="text-xs text-neutral-400">
-            Select the Network to send <b>{state.asset.name}</b> on.
-          </h5>
         </InnerWrapper>
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
           Send{' '}
@@ -79,7 +76,7 @@ const NetworkSelection: React.FC<Props> = () => {
             network ? (
               <div
                 className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
-                key={network.name}
+                key={network.networkName}
                 onClick={() => {
                   dispatch({ payload: network, type: 'SET_NETWORK' });
                   dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -90,15 +87,15 @@ const NetworkSelection: React.FC<Props> = () => {
                   <div className="flex w-4 justify-center">
                     <CoinLogo
                       height="h-4"
-                      name={network.name || ''}
+                      name={network.networkName || ''}
                       png={network.logo?.png || undefined}
                       svg={network.logo?.svg || undefined}
                       width="w-4"
                     />
                   </div>
-                  <span>{network.name}</span>
+                  <span>{network.networkName}</span>
                 </div>
-                {state.network?.name === network.name ? (
+                {state.network?.networkName === network.networkName ? (
                   <i className="fa fa-check-circle text-green-400" />
                 ) : (
                   <i className="fa fa-chevron-right text-xxs" />

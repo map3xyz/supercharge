@@ -22,7 +22,7 @@ describe('ConfirmRequiredAmount', () => {
       );
 
       await screen.findByText('Loading...');
-      const qrCode = await screen.findByText('Scan QR Code');
+      const qrCode = await screen.findByText('Show Address');
       fireEvent.click(qrCode);
     });
     it('renders', async () => {
@@ -37,7 +37,7 @@ describe('ConfirmRequiredAmount', () => {
         const button = await screen.findByText('Acknowledge Amount');
         fireEvent.click(button);
       });
-      const qrCodeMethod = await screen.findByTestId('qrcode-method');
+      const qrCodeMethod = await screen.findByTestId('show-address-method');
       expect(qrCodeMethod).toBeInTheDocument();
     });
   });

@@ -2,7 +2,6 @@ import { Badge, Button } from '@map3xyz/components';
 import React, { useContext, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import { Context, Steps } from '../../providers/Store';
 
 const ConfirmRequiredAmount: React.FC<Props> = () => {
@@ -30,14 +29,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
-          </Badge>{' '}
-          via
-          <Badge color={'blue'} size="large">
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}
-            </span>
+            {state.network?.networkName || ''}
           </Badge>
         </div>
       </div>
@@ -50,7 +42,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
             <b>
               {state.requiredAmount} {state.asset?.symbol}
             </b>{' '}
-            on the <b>{state.network?.name} Network</b> or your payment may be
+            on the <b>{state.network?.networkName}</b> or your payment may be
             delayed, returned or lost.
           </div>
         </div>
@@ -62,12 +54,12 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               'AssetSelection',
               'NetworkSelection',
               'PaymentMethod',
-              'QRCode',
+              'ShowAddress',
               'Result',
             ],
             type: 'SET_STEPS',
           });
-          dispatch({ payload: Steps.QRCode, type: 'SET_STEP' });
+          dispatch({ payload: Steps.ShowAddress, type: 'SET_STEP' });
         }}
       >
         <InnerWrapper>
@@ -88,7 +80,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               <b>
                 {state.requiredAmount} {state.asset?.symbol}
               </b>{' '}
-              on the <b>{state.network?.name} Network</b>.
+              on the <b>{state.network?.networkName}</b>.
             </label>
           </div>
           <Button

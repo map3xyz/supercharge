@@ -8,18 +8,17 @@ import { fireEvent, render, screen } from '~/jest/test-utils';
 import App from '../../App';
 import PaymentMethod from '.';
 
-beforeEach(() => {
-  render(
-    <App
-      config={{
-        ...mockConfig,
-      }}
-      onClose={() => {}}
-    />
-  );
-});
-
 describe('Payment Selection', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
   const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
   beforeAll(() => {
     global.window.ethereum = testingUtils.getProvider();
@@ -30,10 +29,8 @@ describe('Payment Selection', () => {
   });
   beforeEach(async () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
-    const elonCoin = await screen.findByText('ElonCoin');
-    fireEvent.click(elonCoin);
-    const ethNetwork = await screen.findByText('Ethereum');
-    fireEvent.click(ethNetwork);
+    const ethereum = await screen.findByText('Ether');
+    fireEvent.click(ethereum);
   });
   it('renders', async () => {
     const paymentSelection = await screen.findByText('Payment Method');
@@ -47,7 +44,11 @@ describe('Payment Selection', () => {
       const metamask = await screen.findByText('MetaMask');
       expect(metamask).toBeInTheDocument();
       expect(rainbow).not.toBeInTheDocument();
-      fireEvent.change(searchInput, { target: { value: 'superduperwallet' } });
+      await act(async () => {
+        fireEvent.change(searchInput, {
+          target: { value: 'superduperwallet' },
+        });
+      });
       await screen.findByText('Payment Method Not Found');
       const retry = await screen.findByText('click here');
       await act(() => {

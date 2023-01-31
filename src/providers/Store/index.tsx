@@ -12,7 +12,7 @@ export enum Steps {
   'EnterAmount' = 4,
   'WalletConnect' = 5,
   'ConfirmRequiredAmount' = 6,
-  'QRCode' = 7,
+  'ShowAddress' = 7,
   'Result' = 8,
   __LENGTH,
 }
@@ -90,6 +90,7 @@ type State = {
         data?: string;
         error?: string;
         status: RemoteType;
+        title?: string;
       };
     };
     response?: ethers.providers.TransactionResponse;
@@ -155,6 +156,7 @@ type Action =
         error?: string;
         status: RemoteType;
         step: keyof typeof TxSteps;
+        title?: string;
       };
       type: 'SET_TX';
     }
@@ -282,11 +284,15 @@ export const Store: React.FC<
   }
 
   let requiredAmount;
-  if (amount && network && network.decimals) {
-    const isMajorUnits = amount.includes('.');
-    requiredAmount = isMajorUnits
-      ? amount
-      : ethers.utils.formatUnits(amount, network.decimals);
+  if (amount) {
+    let decimals = asset ? asset.decimals : network ? network.decimals : null;
+    if (!decimals) return;
+    if ((network && network.decimals) || (asset && asset.decimals)) {
+      const isMajorUnits = amount.includes('.');
+      requiredAmount = isMajorUnits
+        ? amount
+        : ethers.utils.formatUnits(amount, decimals);
+    }
   }
 
   const [state, dispatch] = useReducer(

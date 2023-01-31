@@ -127,10 +127,10 @@ export const useWeb3 = () => {
       {
         blockExplorerUrls: [state.network.links?.explorer],
         chainId: toHex(state.network.identifiers.chainId),
-        chainName: state.network.name,
+        chainName: state.network.networkName,
         nativeCurrency: {
           decimals: state.network.decimals,
-          name: state.network.name,
+          name: state.network.networkName,
           symbol: state.network.symbol,
         },
         rpcUrls: [
@@ -155,17 +155,16 @@ export const useWeb3 = () => {
       throw new Error('No decimals.');
     }
 
-    if (!state.prebuiltTx.data?.tx.to) {
+    if (!state.depositAddress.data?.address) {
       throw new Error('No recipient address.');
     }
 
     let finalTx = buildTx({
-      address: state.prebuiltTx.data.tx.to,
       amount,
       assetContract,
       decimals,
       from: state.account.data,
-      memo: state.prebuiltTx.data.memo,
+      ...state.depositAddress.data,
     });
 
     try {

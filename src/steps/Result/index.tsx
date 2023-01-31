@@ -1,6 +1,8 @@
 import { Badge, CryptoAddress, ReadOnlyText } from '@map3xyz/components';
+import lottie from 'lottie-web';
 import React, { useContext, useEffect, useState } from 'react';
 
+import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import { Context, Steps, TxSteps } from '../../providers/Store';
@@ -30,6 +32,15 @@ const Result: React.FC<Props> = () => {
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
+
+      const animation = lottie?.loadAnimation({
+        animationData: tadaAnimation,
+        autoplay: false,
+        container: document.getElementById('tada')!,
+        loop: false,
+        renderer: 'svg',
+      });
+      animation?.play();
     } else if (error) {
       onFailure?.(
         state.tx.progress[(error as unknown) as TxSteps].data || '',
@@ -37,7 +48,10 @@ const Result: React.FC<Props> = () => {
         state.asset?.address || undefined
       );
     }
-  }, [state.tx?.progress.Submitted?.status]);
+  }, [
+    state.tx.progress.Submitted.status,
+    state.tx?.progress.Confirmed?.status,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -57,12 +71,12 @@ const Result: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
+            {state.network?.networkName || ''}
           </Badge>{' '}
           via
           <Badge
             color={
-              state.method.value === 'qr'
+              state.method.value === 'show-address'
                 ? 'blue'
                 : state.account.status === 'loading' ||
                   state.account.status === 'idle'
@@ -87,7 +101,9 @@ const Result: React.FC<Props> = () => {
         </div>
       </div>
       <InnerWrapper
-        className={`h-full transition-all ${toggleDetails ? 'h-0 p-0' : ''}`}
+        className={`relative h-full transition-all ${
+          toggleDetails ? 'h-0 p-0' : ''
+        }`}
       >
         {state.tx.steps.map((step, i) => {
           return (
@@ -130,7 +146,7 @@ const Result: React.FC<Props> = () => {
                 </div>
                 <div className="ml-2 mb-2 w-full">
                   <div className="flex items-center gap-1 text-sm font-semibold dark:text-white">
-                    {step}
+                    {state.tx.progress[step].title || step}
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (
@@ -144,13 +160,21 @@ const Result: React.FC<Props> = () => {
                   ) : null}
                 </div>
               </div>
+              <div
+                className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2"
+                id="tada"
+              />
             </div>
           );
         })}
       </InnerWrapper>
       <InnerWrapper
         className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
-          toggleDetails && state.tx.hash ? 'h-full' : 'h-[48px]'
+          toggleDetails && state.tx.hash
+            ? 'h-full'
+            : state.tx.hash
+            ? 'h-[48px]'
+            : 'hidden'
         }`}
         data-testid="transaction-details"
       >

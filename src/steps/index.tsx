@@ -10,9 +10,9 @@ import AssetSelection from '../steps/AssetSelection';
 import EnterAmount from '../steps/EnterAmount';
 import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
-import QRCode from '../steps/QRCode';
 import ConfirmRequiredAmount from './ConfirmRequiredAmount';
 import Result from './Result';
+import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
 
@@ -133,7 +133,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 <ConfirmRequiredAmount />
               </motion.div>
             )}
-            {steps[step] === Steps[Steps.QRCode] && (
+            {steps[step] === Steps[Steps.ShowAddress] && (
               <motion.div
                 animate={{ opacity: 1 }}
                 className="h-full"
@@ -141,7 +141,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 initial={{ opacity: 0 }}
                 key={Steps[step]}
               >
-                <QRCode />
+                <ShowAddress />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.Result] && (

@@ -8,6 +8,13 @@ query GetPaymentMethods($chainId: Int) {
       enabled
       memo
     }
+    links {
+      brave
+      chrome
+      edge
+      firefox
+      opera
+    }
     walletConnect {
       description
       chains

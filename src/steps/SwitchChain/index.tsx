@@ -16,10 +16,12 @@ const SwitchChain: React.FC<Props> = () => {
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const { data: currentChain, loading: loadingCurrentChain } =
-    useGetNetworkByChainIdQuery({
-      variables: { chainId: Number(state.providerChainId) },
-    });
+  const {
+    data: currentChain,
+    loading: loadingCurrentChain,
+  } = useGetNetworkByChainIdQuery({
+    variables: { chainId: Number(state.providerChainId) },
+  });
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -52,9 +54,6 @@ const SwitchChain: React.FC<Props> = () => {
           <h3 className="text-lg font-semibold dark:text-white">
             Switch Chain
           </h3>
-          <h5 className="text-xs text-neutral-400">
-            Allow {window.location.host} to switch the network.
-          </h5>
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
@@ -64,7 +63,7 @@ const SwitchChain: React.FC<Props> = () => {
           </Badge>{' '}
           on the {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.network?.name || ''} Network
+            {state.network?.networkName || ''}
           </Badge>{' '}
           via
           <Badge
@@ -120,13 +119,13 @@ const SwitchChain: React.FC<Props> = () => {
               </div>
               <CoinLogo
                 height="h-12"
-                name={state.network?.name!}
+                name={state.network?.networkName!}
                 png={state.network?.logo?.png || undefined}
                 svg={state.network?.logo?.svg || undefined}
                 width="w-12"
               />
               <div className="mt-2 w-28 text-center font-semibold dark:text-white">
-                {state.network?.name}
+                {state.network?.networkName}
               </div>
             </div>
           </div>

@@ -57,6 +57,15 @@ export type Config = {
   mappedAssetId?: Maybe<Scalars['String']>;
 };
 
+export type ExtensionLinks = {
+  __typename?: 'ExtensionLinks';
+  brave?: Maybe<Scalars['String']>;
+  chrome?: Maybe<Scalars['String']>;
+  edge?: Maybe<Scalars['String']>;
+  firefox?: Maybe<Scalars['String']>;
+  opera?: Maybe<Scalars['String']>;
+};
+
 export type GetBridgeQuoteParams = {
   __typename?: 'GetBridgeQuoteParams';
   amount?: Maybe<Scalars['String']>;
@@ -153,6 +162,8 @@ export type Network = {
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
+  networkName?: Maybe<Scalars['String']>;
+  regex?: Maybe<Regex>;
   symbol?: Maybe<Scalars['String']>;
 };
 
@@ -168,6 +179,7 @@ export type PaymentMethod = {
   __typename?: 'PaymentMethod';
   flags?: Maybe<PaymentMethodFlags>;
   icon?: Maybe<Scalars['String']>;
+  links?: Maybe<ExtensionLinks>;
   logo?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   value?: Maybe<Scalars['String']>;
@@ -326,6 +338,11 @@ export type QuoteEstimate = {
   toAmountUsd?: Maybe<Scalars['Float']>;
 };
 
+export type Regex = {
+  __typename?: 'Regex';
+  address?: Maybe<Scalars['String']>;
+};
+
 export type SdkConfigField = {
   __typename?: 'SdkConfigField';
   assetId?: Maybe<Scalars['String']>;
@@ -414,7 +431,7 @@ export type WatchedAddress = {
 
 export type AssetFieldsFragment = { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null };
 
-export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
+export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null };
 
 export type AddWatchedAddressMutationVariables = Exact<{
   address: Scalars['String'];
@@ -473,26 +490,26 @@ export type GetMappedNetworksForAssetQueryVariables = Exact<{
 }>;
 
 
-export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
+export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetNetworkByChainIdQueryVariables = Exact<{
   chainId: Scalars['Int'];
 }>;
 
 
-export type GetNetworkByChainIdQuery = { __typename?: 'Query', networkByChainId?: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null };
+export type GetNetworkByChainIdQuery = { __typename?: 'Query', networkByChainId?: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null };
 
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
+export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null } | null> | null };
 
 export type GetPaymentMethodsQueryVariables = Exact<{
   chainId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, app?: { __typename?: 'WalletConnectAppType', ios?: string | null, android?: string | null } | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null, universal?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
+export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, links?: { __typename?: 'ExtensionLinks', brave?: string | null, chrome?: string | null, edge?: string | null, firefox?: string | null, opera?: string | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, app?: { __typename?: 'WalletConnectAppType', ios?: string | null, android?: string | null } | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null, universal?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -528,6 +545,7 @@ export const NetworkFieldsFragmentDoc = gql`
   decimals
   name
   networkCode
+  networkName
   logo {
     png
     svg
@@ -884,6 +902,13 @@ export const GetPaymentMethodsDocument = gql`
     flags {
       enabled
       memo
+    }
+    links {
+      brave
+      chrome
+      edge
+      firefox
+      opera
     }
     walletConnect {
       description

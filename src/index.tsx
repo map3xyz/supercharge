@@ -8,6 +8,7 @@ export interface Map3InitConfig {
   address?: string;
   amount?: string;
   anonKey: string;
+  appName?: string;
   assetId?: string;
   authorizeTransaction?: (
     fromAddress: string,
@@ -79,6 +80,10 @@ export class Map3 {
 
     if (config.rainbowRoad) {
       document.body.classList.add('rainbow-road');
+    }
+
+    if (config.appName) {
+      document.title = config.appName;
     }
 
     if (config.colors) {

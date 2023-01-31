@@ -8,6 +8,13 @@ jest.mock('../src/utils/supabase', () => ({
   },
 }));
 
+jest.mock('lottie-web', () => ({
+  __esModule: true,
+  loadAnimation: jest.fn().mockImplementation(() => ({
+    play: jest.fn(),
+  })),
+}));
+
 global.CSS = {
   supports: (k, v) => {
     return v === 'supported';
