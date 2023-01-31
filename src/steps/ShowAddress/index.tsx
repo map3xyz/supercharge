@@ -1,7 +1,7 @@
 import { Pill, ReadOnlyText } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
