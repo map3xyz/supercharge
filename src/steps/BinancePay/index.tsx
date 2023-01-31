@@ -1,10 +1,12 @@
-import { Badge } from '@map3xyz/components';
+import { Badge, Button, Divider } from '@map3xyz/components';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef } from 'react';
+import BinanceLogo from 'url:../../assets/binance-pay.png';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import MethodIcon from '../../components/MethodIcon';
 import { useCreateOrderMutation } from '../../generated/apollo-gql';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
@@ -64,28 +66,57 @@ const BinancePay: React.FC<Props> = () => {
           stacktrace={error.message}
         />
       ) : null}
-      <InnerWrapper className="h-full">
-        {data?.createOrder?.data?.qrContent ? (
-          <div className="flex w-full justify-center">
-            <QRCodeSVG
-              bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
-              className="rounded-lg"
-              fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
-              includeMargin={true}
-              size={width ? width - 160 : 0}
-              style={{
-                border:
-                  state.theme === 'dark'
-                    ? '1px solid #404040'
-                    : '1px solid #e5e5e5',
-              }}
-              value={data?.createOrder?.data?.qrContent}
-            />
-          </div>
-        ) : loading ? (
-          <LoadingWrapper message="Creating Order" />
-        ) : null}
-      </InnerWrapper>
+      {data?.createOrder?.data?.qrContent ? (
+        <InnerWrapper className="h-full">
+          {data?.createOrder?.data?.qrContent ? (
+            <div className="flex h-full flex-col justify-between">
+              <div className="flex w-full flex-col items-center justify-between gap-2 text-sm">
+                <div className="mb-2 px-8 text-center text-xs font-bold text-neutral-400">
+                  Scan the QR code with the Binance app to pay.
+                </div>
+                <QRCodeSVG
+                  bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
+                  className="rounded-lg"
+                  fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
+                  imageSettings={{
+                    excavate: true,
+                    height: 40,
+                    src: BinanceLogo,
+                    width: 40,
+                  }}
+                  includeMargin={true}
+                  size={width ? width - 160 : 0}
+                  style={{
+                    border:
+                      state.theme === 'dark'
+                        ? '1px solid #404040'
+                        : '1px solid #e5e5e5',
+                  }}
+                  value={data?.createOrder?.data?.qrContent}
+                />
+              </div>
+              <div>
+                <Divider>
+                  <span className="text-neutral-400">Or</span>
+                </Divider>
+              </div>
+              <div>
+                <a href={data.createOrder.data.checkoutUrl!} target="_blank">
+                  <Button block size="medium" type={'default'}>
+                    <span className="flex items-center gap-2">
+                      <MethodIcon method={state.method} /> Pay on Binance.com
+                    </span>
+                  </Button>
+                </a>
+              </div>
+            </div>
+          ) : null}
+        </InnerWrapper>
+      ) : loading ? (
+        <InnerWrapper className="h-full">
+          <LoadingWrapper message="Creating Order..." />
+        </InnerWrapper>
+      ) : null}
     </div>
   );
 };
