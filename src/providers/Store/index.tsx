@@ -284,6 +284,11 @@ export const Store: React.FC<
     step = Steps.PaymentMethod;
   }
 
+  let requiredAmount;
+  if (amount && asset?.decimals) {
+    requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
+  }
+
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
       switch (action.type) {
@@ -505,7 +510,7 @@ export const Store: React.FC<
       embed,
       fiat,
       network,
-      requiredAmount: amount,
+      requiredAmount,
       step,
       theme,
     }

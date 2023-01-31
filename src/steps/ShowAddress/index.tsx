@@ -162,22 +162,22 @@ const ShowAddress: React.FC<Props> = () => {
           Pay to Address
         </h3>
       </InnerWrapper>
+      {state.depositAddress.status === 'error' && (
+        <ErrorWrapper
+          description={state.depositAddress.error || ''}
+          header="Error Generating Address"
+          retry={async () => {
+            try {
+              await getDepositAddress();
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+        />
+      )}
       <InnerWrapper className="h-full">
         {state.depositAddress.status === 'loading' && (
           <LoadingWrapper message="Generating Address..." />
-        )}
-        {state.depositAddress.status === 'error' && (
-          <ErrorWrapper
-            description={state.depositAddress.error || ''}
-            header="Error Generating Address"
-            retry={() => {
-              try {
-                getDepositAddress();
-              } catch (e) {
-                console.error(e);
-              }
-            }}
-          />
         )}
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
