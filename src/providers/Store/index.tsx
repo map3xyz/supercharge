@@ -284,14 +284,8 @@ export const Store: React.FC<
   }
 
   let requiredAmount;
-  if (amount) {
-    let decimals = asset ? asset.decimals : network ? network.decimals : null;
-    if (decimals) {
-      const isMajorUnits = amount.includes('.');
-      requiredAmount = isMajorUnits
-        ? amount
-        : ethers.utils.formatUnits(amount, decimals);
-    }
+  if (amount && asset?.decimals) {
+    requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
   }
 
   const [state, dispatch] = useReducer(
