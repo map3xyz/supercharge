@@ -1,7 +1,7 @@
 import { Pill, ReadOnlyText } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -19,7 +19,7 @@ import { listenToWatchedAddress } from '../../utils/supabase';
 const ShowAddress: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { getDepositAddress } = useDepositAddress();
-  const [isWatching, setIsWatching] = React.useState<boolean>(false);
+  const watchedAddressRef = useRef<string | null>();
   const ref = useRef<HTMLDivElement | null>(null);
 
   const { width } = useModalSize(ref);
@@ -48,16 +48,21 @@ const ShowAddress: React.FC<Props> = () => {
         if (typeof data?.addWatchedAddress !== 'string' || errors?.length) {
           throw new Error('Unable to watch address.');
         } else {
-          setTimeout(() => {
-            setIsWatching(true);
-          }, 2000);
+          watchedAddressRef.current = data.addWatchedAddress;
         }
 
         let submmitedDate: string | undefined;
         listenToWatchedAddress(
           data.addWatchedAddress,
           (payload: WatchAddressPayload) => {
-            dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+            switch (payload.new.state) {
+              case 'confirming':
+              case 'confirmed':
+              case 'pending':
+                if (payload.new.subscribed) {
+                  dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+                }
+            }
             switch (payload.new.state) {
               case 'confirming':
                 dispatch({
@@ -134,8 +139,17 @@ const ShowAddress: React.FC<Props> = () => {
       }
     };
     run();
+  }, []);
 
-    return () => dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
+  useEffect(() => {
+    return () => {
+      if (watchedAddressRef.current) {
+        removeWatchedAddress({
+          variables: { watchedAddressId: watchedAddressRef.current },
+        });
+      }
+      dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_IDLE' });
+    };
   }, []);
 
   return (
@@ -172,7 +186,7 @@ const ShowAddress: React.FC<Props> = () => {
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
                 {state.network?.networkName} to this address.
               </div>
-              {isWatching && state.depositAddress.data && (
+              {watchedAddressRef.current && state.depositAddress.data && (
                 <motion.div
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}

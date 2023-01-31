@@ -101,7 +101,9 @@ const Result: React.FC<Props> = () => {
         </div>
       </div>
       <InnerWrapper
-        className={`h-full transition-all ${toggleDetails ? 'h-0 p-0' : ''}`}
+        className={`relative h-full transition-all ${
+          toggleDetails ? 'h-0 p-0' : ''
+        }`}
       >
         {state.tx.steps.map((step, i) => {
           return (
@@ -111,7 +113,7 @@ const Result: React.FC<Props> = () => {
               }`}
               key={step}
             >
-              <div className="relative flex flex-1">
+              <div className="flex flex-1">
                 <div className="flex flex-col items-center">
                   <div
                     className={`flex h-5 min-h-[1.25rem] w-5 items-center justify-center rounded-full border ${

@@ -15,7 +15,7 @@ root.render(
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             return {
-              address: '0x388c818ca8b9251b393131c08a736a67ccb19297',
+              address: '0x67ef9a8d7f4ed931ac63e873b75d8f8dea64cdb2',
             };
           },
           networkCode: 'goerli',
