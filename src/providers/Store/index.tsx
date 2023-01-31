@@ -286,8 +286,7 @@ export const Store: React.FC<
   let requiredAmount;
   if (amount) {
     let decimals = asset ? asset.decimals : network ? network.decimals : null;
-    if (!decimals) return;
-    if ((network && network.decimals) || (asset && asset.decimals)) {
+    if (decimals) {
       const isMajorUnits = amount.includes('.');
       requiredAmount = isMajorUnits
         ? amount
