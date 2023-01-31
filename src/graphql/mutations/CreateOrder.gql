@@ -1,0 +1,17 @@
+mutation CreateOrder($assetId: String!, $orderAmount: Float!) {
+  createOrder(assetId: $assetId, orderAmount: $orderAmount) {
+    code
+    errorMessage
+    status
+    data {
+      prepayId
+      terminalType
+      expireTime
+      qrcodeLink
+      qrContent
+      checkoutUrl
+      deeplink
+      universalUrl
+    }
+  }
+}

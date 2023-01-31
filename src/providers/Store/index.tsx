@@ -10,10 +10,11 @@ export enum Steps {
   'PaymentMethod' = 2,
   'SwitchChain' = 3,
   'EnterAmount' = 4,
-  'WalletConnect' = 5,
-  'ConfirmRequiredAmount' = 6,
-  'ShowAddress' = 7,
-  'Result' = 8,
+  'BinancePay' = 5,
+  'WalletConnect' = 6,
+  'ConfirmRequiredAmount' = 7,
+  'ShowAddress' = 8,
+  'Result' = 9,
   __LENGTH,
 }
 

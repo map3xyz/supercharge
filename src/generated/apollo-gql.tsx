@@ -94,6 +94,7 @@ export type Logo = {
 export type Mutation = {
   __typename?: 'Mutation';
   addWatchedAddress?: Maybe<Scalars['ID']>;
+  createOrder?: Maybe<Order>;
   createOrganization?: Maybe<Organization>;
   createSdkConfigForOrganization?: Maybe<SdkConfigField>;
   prepareBridgeQuote?: Maybe<BridgeQuote>;
@@ -108,6 +109,12 @@ export type MutationAddWatchedAddressArgs = {
   assetId: Scalars['String'];
   confirmationsToWatch: Scalars['Int'];
   memo?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationCreateOrderArgs = {
+  assetId: Scalars['String'];
+  orderAmount: Scalars['Float'];
 };
 
 
@@ -163,7 +170,28 @@ export type Network = {
   name?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
   networkName?: Maybe<Scalars['String']>;
+  regex?: Maybe<Regex>;
   symbol?: Maybe<Scalars['String']>;
+};
+
+export type Order = {
+  __typename?: 'Order';
+  code?: Maybe<Scalars['String']>;
+  data?: Maybe<OrderData>;
+  errorMessage?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type OrderData = {
+  __typename?: 'OrderData';
+  checkoutUrl?: Maybe<Scalars['String']>;
+  deeplink?: Maybe<Scalars['String']>;
+  expireTime?: Maybe<Scalars['String']>;
+  prepayId?: Maybe<Scalars['String']>;
+  qrContent?: Maybe<Scalars['String']>;
+  qrcodeLink?: Maybe<Scalars['String']>;
+  terminalType?: Maybe<Scalars['String']>;
+  universalUrl?: Maybe<Scalars['String']>;
 };
 
 export type Organization = {
@@ -337,6 +365,11 @@ export type QuoteEstimate = {
   toAmountUsd?: Maybe<Scalars['Float']>;
 };
 
+export type Regex = {
+  __typename?: 'Regex';
+  address?: Maybe<Scalars['String']>;
+};
+
 export type SdkConfigField = {
   __typename?: 'SdkConfigField';
   assetId?: Maybe<Scalars['String']>;
@@ -436,6 +469,14 @@ export type AddWatchedAddressMutationVariables = Exact<{
 
 
 export type AddWatchedAddressMutation = { __typename?: 'Mutation', addWatchedAddress?: string | null };
+
+export type CreateOrderMutationVariables = Exact<{
+  assetId: Scalars['String'];
+  orderAmount: Scalars['Float'];
+}>;
+
+
+export type CreateOrderMutation = { __typename?: 'Mutation', createOrder?: { __typename?: 'Order', code?: string | null, errorMessage?: string | null, status?: string | null, data?: { __typename?: 'OrderData', prepayId?: string | null, terminalType?: string | null, expireTime?: string | null, qrcodeLink?: string | null, qrContent?: string | null, checkoutUrl?: string | null, deeplink?: string | null, universalUrl?: string | null } | null } | null };
 
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
@@ -592,6 +633,52 @@ export function useAddWatchedAddressMutation(baseOptions?: Apollo.MutationHookOp
 export type AddWatchedAddressMutationHookResult = ReturnType<typeof useAddWatchedAddressMutation>;
 export type AddWatchedAddressMutationResult = Apollo.MutationResult<AddWatchedAddressMutation>;
 export type AddWatchedAddressMutationOptions = Apollo.BaseMutationOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
+export const CreateOrderDocument = gql`
+    mutation CreateOrder($assetId: String!, $orderAmount: Float!) {
+  createOrder(assetId: $assetId, orderAmount: $orderAmount) {
+    code
+    errorMessage
+    status
+    data {
+      prepayId
+      terminalType
+      expireTime
+      qrcodeLink
+      qrContent
+      checkoutUrl
+      deeplink
+      universalUrl
+    }
+  }
+}
+    `;
+export type CreateOrderMutationFn = Apollo.MutationFunction<CreateOrderMutation, CreateOrderMutationVariables>;
+
+/**
+ * __useCreateOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ *   variables: {
+ *      assetId: // value for 'assetId'
+ *      orderAmount: // value for 'orderAmount'
+ *   },
+ * });
+ */
+export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrderMutation, CreateOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrderMutation, CreateOrderMutationVariables>(CreateOrderDocument, options);
+      }
+export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
+export type CreateOrderMutationResult = Apollo.MutationResult<CreateOrderMutation>;
+export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<CreateOrderMutation, CreateOrderMutationVariables>;
 export const RemoveWatchedAddressDocument = gql`
     mutation RemoveWatchedAddress($watchedAddressId: ID!) {
   removeWatchedAddress(watchedAddressId: $watchedAddressId)

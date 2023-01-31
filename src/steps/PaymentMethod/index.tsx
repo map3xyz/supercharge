@@ -204,6 +204,22 @@ const PaymentMethod: React.FC<Props> = () => {
                           type: 'SET_STEP',
                         });
                       }
+                    } else if (method.value === 'binance-pay') {
+                      dispatch({
+                        payload: [
+                          'AssetSelection',
+                          'NetworkSelection',
+                          'PaymentMethod',
+                          'EnterAmount',
+                          'BinancePay',
+                          'Result',
+                        ],
+                        type: 'SET_STEPS',
+                      });
+                      dispatch({
+                        payload: Steps.EnterAmount,
+                        type: 'SET_STEP',
+                      });
                     } else if (method.value === 'isWalletConnect') {
                       dispatch({
                         payload: [
