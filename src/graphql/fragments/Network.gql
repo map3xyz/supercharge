@@ -3,15 +3,18 @@ fragment NetworkFields on Network {
   name
   networkCode
   networkName
-  logo {
-    png
-    svg
+  symbol
+  identifiers {
+    chainId
   }
   links {
     explorer
   }
-  identifiers {
-    chainId
+  logo {
+    png
+    svg
   }
-  symbol
+  regex {
+    address
+  }
 }

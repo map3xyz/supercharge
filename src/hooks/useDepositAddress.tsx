@@ -26,6 +26,12 @@ export const useDepositAddress = () => {
       if (!address) {
         throw new Error(NO_ADDRESS);
       }
+      if (
+        state.network?.regex?.address &&
+        !RegExp(state.network.regex.address).test(address)
+      ) {
+        throw new Error(`Address format is invalid.`);
+      }
       dispatch({
         payload: { address, memo },
         type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS',
