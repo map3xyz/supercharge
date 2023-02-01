@@ -546,7 +546,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 }
               />
             ) : state.method.value === 'binance-pay' ? (
-              <BinancePay amount={amount} />
+              <BinancePay amount={amount} setFormError={setFormError} />
             ) : (
               <WindowEthereum
                 amount={amount}

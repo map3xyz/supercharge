@@ -7,18 +7,21 @@ import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import { useCreateOrderMutation } from '../../generated/apollo-gql';
+import { useCreateBinanceOrderMutation } from '../../generated/apollo-gql';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const BinancePay: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
-  const [createOrder, { data, error, loading }] = useCreateOrderMutation();
+  const [
+    createBinanceOrder,
+    { data, error, loading },
+  ] = useCreateBinanceOrderMutation();
   const ref = useRef<HTMLDivElement | null>(null);
   const { width } = useModalSize(ref);
 
   const run = async () => {
-    await createOrder({
+    await createBinanceOrder({
       variables: {
         assetId: state.asset!.id!,
         orderAmount: Number(state.tx.amount),
@@ -66,9 +69,9 @@ const BinancePay: React.FC<Props> = () => {
           stacktrace={error.message}
         />
       ) : null}
-      {data?.createOrder?.data?.qrContent ? (
+      {data?.createBinanceOrder?.data?.qrContent ? (
         <InnerWrapper className="h-full">
-          {data?.createOrder?.data?.qrContent ? (
+          {data?.createBinanceOrder?.data?.qrContent ? (
             <div className="flex h-full flex-col justify-between">
               <div className="flex w-full flex-col items-center justify-between gap-2 text-sm">
                 <div className="mb-2 px-8 text-center text-xs font-bold text-neutral-400">
@@ -92,7 +95,7 @@ const BinancePay: React.FC<Props> = () => {
                         ? '1px solid #404040'
                         : '1px solid #e5e5e5',
                   }}
-                  value={data?.createOrder?.data?.qrContent}
+                  value={data?.createBinanceOrder?.data?.qrContent}
                 />
               </div>
               <div>
@@ -101,7 +104,10 @@ const BinancePay: React.FC<Props> = () => {
                 </Divider>
               </div>
               <div>
-                <a href={data.createOrder.data.checkoutUrl!} target="_blank">
+                <a
+                  href={data.createBinanceOrder.data.checkoutUrl!}
+                  target="_blank"
+                >
                   <Button block size="medium" type={'default'}>
                     <span className="flex items-center gap-2">
                       <MethodIcon method={state.method} /> Pay on Binance.com

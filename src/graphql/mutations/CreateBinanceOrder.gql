@@ -1,5 +1,5 @@
-mutation CreateOrder($assetId: String!, $orderAmount: Float!) {
-  createOrder(assetId: $assetId, orderAmount: $orderAmount) {
+mutation CreateBinanceOrder($assetId: String!, $orderAmount: Float!) {
+  createBinanceOrder(assetId: $assetId, orderAmount: $orderAmount) {
     code
     errorMessage
     status
