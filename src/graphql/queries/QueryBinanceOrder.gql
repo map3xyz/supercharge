@@ -1,0 +1,8 @@
+query queryBinanceOrder($prepayId: String!) {
+  queryBinanceOrder(prepayId: $prepayId) {
+    status
+    data {
+      status
+    }
+  }
+}

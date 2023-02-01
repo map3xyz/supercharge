@@ -7,7 +7,10 @@ import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import { useCreateBinanceOrderMutation } from '../../generated/apollo-gql';
+import {
+  useCreateBinanceOrderMutation,
+  useQueryBinanceOrderLazyQuery,
+} from '../../generated/apollo-gql';
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
@@ -19,6 +22,8 @@ const BinancePay: React.FC<Props> = () => {
   ] = useCreateBinanceOrderMutation();
   const ref = useRef<HTMLDivElement | null>(null);
   const { width } = useModalSize(ref);
+
+  const [queryBinanceOrder] = useQueryBinanceOrderLazyQuery();
 
   const run = async () => {
     await createBinanceOrder({
@@ -32,6 +37,19 @@ const BinancePay: React.FC<Props> = () => {
   useEffect(() => {
     run();
   }, []);
+
+  useEffect(() => {
+    // if data.createBinanceOrder.data.prepayId is not null, then poll for the order status
+    // using the prepayId and queryBinanceOrder
+    if (data?.createBinanceOrder?.data?.prepayId) {
+      queryBinanceOrder({
+        pollInterval: 1000,
+        variables: {
+          prepayId: data.createBinanceOrder.data.prepayId,
+        },
+      });
+    }
+  }, [data?.createBinanceOrder?.data?.prepayId]);
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
