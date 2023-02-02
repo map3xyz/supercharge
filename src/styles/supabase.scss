@@ -13,6 +13,19 @@
         height: 100%;
     }
 
+    .w-full.sbui-modal--tiny {
+        max-width: 100% !important;
+    }
+
+    .h-full .sbui-modal-content > .sbui-space-row {
+        height: inherit !important;
+    }
+    
+    .h-full .sbui-modal-content > .sbui-space-row > .sbui-space-col {
+        height: inherit !important;
+    }
+
+
     @media screen and (min-width: 640px) {
         .sbui-modal-content>.sbui-space-row {
             height: initial;

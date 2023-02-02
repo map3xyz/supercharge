@@ -1,6 +1,7 @@
 import { Modal } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
+import { isMobile, isTablet } from 'react-device-detect';
 
 import { Map3InitConfig } from '.';
 import AppWithAddressAndNetwork from './App.withAddressAndNetwork';
@@ -26,7 +27,11 @@ const Layout = ({
   if (!config.embed?.id) {
     return (
       <Modal
-        className={`${minWidth('sm') ? 'map3' : 'map3 h-full w-full'}`}
+        className={`${
+          minWidth('sm') && !isMobile && !isTablet
+            ? 'map3'
+            : 'map3 h-full w-full'
+        }`}
         footerBackground
         onCancel={handleClose}
         size="tiny"

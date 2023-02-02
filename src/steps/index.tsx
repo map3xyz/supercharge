@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from 'jsx:../assets/logo.svg';
 import React, { useContext } from 'react';
+import { isMobile, isTablet } from 'react-device-detect';
 
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
@@ -26,7 +27,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
   return (
     <div
       className={`flex h-full w-full flex-col justify-between ${
-        state.embed?.id ? '' : 'sm:!h-[520px]'
+        state.embed?.id || isMobile || isTablet ? '' : 'sm:!h-[520px]'
       }`}
       id="map3-modal-stepper"
     >
