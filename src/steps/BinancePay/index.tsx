@@ -43,7 +43,7 @@ const BinancePay: React.FC<Props> = () => {
     // using the prepayId and queryBinanceOrder
     if (data?.createBinanceOrder?.data?.prepayId) {
       queryBinanceOrder({
-        pollInterval: 1000,
+        pollInterval: 1500,
         variables: {
           prepayId: data.createBinanceOrder.data.prepayId,
         },
@@ -57,10 +57,7 @@ const BinancePay: React.FC<Props> = () => {
   }
 
   return (
-    <div
-      className="flex h-full flex-col items-center justify-between"
-      ref={ref}
-    >
+    <div className="flex h-full flex-col items-center" ref={ref}>
       <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3 className="text-lg font-semibold dark:text-white">
@@ -88,7 +85,7 @@ const BinancePay: React.FC<Props> = () => {
         />
       ) : null}
       {data?.createBinanceOrder?.data?.qrContent ? (
-        <InnerWrapper className="h-full">
+        <InnerWrapper className="flex h-full flex-col justify-between">
           {data?.createBinanceOrder?.data?.qrContent ? (
             <div className="flex h-full flex-col justify-between">
               <div className="flex w-full flex-col items-center justify-between gap-2 text-sm">
@@ -117,11 +114,9 @@ const BinancePay: React.FC<Props> = () => {
                 />
               </div>
               <div>
-                <Divider>
+                <div className="my-1 flex items-center justify-center">
                   <span className="text-neutral-400">Or</span>
-                </Divider>
-              </div>
-              <div>
+                </div>
                 <a
                   href={data.createBinanceOrder.data.checkoutUrl!}
                   target="_blank"
