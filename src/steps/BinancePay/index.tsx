@@ -1,6 +1,7 @@
-import { Badge, Button, Divider } from '@map3xyz/components';
+import { Badge, Button, Divider, Pill } from '@map3xyz/components';
+import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import BinanceLogo from 'url:../../assets/binance-pay.png';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -14,22 +15,41 @@ import {
 import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
+const BinancePayFinalStatuses = [
+  'PAID',
+  'CANCELED',
+  'ERROR',
+  'REFUNDING',
+  'REFUNDED',
+  'EXPIRED',
+];
+
 const BinancePay: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const [
     createBinanceOrder,
     { data, error, loading },
   ] = useCreateBinanceOrderMutation();
+  const [isPolling, setIsPolling] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const { width } = useModalSize(ref);
 
-  const [queryBinanceOrder] = useQueryBinanceOrderLazyQuery();
+  const [
+    queryBinanceOrder,
+    { data: queryData, stopPolling },
+  ] = useQueryBinanceOrderLazyQuery();
+
+  const stopPoll = () => {
+    setIsPolling(false);
+    stopPolling();
+  };
 
   const run = async () => {
     await createBinanceOrder({
       variables: {
         assetId: state.asset!.id!,
         orderAmount: Number(state.tx.amount),
+        userId: state.userId,
       },
     });
   };
@@ -39,17 +59,34 @@ const BinancePay: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    // if data.createBinanceOrder.data.prepayId is not null, then poll for the order status
-    // using the prepayId and queryBinanceOrder
-    if (data?.createBinanceOrder?.data?.prepayId) {
-      queryBinanceOrder({
-        pollInterval: 1500,
-        variables: {
-          prepayId: data.createBinanceOrder.data.prepayId,
-        },
-      });
-    }
+    const poll = async () => {
+      if (data?.createBinanceOrder?.data?.prepayId) {
+        await queryBinanceOrder({
+          pollInterval: 1500,
+          variables: {
+            prepayId: data.createBinanceOrder.data.prepayId,
+          },
+        });
+        setIsPolling(true);
+      }
+    };
+
+    poll();
   }, [data?.createBinanceOrder?.data?.prepayId]);
+
+  useEffect(() => {
+    if (queryData?.queryBinanceOrder?.status === 'FAILED') {
+      stopPoll();
+    }
+    if (
+      queryData?.queryBinanceOrder?.data?.status &&
+      BinancePayFinalStatuses.includes(
+        queryData?.queryBinanceOrder?.data?.status
+      )
+    ) {
+      stopPoll();
+    }
+  }, [queryData?.queryBinanceOrder]);
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -92,15 +129,29 @@ const BinancePay: React.FC<Props> = () => {
                 <div className="mb-2 px-8 text-center text-xs font-bold text-neutral-400">
                   Scan the QR code with the Binance app to pay.
                 </div>
+                {isPolling && (
+                  <motion.div
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0 }}
+                  >
+                    <Pill
+                      color="yellow"
+                      icon={<i className="fa fa-spinner animate-spin" />}
+                    >
+                      Monitoring for deposits.
+                    </Pill>
+                  </motion.div>
+                )}
                 <QRCodeSVG
-                  bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
+                  bgColor={state.theme === 'dark' ? '#000000' : '#FFFFFF'}
                   className="rounded-lg"
                   fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
                   imageSettings={{
                     excavate: true,
-                    height: 40,
+                    height: 20,
                     src: BinanceLogo,
-                    width: 40,
+                    width: 20,
                   }}
                   includeMargin={true}
                   size={width ? width - 160 : 0}
@@ -114,8 +165,8 @@ const BinancePay: React.FC<Props> = () => {
                 />
               </div>
               <div>
-                <div className="my-1 flex items-center justify-center">
-                  <span className="text-neutral-400">Or</span>
+                <div className="mb-1 flex items-center justify-center">
+                  <span className="text-xs font-bold text-neutral-400">Or</span>
                 </div>
                 <a
                   href={data.createBinanceOrder.data.checkoutUrl!}

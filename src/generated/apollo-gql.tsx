@@ -166,6 +166,7 @@ export type MutationAddWatchedAddressArgs = {
 export type MutationCreateBinanceOrderArgs = {
   assetId: Scalars['String'];
   orderAmount: Scalars['Float'];
+  userId: Scalars['String'];
 };
 
 
@@ -516,6 +517,7 @@ export type AddWatchedAddressMutation = { __typename?: 'Mutation', addWatchedAdd
 
 export type CreateBinanceOrderMutationVariables = Exact<{
   assetId: Scalars['String'];
+  userId: Scalars['String'];
   orderAmount: Scalars['Float'];
 }>;
 
@@ -688,8 +690,12 @@ export type AddWatchedAddressMutationHookResult = ReturnType<typeof useAddWatche
 export type AddWatchedAddressMutationResult = Apollo.MutationResult<AddWatchedAddressMutation>;
 export type AddWatchedAddressMutationOptions = Apollo.BaseMutationOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
 export const CreateBinanceOrderDocument = gql`
-    mutation CreateBinanceOrder($assetId: String!, $orderAmount: Float!) {
-  createBinanceOrder(assetId: $assetId, orderAmount: $orderAmount) {
+    mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: Float!) {
+  createBinanceOrder(
+    assetId: $assetId
+    userId: $userId
+    orderAmount: $orderAmount
+  ) {
     code
     errorMessage
     status
@@ -722,6 +728,7 @@ export type CreateBinanceOrderMutationFn = Apollo.MutationFunction<CreateBinance
  * const [createBinanceOrderMutation, { data, loading, error }] = useCreateBinanceOrderMutation({
  *   variables: {
  *      assetId: // value for 'assetId'
+ *      userId: // value for 'userId'
  *      orderAmount: // value for 'orderAmount'
  *   },
  * });

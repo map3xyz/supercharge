@@ -98,6 +98,7 @@ type State = {
     step: number;
     steps: (keyof typeof TxSteps)[];
   };
+  userId: string;
 };
 
 type Action =
@@ -227,6 +228,7 @@ const initialState: State = {
     step: 0,
     steps: ['Submitted', 'Confirming', 'Confirmed'],
   },
+  userId: '',
 };
 
 export const Store: React.FC<
@@ -259,6 +261,7 @@ export const Store: React.FC<
     onFailure?: (error: string, networkCode: string, address?: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     theme?: 'dark' | 'light';
+    userId: string;
   }>
 > = ({
   amount,
@@ -273,6 +276,7 @@ export const Store: React.FC<
   onFailure,
   onSuccess,
   theme,
+  userId,
 }) => {
   let step = 0;
 
@@ -513,6 +517,7 @@ export const Store: React.FC<
       requiredAmount,
       step,
       theme,
+      userId,
     }
   );
 
