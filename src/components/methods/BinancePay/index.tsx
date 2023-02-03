@@ -21,6 +21,7 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
         variables: {
           assetId: state.asset!.id!,
           orderAmount: Number(amount),
+          userId: state.userId,
         },
       });
 

@@ -1,4 +1,4 @@
-import { Badge, Button, Divider, Pill } from '@map3xyz/components';
+import { Badge, Button, Pill } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
