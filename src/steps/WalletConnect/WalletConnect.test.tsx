@@ -89,7 +89,9 @@ describe('WalletConnect', () => {
   });
   it('handles connection', async () => {
     const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
+    await act(async () => {
+      fireEvent.click(walletConnect);
+    });
     await screen.findByTestId('scan-wallet-connect');
     await act(async () => {
       await wait(TIMEOUT_BEFORE_MOCK_CONNECT);
@@ -97,7 +99,7 @@ describe('WalletConnect', () => {
     expect(await screen.findByText('Confirm Payment')).toBeInTheDocument();
     expect(await screen.findByText(/0xf6/)).toBeInTheDocument();
     const input = await screen.findByTestId('input');
-    await act(() => {
+    await act(async () => {
       fireEvent.change(input, { target: { value: '1' } });
     });
     const form = await screen.findByTestId('enter-amount-form');
@@ -107,7 +109,9 @@ describe('WalletConnect', () => {
   });
   it('handles previous connection', async () => {
     const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
+    await act(async () => {
+      fireEvent.click(walletConnect);
+    });
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
       connector: {
@@ -120,7 +124,9 @@ describe('WalletConnect', () => {
   });
   it('handles connection error', async () => {
     const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
+    await act(async () => {
+      fireEvent.click(walletConnect);
+    });
     mockConnect.mockImplementation(
       (event: string, callback: (error: Error) => void | Error) => {
         if (event === 'connect') {
@@ -132,7 +138,9 @@ describe('WalletConnect', () => {
   });
   it('handles disconnection', async () => {
     const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
+    await act(async () => {
+      fireEvent.click(walletConnect);
+    });
     mockDefault.mockImplementationOnce(() => ({
       ...defaults,
       connector: {
@@ -165,7 +173,9 @@ describe('WalletConnect', () => {
   });
   it('handles disconnection error', async () => {
     const walletConnect = await screen.findByText('Rainbow');
-    fireEvent.click(walletConnect);
+    await act(async () => {
+      fireEvent.click(walletConnect);
+    });
     await mockConnect.mockImplementation(
       (event: string, callback: (error: Error) => void | Error) => {
         if (event === 'disconnect') {
