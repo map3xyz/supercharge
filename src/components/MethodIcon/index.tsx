@@ -1,4 +1,5 @@
 import React from 'react';
+import BinanceLogo from 'url:../../assets/binance-pay.png';
 import CoinbaseWalletLogo from 'url:../../assets/coinbase.png';
 import MetaMaskLogo from 'url:../../assets/metamask.png';
 
@@ -19,6 +20,8 @@ const MethodIcon: React.FC<Props> = ({ method }) => {
           className="h-4 w-4"
           src={CoinbaseWalletLogo}
         />
+      ) : method.value === 'binance-pay' ? (
+        <img aria-label="Binance logo" className="h-4 w-4" src={BinanceLogo} />
       ) : method.icon ? (
         <i className={method.icon + ' h-4 w-4'} />
       ) : method.logo ? (

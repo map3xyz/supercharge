@@ -25,6 +25,9 @@ const bitcoinNetwork = [
     name: 'Bitcoin',
     networkCode: 'bitcoin',
     networkName: 'Bitcoin',
+    regex: {
+      address: '^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^(bc1)[0-9A-Za-z]{39,59}$',
+    },
     symbol: 'BTC',
   },
 ];
@@ -49,6 +52,9 @@ export const networksForAssetMockResult = [
     name: 'Ethereum',
     networkCode: 'ethereum',
     networkName: 'Ethereum',
+    regex: {
+      address: '^(0x)[0-9a-fA-F]{40}$',
+    },
     symbol: 'ETH',
   },
   {
@@ -69,6 +75,9 @@ export const networksForAssetMockResult = [
     name: 'Polygon',
     networkCode: 'polygon',
     networkName: 'Polygon Chain',
+    regex: {
+      address: '^(0x)[0-9a-fA-F]{40}$',
+    },
     symbol: 'MATIC',
   },
 ];
@@ -137,6 +146,10 @@ export const getNetworksMock = () => ({
           name: 'Bitcoin',
           networkCode: 'bitcoin',
           networkName: 'Bitcoin',
+          regex: {
+            address:
+              '^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^(bc1)[0-9A-Za-z]{39,59}$',
+          },
           symbol: 'BTC',
         },
         {
@@ -157,6 +170,9 @@ export const getNetworksMock = () => ({
           name: 'Ethereum',
           networkCode: 'ethereum',
           networkName: 'Ethereum',
+          regex: {
+            address: '^(0x)[0-9a-fA-F]{40}$',
+          },
           symbol: 'ETH',
         },
         {
@@ -177,6 +193,9 @@ export const getNetworksMock = () => ({
           name: 'Polygon',
           networkCode: 'polygon',
           networkName: 'Polygon Chain',
+          regex: {
+            address: '^(0x)[0-9a-fA-F]{40}$',
+          },
           symbol: 'MATIC',
         },
       ],

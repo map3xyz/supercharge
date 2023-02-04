@@ -1,0 +1,17 @@
+mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: String!) {
+  createBinanceOrder(assetId: $assetId, userId: $userId, orderAmount: $orderAmount) {
+    code
+    errorMessage
+    status
+    data {
+      prepayId
+      terminalType
+      expireTime
+      qrcodeLink
+      qrContent
+      checkoutUrl
+      deeplink
+      universalUrl
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import BinancePay from '../../components/methods/BinancePay';
 import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum, {
   ConnectHandler,
@@ -238,6 +239,12 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     try {
       e?.preventDefault();
       setFormError(undefined);
+
+      if (state.method?.value === 'binance-pay') {
+        dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
+        dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
+        return;
+      }
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
         connectRef.current?.connect();
@@ -528,7 +535,19 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 </motion.span>
               ) : null}
             </span>
-            {state.method.value !== 'isWalletConnect' ? (
+            {state.method.value === 'isWalletConnect' ? (
+              <WalletConnect
+                amount={amount}
+                disabled={
+                  state.depositAddress.status === 'loading' ||
+                  state.prebuiltTx.status !== 'success' ||
+                  state.prebuiltTx.data?.feeError ||
+                  !!formError?.includes(INSUFFICIENT_FUNDS)
+                }
+              />
+            ) : state.method.value === 'binance-pay' ? (
+              <BinancePay amount={amount} setFormError={setFormError} />
+            ) : (
               <WindowEthereum
                 amount={amount}
                 disabled={
@@ -539,16 +558,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 }
                 ref={connectRef}
                 setFormError={setFormError}
-              />
-            ) : (
-              <WalletConnect
-                amount={amount}
-                disabled={
-                  state.depositAddress.status === 'loading' ||
-                  state.prebuiltTx.status !== 'success' ||
-                  state.prebuiltTx.data?.feeError ||
-                  !!formError?.includes(INSUFFICIENT_FUNDS)
-                }
               />
             )}
           </div>

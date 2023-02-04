@@ -11,6 +11,7 @@ import AssetSelection from '../steps/AssetSelection';
 import EnterAmount from '../steps/EnterAmount';
 import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
+import BinancePay from './BinancePay';
 import ConfirmRequiredAmount from './ConfirmRequiredAmount';
 import Result from './Result';
 import ShowAddress from './ShowAddress';
@@ -110,6 +111,17 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 key={Steps[step]}
               >
                 <EnterAmount />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.BinancePay] && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="h-full"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <BinancePay />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.WalletConnect] && (

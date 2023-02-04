@@ -24,9 +24,61 @@ export type Asset = {
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
+  networkName?: Maybe<Scalars['String']>;
   networks?: Maybe<Array<Maybe<Network>>>;
   symbol?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
+};
+
+export type BinanceOrder = {
+  __typename?: 'BinanceOrder';
+  code?: Maybe<Scalars['String']>;
+  data?: Maybe<BinanceOrderData>;
+  errorMessage?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type BinanceOrderData = {
+  __typename?: 'BinanceOrderData';
+  checkoutUrl?: Maybe<Scalars['String']>;
+  deeplink?: Maybe<Scalars['String']>;
+  expireTime?: Maybe<Scalars['String']>;
+  prepayId?: Maybe<Scalars['String']>;
+  qrContent?: Maybe<Scalars['String']>;
+  qrcodeLink?: Maybe<Scalars['String']>;
+  terminalType?: Maybe<Scalars['String']>;
+  universalUrl?: Maybe<Scalars['String']>;
+};
+
+export type BinancePayTokensData = {
+  __typename?: 'BinancePayTokensData';
+  apiKey?: Maybe<Scalars['String']>;
+  apiSecret?: Maybe<Scalars['String']>;
+  cancelUrl?: Maybe<Scalars['String']>;
+  returnUrl?: Maybe<Scalars['String']>;
+};
+
+export type BinanceQueryOrderResult = {
+  __typename?: 'BinanceQueryOrderResult';
+  code?: Maybe<Scalars['String']>;
+  data?: Maybe<BinanceQueryOrderResultData>;
+  errorMessage?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
+export type BinanceQueryOrderResultData = {
+  __typename?: 'BinanceQueryOrderResultData';
+  createTime?: Maybe<Scalars['Int']>;
+  currency?: Maybe<Scalars['String']>;
+  merchantId?: Maybe<Scalars['Int']>;
+  merchantTradeNo?: Maybe<Scalars['String']>;
+  openUserId?: Maybe<Scalars['String']>;
+  orderAmount?: Maybe<Scalars['String']>;
+  passThroughInfo?: Maybe<Scalars['String']>;
+  prepayId?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+  transactTime?: Maybe<Scalars['Int']>;
+  transactionId?: Maybe<Scalars['String']>;
 };
 
 export type BridgeQuote = {
@@ -94,11 +146,15 @@ export type Logo = {
 export type Mutation = {
   __typename?: 'Mutation';
   addWatchedAddress?: Maybe<Scalars['ID']>;
+  createBinanceOrder?: Maybe<BinanceOrder>;
+  createBinancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
   createOrganization?: Maybe<Organization>;
   createSdkConfigForOrganization?: Maybe<SdkConfigField>;
+  deleteBinancePayTokensForOrganization?: Maybe<Scalars['String']>;
   prepareBridgeQuote?: Maybe<BridgeQuote>;
   removeWatchedAddress?: Maybe<Scalars['ID']>;
   subscribeToBridgeTransaction?: Maybe<Scalars['String']>;
+  updateBinancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
 };
 
@@ -108,6 +164,21 @@ export type MutationAddWatchedAddressArgs = {
   assetId: Scalars['String'];
   confirmationsToWatch: Scalars['Int'];
   memo?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationCreateBinanceOrderArgs = {
+  assetId: Scalars['String'];
+  orderAmount: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+
+export type MutationCreateBinancePayTokensForOrganizationArgs = {
+  apiKey: Scalars['String'];
+  apiSecret: Scalars['String'];
+  cancelUrl: Scalars['String'];
+  returnUrl: Scalars['String'];
 };
 
 
@@ -140,6 +211,12 @@ export type MutationRemoveWatchedAddressArgs = {
 
 export type MutationSubscribeToBridgeTransactionArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationUpdateBinancePayTokensForOrganizationArgs = {
+  cancelUrl: Scalars['String'];
+  returnUrl: Scalars['String'];
 };
 
 
@@ -211,6 +288,7 @@ export type Query = {
   assets?: Maybe<Array<Maybe<Asset>>>;
   assetsCount?: Maybe<Scalars['Int']>;
   assetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
+  binancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
   mappedNetworksForAsset?: Maybe<Array<Maybe<Network>>>;
   mappedNetworksForAssetByOrg?: Maybe<Array<Maybe<Network>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
@@ -221,6 +299,7 @@ export type Query = {
   networksByNetworkCodes?: Maybe<Array<Maybe<Network>>>;
   networksCount?: Maybe<Scalars['Int']>;
   organizationById?: Maybe<Organization>;
+  queryBinanceOrder?: Maybe<BinanceQueryOrderResult>;
   sdkConfigForOrganization?: Maybe<Array<Maybe<SdkConfigField>>>;
   searchAssets?: Maybe<Array<Maybe<Asset>>>;
   searchAssetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
@@ -309,6 +388,11 @@ export type QueryNetworksByNetworkCodesArgs = {
 
 export type QueryOrganizationByIdArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryQueryBinanceOrderArgs = {
+  prepayId: Scalars['String'];
 };
 
 
@@ -443,6 +527,15 @@ export type AddWatchedAddressMutationVariables = Exact<{
 
 export type AddWatchedAddressMutation = { __typename?: 'Mutation', addWatchedAddress?: string | null };
 
+export type CreateBinanceOrderMutationVariables = Exact<{
+  assetId: Scalars['String'];
+  userId: Scalars['String'];
+  orderAmount: Scalars['String'];
+}>;
+
+
+export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'BinanceOrder', code?: string | null, errorMessage?: string | null, status?: string | null, data?: { __typename?: 'BinanceOrderData', prepayId?: string | null, terminalType?: string | null, expireTime?: string | null, qrcodeLink?: string | null, qrContent?: string | null, checkoutUrl?: string | null, deeplink?: string | null, universalUrl?: string | null } | null } | null };
+
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
 }>;
@@ -510,6 +603,13 @@ export type GetPaymentMethodsQueryVariables = Exact<{
 
 
 export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, links?: { __typename?: 'ExtensionLinks', brave?: string | null, chrome?: string | null, edge?: string | null, firefox?: string | null, opera?: string | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, app?: { __typename?: 'WalletConnectAppType', ios?: string | null, android?: string | null } | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null, universal?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
+
+export type QueryBinanceOrderQueryVariables = Exact<{
+  prepayId: Scalars['String'];
+}>;
+
+
+export type QueryBinanceOrderQuery = { __typename?: 'Query', queryBinanceOrder?: { __typename?: 'BinanceQueryOrderResult', status?: string | null, data?: { __typename?: 'BinanceQueryOrderResultData', status?: string | null } | null } | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -601,6 +701,57 @@ export function useAddWatchedAddressMutation(baseOptions?: Apollo.MutationHookOp
 export type AddWatchedAddressMutationHookResult = ReturnType<typeof useAddWatchedAddressMutation>;
 export type AddWatchedAddressMutationResult = Apollo.MutationResult<AddWatchedAddressMutation>;
 export type AddWatchedAddressMutationOptions = Apollo.BaseMutationOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
+export const CreateBinanceOrderDocument = gql`
+    mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: String!) {
+  createBinanceOrder(
+    assetId: $assetId
+    userId: $userId
+    orderAmount: $orderAmount
+  ) {
+    code
+    errorMessage
+    status
+    data {
+      prepayId
+      terminalType
+      expireTime
+      qrcodeLink
+      qrContent
+      checkoutUrl
+      deeplink
+      universalUrl
+    }
+  }
+}
+    `;
+export type CreateBinanceOrderMutationFn = Apollo.MutationFunction<CreateBinanceOrderMutation, CreateBinanceOrderMutationVariables>;
+
+/**
+ * __useCreateBinanceOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateBinanceOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBinanceOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBinanceOrderMutation, { data, loading, error }] = useCreateBinanceOrderMutation({
+ *   variables: {
+ *      assetId: // value for 'assetId'
+ *      userId: // value for 'userId'
+ *      orderAmount: // value for 'orderAmount'
+ *   },
+ * });
+ */
+export function useCreateBinanceOrderMutation(baseOptions?: Apollo.MutationHookOptions<CreateBinanceOrderMutation, CreateBinanceOrderMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBinanceOrderMutation, CreateBinanceOrderMutationVariables>(CreateBinanceOrderDocument, options);
+      }
+export type CreateBinanceOrderMutationHookResult = ReturnType<typeof useCreateBinanceOrderMutation>;
+export type CreateBinanceOrderMutationResult = Apollo.MutationResult<CreateBinanceOrderMutation>;
+export type CreateBinanceOrderMutationOptions = Apollo.BaseMutationOptions<CreateBinanceOrderMutation, CreateBinanceOrderMutationVariables>;
 export const RemoveWatchedAddressDocument = gql`
     mutation RemoveWatchedAddress($watchedAddressId: ID!) {
   removeWatchedAddress(watchedAddressId: $watchedAddressId)
@@ -959,6 +1110,44 @@ export function useGetPaymentMethodsLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetPaymentMethodsQueryHookResult = ReturnType<typeof useGetPaymentMethodsQuery>;
 export type GetPaymentMethodsLazyQueryHookResult = ReturnType<typeof useGetPaymentMethodsLazyQuery>;
 export type GetPaymentMethodsQueryResult = Apollo.QueryResult<GetPaymentMethodsQuery, GetPaymentMethodsQueryVariables>;
+export const QueryBinanceOrderDocument = gql`
+    query queryBinanceOrder($prepayId: String!) {
+  queryBinanceOrder(prepayId: $prepayId) {
+    status
+    data {
+      status
+    }
+  }
+}
+    `;
+
+/**
+ * __useQueryBinanceOrderQuery__
+ *
+ * To run a query within a React component, call `useQueryBinanceOrderQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQueryBinanceOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryBinanceOrderQuery({
+ *   variables: {
+ *      prepayId: // value for 'prepayId'
+ *   },
+ * });
+ */
+export function useQueryBinanceOrderQuery(baseOptions: Apollo.QueryHookOptions<QueryBinanceOrderQuery, QueryBinanceOrderQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<QueryBinanceOrderQuery, QueryBinanceOrderQueryVariables>(QueryBinanceOrderDocument, options);
+      }
+export function useQueryBinanceOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<QueryBinanceOrderQuery, QueryBinanceOrderQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<QueryBinanceOrderQuery, QueryBinanceOrderQueryVariables>(QueryBinanceOrderDocument, options);
+        }
+export type QueryBinanceOrderQueryHookResult = ReturnType<typeof useQueryBinanceOrderQuery>;
+export type QueryBinanceOrderLazyQueryHookResult = ReturnType<typeof useQueryBinanceOrderLazyQuery>;
+export type QueryBinanceOrderQueryResult = Apollo.QueryResult<QueryBinanceOrderQuery, QueryBinanceOrderQueryVariables>;
 export const SearchAssetsDocument = gql`
     query SearchAssets($query: String) {
   searchAssetsForOrganization(query: $query) {

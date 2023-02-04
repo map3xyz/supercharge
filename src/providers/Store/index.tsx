@@ -10,10 +10,11 @@ export enum Steps {
   'PaymentMethod' = 2,
   'SwitchChain' = 3,
   'EnterAmount' = 4,
-  'WalletConnect' = 5,
-  'ConfirmRequiredAmount' = 6,
-  'ShowAddress' = 7,
-  'Result' = 8,
+  'BinancePay' = 5,
+  'WalletConnect' = 6,
+  'ConfirmRequiredAmount' = 7,
+  'ShowAddress' = 8,
+  'Result' = 9,
   __LENGTH,
 }
 
@@ -97,6 +98,7 @@ type State = {
     step: number;
     steps: (keyof typeof TxSteps)[];
   };
+  userId: string;
 };
 
 type Action =
@@ -226,6 +228,7 @@ const initialState: State = {
     step: 0,
     steps: ['Submitted', 'Confirming', 'Confirmed'],
   },
+  userId: '',
 };
 
 export const Store: React.FC<
@@ -258,6 +261,7 @@ export const Store: React.FC<
     onFailure?: (error: string, networkCode: string, address?: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     theme?: 'dark' | 'light';
+    userId: string;
   }>
 > = ({
   amount,
@@ -272,6 +276,7 @@ export const Store: React.FC<
   onFailure,
   onSuccess,
   theme,
+  userId,
 }) => {
   let step = 0;
 
@@ -512,6 +517,7 @@ export const Store: React.FC<
       requiredAmount,
       step,
       theme,
+      userId,
     }
   );
 
