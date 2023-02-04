@@ -26,6 +26,7 @@ export interface Map3InitConfig {
     onClose?: () => void;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
+    paymentMethod?: 'binance-pay' | 'show-address';
     rainbowRoad?: boolean;
     theme?: 'dark' | 'light';
     userId: string;
