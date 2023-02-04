@@ -6,7 +6,10 @@ import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
-import { useGetPaymentMethodsQuery } from '../../generated/apollo-gql';
+import {
+  PaymentMethod,
+  useGetPaymentMethodsQuery,
+} from '../../generated/apollo-gql';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
@@ -20,12 +23,125 @@ const PaymentMethod: React.FC<Props> = () => {
     variables: { chainId },
   });
 
+  const selectMethod = (method: PaymentMethod) => {
+    if (!method.flags?.enabled) {
+      return;
+    }
+    dispatch({
+      payload: method,
+      type: 'SET_PAYMENT_METHOD',
+    });
+    if (method.value === 'show-address') {
+      if (state.requiredAmount) {
+        dispatch({
+          payload: [
+            'AssetSelection',
+            'NetworkSelection',
+            'PaymentMethod',
+            'ConfirmRequiredAmount',
+            'ShowAddress',
+            'Result',
+          ],
+          type: 'SET_STEPS',
+        });
+        dispatch({
+          payload: Steps.ConfirmRequiredAmount,
+          type: 'SET_STEP',
+        });
+      } else {
+        dispatch({
+          payload: [
+            'AssetSelection',
+            'NetworkSelection',
+            'PaymentMethod',
+            'ShowAddress',
+            'Result',
+          ],
+          type: 'SET_STEPS',
+        });
+        dispatch({
+          payload: Steps.ShowAddress,
+          type: 'SET_STEP',
+        });
+      }
+    } else if (method.value === 'binance-pay') {
+      dispatch({
+        payload: [
+          'AssetSelection',
+          'NetworkSelection',
+          'PaymentMethod',
+          'EnterAmount',
+          'BinancePay',
+          'Result',
+        ],
+        type: 'SET_STEPS',
+      });
+      dispatch({
+        payload: Steps.EnterAmount,
+        type: 'SET_STEP',
+      });
+    } else if (method.value === 'isWalletConnect') {
+      dispatch({
+        payload: [
+          'AssetSelection',
+          'NetworkSelection',
+          'PaymentMethod',
+          'WalletConnect',
+          'EnterAmount',
+          'Result',
+        ],
+        type: 'SET_STEPS',
+      });
+      dispatch({
+        payload: Steps.WalletConnect,
+        type: 'SET_STEP',
+      });
+    } else {
+      dispatch({
+        payload: [
+          'AssetSelection',
+          'NetworkSelection',
+          'PaymentMethod',
+          'EnterAmount',
+          'Result',
+        ],
+        type: 'SET_STEPS',
+      });
+      dispatch({
+        payload: Steps.EnterAmount,
+        type: 'SET_STEP',
+      });
+    }
+  };
+
   useEffect(() => {
     state.provider?.data?.off?.('network');
     dispatch({ type: 'SET_ACCOUNT_IDLE' });
     dispatch({ type: 'SET_PROVIDER_IDLE' });
     dispatch({ payload: undefined, type: 'SET_PROVIDER_CHAIN_ID' });
   }, []);
+
+  useEffect(() => {
+    const method = data?.methodsForNetwork?.find(
+      (method) => method?.value === state.requiredPaymentMethod
+    );
+    if (state.requiredPaymentMethod && method) {
+      // @ts-ignore
+      if (state.prevStep >= state.steps.indexOf(Steps[Steps.PaymentMethod])) {
+        dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+      } else {
+        selectMethod(method);
+      }
+    }
+  }, [data?.methodsForNetwork?.length]);
+
+  if (
+    state.requiredPaymentMethod &&
+    data?.methodsForNetwork?.find(
+      (method) => method?.value === state.requiredPaymentMethod
+    )
+  )
+    return null;
 
   if (!state.asset || !state.network) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
@@ -164,96 +280,7 @@ const PaymentMethod: React.FC<Props> = () => {
                       : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
                   }`}
                   key={method.name + '-' + method.value}
-                  onClick={() => {
-                    if (!method.flags?.enabled) {
-                      return;
-                    }
-                    dispatch({
-                      payload: method,
-                      type: 'SET_PAYMENT_METHOD',
-                    });
-                    if (method.value === 'show-address') {
-                      if (state.requiredAmount) {
-                        dispatch({
-                          payload: [
-                            'AssetSelection',
-                            'NetworkSelection',
-                            'PaymentMethod',
-                            'ConfirmRequiredAmount',
-                            'ShowAddress',
-                            'Result',
-                          ],
-                          type: 'SET_STEPS',
-                        });
-                        dispatch({
-                          payload: Steps.ConfirmRequiredAmount,
-                          type: 'SET_STEP',
-                        });
-                      } else {
-                        dispatch({
-                          payload: [
-                            'AssetSelection',
-                            'NetworkSelection',
-                            'PaymentMethod',
-                            'ShowAddress',
-                            'Result',
-                          ],
-                          type: 'SET_STEPS',
-                        });
-                        dispatch({
-                          payload: Steps.ShowAddress,
-                          type: 'SET_STEP',
-                        });
-                      }
-                    } else if (method.value === 'binance-pay') {
-                      dispatch({
-                        payload: [
-                          'AssetSelection',
-                          'NetworkSelection',
-                          'PaymentMethod',
-                          'EnterAmount',
-                          'BinancePay',
-                          'Result',
-                        ],
-                        type: 'SET_STEPS',
-                      });
-                      dispatch({
-                        payload: Steps.EnterAmount,
-                        type: 'SET_STEP',
-                      });
-                    } else if (method.value === 'isWalletConnect') {
-                      dispatch({
-                        payload: [
-                          'AssetSelection',
-                          'NetworkSelection',
-                          'PaymentMethod',
-                          'WalletConnect',
-                          'EnterAmount',
-                          'Result',
-                        ],
-                        type: 'SET_STEPS',
-                      });
-                      dispatch({
-                        payload: Steps.WalletConnect,
-                        type: 'SET_STEP',
-                      });
-                    } else {
-                      dispatch({
-                        payload: [
-                          'AssetSelection',
-                          'NetworkSelection',
-                          'PaymentMethod',
-                          'EnterAmount',
-                          'Result',
-                        ],
-                        type: 'SET_STEPS',
-                      });
-                      dispatch({
-                        payload: Steps.EnterAmount,
-                        type: 'SET_STEP',
-                      });
-                    }
-                  }}
+                  onClick={() => selectMethod(method)}
                   role="button"
                 >
                   <div className="flex items-center gap-2">

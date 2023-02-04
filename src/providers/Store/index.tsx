@@ -79,6 +79,7 @@ type State = {
   };
   providerChainId?: number;
   requiredAmount?: string;
+  requiredPaymentMethod?: 'binance-pay' | 'show-address';
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
@@ -260,6 +261,7 @@ export const Store: React.FC<
     network?: Network;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
+    paymentMethod?: 'binance-pay' | 'show-address';
     theme?: 'dark' | 'light';
     userId: string;
   }>
@@ -275,6 +277,7 @@ export const Store: React.FC<
   network,
   onFailure,
   onSuccess,
+  paymentMethod,
   theme,
   userId,
 }) => {
@@ -292,6 +295,8 @@ export const Store: React.FC<
   if (amount && asset?.decimals) {
     requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
   }
+
+  const requiredPaymentMethod = paymentMethod;
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
@@ -515,6 +520,7 @@ export const Store: React.FC<
       fiat,
       network,
       requiredAmount,
+      requiredPaymentMethod,
       step,
       theme,
       userId,

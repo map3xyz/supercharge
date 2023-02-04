@@ -18,6 +18,7 @@ root.render(
               address: '0x67ef9a8d7f4ed931ac63e873b75d8f8dea64cdb2',
             };
           },
+          paymentMethod: 'binance-pay',
           theme: 'dark',
           userId: 'preview-user-id',
         });
