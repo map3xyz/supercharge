@@ -43,16 +43,6 @@ const PaymentMethod: React.FC<Props> = () => {
     );
 
   const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
-    const searchMatch = formValue?.get('method-search')
-      ? method?.name
-          ?.toLowerCase()
-          .includes(
-            (formValue.get('method-search') as string)?.toLowerCase() || ''
-          )
-      : true;
-
-    if (!searchMatch) return false;
-
     const supportsChain =
       method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
       method?.walletConnect?.chains?.length === 0;
@@ -95,8 +85,20 @@ const PaymentMethod: React.FC<Props> = () => {
     );
   });
 
+  const methodsForSearch = methodsForNetwork?.filter((method) => {
+    const searchMatch = formValue?.get('method-search')
+      ? method?.name
+          ?.toLowerCase()
+          .includes(
+            (formValue.get('method-search') as string)?.toLowerCase() || ''
+          )
+      : true;
+
+    return searchMatch;
+  });
+
   const isEmptySearch =
-    methodsForNetwork?.length === 0 && !!formValue?.get('method-search');
+    methodsForSearch?.length === 0 && !!formValue?.get('method-search');
 
   return (
     <div className="flex h-full flex-col">
@@ -153,7 +155,7 @@ const PaymentMethod: React.FC<Props> = () => {
               }}
             />
           ) : (
-            methodsForNetwork?.map((method) =>
+            methodsForSearch?.map((method) =>
               method ? (
                 <div
                   className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${

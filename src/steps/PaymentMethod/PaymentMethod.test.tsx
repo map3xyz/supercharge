@@ -46,6 +46,12 @@ describe('Payment Selection', () => {
       expect(rainbow).not.toBeInTheDocument();
       await act(async () => {
         fireEvent.change(searchInput, {
+          target: { value: '' },
+        });
+      });
+      expect(await screen.findByText('Rainbow')).toBeInTheDocument();
+      await act(async () => {
+        fireEvent.change(searchInput, {
           target: { value: 'superduperwallet' },
         });
       });
