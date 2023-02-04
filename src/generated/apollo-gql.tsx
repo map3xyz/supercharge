@@ -24,6 +24,7 @@ export type Asset = {
   logo?: Maybe<Logo>;
   name?: Maybe<Scalars['String']>;
   networkCode?: Maybe<Scalars['String']>;
+  networkName?: Maybe<Scalars['String']>;
   networks?: Maybe<Array<Maybe<Network>>>;
   symbol?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
@@ -53,6 +54,8 @@ export type BinancePayTokensData = {
   __typename?: 'BinancePayTokensData';
   apiKey?: Maybe<Scalars['String']>;
   apiSecret?: Maybe<Scalars['String']>;
+  cancelUrl?: Maybe<Scalars['String']>;
+  returnUrl?: Maybe<Scalars['String']>;
 };
 
 export type BinanceQueryOrderResult = {
@@ -151,6 +154,7 @@ export type Mutation = {
   prepareBridgeQuote?: Maybe<BridgeQuote>;
   removeWatchedAddress?: Maybe<Scalars['ID']>;
   subscribeToBridgeTransaction?: Maybe<Scalars['String']>;
+  updateBinancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
 };
 
@@ -165,7 +169,7 @@ export type MutationAddWatchedAddressArgs = {
 
 export type MutationCreateBinanceOrderArgs = {
   assetId: Scalars['String'];
-  orderAmount: Scalars['Float'];
+  orderAmount: Scalars['String'];
   userId: Scalars['String'];
 };
 
@@ -173,6 +177,8 @@ export type MutationCreateBinanceOrderArgs = {
 export type MutationCreateBinancePayTokensForOrganizationArgs = {
   apiKey: Scalars['String'];
   apiSecret: Scalars['String'];
+  cancelUrl: Scalars['String'];
+  returnUrl: Scalars['String'];
 };
 
 
@@ -205,6 +211,12 @@ export type MutationRemoveWatchedAddressArgs = {
 
 export type MutationSubscribeToBridgeTransactionArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationUpdateBinancePayTokensForOrganizationArgs = {
+  cancelUrl: Scalars['String'];
+  returnUrl: Scalars['String'];
 };
 
 
@@ -518,7 +530,7 @@ export type AddWatchedAddressMutation = { __typename?: 'Mutation', addWatchedAdd
 export type CreateBinanceOrderMutationVariables = Exact<{
   assetId: Scalars['String'];
   userId: Scalars['String'];
-  orderAmount: Scalars['Float'];
+  orderAmount: Scalars['String'];
 }>;
 
 
@@ -690,7 +702,7 @@ export type AddWatchedAddressMutationHookResult = ReturnType<typeof useAddWatche
 export type AddWatchedAddressMutationResult = Apollo.MutationResult<AddWatchedAddressMutation>;
 export type AddWatchedAddressMutationOptions = Apollo.BaseMutationOptions<AddWatchedAddressMutation, AddWatchedAddressMutationVariables>;
 export const CreateBinanceOrderDocument = gql`
-    mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: Float!) {
+    mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: String!) {
   createBinanceOrder(
     assetId: $assetId
     userId: $userId

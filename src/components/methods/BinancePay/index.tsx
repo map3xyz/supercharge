@@ -20,7 +20,7 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
       const { data } = await createBinanceOrder({
         variables: {
           assetId: state.asset!.id!,
-          orderAmount: Number(amount),
+          orderAmount: amount,
           userId: state.userId,
         },
       });

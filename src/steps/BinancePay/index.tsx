@@ -45,10 +45,13 @@ const BinancePay: React.FC<Props> = () => {
   };
 
   const run = async () => {
+    if (!state.asset || !state.tx.amount || !state.userId) {
+      return;
+    }
     await createBinanceOrder({
       variables: {
         assetId: state.asset!.id!,
-        orderAmount: Number(state.tx.amount),
+        orderAmount: state.tx.amount,
         userId: state.userId,
       },
     });

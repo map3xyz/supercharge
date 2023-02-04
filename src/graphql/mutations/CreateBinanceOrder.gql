@@ -1,4 +1,4 @@
-mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: Float!) {
+mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: String!) {
   createBinanceOrder(assetId: $assetId, userId: $userId, orderAmount: $orderAmount) {
     code
     errorMessage
