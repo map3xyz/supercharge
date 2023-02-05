@@ -1,6 +1,7 @@
 import { Badge, Input } from '@map3xyz/components';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -14,6 +15,7 @@ import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
+  const { t } = useTranslation();
   const [state, dispatch] = useContext(Context);
   const [formValue, setFormValue] = useState<FormData>();
   const formRef = useRef<HTMLFormElement>(null);
@@ -148,12 +150,19 @@ const PaymentMethod: React.FC<Props> = () => {
     return null;
   }
 
-  if (loading) return <LoadingWrapper message="Fetching Payment Methods..." />;
+  if (loading)
+    return (
+      <LoadingWrapper
+        message={
+          t('copy.fetching_payment_methods') || 'Fetching Payment Methods...'
+        }
+      />
+    );
   if (error)
     return (
       <ErrorWrapper
-        description="We couldn't get a list of payment methods to select."
-        header="Error Fetching Payment Methods"
+        description={t('copy.error_fetching_payment_methods')}
+        header={t('title.error_fetching_payment_methods')}
         retry={refetch}
       />
     );

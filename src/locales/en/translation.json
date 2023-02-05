@@ -5,6 +5,7 @@
       "confirm_amount": "Confirm Amount",
       "error_fetching_assets": "Error Fetching Assets",
       "error_fetching_networks": "Error Fetching Networks",
+      "error_fetching_payment_methods": "Error Fetching Payment Methods",
       "no_assets_found": "No Assets Found",
       "pay_via_binance": "Pay via Binance",
       "select_network": "Select Network"
@@ -14,13 +15,22 @@
       "creating_order": "Creating Order...",
       "error_fetching_assets": "We couldn't get a list of assets to select.",
       "error_fetching_networks": "We couldn't get a list of networks to select.",
+      "error_fetching_payment_methods": "We couldn't get a list of payment methods to select.",
       "fetching_networks": "Fetching Networks...",
+      "fetching_payment_methods": "Fetching Payment Methods...",
       "monitoring_for_deposits": "Monitoring for deposits",
+      "loading": "Loading...",
       "no_assets_found": "We couldn't find any assets that matched your search.",
+      "no_pricing_available": "No pricing available for this asset.",
       "pay_on_binance_com": "Pay on Binance.com",
       "scan_binance_qr_code": "Scan the QR code with the Binance app to pay.",
       "search_for_an_asset": "Search for an asset...",
+      "send": "Send",
+      "via": "via",
       "select_asset": "Select Asset"
+    },
+    "button": {
+      "pay_via_binance": "Pay via Binance"
     }
   }
 }

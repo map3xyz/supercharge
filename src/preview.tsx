@@ -10,8 +10,8 @@ root.render(
     <button
       onClick={() => {
         const supercharge = initMap3Supercharge({
-          amount: '1000000000000000000',
           anonKey: process.env.CONSOLE_ANON_KEY || '',
+          assetId: '53adbb94-6a68-4eeb-af49-6b6d9e84a1f4',
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -20,7 +20,7 @@ root.render(
             };
           },
           locale: 'es',
-          networkCode: 'ethereum',
+          paymentMethod: 'binance-pay',
           theme: 'dark',
           userId: 'preview-user-id',
         });

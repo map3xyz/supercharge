@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
+import { useTranslation } from 'react-i18next';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
@@ -27,6 +28,7 @@ const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 export const DOWNLOAD_EXTENSION = 'Download Extension';
 
 const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
+  const { t } = useTranslation();
   const [state, dispatch] = useContext(Context);
   const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
@@ -451,9 +453,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   </div>
                 </>
               ) : (
-                <Badge color="yellow">
-                  No pricing available for this asset.
-                </Badge>
+                <Badge color="yellow">{t('copy.no_pricing_available')}</Badge>
               )}
             </div>
           </div>
@@ -577,6 +577,7 @@ const EnterAmount: React.FC<Props> = () => {
       currency: state.fiat,
     },
   });
+  const { t } = useTranslation();
 
   if (!state.asset || !state.network || !state.method) {
     dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
@@ -590,19 +591,23 @@ const EnterAmount: React.FC<Props> = () => {
           className="text-lg font-semibold dark:text-white"
           data-testid="enter-amount"
         >
-          Enter Amount
+          {t('title.enter_amount')}
         </h3>
       </InnerWrapper>
       <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-        Send {/* @ts-ignore */}
+        {t('copy.send')} {/* @ts-ignore */}
         <Badge color="blue" size="large">
           {state.requiredAmount} {state.asset.symbol || ''}
         </Badge>{' '}
-        on the {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {state.network.networkName || ''}
-        </Badge>{' '}
-        via {/* @ts-ignore */}
+        {state.method.value === 'binance-pay' ? null : (
+          <>
+            on the {/* @ts-ignore */}
+            <Badge color="blue" size="large">
+              {state.network.networkName || ''}
+            </Badge>{' '}
+          </>
+        )}
+        {t('copy.via')} {/* @ts-ignore */}
         <Badge
           color={
             state.account.status === 'loading' ||
