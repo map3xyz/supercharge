@@ -19,6 +19,9 @@ export const useDepositAddress = () => {
         return state.depositAddress.data;
       }
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
+      if (typeof generateDepositAddress !== 'function') {
+        throw new Error(NO_ADDRESS);
+      }
       const { address, memo } = await generateDepositAddress(
         state.asset?.symbol as string,
         state.network?.networkCode as string

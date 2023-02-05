@@ -251,7 +251,7 @@ export const Store: React.FC<
       width?: string;
     };
     fiat?: string;
-    generateDepositAddress: (
+    generateDepositAddress?: (
       asset?: string,
       network?: string,
       memoEnabled?: boolean
@@ -550,7 +550,7 @@ export const Context = createContext<
         network: string,
         amount: string
       ) => Promise<Boolean>;
-      generateDepositAddress: (
+      generateDepositAddress?: (
         asset?: string,
         network?: string,
         memoEnabled?: boolean
