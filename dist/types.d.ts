@@ -15,7 +15,7 @@ export interface Map3InitConfig {
         width?: string;
     };
     fiat?: string;
-    generateDepositAddress: (asset?: string, network?: string) => Promise<{
+    generateDepositAddress?: (asset?: string, network?: string) => Promise<{
         address: string;
         memo?: string;
     }> | {
