@@ -14,7 +14,7 @@ import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
   const [formValue, setFormValue] = useState<FormData>();
   const formRef = useRef<HTMLFormElement>(null);
   const chainId = state.network?.identifiers?.chainId;
@@ -159,6 +159,13 @@ const PaymentMethod: React.FC<Props> = () => {
     );
 
   const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
+    if (
+      method?.value !== 'binance-pay' &&
+      typeof generateDepositAddress !== 'function'
+    ) {
+      return false;
+    }
+
     const supportsChain =
       method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
       method?.walletConnect?.chains?.length === 0;

@@ -25,7 +25,7 @@ export interface Map3InitConfig {
     width?: string;
   };
   fiat?: string;
-  generateDepositAddress: (
+  generateDepositAddress?: (
     asset?: string,
     network?: string
   ) =>
@@ -46,9 +46,6 @@ export class Map3 {
   private config: Map3InitConfig;
 
   constructor(config: Map3InitConfig) {
-    if (!config.generateDepositAddress) {
-      throw new Error('generateDepositAddress is required.');
-    }
     if (!config.anonKey) {
       throw new Error('anonKey is required.');
     }

@@ -67,11 +67,6 @@ describe('Map3Sdk', () => {
       'Warning: networkCode is required when address is provided. Falling back to asset selection.'
     );
   });
-  it('should throw if no generateDepositAddress function is passed', () => {
-    // @ts-expect-error
-    const initFn = () => initMap3Supercharge({});
-    expect(initFn).toThrow('generateDepositAddress is required.');
-  });
   it('should throw if no anonKey is passed', () => {
     const initFn = () =>
       // @ts-expect-error
