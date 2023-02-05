@@ -1,5 +1,6 @@
 import { Badge, Button } from '@map3xyz/components';
 import React, { useContext, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import { Context, Steps } from '../../providers/Store';
@@ -7,6 +8,7 @@ import { Context, Steps } from '../../providers/Store';
 const ConfirmRequiredAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const [acknowledged, setAcknowledged] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -18,32 +20,43 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
       <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
         <InnerWrapper className="!pt-0">
           <h3 className="text-lg font-semibold dark:text-white">
-            Confirm Amount
+            {t('title.confirm_amount')}
           </h3>
         </InnerWrapper>
 
         <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-          Send {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.requiredAmount} {state.asset?.symbol || ''}
-          </Badge>{' '}
-          on the {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network?.networkName || ''}
-          </Badge>
+          <Trans
+            components={{
+              // @ts-ignore
+              badge: <Badge color="blue" size="large" />,
+            }}
+            defaults="Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>"
+            values={{
+              amount: state.requiredAmount,
+              network: state.network?.networkName,
+              symbol: state.asset?.symbol,
+            }}
+          />
         </div>
       </div>
       <InnerWrapper>
         <div className="flex flex-col items-center justify-center dark:text-white">
           <span className="text-lg">🎯</span>
-          <h3 className="text-xl font-semibold">Attention!</h3>
+          <h3 className="text-xl font-semibold">{t('title.attention')}</h3>
           <div className="mt-2 text-center text-sm leading-4">
-            You must send <i>exactly</i>{' '}
-            <b>
-              {state.requiredAmount} {state.asset?.symbol}
-            </b>{' '}
-            on the <b>{state.network?.networkName}</b> or your payment may be
-            delayed, returned or lost.
+            <Trans
+              components={{
+                bold: <b />,
+                italic: <i />,
+              }}
+              defaults="You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be
+            delayed, returned or lost."
+              values={{
+                amount: state.requiredAmount,
+                network: state.network?.networkName,
+                symbol: state.asset?.symbol,
+              }}
+            />
           </div>
         </div>
       </InnerWrapper>
@@ -76,11 +89,17 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               className="text-xs leading-3 text-neutral-400"
               htmlFor="checkbox"
             >
-              By clicking this checkbox I acknowledge I must send exactly{' '}
-              <b>
-                {state.requiredAmount} {state.asset?.symbol}
-              </b>{' '}
-              on the <b>{state.network?.networkName}</b>.
+              <Trans
+                components={{
+                  bold: <b />,
+                }}
+                defaults="By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>."
+                values={{
+                  amount: state.requiredAmount,
+                  network: state.network?.networkName,
+                  symbol: state.asset?.symbol,
+                }}
+              />
             </label>
           </div>
           <Button
@@ -90,7 +109,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
             htmlType="submit"
             type="default"
           >
-            Acknowledge Amount
+            {t('copy.acknowledge_amount')}
           </Button>
         </InnerWrapper>
       </form>

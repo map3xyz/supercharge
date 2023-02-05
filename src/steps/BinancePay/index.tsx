@@ -1,7 +1,8 @@
-import { Badge, Button, Pill } from '@map3xyz/components';
+import { Button, Pill } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import BinanceLogo from 'url:../../assets/binance-pay.png';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -33,6 +34,7 @@ const BinancePay: React.FC<Props> = () => {
   const [isPolling, setIsPolling] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const { width } = useModalSize(ref);
+  const { t } = useTranslation();
 
   const [
     queryBinanceOrder,
@@ -96,41 +98,31 @@ const BinancePay: React.FC<Props> = () => {
     return null;
   }
 
+  if (error) {
+    return (
+      <ErrorWrapper
+        description="We were unable to create your order. Please try again."
+        header="Error Creating Order"
+        retry={run}
+        stacktrace={error.message}
+      />
+    );
+  }
+
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
-        <InnerWrapper className="!pt-0">
-          <h3 className="text-lg font-semibold dark:text-white">
-            Pay via Binance
-          </h3>
-        </InnerWrapper>
-
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-          Send {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.tx.amount} {state.asset?.symbol || ''}
-          </Badge>{' '}
-          on the {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network?.networkName || ''}
-          </Badge>
-        </div>
-      </div>
-      {error ? (
-        <ErrorWrapper
-          description="We were unable to create your order. Please try again."
-          header="Error Creating Order"
-          retry={run}
-          stacktrace={error.message}
-        />
-      ) : null}
+      <InnerWrapper className="!pt-0">
+        <h3 className="text-center text-lg font-semibold dark:text-white">
+          {t('title.pay_via_binance')}
+        </h3>
+      </InnerWrapper>
       {data?.createBinanceOrder?.data?.qrContent ? (
-        <InnerWrapper className="flex h-full flex-col justify-between">
+        <InnerWrapper className="h-full">
           {data?.createBinanceOrder?.data?.qrContent ? (
             <div className="flex h-full flex-col justify-between">
-              <div className="flex w-full flex-col items-center justify-between gap-2 text-sm">
+              <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
                 <div className="mb-2 px-8 text-center text-xs font-bold text-neutral-400">
-                  Scan the QR code with the Binance app to pay.
+                  {t('copy.scan_binance_qr_code')}
                 </div>
                 {isPolling && (
                   <motion.div
@@ -142,7 +134,7 @@ const BinancePay: React.FC<Props> = () => {
                       color="yellow"
                       icon={<i className="fa fa-spinner animate-spin" />}
                     >
-                      Monitoring for deposits.
+                      {t('copy.monitoring_for_deposits')}
                     </Pill>
                   </motion.div>
                 )}
@@ -166,18 +158,15 @@ const BinancePay: React.FC<Props> = () => {
                   }}
                   value={data?.createBinanceOrder?.data?.qrContent}
                 />
-              </div>
-              <div>
-                <div className="mb-1 flex items-center justify-center">
-                  <span className="text-xs font-bold text-neutral-400">Or</span>
-                </div>
                 <a
+                  className="w-full"
                   href={data.createBinanceOrder.data.checkoutUrl!}
                   target="_blank"
                 >
                   <Button block size="medium" type={'default'}>
                     <span className="flex items-center gap-2">
-                      <MethodIcon method={state.method} /> Pay on Binance.com
+                      <MethodIcon method={state.method} />{' '}
+                      {t('copy.pay_on_binance_com')}
                     </span>
                   </Button>
                 </a>
@@ -187,7 +176,9 @@ const BinancePay: React.FC<Props> = () => {
         </InnerWrapper>
       ) : loading ? (
         <InnerWrapper className="h-full">
-          <LoadingWrapper message="Creating Order..." />
+          <LoadingWrapper
+            message={t('copy.creating_order') || 'Creating Order'}
+          />
         </InnerWrapper>
       ) : null}
     </div>

@@ -1,0 +1,12 @@
+{
+  "translation": {
+    "Send <badge>{{symbol}}</badge> on": "Send <badge>{{symbol}}</badge> on",
+    "Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>": "Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>",
+    "You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be delayed, returned or lost.": "You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be delayed, returned or lost.",
+    "By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>.":
+      "By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>.",
+    "copy": {
+      "select_asset": "Elegir activo"
+    }
+  }
+}

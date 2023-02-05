@@ -1,5 +1,6 @@
 import { CoinLogo, Input } from '@map3xyz/components';
 import React, { ChangeEvent, useCallback, useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -17,6 +18,7 @@ const AssetSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const [formValue, setFormValue] = useState<FormData>();
   const [atAssetLimit, setAtAssetLimit] = useState(false);
+  const { t } = useTranslation();
 
   const { data, error, fetchMore, loading, refetch } = useGetAssetsForOrgQuery({
     fetchPolicy: 'network-only',
@@ -39,8 +41,8 @@ const AssetSelection: React.FC<Props> = () => {
   if (error) {
     return (
       <ErrorWrapper
-        description="We couldn't get a list of assets to select."
-        header="Error Fetching Assets"
+        description={t('copy.error_fetching_assets')}
+        header={t('title.error_fetching_assets')}
         retry={() => refetch()}
         stacktrace={JSON.stringify(error)}
       />
@@ -67,7 +69,7 @@ const AssetSelection: React.FC<Props> = () => {
             className="text-lg font-semibold dark:text-white"
             data-testid="select-asset"
           >
-            Select Asset
+            {t('copy.select_asset')}
           </h3>
           {assets?.length && assets.length > 6 ? (
             <form
@@ -84,7 +86,7 @@ const AssetSelection: React.FC<Props> = () => {
                     },
                   })
                 }
-                placeholder="Search for an asset..."
+                placeholder={t('copy.search_for_an_asset') || ''}
                 rounded
               />
             </form>
@@ -97,8 +99,8 @@ const AssetSelection: React.FC<Props> = () => {
             <LoadingWrapper />
           ) : formValue?.get('asset-search') && isEmptySearch ? (
             <ErrorWrapper
-              description="We couldn't find any assets that matched your search."
-              header="No Assets Found"
+              description={t('copy.no_assets_found')}
+              header={t('title.no_assets_found')}
               retry={() =>
                 search({
                   variables: { query: formValue.get('asset-search') as string },
