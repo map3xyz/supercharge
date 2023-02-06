@@ -22,6 +22,7 @@ export interface Map3InitConfig {
         address: string;
         memo?: string;
     };
+    locale?: string;
     networkCode?: string;
     onClose?: () => void;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
