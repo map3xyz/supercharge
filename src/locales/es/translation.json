@@ -7,6 +7,7 @@
     "title": {
       "attention": "Atención!",
       "confirm_amount": "Confirmar Monto",
+      "enter_amount": "Ingresar Monto",
       "error_fetching_assets": "Error Cargando Activos",
       "error_fetching_networks": "Error Cargando Redes",
       "error_fetching_payment_methods": "Error Cargando Métodos de Pago",

@@ -3,6 +3,7 @@
     "title": {
       "attention": "Attention!",
       "confirm_amount": "Confirm Amount",
+      "enter_amount": "Enter Amount",
       "error_fetching_assets": "Error Fetching Assets",
       "error_fetching_networks": "Error Fetching Networks",
       "error_fetching_payment_methods": "Error Fetching Payment Methods",
