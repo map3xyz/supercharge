@@ -1,9 +1,10 @@
+import '../i18n';
+
 import { Modal } from '@map3xyz/components';
 import { motion } from 'framer-motion';
-import i18n from 'i18next';
 import React, { Suspense, useEffect, useState } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
-import { initReactI18next, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import { Map3InitConfig } from '.';
 import AppWithAddressAndNetwork from './App.withAddressAndNetwork';
@@ -11,17 +12,8 @@ import AppWithAssetId from './App.withAssetId';
 import AppWithNetwork from './App.withNetwork';
 import LoadingWrapper from './components/LoadingWrapper';
 import { useWindowSize } from './hooks/useWindowSize';
-import locales from './locales';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
-
-i18n.use(initReactI18next).init({
-  fallbackLng: 'en',
-  interpolation: {
-    escapeValue: false,
-  },
-  resources: locales,
-});
 
 const Layout = ({
   children,
