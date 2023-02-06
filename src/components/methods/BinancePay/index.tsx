@@ -27,8 +27,8 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
         },
       });
 
-      if (data?.createBinanceOrder?.data?.deeplink) {
-        window.location.href = data.createBinanceOrder.data?.deeplink;
+      if (data?.createBinanceOrder?.data?.universalUrl) {
+        window.location.href = data.createBinanceOrder.data?.universalUrl;
       }
     }
   };
