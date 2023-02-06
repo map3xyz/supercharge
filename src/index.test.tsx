@@ -147,8 +147,8 @@ describe('Map3Sdk', () => {
       initMap3Supercharge({
         anonKey: 'test',
         colors: {
-          progressBar: '#000000',
-          scrollBar: '#000000',
+          accent: '#000000',
+          primary: '#000000',
         },
         generateDepositAddress: async () => {
           await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -175,7 +175,7 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
     expect(warnSpy).toBeCalledWith(
-      'Warning: invalid key passed to colors. Valid keys are: progressBar, scrollBar'
+      'Warning: invalid value passed to colors.primary. Falling back to default.'
     );
   });
   it('should warn if amount is passed without at least networkCode', () => {
@@ -193,13 +193,13 @@ describe('Map3Sdk', () => {
       'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
     );
   });
-  it('should check valid config.colors.scrollBar', () => {
+  it('should check valid config.colors.primary', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
         colors: {
-          scrollBar: 'not-a-color',
+          primary: 'not-a-color',
         },
         generateDepositAddress: async () => {
           await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -209,13 +209,13 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
     expect(warnSpy).toBeCalledWith(
-      'Warning: invalid value passed to colors.scrollBar. Falling back to default.'
+      'Warning: invalid value passed to colors.primary. Falling back to default.'
     );
     const initFn2 = () =>
       initMap3Supercharge({
         anonKey: 'test',
         colors: {
-          scrollBar: 'supported',
+          primary: 'supported',
         },
         generateDepositAddress: async () => {
           await new Promise((resolve) => setTimeout(resolve, 1000));

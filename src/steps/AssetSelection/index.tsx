@@ -61,7 +61,7 @@ const AssetSelection: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -109,7 +109,7 @@ const AssetSelection: React.FC<Props> = () => {
             assets?.map((asset) => {
               return (
                 <div
-                  className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800"
+                  className="flex items-center justify-between border-b border-primary-200 px-4 py-3 text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800"
                   key={asset?.name}
                   onClick={() => {
                     dispatch({
@@ -173,7 +173,7 @@ const AssetSelection: React.FC<Props> = () => {
               isEmptySearch ||
               isSearch ? null : atAssetLimit ? null : (
                 <div className="flex w-full items-center justify-center py-2">
-                  <i className="fa fa-gear animate-spin text-neutral-500" />
+                  <i className="fa fa-gear animate-spin text-primary-500" />
                 </div>
               )}
             </InView>

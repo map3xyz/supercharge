@@ -1,23 +1,10 @@
-import React, { useContext, useEffect } from 'react';
-
-import { Context } from '../../providers/Store';
+import React from 'react';
 
 const ProgressBar: React.FC<Props> = ({ progress }) => {
-  const [state] = useContext(Context);
-
-  useEffect(() => {
-    if (state.colors?.progressBar) {
-      const progressBar = document.getElementById('progress-bar');
-      if (progressBar) {
-        progressBar.style.backgroundColor = state.colors.progressBar;
-      }
-    }
-  }, [state.colors?.progressBar]);
-
   return (
-    <div className="relative h-1 w-full rounded-lg bg-neutral-100 dark:bg-neutral-800">
+    <div className="relative h-1 w-full rounded-lg bg-primary-100 dark:bg-primary-800">
       <div
-        className="rainbow-background absolute left-0 h-full rounded-lg bg-orange-600 transition-all duration-150"
+        className="rainbow-background absolute left-0 h-full rounded-lg bg-accent transition-all duration-150"
         data-testid="progress-bar"
         id="progress-bar"
         style={{ width: progress * 100 + '%' }}

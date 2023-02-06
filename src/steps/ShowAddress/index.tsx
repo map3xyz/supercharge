@@ -182,7 +182,7 @@ const ShowAddress: React.FC<Props> = () => {
         {state.depositAddress.status === 'success' &&
           state.depositAddress.data && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-              <div className="px-4 text-center text-xs font-bold text-neutral-400">
+              <div className="px-4 text-center text-xs font-bold text-primary-400">
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
                 {state.network?.networkName} to this address.
               </div>
@@ -225,7 +225,7 @@ const ShowAddress: React.FC<Props> = () => {
               <div className="w-full">
                 {state.requiredAmount ? (
                   <div className="mb-1">
-                    <label className="text-xs text-neutral-500 dark:text-white">
+                    <label className="text-xs text-primary-500 dark:text-white">
                       Amount:
                     </label>
                     <ReadOnlyText
@@ -234,7 +234,7 @@ const ShowAddress: React.FC<Props> = () => {
                     />
                   </div>
                 ) : null}
-                <label className="text-xs text-neutral-500 dark:text-white">
+                <label className="text-xs text-primary-500 dark:text-white">
                   Address:
                 </label>
                 <ReadOnlyText

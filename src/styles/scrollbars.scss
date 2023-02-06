@@ -110,8 +110,7 @@
 
     &.dark {
         .layout-scrollbar::-webkit-scrollbar-thumb {
-        // dark:bg-neutral-900   
-            box-shadow: 0px 0px 0px 100000vh rgb(23 23 23 / var(--tw-bg-opacity));
+            box-shadow: 0px 0px 0px 100000vh var(--bg-primary-900);
         }
     }
 }

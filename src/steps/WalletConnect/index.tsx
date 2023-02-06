@@ -146,13 +146,13 @@ const WalletConnect: React.FC<Props> = () => {
       className="flex h-full flex-col items-center justify-between py-2"
       ref={ref}
     >
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+      <div className="w-full border-y border-primary-200 bg-primary-100 px-4 py-3 leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
         <div>
           <div className="flex items-center gap-2">
             <img className="h-4" src={state.method?.logo || ''} />
             <div className="font-bold">{state.method?.name}</div>
           </div>
-          <div className="text-xs text-neutral-500">
+          <div className="text-xs text-primary-500">
             {state.method?.description}
           </div>
         </div>

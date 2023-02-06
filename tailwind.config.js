@@ -8,6 +8,18 @@ module.exports = {
   plugins: [],
   theme: {
     extend: {
+      colors: {
+        accent: 'var(--accent-color)',
+        primary: {
+          100: 'var(--primary-color-100)',
+          200: 'var(--primary-color-200)',
+          400: 'var(--primary-color-400)',
+          500: 'var(--primary-color-500)',
+          700: 'var(--primary-color-700)',
+          800: 'var(--primary-color-800)',
+          900: 'var(--primary-color-900)',
+        },
+      },
       fontSize: {
         xxs: '.625rem',
       },

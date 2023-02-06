@@ -44,13 +44,13 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
                 });
               }}
             >
-              <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
+              <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
             {state.embed?.id || window.isMap3Hosted ? null : (
               <div>
                 <button aria-label="Close" onClick={onClose}>
-                  <i className="fa fa-close transition-colors duration-75 dark:text-neutral-600 dark:hover:text-neutral-400" />
+                  <i className="fa fa-close transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
                 </button>
               </div>
             )}
@@ -171,11 +171,11 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
           </AnimatePresence>
         </div>
       </>
-      <div className="!mt-0 w-full border-t border-neutral-200 bg-neutral-100 py-2 text-center dark:border-neutral-700 dark:bg-neutral-800">
+      <div className="!mt-0 w-full border-t border-primary-200 bg-primary-100 py-2 text-center dark:border-primary-700 dark:bg-primary-800">
         <div className="flex items-center justify-center">
           <a
             aria-label="Map3.xyz"
-            className="flex gap-1 text-xxs text-neutral-400"
+            className="flex gap-1 text-xxs text-primary-400"
             href="https://map3.xyz"
             target="_blank"
           >

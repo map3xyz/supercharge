@@ -15,14 +15,14 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center justify-between">
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper className="!pt-0">
           <h3 className="text-lg font-semibold dark:text-white">
             Confirm Amount
           </h3>
         </InnerWrapper>
 
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
           Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.requiredAmount} {state.asset?.symbol || ''}
@@ -73,7 +73,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               type="checkbox"
             />
             <label
-              className="text-xs leading-3 text-neutral-400"
+              className="text-xs leading-3 text-primary-400"
               htmlFor="checkbox"
             >
               By clicking this checkbox I acknowledge I must send exactly{' '}

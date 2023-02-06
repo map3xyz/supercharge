@@ -11,6 +11,10 @@ root.render(
       onClick={() => {
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
+          colors: {
+            accent: '#dfff86',
+            primary: '#0e1523',
+          },
           generateDepositAddress: async (_coin, _network) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -19,7 +23,6 @@ root.render(
             };
           },
           paymentMethod: 'binance-pay',
-          theme: 'dark',
           userId: 'preview-user-id',
         });
         supercharge.open();
