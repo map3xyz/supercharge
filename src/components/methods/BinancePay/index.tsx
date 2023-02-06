@@ -9,7 +9,7 @@ import MethodIcon from '../../MethodIcon';
 
 const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
   const { t } = useTranslation();
-  const [state] = useContext(Context);
+  const [state, _dispatch, { onOrderCreated }] = useContext(Context);
   const [
     createBinanceOrder,
     { error, loading },
@@ -26,6 +26,10 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
           userId: state.userId,
         },
       });
+
+      if (data?.createBinanceOrder?.map3OrderId) {
+        onOrderCreated?.(data?.createBinanceOrder.map3OrderId, 'binance-pay');
+      }
 
       if (data?.createBinanceOrder?.data?.universalUrl) {
         window.location.href = data.createBinanceOrder.data?.universalUrl;

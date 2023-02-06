@@ -2,6 +2,7 @@ mutation CreateBinanceOrder($assetId: String!, $userId: String!, $orderAmount: S
   createBinanceOrder(assetId: $assetId, userId: $userId, orderAmount: $orderAmount) {
     code
     errorMessage
+    map3OrderId
     status
     data {
       prepayId

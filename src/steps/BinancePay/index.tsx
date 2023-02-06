@@ -26,7 +26,7 @@ const BinancePayFinalStatuses = [
 ];
 
 const BinancePay: React.FC<Props> = () => {
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch, { onOrderCreated }] = useContext(Context);
   const [
     createBinanceOrder,
     { data, error, loading },
@@ -50,13 +50,17 @@ const BinancePay: React.FC<Props> = () => {
     if (!state.asset || !state.tx.amount || !state.userId) {
       return;
     }
-    await createBinanceOrder({
+    const { data } = await createBinanceOrder({
       variables: {
         assetId: state.asset!.id!,
         orderAmount: state.tx.amount,
         userId: state.userId,
       },
     });
+
+    if (data?.createBinanceOrder?.map3OrderId) {
+      onOrderCreated?.(data?.createBinanceOrder.map3OrderId, 'binance-pay');
+    }
   };
 
   useEffect(() => {

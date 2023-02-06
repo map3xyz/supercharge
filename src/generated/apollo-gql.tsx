@@ -30,14 +30,6 @@ export type Asset = {
   type?: Maybe<Scalars['String']>;
 };
 
-export type BinanceOrder = {
-  __typename?: 'BinanceOrder';
-  code?: Maybe<Scalars['String']>;
-  data?: Maybe<BinanceOrderData>;
-  errorMessage?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
-};
-
 export type BinanceOrderData = {
   __typename?: 'BinanceOrderData';
   checkoutUrl?: Maybe<Scalars['String']>;
@@ -109,6 +101,15 @@ export type Config = {
   mappedAssetId?: Maybe<Scalars['String']>;
 };
 
+export type CreateBinanceOrderResult = {
+  __typename?: 'CreateBinanceOrderResult';
+  code?: Maybe<Scalars['String']>;
+  data?: Maybe<BinanceOrderData>;
+  errorMessage?: Maybe<Scalars['String']>;
+  map3OrderId?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']>;
+};
+
 export type ExtensionLinks = {
   __typename?: 'ExtensionLinks';
   brave?: Maybe<Scalars['String']>;
@@ -146,8 +147,9 @@ export type Logo = {
 export type Mutation = {
   __typename?: 'Mutation';
   addWatchedAddress?: Maybe<Scalars['ID']>;
-  createBinanceOrder?: Maybe<BinanceOrder>;
+  createBinanceOrder?: Maybe<CreateBinanceOrderResult>;
   createBinancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
+  createConsumerPortalWebhookLink?: Maybe<Scalars['String']>;
   createOrganization?: Maybe<Organization>;
   createSdkConfigForOrganization?: Maybe<SdkConfigField>;
   deleteBinancePayTokensForOrganization?: Maybe<Scalars['String']>;
@@ -534,7 +536,7 @@ export type CreateBinanceOrderMutationVariables = Exact<{
 }>;
 
 
-export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'BinanceOrder', code?: string | null, errorMessage?: string | null, status?: string | null, data?: { __typename?: 'BinanceOrderData', prepayId?: string | null, terminalType?: string | null, expireTime?: string | null, qrcodeLink?: string | null, qrContent?: string | null, checkoutUrl?: string | null, deeplink?: string | null, universalUrl?: string | null } | null } | null };
+export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'CreateBinanceOrderResult', code?: string | null, errorMessage?: string | null, map3OrderId?: string | null, status?: string | null, data?: { __typename?: 'BinanceOrderData', prepayId?: string | null, terminalType?: string | null, expireTime?: string | null, qrcodeLink?: string | null, qrContent?: string | null, checkoutUrl?: string | null, deeplink?: string | null, universalUrl?: string | null } | null } | null };
 
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
@@ -710,6 +712,7 @@ export const CreateBinanceOrderDocument = gql`
   ) {
     code
     errorMessage
+    map3OrderId
     status
     data {
       prepayId

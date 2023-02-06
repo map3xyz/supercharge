@@ -252,6 +252,7 @@ export const Store: React.FC<
       | { address: string; memo?: string };
     network?: Network;
     onFailure?: (error: string, networkCode: string, address?: string) => void;
+    onOrderCreated?: (orderId: string, type: string) => void;
     onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
     paymentMethod?: 'binance-pay' | 'show-address';
     theme?: 'dark' | 'light';
@@ -267,6 +268,7 @@ export const Store: React.FC<
   generateDepositAddress,
   network,
   onFailure,
+  onOrderCreated,
   onSuccess,
   paymentMethod,
   theme,
@@ -522,7 +524,13 @@ export const Store: React.FC<
       value={[
         state,
         dispatch,
-        { authorizeTransaction, generateDepositAddress, onFailure, onSuccess },
+        {
+          authorizeTransaction,
+          generateDepositAddress,
+          onFailure,
+          onOrderCreated,
+          onSuccess,
+        },
       ]}
     >
       {children}
@@ -552,6 +560,7 @@ export const Context = createContext<
         networkCode: string,
         address?: string
       ) => void;
+      onOrderCreated?: (orderId: string, type: string) => void;
       onSuccess?: (
         txHash: string,
         networkCode: string,
@@ -568,6 +577,7 @@ export const Context = createContext<
     generateDepositAddress: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
     onFailure: /* istanbul ignore next */ () => {},
+    onOrderCreated: /* istanbul ignore next */ () => {},
     onSuccess: /* istanbul ignore next */ () => {},
   },
 ]);
