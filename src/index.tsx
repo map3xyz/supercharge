@@ -1,8 +1,12 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
+import { colord, extend } from 'colord';
+import mixPlugin from 'colord/plugins/mix';
 import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
+
+extend([mixPlugin]);
 
 export interface Map3InitConfig {
   address?: string;
@@ -16,8 +20,8 @@ export interface Map3InitConfig {
     amount: string
   ) => Promise<Boolean>;
   colors?: {
-    progressBar?: string;
-    scrollBar?: string;
+    accent?: string;
+    primary?: string;
   };
   embed?: {
     height?: string;
@@ -25,7 +29,7 @@ export interface Map3InitConfig {
     width?: string;
   };
   fiat?: string;
-  generateDepositAddress: (
+  generateDepositAddress?: (
     asset?: string,
     network?: string
   ) =>
@@ -47,9 +51,6 @@ export class Map3 {
   private config: Map3InitConfig;
 
   constructor(config: Map3InitConfig) {
-    if (!config.generateDepositAddress) {
-      throw new Error('generateDepositAddress is required.');
-    }
     if (!config.anonKey) {
       throw new Error('anonKey is required.');
     }
@@ -92,8 +93,30 @@ export class Map3 {
       document.title = config.appName;
     }
 
+    // default colors
+    const shades = {
+      '100': 'rgb(245, 245, 245)',
+      '200': 'rgb(229, 229, 229)',
+      '400': 'rgb(163, 163, 163)',
+      '500': 'rgb(115, 115, 115)',
+      '700': 'rgb(64, 64, 64)',
+      '800': 'rgb(38, 38, 38)',
+      '900': 'rgb(24, 24, 24)',
+    };
+
+    Object.keys(shades).forEach((shade) => {
+      document.body.style.setProperty(
+        `--primary-color-${shade}`,
+        shades[shade as keyof typeof shades]
+      );
+    });
+
+    // orange-600
+    document.body.style.setProperty('--accent-color', 'rgb(234, 88, 12)');
+
+    // theme colors
     if (config.colors) {
-      const validKeys = ['progressBar', 'scrollBar'];
+      const validKeys = ['primary', 'accent'];
       const invalidKeys = Object.keys(config.colors).filter(
         (key) => !validKeys.includes(key)
       );
@@ -103,19 +126,46 @@ export class Map3 {
             ', '
           )}`
         );
+
+        invalidKeys.forEach((key) => {
+          delete config.colors![key as keyof Map3InitConfig['colors']];
+        });
       }
 
-      if (config.colors.scrollBar) {
-        if (CSS.supports('color', config.colors.scrollBar)) {
-          document.body.style.setProperty(
-            '--scrollbar-color',
-            config.colors.scrollBar
-          );
-        } else {
+      Object.keys(config.colors).forEach((key) => {
+        if (
+          !CSS.supports(
+            'color',
+            config.colors![key as keyof Map3InitConfig['colors']]
+          )
+        ) {
           console.warn(
-            `Warning: invalid value passed to colors.scrollBar. Falling back to default.`
+            `Warning: invalid value passed to colors.${key}. Falling back to default.`
           );
+
+          delete config.colors![key as keyof Map3InitConfig['colors']];
         }
+      });
+
+      if (config.colors.accent) {
+        document.body.classList.add('map3-accent');
+        document.body.style.setProperty('--accent-color', config.colors.accent);
+      }
+
+      if (config.colors.primary) {
+        const primaryColor = colord(config.colors.primary);
+
+        if (primaryColor.isDark()) {
+          document.body.classList.add('dark');
+        }
+
+        Object.keys(shades).forEach((shade) => {
+          document.body.style.setProperty(
+            `--primary-color-${shade}`,
+            primaryColor.mix(shades[shade as keyof typeof shades], 0.5).toHex()
+          );
+        });
+      } else {
       }
     }
 

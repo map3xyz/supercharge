@@ -49,14 +49,14 @@ const SwitchChain: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center justify-between">
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper className="!pt-0">
           <h3 className="text-lg font-semibold dark:text-white">
             Switch Chain
           </h3>
         </InnerWrapper>
 
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
           Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.requiredAmount} {state.asset?.symbol || ''}
@@ -96,7 +96,7 @@ const SwitchChain: React.FC<Props> = () => {
         ) : currentChain ? (
           <div className="flex h-full items-start justify-between">
             <div className="flex w-1/2 flex-col items-center justify-center">
-              <div className="mb-2 whitespace-nowrap text-xs text-neutral-400">
+              <div className="mb-2 whitespace-nowrap text-xs text-primary-400">
                 Current Network
               </div>
               <CoinLogo
@@ -111,10 +111,10 @@ const SwitchChain: React.FC<Props> = () => {
               </div>
             </div>
             <div className="flex h-full items-center justify-center">
-              <i className="fa fa-arrow-right text-lg text-neutral-400" />
+              <i className="fa fa-arrow-right text-lg text-primary-400" />
             </div>
             <div className="flex w-1/2 flex-col items-center justify-center">
-              <div className="mb-2 whitespace-nowrap text-xs text-neutral-400">
+              <div className="mb-2 whitespace-nowrap text-xs text-primary-400">
                 Switch to
               </div>
               <CoinLogo

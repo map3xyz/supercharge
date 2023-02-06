@@ -1,4 +1,25 @@
+.map3-accent {
+    .sbui-btn-default {
+        background: var(--accent-color) !important;
+        color: var(--primary-color-900) !important;
+        text-shadow: none !important;
+    }
+
+}
+
+.dark {
+    .map3 {
+        .sbui-modal {
+            background: var(--primary-color-900) !important;
+        }
+    }
+}
+
 .map3 {
+    .sbui-modal {
+        background: white !important;
+    }
+    
     .sbui-modal-content {
         padding: 0 !important;
         height: 100%;
@@ -24,7 +45,6 @@
     .h-full .sbui-modal-content > .sbui-space-row > .sbui-space-col {
         height: inherit !important;
     }
-
 
     @media screen and (min-width: 640px) {
         .sbui-modal-content>.sbui-space-row {

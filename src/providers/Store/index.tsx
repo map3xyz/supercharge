@@ -39,10 +39,6 @@ type State = {
     status: RemoteType;
   };
   asset?: Asset;
-  colors?: {
-    progressBar?: string;
-    scrollBar?: string;
-  };
   depositAddress: {
     data?: { address: string; memo?: string };
     error?: string;
@@ -241,17 +237,13 @@ export const Store: React.FC<
       network: string,
       amount: string
     ) => Promise<Boolean>;
-    colors?: {
-      progressBar?: string;
-      scrollBar?: string;
-    };
     embed?: {
       height?: string;
       id?: string;
       width?: string;
     };
     fiat?: string;
-    generateDepositAddress: (
+    generateDepositAddress?: (
       asset?: string,
       network?: string,
       memoEnabled?: boolean
@@ -270,7 +262,6 @@ export const Store: React.FC<
   asset,
   authorizeTransaction,
   children,
-  colors,
   embed,
   fiat,
   generateDepositAddress,
@@ -515,7 +506,6 @@ export const Store: React.FC<
     {
       ...initialState,
       asset,
-      colors,
       embed,
       fiat,
       network,
@@ -550,7 +540,7 @@ export const Context = createContext<
         network: string,
         amount: string
       ) => Promise<Boolean>;
-      generateDepositAddress: (
+      generateDepositAddress?: (
         asset?: string,
         network?: string,
         memoEnabled?: boolean

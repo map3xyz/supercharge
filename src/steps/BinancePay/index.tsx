@@ -121,7 +121,7 @@ const BinancePay: React.FC<Props> = () => {
           {data?.createBinanceOrder?.data?.qrContent ? (
             <div className="flex h-full flex-col justify-between">
               <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-                <div className="mb-2 px-8 text-center text-xs font-bold text-neutral-400">
+                <div className="mb-2 px-8 text-center text-xs font-bold text-primary-400">
                   {t('copy.scan_binance_qr_code')}
                 </div>
                 {isPolling && (
@@ -158,6 +158,11 @@ const BinancePay: React.FC<Props> = () => {
                   }}
                   value={data?.createBinanceOrder?.data?.qrContent}
                 />
+              </div>
+              <div>
+                <div className="mb-1 flex items-center justify-center">
+                  <span className="text-xs font-bold text-primary-400">Or</span>
+                </div>
                 <a
                   className="w-full"
                   href={data.createBinanceOrder.data.checkoutUrl!}
