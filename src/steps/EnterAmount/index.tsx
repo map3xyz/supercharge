@@ -422,7 +422,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 <span className="text-inherit">{state.asset.symbol}</span>
               ) : null}
             </div>
-            <div className="mt-8 flex items-center justify-center text-neutral-400">
+            <div className="mt-8 flex items-center justify-center text-primary-400">
               {price ? (
                 <>
                   <div className="text-xs">
@@ -593,7 +593,7 @@ const EnterAmount: React.FC<Props> = () => {
           Enter Amount
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+      <div className="w-full border-y border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
         Send {/* @ts-ignore */}
         <Badge color="blue" size="large">
           {state.requiredAmount} {state.asset.symbol || ''}

@@ -98,14 +98,14 @@ const BinancePay: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper className="!pt-0">
           <h3 className="text-lg font-semibold dark:text-white">
             Pay via Binance
           </h3>
         </InnerWrapper>
 
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
           Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.tx.amount} {state.asset?.symbol || ''}
@@ -129,7 +129,7 @@ const BinancePay: React.FC<Props> = () => {
           {data?.createBinanceOrder?.data?.qrContent ? (
             <div className="flex h-full flex-col justify-between">
               <div className="flex w-full flex-col items-center justify-between gap-2 text-sm">
-                <div className="mb-2 px-8 text-center text-xs font-bold text-neutral-400">
+                <div className="mb-2 px-8 text-center text-xs font-bold text-primary-400">
                   Scan the QR code with the Binance app to pay.
                 </div>
                 {isPolling && (
@@ -169,7 +169,7 @@ const BinancePay: React.FC<Props> = () => {
               </div>
               <div>
                 <div className="mb-1 flex items-center justify-center">
-                  <span className="text-xs font-bold text-neutral-400">Or</span>
+                  <span className="text-xs font-bold text-primary-400">Or</span>
                 </div>
                 <a
                   href={data.createBinanceOrder.data.checkoutUrl!}

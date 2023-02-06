@@ -63,8 +63,8 @@ const Result: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center">
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
+        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
           Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.requiredAmount} {state.asset?.symbol || ''}
@@ -150,7 +150,7 @@ const Result: React.FC<Props> = () => {
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (
-                    <div className="text-xs text-neutral-500">
+                    <div className="text-xs text-primary-500">
                       {state.tx.progress[step].data}
                     </div>
                   ) : state.tx.progress[step].status === 'error' ? (
@@ -169,7 +169,7 @@ const Result: React.FC<Props> = () => {
         })}
       </InnerWrapper>
       <InnerWrapper
-        className={`relative border-t border-neutral-200 bg-neutral-100 transition-all dark:border-neutral-700 dark:bg-neutral-800 ${
+        className={`relative border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 ${
           toggleDetails && state.tx.hash
             ? 'h-full'
             : state.tx.hash

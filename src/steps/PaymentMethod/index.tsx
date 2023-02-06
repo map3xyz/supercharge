@@ -225,7 +225,7 @@ const PaymentMethod: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-900">
+      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper className="!pt-0">
           <h3
             className="text-lg font-semibold dark:text-white"
@@ -251,7 +251,7 @@ const PaymentMethod: React.FC<Props> = () => {
           ) : null}
         </InnerWrapper>
 
-        <div className="w-full border-t border-neutral-200 bg-neutral-100 px-4 py-3 font-bold leading-6 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
           Send {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.requiredAmount} {state.asset.symbol || ''}
@@ -281,10 +281,10 @@ const PaymentMethod: React.FC<Props> = () => {
             methodsForSearch?.map((method) =>
               method ? (
                 <div
-                  className={`flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-sm hover:bg-neutral-100 dark:border-neutral-700 hover:dark:bg-neutral-800 ${
+                  className={`flex items-center justify-between border-b border-primary-200 px-4 py-3 text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800 ${
                     method.flags?.enabled
                       ? ''
-                      : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-neutral-900'
+                      : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-primary-900'
                   }`}
                   key={method.name + '-' + method.value}
                   onClick={() => selectMethod(method)}
