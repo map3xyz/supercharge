@@ -6,8 +6,8 @@ export interface Map3InitConfig {
     assetId?: string;
     authorizeTransaction?: (fromAddress: string, network: string, amount: string) => Promise<Boolean>;
     colors?: {
-        progressBar?: string;
-        scrollBar?: string;
+        accent?: string;
+        primary?: string;
     };
     embed?: {
         height?: string;
