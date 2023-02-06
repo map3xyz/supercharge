@@ -153,10 +153,10 @@ const ShowAddress: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col" ref={ref}>
+    <div className="flex h-full flex-col items-center" ref={ref}>
       <InnerWrapper className="!pt-0">
         <h3
-          className="text-lg font-semibold dark:text-white"
+          className="text-center text-lg font-semibold dark:text-white"
           data-testid="show-address-method"
         >
           Pay to Address

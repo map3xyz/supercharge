@@ -1,5 +1,6 @@
 import { Badge, CoinLogo } from '@map3xyz/components';
 import React, { useContext, useEffect } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -9,6 +10,7 @@ import { Context, Steps } from '../../providers/Store';
 
 const NetworkSelection: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const { t } = useTranslation();
 
   const { data, error, loading, refetch } = useGetMappedNetworksForAssetQuery({
     variables: {
@@ -40,13 +42,18 @@ const NetworkSelection: React.FC<Props> = () => {
     return null;
   }
 
-  if (loading) return <LoadingWrapper message="Fetching Networks..." />;
+  if (loading)
+    return (
+      <LoadingWrapper
+        message={t('copy.fetching_networks') || 'Fetching Networks...'}
+      />
+    );
 
   if (error)
     return (
       <ErrorWrapper
-        description="We couldn't get a list of networks to select."
-        header="Error Fetching Networks"
+        description={t('copy.error_fetching_networks')}
+        header={t('title.error_fetching_networks')}
         retry={refetch}
       />
     );
@@ -59,15 +66,20 @@ const NetworkSelection: React.FC<Props> = () => {
             className="text-lg font-semibold dark:text-white"
             data-testid="network-select"
           >
-            Select Network
+            {t('title.select_network')}
           </h3>
         </InnerWrapper>
         <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-          Send{' '}
-          <Badge color="blue" size="large">
-            {state.asset.symbol || ''}
-          </Badge>{' '}
-          on
+          <Trans
+            components={{
+              // @ts-ignore
+              badge: <Badge color="blue" size="large" />,
+            }}
+            defaults="Send <badge>{{symbol}}</badge> on"
+            values={{
+              symbol: state.asset?.symbol,
+            }}
+          />
         </div>
       </div>
       <div className="flex h-full flex-col overflow-hidden">

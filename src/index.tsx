@@ -35,6 +35,7 @@ export interface Map3InitConfig {
   ) =>
     | Promise<{ address: string; memo?: string }>
     | { address: string; memo?: string };
+  locale?: string;
   networkCode?: string;
   onClose?: () => void;
   onFailure?: (error: string, networkCode: string, address?: string) => void;
@@ -64,6 +65,10 @@ export class Map3 {
 
     if (!config.fiat) {
       config.fiat = 'USD';
+    }
+
+    if (!config.locale) {
+      config.locale = 'en';
     }
 
     if (config.address && !config.networkCode) {
