@@ -1,40 +1,40 @@
 {
   "translation": {
-    "Send <badge>{{symbol}}</badge> on": "Send <badge>{{symbol}}</badge> on",
-    "Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>": "Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>",
-    "You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be delayed, returned or lost.": "You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be delayed, returned or lost.",
-    "By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>.": "By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>.",
+    "Send <badge>{{symbol}}</badge> on": "Enviar <badge>{{symbol}}</badge> en",
+    "Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>": "Enviar <badge>{{amount}} {{symbol}}</badge> en la red <badge>{{network}}</badge>",
+    "You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be delayed, returned or lost.": "Debes enviar <italic>exactamente</italic> <bold>{{amount}} {{symbol}}</bold> en la red <bold>{{network}}</bold> o tu pago podría ser dilatado, devuelto o extraviado.",
+    "By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>.": "Acepto que debo enviar exactamente <bold>{{amount}} {{symbol}}</bold> en la red <bold>{state.network?.networkName}</bold>.",
     "title": {
-      "attention": "Attention!",
-      "confirm_amount": "Confirm Amount",
-      "error_fetching_assets": "Error Fetching Assets",
-      "error_fetching_networks": "Error Fetching Networks",
-      "error_fetching_payment_methods": "Error Fetching Payment Methods",
-      "no_assets_found": "No Assets Found",
-      "pay_via_binance": "Pay via Binance",
-      "select_network": "Select Network"
+      "attention": "Atención!",
+      "confirm_amount": "Confirmar Monto",
+      "error_fetching_assets": "Error Cargando Activos",
+      "error_fetching_networks": "Error Cargando Redes",
+      "error_fetching_payment_methods": "Error Cargando Métodos de Pago",
+      "no_assets_found": "No Encontramos esa Crypto",
+      "pay_via_binance": "Pagar con Binance",
+      "select_network": "Selecciona la Red"
     },
     "copy": {
-      "acknowledge_amount": "Acknowledge Amount",
-      "creating_order": "Creating Order...",
-      "error_fetching_assets": "We couldn't get a list of assets to select.",
-      "error_fetching_networks": "We couldn't get a list of networks to select.",
-      "error_fetching_payment_methods": "We couldn't get a list of payment methods to select.",
-      "fetching_networks": "Fetching Networks...",
-      "fetching_payment_methods": "Fetching Payment Methods...",
-      "monitoring_for_deposits": "Monitoring for deposits",
-      "loading": "Loading...",
-      "no_assets_found": "We couldn't find any assets that matched your search.",
-      "no_pricing_available": "No pricing available for this asset.",
-      "pay_on_binance_com": "Pay on Binance.com",
-      "scan_binance_qr_code": "Scan the QR code with the Binance app to pay.",
-      "search_for_an_asset": "Search for an asset...",
-      "send": "Send",
-      "via": "via",
-      "select_asset": "Select Asset"
+      "acknowledge_amount": "Confirma Monto",
+      "creating_order": "Creando Orden...",
+      "error_fetching_assets": "No Pudimos Cargar la Lista de Cryptos.",
+      "error_fetching_networks": "No Pudimos Cargar la Lista de Redes.",
+      "error_fetching_payment_methods": "No Pudimos Cargar los Métodos de Pago.",
+      "fetching_networks": "Cargando Redes...",
+      "fetching_payment_methods": "Cargando Métodos de Pago...",
+      "monitoring_for_deposits": "Verificando Depósitos",
+      "loading": "Cargando...",
+      "no_assets_found": "No Pudimos Encontrar la Crypto que Buscaste.",
+      "no_pricing_available": "No tenemos precio indicativo para esta Crypto.",
+      "pay_on_binance_com": "Pagar con Binance.com",
+      "scan_binance_qr_code": "Escanea el Código QR con el App de Binance Para Pagar.",
+      "search_for_an_asset": "Buscar una Crypto...",
+      "send": "Enviar",
+      "via": "vía",
+      "select_asset": "Selecciona la Crypto"
     },
     "button": {
-      "pay_via_binance": "Pay via Binance"
+      "pay_via_binance": "Pagar con Binance"
     }
   }
 }
