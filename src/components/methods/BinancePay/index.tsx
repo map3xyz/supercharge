@@ -49,7 +49,8 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
 
   return (
     <div className="relative z-40 w-full">
-      <div className="absolute top-[-98px] flex w-full flex-col items-center justify-center gap-1 border-primary-700 pt-2 text-xs font-normal dark:border-t dark:bg-primary-900">
+      {/* WIP */}
+      {/* <div className="absolute top-[-98px] flex w-full flex-col items-center justify-center gap-1 border-primary-700 pt-2 text-xs font-normal dark:border-t dark:bg-primary-900">
         <div className="flex w-full items-center justify-between">
           <div>Fixed Fee:</div>
           <div>3% (0.30 BUSD)</div>
@@ -66,7 +67,7 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
           <div>Total Received:</div>
           <div>99.60 BUSD</div>
         </div>
-      </div>
+      </div> */}
       <Button
         block
         disabled={loading || !!error?.message || amount === '0'}
