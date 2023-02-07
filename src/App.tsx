@@ -11,9 +11,11 @@ import AppWithAddressAndNetwork from './App.withAddressAndNetwork';
 import AppWithAssetId from './App.withAssetId';
 import AppWithNetwork from './App.withNetwork';
 import LoadingWrapper from './components/LoadingWrapper';
+import { useGetOrganizationByIdLazyQuery } from './generated/apollo-gql';
 import { useWindowSize } from './hooks/useWindowSize';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
+import { parseJwt } from './utils/parseJwt';
 
 const Layout = ({
   children,
@@ -76,6 +78,7 @@ const Layout = ({
 
 const App: React.FC<AppProps> = ({ config, onClose }) => {
   const { options } = config;
+  const [getOrganizationById, { data }] = useGetOrganizationByIdLazyQuery();
   const { selection, style } = options || {};
   const { address, assetId, networkCode } = selection || {};
   const { locale } = style || {};
@@ -87,6 +90,15 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
       i18n.changeLanguage(locale);
     }
   }, [locale]);
+
+  useEffect(() => {
+    try {
+      const { org_id } = parseJwt(config.anonKey);
+      getOrganizationById({ variables: { id: org_id } });
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   useEffect(() => {
     setVisible(true);
@@ -111,14 +123,29 @@ const App: React.FC<AppProps> = ({ config, onClose }) => {
       <Layout config={config} handleClose={handleClose} visible={visible}>
         <Suspense fallback={<LoadingWrapper />}>
           {assetId ? (
-            <AppWithAssetId config={config} onClose={handleClose} />
+            <AppWithAssetId
+              config={config}
+              onClose={handleClose}
+              plan={data?.organizationById?.plan}
+            />
           ) : address && networkCode ? (
-            <AppWithAddressAndNetwork config={config} onClose={handleClose} />
+            <AppWithAddressAndNetwork
+              config={config}
+              onClose={handleClose}
+              plan={data?.organizationById?.plan}
+            />
           ) : networkCode ? (
-            <AppWithNetwork config={config} onClose={handleClose} />
+            <AppWithNetwork
+              config={config}
+              onClose={handleClose}
+              plan={data?.organizationById?.plan}
+            />
           ) : (
             <Store {...config}>
-              <Map3SdkSteps onClose={handleClose} />
+              <Map3SdkSteps
+                onClose={handleClose}
+                plan={data?.organizationById?.plan}
+              />
             </Store>
           )}
         </Suspense>
