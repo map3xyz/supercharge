@@ -48,19 +48,40 @@ const BinancePay: React.FC<Props> = ({ amount, setFormError }) => {
   }
 
   return (
-    <Button
-      block
-      disabled={loading || !!error?.message || amount === '0'}
-      htmlType="submit"
-      loading={loading || state.account.status === 'loading'}
-      onClick={handleClick}
-      size="medium"
-      type={'default'}
-    >
-      <span className="flex items-center gap-2">
-        <MethodIcon method={state.method} /> {t('button.pay_via_binance')}
-      </span>
-    </Button>
+    <div className="relative z-40 w-full">
+      {/* WIP */}
+      {/* <div className="absolute top-[-98px] flex w-full flex-col items-center justify-center gap-1 border-primary-700 pt-2 text-xs font-normal dark:border-t dark:bg-primary-900">
+        <div className="flex w-full items-center justify-between">
+          <div>Fixed Fee:</div>
+          <div>3% (0.30 BUSD)</div>
+        </div>
+        <div className="flex w-full items-center justify-between">
+          <div>Variable Fee:</div>
+          <div>1% (0.10 BUSD)</div>
+        </div>
+        <div className="flex w-full items-center justify-between">
+          <div>Total Sent:</div>
+          <div>100.00 BUSD</div>
+        </div>
+        <div className="flex w-full items-center justify-between">
+          <div>Total Received:</div>
+          <div>99.60 BUSD</div>
+        </div>
+      </div> */}
+      <Button
+        block
+        disabled={loading || !!error?.message || amount === '0'}
+        htmlType="submit"
+        loading={loading || state.account.status === 'loading'}
+        onClick={handleClick}
+        size="medium"
+        type={'default'}
+      >
+        <span className="flex items-center gap-2">
+          <MethodIcon method={state.method} /> {t('button.pay_via_binance')}
+        </span>
+      </Button>
+    </div>
   );
 };
 

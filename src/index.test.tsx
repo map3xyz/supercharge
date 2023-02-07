@@ -8,9 +8,13 @@ describe('Map3Sdk', () => {
   it('can be opened and closed', async () => {
     const supercharge = initMap3Supercharge({
       anonKey: 'test',
-      generateDepositAddress: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        return { address: '0x0000000000000000000000000000000000000000' };
+      options: {
+        callbacks: {
+          onAddressRequested: async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return { address: '0x0000000000000000000000000000000000000000' };
+          },
+        },
       },
       userId: 'test',
     });
@@ -27,11 +31,17 @@ describe('Map3Sdk', () => {
   it('should setup dark theme', async () => {
     const supercharge = initMap3Supercharge({
       anonKey: 'test',
-      generateDepositAddress: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        return { address: '0x0000000000000000000000000000000000000000' };
+      options: {
+        callbacks: {
+          onAddressRequested: async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return { address: '0x0000000000000000000000000000000000000000' };
+          },
+        },
+        style: {
+          theme: 'dark',
+        },
       },
-      theme: 'dark',
       userId: 'test',
     });
     await act(async () => {
@@ -43,10 +53,16 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        fiat: 'USD',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x0000000000000000000000000000000000000000' };
+            },
+          },
+          selection: {
+            fiat: 'USD',
+          },
         },
         userId: 'test',
       });
@@ -56,10 +72,13 @@ describe('Map3Sdk', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () =>
       initMap3Supercharge({
-        address: '0x123',
         anonKey: 'test',
-        fiat: 'USD',
-        generateDepositAddress: async () => ({ address: '0x000000' }),
+        options: {
+          selection: {
+            address: '0x123',
+            fiat: 'USD',
+          },
+        },
         userId: 'test',
       });
     expect(initFn).not.toThrow();
@@ -70,12 +89,7 @@ describe('Map3Sdk', () => {
   it('should throw if no anonKey is passed', () => {
     const initFn = () =>
       // @ts-expect-error
-      initMap3Supercharge({
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
-        },
-      });
+      initMap3Supercharge({});
     expect(initFn).toThrow('anonKey is required.');
   });
   it('should throw if no userId is passed', () => {
@@ -83,35 +97,18 @@ describe('Map3Sdk', () => {
       // @ts-expect-error
       initMap3Supercharge({
         anonKey: 'test',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
-        },
       });
     expect(initFn).toThrow('userId is required.');
-  });
-  it('should allow optional rainbowRoad config', () => {
-    const initFn = () =>
-      initMap3Supercharge({
-        anonKey: 'test',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
-        },
-        rainbowRoad: true,
-        userId: 'test',
-      });
-    expect(initFn).not.toThrow();
   });
   it('should allow optional onClose', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          callbacks: {
+            onClose: () => {},
+          },
         },
-        onClose: () => {},
         userId: 'test',
       });
     expect(initFn).not.toThrow();
@@ -120,11 +117,11 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          callbacks: {
+            onFailure: () => {},
+          },
         },
-        onFailure: () => {},
         userId: 'test',
       });
     expect(initFn).not.toThrow();
@@ -133,11 +130,11 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          callbacks: {
+            onSuccess: () => {},
+          },
         },
-        onSuccess: () => {},
         userId: 'test',
       });
     expect(initFn).not.toThrow();
@@ -146,13 +143,13 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        colors: {
-          accent: '#000000',
-          primary: '#000000',
-        },
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          style: {
+            colors: {
+              accent: '#000000',
+              primary: '#000000',
+            },
+          },
         },
         userId: 'test',
       });
@@ -163,13 +160,13 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        colors: {
-          // @ts-expect-error
-          invalidKey: '#000000',
-        },
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          style: {
+            colors: {
+              // @ts-expect-error
+              invalidKey: '#000000',
+            },
+          },
         },
         userId: 'test',
       });
@@ -182,9 +179,15 @@ describe('Map3Sdk', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () => {
       initMap3Supercharge({
-        amount: '100',
         anonKey: 'test',
-        generateDepositAddress: async () => ({ address: '0x000000' }),
+        options: {
+          callbacks: {
+            onAddressRequested: async () => ({ address: '0x000000' }),
+          },
+          selection: {
+            amount: '100',
+          },
+        },
         userId: 'test',
       });
     };
@@ -198,12 +201,12 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        colors: {
-          primary: 'not-a-color',
-        },
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x0000000000000000000000000000000000000000' };
+        options: {
+          style: {
+            colors: {
+              primary: 'not-a-color',
+            },
+          },
         },
         userId: 'test',
       });
@@ -214,12 +217,18 @@ describe('Map3Sdk', () => {
     const initFn2 = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        colors: {
-          primary: 'supported',
-        },
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x000000' };
+        options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
+          style: {
+            colors: {
+              primary: 'supported',
+            },
+          },
         },
         userId: 'test',
       });
@@ -230,10 +239,16 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       initMap3Supercharge({
         anonKey: 'test',
-        appName: 'awesome-app',
-        generateDepositAddress: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          return { address: '0x000000' };
+        options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
+          style: {
+            appName: 'awesome-app',
+          },
         },
         userId: 'test',
       });

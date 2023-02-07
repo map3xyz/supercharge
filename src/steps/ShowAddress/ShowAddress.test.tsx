@@ -37,8 +37,14 @@ describe('Show Address Errors', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async () => {
-            throw new Error('Test Error');
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: async () => {
+                throw new Error('Test Error');
+              },
+            },
           },
         }}
         onClose={() => {}}

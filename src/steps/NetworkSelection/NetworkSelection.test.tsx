@@ -43,8 +43,15 @@ describe('Network Selection', () => {
         <App
           config={{
             ...mockConfig,
-            generateDepositAddress: async () => {
-              return { address: '0x0000000000000000000000000000000000000000' };
+            options: {
+              ...mockConfig.options,
+              callbacks: {
+                onAddressRequested: async () => {
+                  return {
+                    address: '0x0000000000000000000000000000000000000000',
+                  };
+                },
+              },
             },
           }}
           onClose={() => {}}

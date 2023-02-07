@@ -28,7 +28,7 @@ const Layout = ({
 }) => {
   const { minWidth } = useWindowSize();
 
-  if (!config.embed?.id) {
+  if (!config.options?.style?.embed?.id) {
     return (
       <Modal
         className={`${
@@ -46,8 +46,8 @@ const Layout = ({
     );
   }
 
-  const height = config.embed.height || '500px';
-  const width = config.embed.width || '320px';
+  const height = config.options.style.embed.height || '500px';
+  const width = config.options.style.embed.width || '320px';
   const offsetLeft = parseFloat(width) / 2;
   const offsetTop = parseFloat(height) / 2;
 
@@ -58,10 +58,10 @@ const Layout = ({
       exit={{ opacity: 0 }}
       initial={{ opacity: 0, scale: 0.5 }}
       style={{
-        height: config.embed.height || '500px',
+        height: config.options.style.embed.height || '500px',
         left: `-${offsetLeft}px`,
         top: `-${offsetTop}px`,
-        width: config.embed.width || '320px',
+        width: config.options.style.embed.width || '320px',
       }}
       transition={{
         damping: 20,
@@ -75,15 +75,18 @@ const Layout = ({
 };
 
 const App: React.FC<AppProps> = ({ config, onClose }) => {
-  const { address, assetId, networkCode } = config;
+  const { options } = config;
+  const { selection, style } = options || {};
+  const { address, assetId, networkCode } = selection || {};
+  const { locale } = style || {};
   const [visible, setVisible] = useState(false);
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    if (config.locale !== 'en') {
-      i18n.changeLanguage(config.locale);
+    if (locale !== 'en') {
+      i18n.changeLanguage(locale);
     }
-  }, [config.locale]);
+  }, [locale]);
 
   useEffect(() => {
     setVisible(true);
