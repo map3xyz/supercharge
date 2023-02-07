@@ -32,13 +32,20 @@ enabling<br/>cross-chain deposits and increasing volumes.</div>
     <script>
     function openSdk() {
         const supercharge = initMap3Supercharge({
-          theme: 'dark',
           anonKey: '<ANON_KEY>',
-          generateDepositAddress: async (coin, network) => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+          userId: '<USER_ID>',
+          options: {
+            callbacks: {
+              onAddressRequested: async (coin, network) => {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            return {address: '0x0000000000000000000000000000000000000000'};
-          }
+                return {address: '0x0000000000000000000000000000000000000000'};
+              }
+            },
+            style: {
+                theme: 'dark'
+            }
+          },
         })
         supercharge.open()
     }
