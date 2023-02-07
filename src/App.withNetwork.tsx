@@ -4,13 +4,18 @@ import { AppProps } from './App';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import {
+  Organization,
   useGetAssetsForOrgQuery,
   useGetNetworksQuery,
 } from './generated/apollo-gql';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
-const AppWithNetwork: React.FC<AppProps> = ({ config, onClose }) => {
+const AppWithNetwork: React.FC<AppProps & { plan: Organization['plan'] }> = ({
+  config,
+  onClose,
+  plan,
+}) => {
   const { selection } = config.options || {};
   const { networkCode } = selection || {};
 
@@ -44,7 +49,7 @@ const AppWithNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     );
   return (
     <Store {...config} asset={asset} network={network}>
-      <Map3SdkSteps onClose={onClose} />
+      <Map3SdkSteps onClose={onClose} plan={plan} />
     </Store>
   );
 };

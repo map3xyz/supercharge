@@ -5,6 +5,7 @@ import { isMobile, isTablet } from 'react-device-detect';
 
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
+import { Organization } from '../generated/apollo-gql';
 import { useChainWatcher } from '../hooks/useChainWatcher';
 import { Context, Steps } from '../providers/Store';
 import AssetSelection from '../steps/AssetSelection';
@@ -18,9 +19,10 @@ import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
 
-const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
+const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
   const { step, steps } = state;
+  console.log(plan);
 
   useChainWatcher();
 
@@ -171,24 +173,27 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose }) => {
           </AnimatePresence>
         </div>
       </>
-      <div className="!mt-0 w-full border-t border-primary-200 bg-primary-100 py-2 text-center dark:border-primary-700 dark:bg-primary-800">
-        <div className="flex items-center justify-center">
-          <a
-            aria-label="Map3.xyz"
-            className="flex gap-1 text-xxs text-primary-400"
-            href="https://map3.xyz"
-            target="_blank"
-          >
-            Powered by <div className="h-3">{<Logo className="h-3" />}</div>
-          </a>
+      {plan === 'enterprise' ? null : (
+        <div className="!mt-0 w-full border-t border-primary-200 bg-primary-100 py-2 text-center dark:border-primary-700 dark:bg-primary-800">
+          <div className="flex items-center justify-center">
+            <a
+              aria-label="Map3.xyz"
+              className="flex gap-1 text-xxs text-primary-400"
+              href="https://map3.xyz"
+              target="_blank"
+            >
+              Powered by <div className="h-3">{<Logo className="h-3" />}</div>
+            </a>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
 type Props = {
   onClose: () => void;
+  plan: Organization['plan'];
 };
 
 export default Map3SdkSteps;

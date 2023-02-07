@@ -251,6 +251,7 @@ export type Organization = {
   created?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
+  plan?: Maybe<Scalars['String']>;
   updated?: Maybe<Scalars['String']>;
 };
 
@@ -598,6 +599,13 @@ export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null> | null };
+
+export type GetOrganizationByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetOrganizationByIdQuery = { __typename?: 'Query', organizationById?: { __typename?: 'Organization', plan?: string | null } | null };
 
 export type GetPaymentMethodsQueryVariables = Exact<{
   chainId?: InputMaybe<Scalars['Int']>;
@@ -1049,6 +1057,41 @@ export function useGetNetworksLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetNetworksQueryHookResult = ReturnType<typeof useGetNetworksQuery>;
 export type GetNetworksLazyQueryHookResult = ReturnType<typeof useGetNetworksLazyQuery>;
 export type GetNetworksQueryResult = Apollo.QueryResult<GetNetworksQuery, GetNetworksQueryVariables>;
+export const GetOrganizationByIdDocument = gql`
+    query GetOrganizationById($id: ID!) {
+  organizationById(id: $id) {
+    plan
+  }
+}
+    `;
+
+/**
+ * __useGetOrganizationByIdQuery__
+ *
+ * To run a query within a React component, call `useGetOrganizationByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOrganizationByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOrganizationByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetOrganizationByIdQuery(baseOptions: Apollo.QueryHookOptions<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>(GetOrganizationByIdDocument, options);
+      }
+export function useGetOrganizationByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>(GetOrganizationByIdDocument, options);
+        }
+export type GetOrganizationByIdQueryHookResult = ReturnType<typeof useGetOrganizationByIdQuery>;
+export type GetOrganizationByIdLazyQueryHookResult = ReturnType<typeof useGetOrganizationByIdLazyQuery>;
+export type GetOrganizationByIdQueryResult = Apollo.QueryResult<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>;
 export const GetPaymentMethodsDocument = gql`
     query GetPaymentMethods($chainId: Int) {
   methodsForNetwork(chainId: $chainId) {

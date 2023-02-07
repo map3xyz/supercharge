@@ -1,7 +1,7 @@
 export const toHex = (value: number) => {
   if (
     typeof value === 'string' &&
-    (value as unknown as string).startsWith('0x')
+    ((value as unknown) as string).startsWith('0x')
   ) {
     return value;
   }

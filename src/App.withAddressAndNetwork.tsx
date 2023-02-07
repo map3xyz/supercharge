@@ -4,13 +4,16 @@ import { AppProps } from './App';
 import ErrorWrapper from './components/ErrorWrapper';
 import LoadingWrapper from './components/LoadingWrapper';
 import {
+  Organization,
   useGetAssetByAddressAndNetworkCodeQuery,
   useGetNetworksQuery,
 } from './generated/apollo-gql';
 import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
-const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
+const AppWithAddressAndNetwork: React.FC<
+  AppProps & { plan: Organization['plan'] }
+> = ({ config, onClose, plan }) => {
   const { data, error, loading, refetch } = useGetNetworksQuery();
   const { selection } = config.options || {};
   const { address, networkCode } = selection || {};
@@ -44,7 +47,7 @@ const AppWithAddressAndNetwork: React.FC<AppProps> = ({ config, onClose }) => {
     );
   return (
     <Store {...config} asset={asset} network={network}>
-      <Map3SdkSteps onClose={onClose} />
+      <Map3SdkSteps onClose={onClose} plan={plan} />
     </Store>
   );
 };
