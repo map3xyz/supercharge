@@ -16,7 +16,7 @@ import { Context, Steps } from '../../providers/Store';
 
 const PaymentMethod: React.FC<Props> = () => {
   const { t } = useTranslation();
-  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
+  const [state, dispatch, { onAddressRequested }] = useContext(Context);
   const [formValue, setFormValue] = useState<FormData>();
   const formRef = useRef<HTMLFormElement>(null);
   const chainId = state.network?.identifiers?.chainId;
@@ -170,7 +170,7 @@ const PaymentMethod: React.FC<Props> = () => {
   const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
     if (
       method?.value !== 'binance-pay' &&
-      typeof generateDepositAddress !== 'function'
+      typeof onAddressRequested !== 'function'
     ) {
       return false;
     }

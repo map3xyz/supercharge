@@ -68,8 +68,16 @@ describe('WalletConnect', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async (_asset, _network) => {
-            return { address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' };
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: async (_asset, _network) => {
+                return {
+                  address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+                };
+              },
+            },
           },
         }}
         onClose={() => {}}

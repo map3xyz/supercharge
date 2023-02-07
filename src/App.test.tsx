@@ -17,7 +17,13 @@ describe('App', () => {
       <App
         config={{
           ...mockConfig,
-          assetId: 'satoshi123',
+          options: {
+            ...mockConfig.options,
+            selection: {
+              ...mockConfig.options?.selection,
+              assetId: 'satoshi123',
+            },
+          },
         }}
         onClose={() => {}}
       />
@@ -35,8 +41,14 @@ describe('App', () => {
       <App
         config={{
           ...mockConfig,
-          address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
-          networkCode: 'ethereum',
+          options: {
+            ...mockConfig.options,
+            selection: {
+              ...mockConfig.options?.selection,
+              address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
+              networkCode: 'ethereum',
+            },
+          },
         }}
         onClose={() => {}}
       />
@@ -54,7 +66,13 @@ describe('App', () => {
       <App
         config={{
           ...mockConfig,
-          networkCode: 'bitcoin',
+          options: {
+            ...mockConfig.options,
+            selection: {
+              ...mockConfig.options?.selection,
+              networkCode: 'bitcoin',
+            },
+          },
         }}
         onClose={() => {}}
       />
@@ -67,15 +85,20 @@ describe('App', () => {
     const paymentSelection = await screen.findByText('Payment Method');
     expect(paymentSelection).toBeInTheDocument();
   });
-  it('accepts an optional callback `authorizeTransaction`', async () => {
+  it('accepts an optional callback `handleAuthorizeTransaction`', async () => {
     render(
       <App
         config={{
           ...mockConfig,
-          authorizeTransaction: async () => {
-            return true;
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              handleAuthorizeTransaction: async () => {
+                return true;
+              },
+            },
           },
-          rainbowRoad: true,
         }}
         onClose={() => {}}
       />

@@ -44,8 +44,14 @@ describe('Result', () => {
       <App
         config={{
           ...mockConfig,
-          onFailure: onFailureMock,
-          onSuccess: onSuccessMock,
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onFailure: onFailureMock,
+              onSuccess: onSuccessMock,
+            },
+          },
         }}
         onClose={() => {}}
       />

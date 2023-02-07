@@ -11,6 +11,9 @@ import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
 const AppWithNetwork: React.FC<AppProps> = ({ config, onClose }) => {
+  const { selection } = config.options || {};
+  const { networkCode } = selection || {};
+
   const { data, error, loading, refetch } = useGetNetworksQuery();
   const {
     data: assetsData,
@@ -22,11 +25,10 @@ const AppWithNetwork: React.FC<AppProps> = ({ config, onClose }) => {
   if (loading || assetsLoading) return <LoadingWrapper />;
 
   const network = data?.networks?.find(
-    (network) => network?.networkCode === config.networkCode
+    (network) => network?.networkCode === networkCode
   );
   const asset = assetsData?.assetsForOrganization?.find(
-    (asset) =>
-      asset?.networkCode === config.networkCode && asset?.type === 'network'
+    (asset) => asset?.networkCode === networkCode && asset?.type === 'network'
   );
 
   if (error || assetsError || !network || !asset)

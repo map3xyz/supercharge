@@ -11,14 +11,20 @@ root.render(
       onClick={() => {
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
-          assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
-          colors: {
-            accent: '#dfff86',
-            primary: '#0e1523',
+          options: {
+            selection: {
+              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
+              paymentMethod: 'binance-pay',
+            },
+            style: {
+              colors: {
+                accent: '#dfff86',
+                primary: '#0e1523',
+              },
+              locale: 'es',
+              theme: 'dark',
+            },
           },
-          locale: 'es',
-          paymentMethod: 'binance-pay',
-          theme: 'dark',
           userId: 'preview-user-id',
         });
         supercharge.open();

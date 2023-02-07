@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
+import { Map3InitConfig } from '../..';
 import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
 import { PrebuiltTx } from '../../utils/transactions/evm';
 
@@ -229,51 +230,19 @@ const initialState: State = {
 };
 
 export const Store: React.FC<
-  PropsWithChildren<{
-    amount?: string;
-    asset?: Asset;
-    authorizeTransaction?: (
-      fromAddress: string,
-      network: string,
-      amount: string
-    ) => Promise<Boolean>;
-    embed?: {
-      height?: string;
-      id?: string;
-      width?: string;
-    };
-    fiat?: string;
-    generateDepositAddress?: (
-      asset?: string,
-      network?: string,
-      memoEnabled?: boolean
-    ) =>
-      | Promise<{ address: string; memo?: string }>
-      | { address: string; memo?: string };
-    network?: Network;
-    onFailure?: (error: string, networkCode: string, address?: string) => void;
-    onOrderCreated?: (orderId: string, type: string) => void;
-    onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
-    paymentMethod?: 'binance-pay' | 'show-address';
-    theme?: 'dark' | 'light';
-    userId: string;
-  }>
-> = ({
-  amount,
-  asset,
-  authorizeTransaction,
-  children,
-  embed,
-  fiat,
-  generateDepositAddress,
-  network,
-  onFailure,
-  onOrderCreated,
-  onSuccess,
-  paymentMethod,
-  theme,
-  userId,
-}) => {
+  PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
+> = ({ asset, children, network, options, userId }) => {
+  const { callbacks, selection, style } = options || {};
+  const { amount, fiat, paymentMethod } = selection || {};
+  const { embed, theme } = style || {};
+  const {
+    handleAuthorizeTransaction,
+    onAddressRequested,
+    onFailure,
+    onOrderCreated,
+    onSuccess,
+  } = callbacks || {};
+
   let step = 0;
 
   if (asset) {
@@ -525,8 +494,8 @@ export const Store: React.FC<
         state,
         dispatch,
         {
-          authorizeTransaction,
-          generateDepositAddress,
+          handleAuthorizeTransaction,
+          onAddressRequested,
           onFailure,
           onOrderCreated,
           onSuccess,
@@ -543,12 +512,12 @@ export const Context = createContext<
     State,
     React.Dispatch<Action>,
     {
-      authorizeTransaction?: (
+      handleAuthorizeTransaction?: (
         fromAddress: string,
         network: string,
         amount: string
       ) => Promise<Boolean>;
-      generateDepositAddress?: (
+      onAddressRequested?: (
         asset?: string,
         network?: string,
         memoEnabled?: boolean
@@ -572,9 +541,9 @@ export const Context = createContext<
   initialState,
   () => null,
   {
-    authorizeTransaction: /* istanbul ignore next */ () =>
+    handleAuthorizeTransaction: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve(true)),
-    generateDepositAddress: /* istanbul ignore next */ () =>
+    onAddressRequested: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
     onFailure: /* istanbul ignore next */ () => {},
     onOrderCreated: /* istanbul ignore next */ () => {},

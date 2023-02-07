@@ -155,8 +155,14 @@ describe('window.ethereum', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: () => {
-            throw 'Error generating deposit address.';
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: () => {
+                throw 'Error generating deposit address.';
+              },
+            },
           },
         }}
         onClose={() => {}}
@@ -314,11 +320,16 @@ describe('window.ethereum > ERC20', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: () => {
-            return {
-              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-              memo: 'memo',
-            };
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              onAddressRequested: () => {
+                return {
+                  address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+                  memo: 'memo',
+                };
+              },
+            },
           },
         }}
         onClose={() => {}}
@@ -385,8 +396,8 @@ describe('txAuth - Failure', () => {
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
-      authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
+      handleAuthorizeTransactionProxy: mockAuthTransactionProxy,
       sendTransaction: sendTransactionMock,
       waitForTransaction: mockWaitForTransaction,
     }));
@@ -394,15 +405,22 @@ describe('txAuth - Failure', () => {
       <App
         config={{
           ...mockConfig,
-          // @ts-ignore
-          authorizeTransaction: () => {
-            return false;
-          },
-          generateDepositAddress: () => {
-            return {
-              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-              memo: 'memo',
-            };
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              // @ts-ignore
+              handleAuthorizeTransaction: () => {
+                return false;
+              },
+
+              onAddressRequested: () => {
+                return {
+                  address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+                  memo: 'memo',
+                };
+              },
+            },
           },
         }}
         onClose={() => {}}
@@ -470,8 +488,8 @@ describe('txAuth - Success', () => {
   beforeEach(async () => {
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
-      authorizeTransactionProxy: mockAuthTransactionProxy,
       getBalance: getBalanceMock,
+      handleAuthorizeTransactionProxy: mockAuthTransactionProxy,
       sendTransaction: sendTransactionMock,
       waitForTransaction: mockWaitForTransaction,
     }));
@@ -479,15 +497,22 @@ describe('txAuth - Success', () => {
       <App
         config={{
           ...mockConfig,
-          // @ts-ignore
-          authorizeTransaction: () => {
-            return true;
-          },
-          generateDepositAddress: () => {
-            return {
-              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-              memo: 'memo',
-            };
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              // @ts-ignore
+              handleAuthorizeTransaction: () => {
+                return true;
+              },
+
+              onAddressRequested: () => {
+                return {
+                  address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+                  memo: 'memo',
+                };
+              },
+            },
           },
         }}
         onClose={() => {}}
@@ -551,27 +576,33 @@ describe('EnterAmount - MaxLimit', () => {
     // @ts-ignore
     web3MockSpy.mockImplementation(() => ({
       ...web3Mock,
-      authorizeTransactionProxy: mockAuthTransactionProxy,
       estimateGas: jest.fn(() => ethers.BigNumber.from('21000')),
       getBalance: getBalanceMock,
       getFeeData: jest.fn(() => ({
         maxFeePerGas: ethers.BigNumber.from('2000000000'),
         maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'),
       })),
+      handleAuthorizeTransactionProxy: mockAuthTransactionProxy,
       sendTransaction: sendTransactionMock,
     }));
     render(
       <App
         config={{
           ...mockConfig,
-          // @ts-ignore
-          authorizeTransaction: () => {
-            return true;
-          },
-          generateDepositAddress: () => {
-            return {
-              address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
-            };
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              // @ts-ignore
+              handleAuthorizeTransaction: () => {
+                return true;
+              },
+
+              onAddressRequested: () => {
+                return {
+                  address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+                };
+              },
+            },
           },
         }}
         onClose={() => {}}

@@ -9,41 +9,65 @@ import App from './App';
 extend([mixPlugin]);
 
 export interface Map3InitConfig {
-  address?: string;
-  amount?: string;
   anonKey: string;
-  appName?: string;
-  assetId?: string;
-  authorizeTransaction?: (
-    fromAddress: string,
-    network: string,
-    amount: string
-  ) => Promise<Boolean>;
-  colors?: {
-    accent?: string;
-    primary?: string;
+  options?: {
+    callbacks?: {
+      handleAuthorizeTransaction?: (
+        fromAddress: string,
+        network: string,
+        amount: string
+      ) => Promise<Boolean>;
+      handleFeeCalculation?: (
+        asset: string,
+        networkCode: string,
+        amount: string
+      ) => Promise<{
+        fixedFee?: number;
+        message?: string;
+        variableFee?: number;
+      }>;
+      onAddressRequested?: (
+        asset?: string,
+        network?: string
+      ) =>
+        | Promise<{ address: string; memo?: string }>
+        | { address: string; memo?: string };
+      onClose?: () => void;
+      onFailure?: (
+        error: string,
+        networkCode: string,
+        address?: string
+      ) => void;
+      onOrderCreated?: (orderId: string, type: string) => void;
+      onSuccess?: (
+        txHash: string,
+        networkCode: string,
+        address?: string
+      ) => void;
+    };
+    selection?: {
+      address?: string;
+      amount?: string;
+      assetId?: string;
+      fiat?: string;
+      networkCode?: string;
+      paymentMethod?: 'binance-pay';
+    };
+    style?: {
+      appName?: string;
+      colors?: {
+        accent?: string;
+        primary?: string;
+      };
+      embed?: {
+        height?: string;
+        id?: string;
+        width?: string;
+      };
+      locale?: 'en' | 'es';
+      theme?: 'dark' | 'light';
+    };
   };
-  embed?: {
-    height?: string;
-    id?: string;
-    width?: string;
-  };
-  fiat?: string;
-  generateDepositAddress?: (
-    asset?: string,
-    network?: string
-  ) =>
-    | Promise<{ address: string; memo?: string }>
-    | { address: string; memo?: string };
-  locale?: string;
-  networkCode?: string;
-  onClose?: () => void;
-  onFailure?: (error: string, networkCode: string, address?: string) => void;
-  onOrderCreated?: (orderId: string, type: string) => void;
-  onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
-  paymentMethod?: 'binance-pay' | 'show-address';
-  rainbowRoad?: boolean;
-  theme?: 'dark' | 'light';
   userId: string;
 }
 export class Map3 {
@@ -60,38 +84,40 @@ export class Map3 {
       throw new Error('userId is required.');
     }
 
-    if (!config.theme) {
-      config.theme = 'light';
+    if (!config.options) {
+      config.options = {};
     }
 
-    if (!config.fiat) {
-      config.fiat = 'USD';
+    if (!config.options.selection) {
+      config.options.selection = {};
     }
 
-    if (!config.locale) {
-      config.locale = 'en';
+    if (!config.options.selection.fiat) {
+      config.options.selection.fiat = 'USD';
     }
 
-    if (config.address && !config.networkCode) {
+    if (
+      config.options.selection.address &&
+      !config.options.selection.networkCode
+    ) {
       console.warn(
         'Warning: networkCode is required when address is provided. Falling back to asset selection.'
       );
-      config.address = undefined;
+      config.options.selection.address = undefined;
     }
 
-    if (config.amount && !config.networkCode) {
+    if (
+      config.options.selection.amount &&
+      !config.options.selection.networkCode
+    ) {
       console.warn(
         'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
       );
-      config.amount = undefined;
+      config.options.selection.amount = undefined;
     }
 
-    if (config.rainbowRoad) {
-      document.body.classList.add('rainbow-road');
-    }
-
-    if (config.appName) {
-      document.title = config.appName;
+    if (config.options.style?.appName) {
+      document.title = config.options.style.appName;
     }
 
     // default colors
@@ -116,9 +142,9 @@ export class Map3 {
     document.body.style.setProperty('--accent-color', 'rgb(234, 88, 12)');
 
     // theme colors
-    if (config.colors) {
+    if (config.options.style && config.options.style.colors) {
       const validKeys = ['primary', 'accent'];
-      const invalidKeys = Object.keys(config.colors).filter(
+      const invalidKeys = Object.keys(config.options.style.colors).filter(
         (key) => !validKeys.includes(key)
       );
       if (invalidKeys.length > 0) {
@@ -129,32 +155,35 @@ export class Map3 {
         );
 
         invalidKeys.forEach((key) => {
-          delete config.colors![key as keyof Map3InitConfig['colors']];
+          delete config.options!.style!.colors![key as 'primary' | 'accent'];
         });
       }
 
-      Object.keys(config.colors).forEach((key) => {
+      Object.keys(config.options.style.colors).forEach((key) => {
         if (
           !CSS.supports(
             'color',
-            config.colors![key as keyof Map3InitConfig['colors']]
+            config.options!.style!.colors![key as 'primary' | 'accent'] || ''
           )
         ) {
           console.warn(
             `Warning: invalid value passed to colors.${key}. Falling back to default.`
           );
 
-          delete config.colors![key as keyof Map3InitConfig['colors']];
+          delete config.options!.style!.colors![key as 'primary' | 'accent'];
         }
       });
 
-      if (config.colors.accent) {
+      if (config.options.style.colors.accent) {
         document.body.classList.add('map3-accent');
-        document.body.style.setProperty('--accent-color', config.colors.accent);
+        document.body.style.setProperty(
+          '--accent-color',
+          config.options.style.colors.accent
+        );
       }
 
-      if (config.colors.primary) {
-        const primaryColor = colord(config.colors.primary);
+      if (config.options.style.colors.primary) {
+        const primaryColor = colord(config.options.style.colors.primary);
 
         if (primaryColor.isDark()) {
           document.body.classList.add('dark');
@@ -174,12 +203,12 @@ export class Map3 {
 
     this.onClose = () => {
       this.root.unmount();
-      this.config.onClose?.();
+      this.config.options?.callbacks?.onClose?.();
     };
 
     const element = document.createElement('div');
-    const embed = config.embed?.id
-      ? document.getElementById(config.embed.id)
+    const embed = config.options.style?.embed?.id
+      ? document.getElementById(config.options.style?.embed?.id)
       : null;
 
     if (embed) {
@@ -189,7 +218,10 @@ export class Map3 {
       document.body.appendChild(element);
     }
 
-    if (config.theme === 'dark' && !document.body.classList.contains('dark')) {
+    if (
+      config.options?.style?.theme === 'dark' &&
+      !document.body.classList.contains('dark')
+    ) {
       document.body.classList.add('dark');
     }
 

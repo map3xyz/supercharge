@@ -11,8 +11,14 @@ describe('useWeb3', () => {
       <App
         config={{
           ...mockConfig,
-          generateDepositAddress: async () => {
-            throw 'Error generating deposit address.';
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: async () => {
+                throw 'Error generating deposit address.';
+              },
+            },
           },
         }}
         onClose={() => {}}

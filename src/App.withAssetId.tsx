@@ -11,8 +11,10 @@ import { Store } from './providers/Store';
 import Map3SdkSteps from './steps';
 
 const AppWithAssetId: React.FC<AppProps> = ({ config, onClose }) => {
+  const { selection } = config.options || {};
+  const { assetId } = selection || {};
   const { data, error, loading, refetch } = useGetAssetsForOrgQuery({
-    variables: { assetId: config.assetId },
+    variables: { assetId: assetId },
   });
 
   const {
@@ -30,7 +32,7 @@ const AppWithAssetId: React.FC<AppProps> = ({ config, onClose }) => {
   if (loading || networkLoading) return <LoadingWrapper />;
 
   const asset = data?.assetsForOrganization?.find(
-    (asset) => asset?.id === config.assetId
+    (asset) => asset?.id === assetId
   );
   const network = networkData?.networks?.find(
     (n) => n?.networkCode === asset?.networkCode

@@ -87,8 +87,8 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   });
 
   const {
-    authorizeTransactionProxy,
     getTransaction,
+    handleAuthorizeTransactionProxy,
     sendTransaction,
     waitForTransaction,
   } = useWeb3();
@@ -268,7 +268,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         throw new Error('Asset contract not found.');
       }
 
-      await authorizeTransactionProxy(
+      await handleAuthorizeTransactionProxy(
         state.account.data,
         state.network?.networkCode,
         amount
@@ -424,7 +424,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 <span className="text-inherit">{state.asset.symbol}</span>
               ) : null}
             </div>
-            <div className="mt-8 flex items-center justify-center text-primary-400">
+            <div className="mt-4 flex items-center justify-center text-primary-400">
               {price ? (
                 <>
                   <div className="text-xs">

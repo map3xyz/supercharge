@@ -9,7 +9,7 @@ import { toHex } from '../utils/toHex';
 import { buildTx, PrebuiltTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
-  const [state, _, { authorizeTransaction }] = useContext(Context);
+  const [state, _, { handleAuthorizeTransaction }] = useContext(Context);
   const [providers, setProviders] = useState<
     {
       [key in string]: boolean;
@@ -43,7 +43,7 @@ export const useWeb3 = () => {
   }, []);
 
   // TODO: move this to a separate hook
-  const authorizeTransactionProxy = async (
+  const handleAuthorizeTransactionProxy = async (
     fromAddress?: string,
     network?: Maybe<string> | undefined,
     amount?: string
@@ -52,8 +52,11 @@ export const useWeb3 = () => {
       throw new Error('Unable to authorize transaction.');
     }
     let isAuth: Boolean = true;
-    if (authorizeTransaction && typeof authorizeTransaction === 'function') {
-      isAuth = await authorizeTransaction(fromAddress, network, amount);
+    if (
+      handleAuthorizeTransaction &&
+      typeof handleAuthorizeTransaction === 'function'
+    ) {
+      isAuth = await handleAuthorizeTransaction(fromAddress, network, amount);
     }
 
     if (!isAuth) {
@@ -222,12 +225,12 @@ export const useWeb3 = () => {
 
   return {
     addChain,
-    authorizeTransactionProxy,
     estimateGas,
     getBalance,
     getChainId,
     getFeeData,
     getTransaction,
+    handleAuthorizeTransactionProxy,
     providers,
     sendTransaction,
     switchChain,

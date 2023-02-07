@@ -5,7 +5,7 @@ import { Context } from '../providers/Store';
 const NO_ADDRESS = 'No address generated. Please contact support.';
 
 export const useDepositAddress = () => {
-  const [state, dispatch, { generateDepositAddress }] = useContext(Context);
+  const [state, dispatch, { onAddressRequested }] = useContext(Context);
 
   const getDepositAddress = async (): Promise<{
     address: string;
@@ -19,10 +19,10 @@ export const useDepositAddress = () => {
         return state.depositAddress.data;
       }
       dispatch({ type: 'GENERATE_DEPOSIT_ADDRESS_LOADING' });
-      if (typeof generateDepositAddress !== 'function') {
+      if (typeof onAddressRequested !== 'function') {
         throw new Error(NO_ADDRESS);
       }
-      const { address, memo } = await generateDepositAddress(
+      const { address, memo } = await onAddressRequested(
         state.asset?.symbol as string,
         state.network?.networkCode as string
       );

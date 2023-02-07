@@ -11,11 +11,19 @@ describe('ConfirmRequiredAmount', () => {
         <App
           config={{
             ...mockConfig,
-            amount: '1000000000000000',
-            generateDepositAddress: async (_asset, _network) => {
-              return { address: '0x0000000000000000000000000000000000000000' };
+            options: {
+              callbacks: {
+                onAddressRequested: async (_asset, _network) => {
+                  return {
+                    address: '0x0000000000000000000000000000000000000000',
+                  };
+                },
+              },
+              selection: {
+                amount: '1000000000000000',
+                networkCode: 'ethereum',
+              },
             },
-            networkCode: 'ethereum',
           }}
           onClose={() => {}}
         />
