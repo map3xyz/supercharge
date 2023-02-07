@@ -23,13 +23,14 @@ import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
 const BASE_FONT_SIZE = 48;
-const DECIMAL_FALLBACK = 8;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
+export const DECIMAL_FALLBACK = 8;
 export const DOWNLOAD_EXTENSION = 'Download Extension';
 
 const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { t } = useTranslation();
   const [state, dispatch] = useContext(Context);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
@@ -141,7 +142,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       quote:
         formValue.inputSelected === 'crypto'
           ? quote.round(2).toString()
-          : quote.round(decimals).toString(),
+          : quote.toUnsafeFloat().toPrecision(Math.min(6, decimals)),
     }));
 
     if (base.isZero()) return setAmount('0');
@@ -383,7 +384,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           ref={formRef}
         >
           <div />
-          <div className="w-full">
+          <div className={`w-full ${isConfirming ? 'blur-[2px]' : ''}`}>
             <div className="relative box-border flex max-w-full items-center justify-center">
               {formValue.inputSelected === 'fiat' ? (
                 <span className="text-inherit">$</span>
@@ -546,7 +547,12 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 }
               />
             ) : state.method.value === 'binance-pay' ? (
-              <BinancePay amount={amount} setFormError={setFormError} />
+              <BinancePay
+                amount={amount}
+                isConfirming={isConfirming}
+                setFormError={setFormError}
+                setIsConfirming={setIsConfirming}
+              />
             ) : (
               <WindowEthereum
                 amount={amount}

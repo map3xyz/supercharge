@@ -13,6 +13,7 @@
     },
     "copy": {
       "acknowledge_amount": "Acknowledge Amount",
+      "amount_to_pay": "Amount to Pay",
       "creating_order": "Creating Order...",
       "error_fetching_assets": "We couldn't get a list of assets to select.",
       "error_fetching_networks": "We couldn't get a list of networks to select.",
@@ -24,6 +25,8 @@
       "no_assets_found": "We couldn't find any assets that matched your search.",
       "no_pricing_available": "No pricing available for this asset.",
       "pay_on_binance_com": "Pay on Binance.com",
+      "payment_fee": "Payment Fee",
+      "receive_amount": "Receive Amount",
       "scan_binance_qr_code": "Scan the QR code with the Binance app to pay.",
       "search_for_an_asset": "Search for an asset...",
       "send": "Send",
@@ -31,7 +34,8 @@
       "select_asset": "Select Asset"
     },
     "button": {
-      "pay_via_binance": "Pay via Binance"
+      "pay_via_binance": "Pay via Binance",
+      "finalize_on_binance": "Finalize on Binance"
     }
   }
 }

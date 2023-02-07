@@ -17,6 +17,7 @@
     },
     "copy": {
       "acknowledge_amount": "Confirma Monto",
+      "amount_to_pay": "Monto a Recargar",
       "creating_order": "Creando Orden...",
       "error_fetching_assets": "No Pudimos Cargar la Lista de Cryptos.",
       "error_fetching_networks": "No Pudimos Cargar la Lista de Redes.",
@@ -28,6 +29,8 @@
       "no_assets_found": "No Pudimos Encontrar la Crypto que Buscaste.",
       "no_pricing_available": "No tenemos precio indicativo para esta Crypto.",
       "pay_on_binance_com": "Pagar con Binance.com",
+      "payment_fee": "Costo Pasarela",
+      "receive_amount": "Vas a Recibir",
       "scan_binance_qr_code": "Escanea el Código QR con el App de Binance Para Pagar.",
       "search_for_an_asset": "Buscar una Crypto...",
       "send": "Enviar",
@@ -35,7 +38,8 @@
       "select_asset": "Selecciona la Crypto"
     },
     "button": {
-      "pay_via_binance": "Pagar con Binance"
+      "pay_via_binance": "Pagar con Binance",
+      "finalize_on_binance": "Finalizar en Binance"
     }
   }
 }

@@ -22,7 +22,6 @@ import WalletConnect from './WalletConnect';
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
   const { step, steps } = state;
-  console.log(plan);
 
   useChainWatcher();
 

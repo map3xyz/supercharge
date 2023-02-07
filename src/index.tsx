@@ -14,10 +14,10 @@ export interface Map3InitConfig {
     callbacks?: {
       handleAuthorizeTransaction?: (
         fromAddress: string,
-        network: string,
+        networkCode: string,
         amount: string
       ) => Promise<Boolean>;
-      handleFeeCalculation?: (
+      handleOrderFeeCalculation?: (
         asset: string,
         networkCode: string,
         amount: string
@@ -27,8 +27,8 @@ export interface Map3InitConfig {
         variableFee?: number;
       }>;
       onAddressRequested?: (
-        asset?: string,
-        network?: string
+        asset: string,
+        networkCode: string
       ) =>
         | Promise<{ address: string; memo?: string }>
         | { address: string; memo?: string };
