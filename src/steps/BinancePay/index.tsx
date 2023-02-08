@@ -17,12 +17,12 @@ import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const BinancePayFinalStatuses = [
-  'PAID',
-  'CANCELED',
-  'ERROR',
-  'REFUNDING',
-  'REFUNDED',
-  'EXPIRED',
+  'paid',
+  'canceled',
+  'error',
+  'refunding',
+  'refunded',
+  'expired',
 ];
 
 const BinancePay: React.FC<Props> = () => {
@@ -84,7 +84,7 @@ const BinancePay: React.FC<Props> = () => {
   }, [data?.createBinanceOrder?.data?.prepayId]);
 
   useEffect(() => {
-    if (queryData?.queryBinanceOrder?.status === 'FAILED') {
+    if (queryData?.queryBinanceOrder?.status === 'failed') {
       stopPoll();
     }
     if (
