@@ -237,6 +237,7 @@ export const Store: React.FC<
   const { embed, theme } = style || {};
   const {
     handleAuthorizeTransaction,
+    handleOrderFeeCalculation,
     onAddressRequested,
     onFailure,
     onOrderCreated,
@@ -495,6 +496,7 @@ export const Store: React.FC<
         dispatch,
         {
           handleAuthorizeTransaction,
+          handleOrderFeeCalculation,
           onAddressRequested,
           onFailure,
           onOrderCreated,
@@ -517,9 +519,18 @@ export const Context = createContext<
         network: string,
         amount: string
       ) => Promise<Boolean>;
+      handleOrderFeeCalculation?: (
+        asset: string,
+        network: string,
+        amount: string
+      ) => Promise<{
+        fixedFee?: number;
+        message?: string;
+        variableFee?: number;
+      }>;
       onAddressRequested?: (
-        asset?: string,
-        network?: string,
+        asset: string,
+        network: string,
         memoEnabled?: boolean
       ) =>
         | Promise<{ address: string; memo?: string }>
@@ -543,6 +554,8 @@ export const Context = createContext<
   {
     handleAuthorizeTransaction: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve(true)),
+    handleOrderFeeCalculation: /* istanbul ignore next */ () =>
+      new Promise((resolve) => resolve({})),
     onAddressRequested: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
     onFailure: /* istanbul ignore next */ () => {},

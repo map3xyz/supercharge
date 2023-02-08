@@ -7,7 +7,8 @@ import { initMap3Supercharge } from './index';
 describe('Map3Sdk', () => {
   it('can be opened and closed', async () => {
     const supercharge = initMap3Supercharge({
-      anonKey: 'test',
+      anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
       options: {
         callbacks: {
           onAddressRequested: async () => {
@@ -30,7 +31,8 @@ describe('Map3Sdk', () => {
   });
   it('should setup dark theme', async () => {
     const supercharge = initMap3Supercharge({
-      anonKey: 'test',
+      anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
       options: {
         callbacks: {
           onAddressRequested: async () => {
@@ -52,7 +54,8 @@ describe('Map3Sdk', () => {
   it('should initialize with a fiat value', async () => {
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onAddressRequested: async () => {
@@ -72,7 +75,8 @@ describe('Map3Sdk', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           selection: {
             address: '0x123',
@@ -96,14 +100,16 @@ describe('Map3Sdk', () => {
     const initFn = () =>
       // @ts-expect-error
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
       });
     expect(initFn).toThrow('userId is required.');
   });
   it('should allow optional onClose', () => {
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onClose: () => {},
@@ -116,7 +122,8 @@ describe('Map3Sdk', () => {
   it('should allow optional onFailure', () => {
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onFailure: () => {},
@@ -129,7 +136,8 @@ describe('Map3Sdk', () => {
   it('should allow optional onSuccess', () => {
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onSuccess: () => {},
@@ -142,7 +150,8 @@ describe('Map3Sdk', () => {
   it('should allow an optional custom.colors', () => {
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           style: {
             colors: {
@@ -159,7 +168,8 @@ describe('Map3Sdk', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           style: {
             colors: {
@@ -179,7 +189,8 @@ describe('Map3Sdk', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () => {
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onAddressRequested: async () => ({ address: '0x000000' }),
@@ -200,7 +211,8 @@ describe('Map3Sdk', () => {
     const warnSpy = jest.spyOn(console, 'warn');
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           style: {
             colors: {
@@ -216,7 +228,8 @@ describe('Map3Sdk', () => {
     );
     const initFn2 = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onAddressRequested: async () => {
@@ -238,7 +251,8 @@ describe('Map3Sdk', () => {
   it('allows optional parameter appName', () => {
     const initFn = () =>
       initMap3Supercharge({
-        anonKey: 'test',
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
             onAddressRequested: async () => {
