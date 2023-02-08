@@ -129,29 +129,35 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   ]);
 
   useEffect(() => {
-    const base = ethers.FixedNumber.from(formValue.base || '0');
-    const fixedRate = ethers.FixedNumber.from(price.toString());
-    const decimals = state.asset?.decimals || DECIMAL_FALLBACK;
+    try {
+      const base = ethers.FixedNumber.from(formValue.base || '0');
+      const fixedRate = ethers.FixedNumber.from(price.toString());
+      const decimals = state.asset?.decimals || DECIMAL_FALLBACK;
+      const maxDisplayDecimals = Math.min(6, decimals);
 
-    const quote =
-      formValue.inputSelected === 'crypto'
-        ? base.mulUnsafe(fixedRate)
-        : base.divUnsafe(fixedRate);
-    setFormValue((formValue) => ({
-      ...formValue,
-      quote:
+      const quote =
         formValue.inputSelected === 'crypto'
-          ? quote.round(2).toString()
-          : quote.toUnsafeFloat().toPrecision(Math.min(6, decimals)),
-    }));
+          ? base.mulUnsafe(fixedRate)
+          : base.divUnsafe(fixedRate);
 
-    if (base.isZero()) return setAmount('0');
+      setFormValue((formValue) => ({
+        ...formValue,
+        quote:
+          formValue.inputSelected === 'crypto'
+            ? quote.round(2).toString()
+            : quote.round(maxDisplayDecimals).toString(),
+      }));
 
-    setAmount(
-      formValue.inputSelected === 'crypto'
-        ? base.round(decimals).toString()
-        : quote.round(decimals).toString()
-    );
+      if (base.isZero()) return setAmount('0');
+
+      setAmount(
+        formValue.inputSelected === 'crypto'
+          ? base.round(decimals).toString()
+          : quote.round(maxDisplayDecimals).toString()
+      );
+    } catch (e) {
+      console.error(e);
+    }
   }, [formValue.base]);
 
   useEffect(() => {
