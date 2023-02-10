@@ -93,10 +93,10 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
                 components={{
                   bold: <b />,
                 }}
-                defaults="By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{state.network?.networkName}</bold>."
+                defaults="By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{{networkName}}</bold>."
                 values={{
                   amount: state.requiredAmount,
-                  network: state.network?.networkName,
+                  networkName: state.network?.networkName,
                   symbol: state.asset?.symbol,
                 }}
               />

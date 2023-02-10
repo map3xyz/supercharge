@@ -12,9 +12,16 @@ root.render(
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
+            callbacks: {
+              onAddressRequested: () => {
+                return {
+                  address: '0xE214Bc3e755d56c4D41dfD95539ca1B463E00E19',
+                };
+              },
+            },
             selection: {
-              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
-              paymentMethod: 'binance-pay',
+              amount: '10000',
+              networkCode: 'ethereum',
             },
             style: {
               colors: {
