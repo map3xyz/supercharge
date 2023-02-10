@@ -33,10 +33,10 @@
       "receive_amount": "Vas a Recibir",
       "scan_binance_qr_code": "Escanea el Código QR con el App de Binance Para Pagar.",
       "search_for_an_asset": "Buscar una Crypto...",
+      "select_asset": "Selecciona la Crypto",
       "send": "Enviar",
-      "total_receive_less_than_zero": "Please try again with a higher amount.",
-      "via": "vía",
-      "select_asset": "Selecciona la Crypto"
+      "total_receive_less_than_zero": "Vuelva a intentarlo con un monto mayor.",
+      "via": "vía"
     },
     "button": {
       "pay_via_binance": "Pagar con Binance",
