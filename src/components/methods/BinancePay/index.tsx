@@ -138,7 +138,7 @@ const BinancePay: React.FC<Props> = ({
             <div className="flex w-full items-center justify-between">
               <div>{t('copy.amount_to_pay')}:</div>
               <div>
-                {Number(amount).toPrecision(
+                {Number(amount).toFixed(
                   Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
                 )}{' '}
                 {state.asset?.symbol}
@@ -164,7 +164,7 @@ const BinancePay: React.FC<Props> = ({
                   :
                 </div>
                 <div>
-                  {feeData.totalFee?.toPrecision(
+                  {feeData.totalFee?.toFixed(
                     Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
                   )}{' '}
                   {state.asset?.symbol}
@@ -181,7 +181,7 @@ const BinancePay: React.FC<Props> = ({
                   >
                     <div>{t('copy.receive_amount')}:</div>
                     <div>
-                      {feeData.totalAmountMinusFee?.toPrecision(
+                      {feeData.totalAmountMinusFee?.toFixed(
                         Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
                       )}{' '}
                       {state.asset?.symbol}
