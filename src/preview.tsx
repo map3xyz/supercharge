@@ -12,6 +12,14 @@ root.render(
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
+            callbacks: {
+              handleOrderFeeCalculation: async () => {
+                return {
+                  fixedFee: 0.3,
+                  variableFee: 0.01,
+                };
+              },
+            },
             selection: {
               assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
               paymentMethod: 'binance-pay',

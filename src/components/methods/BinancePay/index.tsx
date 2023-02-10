@@ -1,4 +1,4 @@
-import { Button } from '@map3xyz/components';
+import { Badge, Button } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -38,49 +38,46 @@ const BinancePay: React.FC<Props> = ({
   useOnClickOutside(ref, () => setIsConfirming(false));
 
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isConfirming) {
+      setIsFeeLoading(true);
+      const feeData = await handleOrderFeeCalculation?.(
+        state.asset!.symbol!,
+        state.network!.networkCode!,
+        amount
+      );
+      try {
+        if (
+          feeData &&
+          (feeData.message || feeData.fixedFee || feeData.variableFee)
+        ) {
+          if (feeData.fixedFee && typeof feeData.fixedFee !== 'number') {
+            throw new Error('Fixed fee is not a number');
+          }
+          if (feeData.variableFee && typeof feeData.variableFee !== 'number') {
+            throw new Error('Variable fee is not a number');
+          }
+          if (feeData.message && typeof feeData.message !== 'string') {
+            throw new Error('Message is not a string');
+          }
+          const variableFee = Number(amount) * (feeData.variableFee || 0);
+          const totalFee = (feeData.fixedFee || 0) + variableFee;
+          const totalAmountMinusFee = Number(amount) - totalFee;
+
+          setFeeData({ ...feeData, totalAmountMinusFee, totalFee });
+          setIsConfirming(true);
+          setIsFeeLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      setIsFeeLoading(false);
+    }
+
     if (isMobile) {
       e.preventDefault();
       e.stopPropagation();
-
-      if (!isConfirming) {
-        setIsFeeLoading(true);
-        const feeData = await handleOrderFeeCalculation?.(
-          state.asset!.symbol!,
-          state.network!.networkCode!,
-          amount
-        );
-        try {
-          if (
-            feeData &&
-            (feeData.message || feeData.fixedFee || feeData.variableFee)
-          ) {
-            if (feeData.fixedFee && typeof feeData.fixedFee !== 'number') {
-              throw new Error('Fixed fee is not a number');
-            }
-            if (
-              feeData.variableFee &&
-              typeof feeData.variableFee !== 'number'
-            ) {
-              throw new Error('Variable fee is not a number');
-            }
-            if (feeData.message && typeof feeData.message !== 'string') {
-              throw new Error('Message is not a string');
-            }
-            const variableFee = Number(amount) * (feeData.variableFee || 0);
-            const totalFee = (feeData.fixedFee || 0) + variableFee;
-            const totalAmountMinusFee = Number(amount) - totalFee;
-
-            setFeeData({ ...feeData, totalAmountMinusFee, totalFee });
-            setIsConfirming(true);
-            setIsFeeLoading(false);
-            return;
-          }
-        } catch (e) {
-          console.error(e);
-        }
-
-        setIsFeeLoading(false);
-      }
 
       const { data } = await createBinanceOrder({
         variables: {
@@ -174,24 +171,46 @@ const BinancePay: React.FC<Props> = ({
                 </div>
               </div>
             )}
-            {feeData.totalAmountMinusFee && (
-              <div className="flex w-full items-center justify-between font-bold">
-                <div>{t('copy.receive_amount')}:</div>
-                <div>
-                  {feeData.totalAmountMinusFee?.toPrecision(
-                    Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
-                  )}{' '}
-                  {state.asset?.symbol}
-                </div>
-              </div>
-            )}
+            {feeData.totalAmountMinusFee !== undefined ? (
+              <>
+                {feeData.fixedFee || feeData.variableFee ? (
+                  <div
+                    className={`flex w-full items-center justify-between font-bold ${
+                      feeData.totalAmountMinusFee! <= 0 ? 'text-red-600' : ''
+                    }`}
+                  >
+                    <div>{t('copy.receive_amount')}:</div>
+                    <div>
+                      {feeData.totalAmountMinusFee?.toPrecision(
+                        Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
+                      )}{' '}
+                      {state.asset?.symbol}
+                    </div>
+                  </div>
+                ) : null}
+                {feeData.totalAmountMinusFee <= 0 ? (
+                  // @ts-ignore
+                  <div className="my-1">
+                    <Badge color="red" dot>
+                      {t('copy.total_receive_less_than_zero')}
+                    </Badge>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
           </motion.div>
         )}
       </AnimatePresence>
 
       <Button
         block
-        disabled={loading || isFeeLoading || !!error?.message || amount === '0'}
+        disabled={
+          loading ||
+          isFeeLoading ||
+          !!error?.message ||
+          amount === '0' ||
+          feeData.totalAmountMinusFee! <= 0
+        }
         htmlType="submit"
         loading={loading || isFeeLoading || state.account.status === 'loading'}
         onClick={handleClick}
