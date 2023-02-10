@@ -30,6 +30,7 @@
       "scan_binance_qr_code": "Scan the QR code with the Binance app to pay.",
       "search_for_an_asset": "Search for an asset...",
       "send": "Send",
+      "total_receive_less_than_zero": "Please try again with a higher amount.",
       "via": "via",
       "select_asset": "Select Asset"
     },

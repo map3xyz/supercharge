@@ -13,15 +13,16 @@ root.render(
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
             callbacks: {
-              onAddressRequested: () => {
+              handleOrderFeeCalculation: async () => {
                 return {
-                  address: '0xE214Bc3e755d56c4D41dfD95539ca1B463E00E19',
+                  fixedFee: 0.3,
+                  variableFee: 0.01,
                 };
               },
             },
             selection: {
-              amount: '10000',
-              networkCode: 'ethereum',
+              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
+              paymentMethod: 'binance-pay',
             },
             style: {
               colors: {
