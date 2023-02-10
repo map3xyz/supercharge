@@ -108,7 +108,7 @@ const BinancePay: React.FC<Props> = () => {
         description="We were unable to create your order. Please try again."
         header="Error Creating Order"
         retry={run}
-        stacktrace={error.message}
+        stacktrace={JSON.stringify(error)}
       />
     );
   }
