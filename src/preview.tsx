@@ -23,6 +23,7 @@ root.render(
             selection: {
               assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
               paymentMethod: 'binance-pay',
+              shortcutAmounts: [1, 2, 3, 4, 5],
             },
             style: {
               colors: {

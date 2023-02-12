@@ -572,11 +572,13 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                       },
                     }}
                   >
-                    {['10', '50', '100'].map((amount) => (
+                    {(state.shortcutAmounts || []).map((amount) => (
                       <motion.span
                         className="relative"
                         key={amount}
-                        onClick={() => setFiatAmountAndSubmit(amount)}
+                        onClick={() =>
+                          setFiatAmountAndSubmit(amount.toString())
+                        }
                         role="button"
                         variants={{
                           hidden: { opacity: 0, top: '10px' },
@@ -586,7 +588,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                         <Badge color="green" size="large">
                           {/* @ts-ignore */}
                           <span className="whitespace-nowrap">
-                            ${Number(amount).toFixed(2)}
+                            ${amount.toFixed(2)}
                           </span>
                         </Badge>
                       </motion.span>

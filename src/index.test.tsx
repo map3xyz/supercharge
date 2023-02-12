@@ -268,4 +268,22 @@ describe('Map3Sdk', () => {
       });
     expect(initFn).not.toThrow();
   });
+  it('allows optional shortcutAmounts, slices first 3 amounts if more than 3 are passed.', () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+    const initFn = () =>
+      initMap3Supercharge({
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
+        options: {
+          selection: {
+            shortcutAmounts: [1, 2, 3, 4, 5],
+          },
+        },
+        userId: 'test',
+      });
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: shortcutAmounts should not exceed 3 values. Falling back to first 3 values.'
+    );
+  });
 });
