@@ -172,7 +172,7 @@ const BinancePay: React.FC<Props> = () => {
                 href={data.createBinanceOrder.data.checkoutUrl!}
                 target="_blank"
               >
-                <Button block size="medium" type={'default'}>
+                <Button block size="large" type={'default'}>
                   <span className="flex items-center gap-2">
                     <MethodIcon method={state.method} />{' '}
                     {t('copy.pay_on_binance_com')}
