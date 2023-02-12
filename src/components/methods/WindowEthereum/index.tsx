@@ -8,18 +8,14 @@ import React, {
 } from 'react';
 
 import { Context } from '../../../providers/Store';
-import { DOWNLOAD_EXTENSION } from '../../../steps/EnterAmount';
+import { DOWNLOAD_EXTENSION, SubmitHandler } from '../../../steps/EnterAmount';
 import MethodIcon from '../../MethodIcon';
 
-export type ConnectHandler = {
-  connect: () => void;
-};
-
-const WindowEthereum = forwardRef<ConnectHandler, Props>(
-  ({ amount, disabled, setFormError }, connectRef) => {
+const WindowEthereum = forwardRef<SubmitHandler, Props>(
+  ({ amount, disabled, setFormError }, submitRef) => {
     const [state, dispatch] = useContext(Context);
 
-    const connect = async () => {
+    const submit = async () => {
       dispatch({ type: 'SET_PROVIDER_LOADING' });
       const providers = window.ethereum?.providers;
       const selectedProvider = providers?.find(
@@ -86,14 +82,14 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
       }
     };
 
-    useImperativeHandle(connectRef, () => ({
-      connect: () => {
-        connect();
+    useImperativeHandle(submitRef, () => ({
+      submit: () => {
+        submit();
       },
     }));
 
     useEffect(() => {
-      connect();
+      submit();
     }, []);
 
     if (!state.method || !state.method?.value) return null;
@@ -122,7 +118,7 @@ const WindowEthereum = forwardRef<ConnectHandler, Props>(
         }
         htmlType="submit"
         loading={state.account.status === 'loading'}
-        size="medium"
+        size="large"
         type={'default'}
       >
         <span className="flex items-center gap-2">

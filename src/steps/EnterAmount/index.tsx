@@ -1,6 +1,6 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
 import { ethers } from 'ethers';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +10,7 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import BinancePay from '../../components/methods/BinancePay';
 import WalletConnect from '../../components/methods/WalletConnect';
-import WindowEthereum, {
-  ConnectHandler,
-} from '../../components/methods/WindowEthereum';
+import WindowEthereum from '../../components/methods/WindowEthereum';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
@@ -26,6 +24,10 @@ const BASE_FONT_SIZE = 48;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 export const DECIMAL_FALLBACK = 8;
 export const DOWNLOAD_EXTENSION = 'Download Extension';
+
+export type SubmitHandler = {
+  submit: () => void;
+};
 
 const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { t } = useTranslation();
@@ -43,7 +45,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
-  const connectRef = useRef<ConnectHandler>(null);
+  const submitRef = useRef<SubmitHandler>(null);
   const extensionLink =
     state.method?.links?.[
       isChrome
@@ -244,6 +246,20 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     });
   };
 
+  const setFiatAmountAndSubmit = (amount: string) => {
+    if (!inputRef.current) return;
+    if (formValue.inputSelected === 'crypto') toggleBase();
+    inputRef.current.value = amount;
+    setFormValue({
+      ...formValue,
+      base: amount,
+      inputSelected: 'fiat',
+    });
+    setTimeout(() => {
+      submitRef.current?.submit();
+    }, 100);
+  };
+
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     try {
       e?.preventDefault();
@@ -256,7 +272,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       }
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
-        connectRef.current?.connect();
+        submitRef.current?.submit();
         return;
       }
 
@@ -532,7 +548,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   onClick={setMax}
                   role="button"
                 >
-                  <Badge color="blue">
+                  <Badge color="blue" size="large">
                     {/* @ts-ignore */}
                     <span className="whitespace-nowrap">
                       Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
@@ -540,6 +556,45 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                     </span>
                   </Badge>
                 </motion.span>
+              ) : state.method.value === 'binance-pay' && price ? (
+                <AnimatePresence>
+                  <motion.div
+                    animate="show"
+                    className="mb-1 flex w-full justify-around"
+                    initial="hidden"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: {
+                        opacity: 1,
+                        transition: {
+                          staggerChildren: 0.1,
+                        },
+                      },
+                    }}
+                  >
+                    {(state.shortcutAmounts || []).map((amount) => (
+                      <motion.span
+                        className="relative"
+                        key={amount}
+                        onClick={() =>
+                          setFiatAmountAndSubmit(amount.toString())
+                        }
+                        role="button"
+                        variants={{
+                          hidden: { opacity: 0, top: '10px' },
+                          show: { opacity: 1, top: '0px' },
+                        }}
+                      >
+                        <Badge color="green" size="large">
+                          {/* @ts-ignore */}
+                          <span className="whitespace-nowrap">
+                            ${amount.toFixed(2)}
+                          </span>
+                        </Badge>
+                      </motion.span>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
               ) : null}
             </span>
             {state.method.value === 'isWalletConnect' ? (
@@ -556,6 +611,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
               <BinancePay
                 amount={amount}
                 isConfirming={isConfirming}
+                ref={submitRef}
                 setFormError={setFormError}
                 setIsConfirming={setIsConfirming}
               />
@@ -568,7 +624,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   state.prebuiltTx.data?.feeError ||
                   !!formError?.includes(INSUFFICIENT_FUNDS)
                 }
-                ref={connectRef}
+                ref={submitRef}
                 setFormError={setFormError}
               />
             )}

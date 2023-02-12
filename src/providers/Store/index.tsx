@@ -77,6 +77,7 @@ type State = {
   providerChainId?: number;
   requiredAmount?: string;
   requiredPaymentMethod?: 'binance-pay' | 'show-address';
+  shortcutAmounts?: number[];
   slug?: string;
   step: number;
   steps: (keyof typeof Steps)[];
@@ -195,6 +196,7 @@ const initialState: State = {
     status: 'idle',
   },
   providerChainId: undefined,
+  shortcutAmounts: [],
   slug: undefined,
   step: Steps.AssetSelection,
   steps: [
@@ -233,7 +235,7 @@ export const Store: React.FC<
   PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
 > = ({ asset, children, network, options, userId }) => {
   const { callbacks, selection, style } = options || {};
-  const { amount, fiat, paymentMethod } = selection || {};
+  const { amount, fiat, paymentMethod, shortcutAmounts } = selection || {};
   const { embed, theme } = style || {};
   const {
     handleAuthorizeTransaction,
@@ -483,6 +485,7 @@ export const Store: React.FC<
       network,
       requiredAmount,
       requiredPaymentMethod,
+      shortcutAmounts,
       step,
       theme,
       userId,

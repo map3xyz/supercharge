@@ -21,7 +21,7 @@ const WalletConnect: React.FC<Props> = ({ amount, disabled }) => {
       }
       htmlType="submit"
       loading={state.account.status === 'loading'}
-      size="medium"
+      size="large"
       type={'default'}
     >
       <span className="flex items-center gap-2">

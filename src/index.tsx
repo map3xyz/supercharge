@@ -52,6 +52,7 @@ export interface Map3InitConfig {
       fiat?: string;
       networkCode?: string;
       paymentMethod?: 'binance-pay';
+      shortcutAmounts?: number[];
     };
     style?: {
       appName?: string;
@@ -94,6 +95,19 @@ export class Map3 {
 
     if (!config.options.selection.fiat) {
       config.options.selection.fiat = 'USD';
+    }
+
+    if (
+      config.options.selection.shortcutAmounts &&
+      config.options.selection.shortcutAmounts.length > 3
+    ) {
+      console.warn(
+        'Warning: shortcutAmounts should not exceed 3 values. Falling back to first 3 values.'
+      );
+      config.options.selection.shortcutAmounts = config.options.selection.shortcutAmounts.slice(
+        0,
+        3
+      );
     }
 
     if (
