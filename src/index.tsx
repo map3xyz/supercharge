@@ -258,11 +258,6 @@ export class Map3 {
           },
         },
       }),
-      defaultOptions: {
-        watchQuery: {
-          notifyOnNetworkStatusChange: true,
-        },
-      },
       headers: {
         Authorization: 'Bearer ' + this.config.anonKey,
         'x-map3-user': this.config.userId,
