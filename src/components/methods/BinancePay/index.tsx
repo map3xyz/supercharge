@@ -93,12 +93,12 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
           },
         });
 
-        if (data?.createBinanceOrder?.map3OrderId) {
-          onOrderCreated?.(data?.createBinanceOrder.map3OrderId, 'binance-pay');
+        if (data?.createBinanceOrder?.id) {
+          onOrderCreated?.(data?.createBinanceOrder.id, 'binance-pay');
         }
 
-        if (data?.createBinanceOrder?.data?.universalUrl) {
-          window.location.href = data.createBinanceOrder.data?.universalUrl;
+        if (data?.createBinanceOrder?.universalUrl) {
+          window.location.href = data.createBinanceOrder.universalUrl;
         }
       }
     };
