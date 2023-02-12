@@ -27,6 +27,7 @@ export interface Map3InitConfig {
             fiat?: string;
             networkCode?: string;
             paymentMethod?: 'binance-pay';
+            shortcutAmounts?: number[];
         };
         style?: {
             appName?: string;
