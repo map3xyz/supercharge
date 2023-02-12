@@ -409,7 +409,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           <div className={`w-full ${isConfirming ? 'blur-[2px]' : ''}`}>
             <div className="relative box-border flex max-w-full items-center justify-center">
               {formValue.inputSelected === 'fiat' ? (
-                <span className="text-inherit">$</span>
+                <span className="text-inherit">{state.fiatDisplaySymbol}</span>
               ) : null}
               <input
                 autoFocus
@@ -441,7 +441,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
               >
                 {formValue.inputSelected === 'crypto'
                   ? state.asset.symbol
-                  : '$'}
+                  : state.fiatDisplaySymbol}
               </span>
               {formValue.inputSelected === 'crypto' ? (
                 <span className="text-inherit">{state.asset.symbol}</span>
@@ -452,7 +452,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 <>
                   <div className="text-xs">
                     {formValue.inputSelected === 'crypto' ? (
-                      <span>$&nbsp;</span>
+                      <span>{state.fiatDisplaySymbol}&nbsp;</span>
                     ) : null}
                     <span data-testid="quote" ref={quoteRef}>
                       {formValue.quote}
@@ -588,7 +588,8 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                         <Badge color="green" size="large">
                           {/* @ts-ignore */}
                           <span className="whitespace-nowrap">
-                            ${amount.toFixed(2)}
+                            {state.fiatDisplaySymbol}
+                            {amount.toFixed(2)}
                           </span>
                         </Badge>
                       </motion.span>

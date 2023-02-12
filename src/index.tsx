@@ -5,6 +5,7 @@ import mixPlugin from 'colord/plugins/mix';
 import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
+import { ISO_4217_TO_SYMBOL } from './constants/iso4217';
 
 extend([mixPlugin]);
 
@@ -94,6 +95,13 @@ export class Map3 {
     }
 
     if (!config.options.selection.fiat) {
+      config.options.selection.fiat = 'USD';
+    }
+
+    if (!ISO_4217_TO_SYMBOL[config.options.selection.fiat]) {
+      console.warn(
+        `Warning: fiat ${config.options.selection.fiat} is not supported. Falling back to USD.`
+      );
       config.options.selection.fiat = 'USD';
     }
 
