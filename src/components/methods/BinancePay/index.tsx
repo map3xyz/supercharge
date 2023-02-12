@@ -14,15 +14,11 @@ import { useTranslation } from 'react-i18next';
 import { useCreateBinanceOrderMutation } from '../../../generated/apollo-gql';
 import useOnClickOutside from '../../../hooks/useOnClickOutside';
 import { Context } from '../../../providers/Store';
-import { DECIMAL_FALLBACK } from '../../../steps/EnterAmount';
+import { DECIMAL_FALLBACK, SubmitHandler } from '../../../steps/EnterAmount';
 import MethodIcon from '../../MethodIcon';
 
-export type ConnectHandler = {
-  connect: () => void;
-};
-
-const BinancePay = forwardRef<ConnectHandler, Props>(
-  ({ amount, isConfirming, setFormError, setIsConfirming }, connectRef) => {
+const BinancePay = forwardRef<SubmitHandler, Props>(
+  ({ amount, isConfirming, setFormError, setIsConfirming }, submitRef) => {
     const { t } = useTranslation();
     const [
       state,
@@ -117,8 +113,8 @@ const BinancePay = forwardRef<ConnectHandler, Props>(
       setIsConfirming(false);
     }, [amount]);
 
-    useImperativeHandle(connectRef, () => ({
-      connect: () => {
+    useImperativeHandle(submitRef, () => ({
+      submit: () => {
         handleClick();
       },
     }));

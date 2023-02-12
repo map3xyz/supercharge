@@ -10,9 +10,7 @@ import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import BinancePay from '../../components/methods/BinancePay';
 import WalletConnect from '../../components/methods/WalletConnect';
-import WindowEthereum, {
-  ConnectHandler,
-} from '../../components/methods/WindowEthereum';
+import WindowEthereum from '../../components/methods/WindowEthereum';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
@@ -26,6 +24,10 @@ const BASE_FONT_SIZE = 48;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 export const DECIMAL_FALLBACK = 8;
 export const DOWNLOAD_EXTENSION = 'Download Extension';
+
+export type SubmitHandler = {
+  submit: () => void;
+};
 
 const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { t } = useTranslation();
@@ -43,7 +45,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
-  const connectRef = useRef<ConnectHandler>(null);
+  const submitRef = useRef<SubmitHandler>(null);
   const extensionLink =
     state.method?.links?.[
       isChrome
@@ -254,7 +256,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       inputSelected: 'fiat',
     });
     setTimeout(() => {
-      connectRef.current?.connect();
+      submitRef.current?.submit();
     }, 100);
   };
 
@@ -270,7 +272,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       }
 
       if (state.account.status === 'idle' || state.account.status === 'error') {
-        connectRef.current?.connect();
+        submitRef.current?.submit();
         return;
       }
 
@@ -607,7 +609,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
               <BinancePay
                 amount={amount}
                 isConfirming={isConfirming}
-                ref={connectRef}
+                ref={submitRef}
                 setFormError={setFormError}
                 setIsConfirming={setIsConfirming}
               />
@@ -620,7 +622,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   state.prebuiltTx.data?.feeError ||
                   !!formError?.includes(INSUFFICIENT_FUNDS)
                 }
-                ref={connectRef}
+                ref={submitRef}
                 setFormError={setFormError}
               />
             )}
