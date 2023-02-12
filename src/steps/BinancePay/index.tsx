@@ -10,6 +10,7 @@ import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import {
+  Map3PlatformOrderStatus,
   useCreateBinanceOrderMutation,
   useQueryBinanceOrderLazyQuery,
 } from '../../generated/apollo-gql';
@@ -17,12 +18,12 @@ import { useModalSize } from '../../hooks/useModalSize';
 import { Context, Steps } from '../../providers/Store';
 
 const BinancePayFinalStatuses = [
-  'paid',
-  'canceled',
-  'error',
-  'refunding',
-  'refunded',
-  'expired',
+  Map3PlatformOrderStatus.Paid,
+  Map3PlatformOrderStatus.Canceled,
+  Map3PlatformOrderStatus.Expired,
+  Map3PlatformOrderStatus.Refunded,
+  Map3PlatformOrderStatus.Refunding,
+  Map3PlatformOrderStatus.Error,
 ];
 
 const BinancePay: React.FC<Props> = () => {
@@ -58,8 +59,8 @@ const BinancePay: React.FC<Props> = () => {
       },
     });
 
-    if (data?.createBinanceOrder?.map3OrderId) {
-      onOrderCreated?.(data?.createBinanceOrder.map3OrderId, 'binance-pay');
+    if (data?.createBinanceOrder?.id) {
+      onOrderCreated?.(data?.createBinanceOrder.id, 'binance-pay');
     }
   };
 
@@ -69,11 +70,11 @@ const BinancePay: React.FC<Props> = () => {
 
   useEffect(() => {
     const poll = async () => {
-      if (data?.createBinanceOrder?.data?.prepayId) {
+      if (data?.createBinanceOrder?.id) {
         await queryBinanceOrder({
           pollInterval: 1500,
           variables: {
-            prepayId: data.createBinanceOrder.data.prepayId,
+            id: data.createBinanceOrder.id,
           },
         });
         setIsPolling(true);
@@ -81,17 +82,12 @@ const BinancePay: React.FC<Props> = () => {
     };
 
     poll();
-  }, [data?.createBinanceOrder?.data?.prepayId]);
+  }, [data?.createBinanceOrder?.id]);
 
   useEffect(() => {
-    if (queryData?.queryBinanceOrder?.status === 'failed') {
-      stopPoll();
-    }
     if (
-      queryData?.queryBinanceOrder?.data?.status &&
-      BinancePayFinalStatuses.includes(
-        queryData?.queryBinanceOrder?.data?.status
-      )
+      queryData?.queryBinanceOrder?.status &&
+      BinancePayFinalStatuses.includes(queryData?.queryBinanceOrder?.status)
     ) {
       stopPoll();
     }
@@ -125,7 +121,7 @@ const BinancePay: React.FC<Props> = () => {
       </InnerWrapper>
       <InnerWrapper className="h-full">
         {loading && <LoadingWrapper message="Generating Address..." />}
-        {data?.createBinanceOrder?.data?.qrContent && (
+        {data?.createBinanceOrder?.qrContent && (
           <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
             <div className="px-4 text-center text-xs font-bold text-primary-400">
               {t('copy.scan_binance_qr_code')}
@@ -163,13 +159,13 @@ const BinancePay: React.FC<Props> = () => {
                       ? '1px solid #404040'
                       : '1px solid #e5e5e5',
                 }}
-                value={data?.createBinanceOrder?.data?.qrContent}
+                value={data?.createBinanceOrder.qrContent}
               />
             </div>
             <div className="w-full">
               <a
                 className="w-full"
-                href={data.createBinanceOrder.data.checkoutUrl!}
+                href={data.createBinanceOrder.checkoutUrl!}
                 target="_blank"
               >
                 <Button block size="large" type={'default'}>

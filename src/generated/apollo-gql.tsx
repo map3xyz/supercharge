@@ -30,47 +30,12 @@ export type Asset = {
   type?: Maybe<Scalars['String']>;
 };
 
-export type BinanceOrderData = {
-  __typename?: 'BinanceOrderData';
-  checkoutUrl?: Maybe<Scalars['String']>;
-  deeplink?: Maybe<Scalars['String']>;
-  expireTime?: Maybe<Scalars['String']>;
-  prepayId?: Maybe<Scalars['String']>;
-  qrContent?: Maybe<Scalars['String']>;
-  qrcodeLink?: Maybe<Scalars['String']>;
-  terminalType?: Maybe<Scalars['String']>;
-  universalUrl?: Maybe<Scalars['String']>;
-};
-
-export type BinancePayTokensData = {
-  __typename?: 'BinancePayTokensData';
+export type BinanceSettingsData = {
+  __typename?: 'BinanceSettingsData';
   apiKey?: Maybe<Scalars['String']>;
   apiSecret?: Maybe<Scalars['String']>;
   cancelUrl?: Maybe<Scalars['String']>;
   returnUrl?: Maybe<Scalars['String']>;
-};
-
-export type BinanceQueryOrderResult = {
-  __typename?: 'BinanceQueryOrderResult';
-  code?: Maybe<Scalars['String']>;
-  data?: Maybe<BinanceQueryOrderResultData>;
-  errorMessage?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
-};
-
-export type BinanceQueryOrderResultData = {
-  __typename?: 'BinanceQueryOrderResultData';
-  createTime?: Maybe<Scalars['Int']>;
-  currency?: Maybe<Scalars['String']>;
-  merchantId?: Maybe<Scalars['Int']>;
-  merchantTradeNo?: Maybe<Scalars['String']>;
-  openUserId?: Maybe<Scalars['String']>;
-  orderAmount?: Maybe<Scalars['String']>;
-  passThroughInfo?: Maybe<Scalars['String']>;
-  prepayId?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
-  transactTime?: Maybe<Scalars['Int']>;
-  transactionId?: Maybe<Scalars['String']>;
 };
 
 export type BridgeQuote = {
@@ -101,13 +66,12 @@ export type Config = {
   mappedAssetId?: Maybe<Scalars['String']>;
 };
 
-export type CreateBinanceOrderResult = {
-  __typename?: 'CreateBinanceOrderResult';
-  code?: Maybe<Scalars['String']>;
-  data?: Maybe<BinanceOrderData>;
-  errorMessage?: Maybe<Scalars['String']>;
-  map3OrderId?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
+export type CreateOrderResponse = {
+  __typename?: 'CreateOrderResponse';
+  checkoutUrl?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  qrContent?: Maybe<Scalars['String']>;
+  universalUrl?: Maybe<Scalars['String']>;
 };
 
 export type ExtensionLinks = {
@@ -144,19 +108,44 @@ export type Logo = {
   svg?: Maybe<Scalars['String']>;
 };
 
+export type Map3Order = {
+  __typename?: 'Map3Order';
+  assetId?: Maybe<Scalars['String']>;
+  merchantTradeNo?: Maybe<Scalars['String']>;
+  orderAmount?: Maybe<Scalars['String']>;
+  organizationId?: Maybe<Scalars['String']>;
+  platformTransactionId?: Maybe<Scalars['String']>;
+  prepayId?: Maybe<Scalars['String']>;
+  status?: Maybe<Map3PlatformOrderStatus>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+export enum Map3PlatformOrderStatus {
+  Canceled = 'canceled',
+  Error = 'error',
+  Expired = 'expired',
+  Initial = 'initial',
+  Paid = 'paid',
+  Pending = 'pending',
+  Refunded = 'refunded',
+  Refunding = 'refunding',
+  Success = 'success'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   addWatchedAddress?: Maybe<Scalars['ID']>;
-  createBinanceOrder?: Maybe<CreateBinanceOrderResult>;
-  createBinancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
-  createConsumerPortalWebhookLink?: Maybe<Scalars['String']>;
+  createBinanceOrder?: Maybe<CreateOrderResponse>;
+  createBinanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
   createOrganization?: Maybe<Organization>;
   createSdkConfigForOrganization?: Maybe<SdkConfigField>;
-  deleteBinancePayTokensForOrganization?: Maybe<Scalars['String']>;
+  createSvixConsumerApp?: Maybe<Scalars['String']>;
+  createSvixConsumerPortalWebhookLink?: Maybe<Scalars['String']>;
+  deleteBinanceSettingsForOrganization?: Maybe<Scalars['String']>;
   prepareBridgeQuote?: Maybe<BridgeQuote>;
   removeWatchedAddress?: Maybe<Scalars['ID']>;
   subscribeToBridgeTransaction?: Maybe<Scalars['String']>;
-  updateBinancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
+  updateBinanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
 };
 
@@ -176,7 +165,7 @@ export type MutationCreateBinanceOrderArgs = {
 };
 
 
-export type MutationCreateBinancePayTokensForOrganizationArgs = {
+export type MutationCreateBinanceSettingsForOrganizationArgs = {
   apiKey: Scalars['String'];
   apiSecret: Scalars['String'];
   cancelUrl: Scalars['String'];
@@ -193,6 +182,11 @@ export type MutationCreateSdkConfigForOrganizationArgs = {
   assetId: Scalars['ID'];
   mappedAssetId: Scalars['ID'];
   networkCode: Scalars['String'];
+};
+
+
+export type MutationCreateSvixConsumerAppArgs = {
+  organizationId: Scalars['ID'];
 };
 
 
@@ -216,7 +210,7 @@ export type MutationSubscribeToBridgeTransactionArgs = {
 };
 
 
-export type MutationUpdateBinancePayTokensForOrganizationArgs = {
+export type MutationUpdateBinanceSettingsForOrganizationArgs = {
   cancelUrl: Scalars['String'];
   returnUrl: Scalars['String'];
 };
@@ -291,7 +285,7 @@ export type Query = {
   assets?: Maybe<Array<Maybe<Asset>>>;
   assetsCount?: Maybe<Scalars['Int']>;
   assetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
-  binancePayTokensForOrganization?: Maybe<BinancePayTokensData>;
+  binanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
   mappedNetworksForAsset?: Maybe<Array<Maybe<Network>>>;
   mappedNetworksForAssetByOrg?: Maybe<Array<Maybe<Network>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
@@ -302,7 +296,7 @@ export type Query = {
   networksByNetworkCodes?: Maybe<Array<Maybe<Network>>>;
   networksCount?: Maybe<Scalars['Int']>;
   organizationById?: Maybe<Organization>;
-  queryBinanceOrder?: Maybe<BinanceQueryOrderResult>;
+  queryBinanceOrder?: Maybe<Map3Order>;
   sdkConfigForOrganization?: Maybe<Array<Maybe<SdkConfigField>>>;
   searchAssets?: Maybe<Array<Maybe<Asset>>>;
   searchAssetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
@@ -395,7 +389,7 @@ export type QueryOrganizationByIdArgs = {
 
 
 export type QueryQueryBinanceOrderArgs = {
-  prepayId: Scalars['String'];
+  id: Scalars['String'];
 };
 
 
@@ -537,7 +531,7 @@ export type CreateBinanceOrderMutationVariables = Exact<{
 }>;
 
 
-export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'CreateBinanceOrderResult', code?: string | null, errorMessage?: string | null, map3OrderId?: string | null, status?: string | null, data?: { __typename?: 'BinanceOrderData', prepayId?: string | null, terminalType?: string | null, expireTime?: string | null, qrcodeLink?: string | null, qrContent?: string | null, checkoutUrl?: string | null, deeplink?: string | null, universalUrl?: string | null } | null } | null };
+export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'CreateOrderResponse', checkoutUrl?: string | null, id?: string | null, qrContent?: string | null, universalUrl?: string | null } | null };
 
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
@@ -615,11 +609,11 @@ export type GetPaymentMethodsQueryVariables = Exact<{
 export type GetPaymentMethodsQuery = { __typename?: 'Query', methodsForNetwork?: Array<{ __typename?: 'PaymentMethod', name?: string | null, icon?: string | null, logo?: string | null, value?: string | null, flags?: { __typename?: 'PaymentMethodFlags', enabled?: boolean | null, memo?: boolean | null } | null, links?: { __typename?: 'ExtensionLinks', brave?: string | null, chrome?: string | null, edge?: string | null, firefox?: string | null, opera?: string | null } | null, walletConnect?: { __typename?: 'WalletConnectWallet', description?: string | null, chains?: Array<string | null> | null, app?: { __typename?: 'WalletConnectAppType', ios?: string | null, android?: string | null } | null, mobile?: { __typename?: 'WalletConnectPlatformType', native?: string | null, universal?: string | null } | null, desktop?: { __typename?: 'WalletConnectPlatformType', native?: string | null } | null } | null } | null> | null };
 
 export type QueryBinanceOrderQueryVariables = Exact<{
-  prepayId: Scalars['String'];
+  id: Scalars['String'];
 }>;
 
 
-export type QueryBinanceOrderQuery = { __typename?: 'Query', queryBinanceOrder?: { __typename?: 'BinanceQueryOrderResult', status?: string | null, data?: { __typename?: 'BinanceQueryOrderResultData', status?: string | null } | null } | null };
+export type QueryBinanceOrderQuery = { __typename?: 'Query', queryBinanceOrder?: { __typename?: 'Map3Order', status?: Map3PlatformOrderStatus | null } | null };
 
 export type SearchAssetsQueryVariables = Exact<{
   query?: InputMaybe<Scalars['String']>;
@@ -718,20 +712,10 @@ export const CreateBinanceOrderDocument = gql`
     userId: $userId
     orderAmount: $orderAmount
   ) {
-    code
-    errorMessage
-    map3OrderId
-    status
-    data {
-      prepayId
-      terminalType
-      expireTime
-      qrcodeLink
-      qrContent
-      checkoutUrl
-      deeplink
-      universalUrl
-    }
+    checkoutUrl
+    id
+    qrContent
+    universalUrl
   }
 }
     `;
@@ -1157,12 +1141,9 @@ export type GetPaymentMethodsQueryHookResult = ReturnType<typeof useGetPaymentMe
 export type GetPaymentMethodsLazyQueryHookResult = ReturnType<typeof useGetPaymentMethodsLazyQuery>;
 export type GetPaymentMethodsQueryResult = Apollo.QueryResult<GetPaymentMethodsQuery, GetPaymentMethodsQueryVariables>;
 export const QueryBinanceOrderDocument = gql`
-    query queryBinanceOrder($prepayId: String!) {
-  queryBinanceOrder(prepayId: $prepayId) {
+    query queryBinanceOrder($id: String!) {
+  queryBinanceOrder(id: $id) {
     status
-    data {
-      status
-    }
   }
 }
     `;
@@ -1179,7 +1160,7 @@ export const QueryBinanceOrderDocument = gql`
  * @example
  * const { data, loading, error } = useQueryBinanceOrderQuery({
  *   variables: {
- *      prepayId: // value for 'prepayId'
+ *      id: // value for 'id'
  *   },
  * });
  */

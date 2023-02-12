@@ -1,8 +1,5 @@
-query queryBinanceOrder($prepayId: String!) {
-  queryBinanceOrder(prepayId: $prepayId) {
+query queryBinanceOrder($id: String!) {
+  queryBinanceOrder(id: $id) {
     status
-    data {
-      status
-    }
   }
 }
