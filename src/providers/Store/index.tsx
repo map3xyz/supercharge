@@ -2,6 +2,7 @@ import { BigNumber, ethers } from 'ethers';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Map3InitConfig } from '../..';
+import { ISO_4217_TO_SYMBOL } from '../../constants/iso4217';
 import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
 import { PrebuiltTx } from '../../utils/transactions/evm';
 
@@ -51,6 +52,7 @@ type State = {
     width?: string;
   };
   fiat?: string;
+  fiatDisplaySymbol?: string;
   method?: PaymentMethod & { description?: string };
   network?: Network;
   prebuiltTx: {
@@ -262,6 +264,8 @@ export const Store: React.FC<
   }
 
   const requiredPaymentMethod = paymentMethod;
+
+  const fiatDisplaySymbol = ISO_4217_TO_SYMBOL[fiat || 'USD'];
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
@@ -482,6 +486,7 @@ export const Store: React.FC<
       asset,
       embed,
       fiat,
+      fiatDisplaySymbol,
       network,
       requiredAmount,
       requiredPaymentMethod,
