@@ -4,6 +4,7 @@ fragment NetworkFields on Network {
   networkCode
   networkName
   symbol
+  bridged
   identifiers {
     chainId
   }

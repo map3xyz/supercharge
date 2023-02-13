@@ -58,6 +58,15 @@ const NetworkSelection: React.FC<Props> = () => {
       />
     );
 
+  const enabledNetworks = data?.mappedNetworksForAssetByOrg?.filter(
+    (network) => !network?.bridged
+  );
+  const bridgedNetworks = data?.mappedNetworksForAssetByOrg?.filter(
+    (network) => network?.bridged
+  );
+
+  if (!enabledNetworks?.length && !bridgedNetworks?.length) return null;
+
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
@@ -107,11 +116,17 @@ const NetworkSelection: React.FC<Props> = () => {
                   </div>
                   <span>{network.networkName}</span>
                 </div>
-                {state.network?.networkName === network.networkName ? (
-                  <i className="fa fa-check-circle text-green-400" />
-                ) : (
-                  <i className="fa fa-chevron-right text-xxs" />
-                )}
+                <div className="flex items-center gap-2">
+                  {network.bridged ? (
+                    // @ts-ignore
+                    <Badge color="green">{t('copy.bridged')}</Badge>
+                  ) : null}
+                  {state.network?.networkName === network.networkName ? (
+                    <i className="fa fa-check-circle text-green-400" />
+                  ) : (
+                    <i className="fa fa-chevron-right text-xxs" />
+                  )}
+                </div>
               </div>
             ) : null
           )}
