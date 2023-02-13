@@ -14,6 +14,7 @@
     "copy": {
       "acknowledge_amount": "Acknowledge Amount",
       "amount_to_pay": "Amount to Pay",
+      "bridged": "Bridged",
       "creating_order": "Creating Order...",
       "error_fetching_assets": "We couldn't get a list of assets to select.",
       "error_fetching_networks": "We couldn't get a list of networks to select.",

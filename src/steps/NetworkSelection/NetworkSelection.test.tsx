@@ -65,6 +65,18 @@ describe('Network Selection', () => {
   });
 });
 
+describe('Bridged Networks', () => {
+  beforeEach(async () => {
+    render(<App config={mockConfig} onClose={() => {}} />);
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+  });
+  it('displays bridged networks', async () => {
+    const bridged = await screen.findAllByText('Bridged');
+    expect(bridged[0]).toBeInTheDocument();
+  });
+});
+
 describe('Network Selection Skip', () => {
   beforeEach(async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
