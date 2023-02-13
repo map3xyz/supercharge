@@ -36,8 +36,10 @@
       "via": "via"
     },
     "button": {
+      "confirm_payment": "Confirm Payment",
       "pay_via_binance": "Pay via Binance",
-      "finalize_on_binance": "Finalize on Binance"
+      "finalize_on_binance": "Finalize on Binance",
+      "finalize_payment": "Finalize Payment"
     }
   }
 }

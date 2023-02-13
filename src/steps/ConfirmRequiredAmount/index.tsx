@@ -1,4 +1,4 @@
-import { Badge, Button } from '@map3xyz/components';
+import { Button } from '@map3xyz/components';
 import React, { useContext, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 

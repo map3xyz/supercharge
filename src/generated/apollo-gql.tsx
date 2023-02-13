@@ -566,7 +566,7 @@ export type GetAssetByMappedAssetIdAndNetworkCodeQueryVariables = Exact<{
 }>;
 
 
-export type GetAssetByMappedAssetIdAndNetworkCodeQuery = { __typename?: 'Query', assetByMappedAssetIdAndNetworkCode?: { __typename?: 'Asset', address?: string | null } | null };
+export type GetAssetByMappedAssetIdAndNetworkCodeQuery = { __typename?: 'Query', assetByMappedAssetIdAndNetworkCode?: { __typename?: 'Asset', id?: string | null, address?: string | null } | null };
 
 export type GetAssetPriceQueryVariables = Exact<{
   assetId?: InputMaybe<Scalars['String']>;
@@ -903,6 +903,7 @@ export const GetAssetByMappedAssetIdAndNetworkCodeDocument = gql`
     mappedAssetId: $mappedAssetId
     networkCode: $networkCode
   ) {
+    id
     address
   }
 }

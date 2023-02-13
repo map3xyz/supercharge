@@ -14,6 +14,8 @@ import WindowEthereum from '../../components/methods/WindowEthereum';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
+  useCreateBridgeQuoteMutation,
+  useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
   useGetAssetPriceQuery,
 } from '../../generated/apollo-gql';
@@ -78,6 +80,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     state.prebuiltTx.data?.maxLimitFormatted,
   ]);
 
+  const [
+    getAssetMappedAssetIdAndNetworkCodeQueryLazy,
+  ] = useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery();
   const {
     data,
     error,
@@ -90,6 +95,14 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       networkCode: state.network?.networkCode,
     },
   });
+  const [
+    createBridgeQuote,
+    {
+      data: _bridgeQuoteData,
+      error: _bridgeQuoteError,
+      loading: bridgeQuoteLoading,
+    },
+  ] = useCreateBridgeQuoteMutation();
 
   const {
     getTransaction,
@@ -298,6 +311,33 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         state.network?.networkCode,
         amount
       );
+
+      if (state.network?.bridged) {
+        const {
+          data: fromAsset,
+        } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+          variables: {
+            mappedAssetId: state.asset?.id!,
+            networkCode: state.network?.networkCode!,
+          },
+        });
+
+        await createBridgeQuote({
+          variables: {
+            amount: ethers.utils
+              .parseUnits(amount, state.asset?.decimals!)
+              .toString(),
+            fromAddress: fromAsset?.assetByMappedAssetIdAndNetworkCode!
+              .address!,
+            fromAssetId: fromAsset!.assetByMappedAssetIdAndNetworkCode!.id!,
+            // TODO: correct toAddress
+            toAddress: state.asset?.address!,
+            // TODO: correct toAssetId
+            toAssetId: state.asset?.id!,
+            userId: state.userId,
+          },
+        });
+      }
 
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });
 
@@ -611,7 +651,15 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 </AnimatePresence>
               ) : null}
             </span>
-            {state.method.value === 'isWalletConnect' ? (
+            {state.method.value === 'binance-pay' ? (
+              <BinancePay
+                amount={amount}
+                isConfirming={isConfirming}
+                ref={submitRef}
+                setFormError={setFormError}
+                setIsConfirming={setIsConfirming}
+              />
+            ) : state.method.value === 'isWalletConnect' ? (
               <WalletConnect
                 amount={amount}
                 disabled={
@@ -620,14 +668,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   state.prebuiltTx.data?.feeError ||
                   !!formError?.includes(INSUFFICIENT_FUNDS)
                 }
-              />
-            ) : state.method.value === 'binance-pay' ? (
-              <BinancePay
-                amount={amount}
-                isConfirming={isConfirming}
-                ref={submitRef}
-                setFormError={setFormError}
-                setIsConfirming={setIsConfirming}
               />
             ) : (
               <WindowEthereum
@@ -638,6 +678,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   state.prebuiltTx.data?.feeError ||
                   !!formError?.includes(INSUFFICIENT_FUNDS)
                 }
+                loading={bridgeQuoteLoading}
                 ref={submitRef}
                 setFormError={setFormError}
               />

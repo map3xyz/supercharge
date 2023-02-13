@@ -1,9 +1,8 @@
-import { Badge, Button, CoinLogo, CryptoAddress } from '@map3xyz/components';
+import { Badge, Button, CoinLogo } from '@map3xyz/components';
 import React, { useContext, useState } from 'react';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { useGetNetworkByChainIdQuery } from '../../generated/apollo-gql';
 import { useWeb3 } from '../../hooks/useWeb3';

@@ -12,7 +12,7 @@ import { DOWNLOAD_EXTENSION, SubmitHandler } from '../../../steps/EnterAmount';
 import MethodIcon from '../../MethodIcon';
 
 const WindowEthereum = forwardRef<SubmitHandler, Props>(
-  ({ amount, disabled, setFormError }, submitRef) => {
+  ({ amount, disabled, loading, setFormError }, submitRef) => {
     const [state, dispatch] = useContext(Context);
 
     const submit = async () => {
@@ -117,7 +117,7 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
           state.account.status === 'loading'
         }
         htmlType="submit"
-        loading={state.account.status === 'loading'}
+        loading={loading || state.account.status === 'loading'}
         size="large"
         type={'default'}
       >
@@ -133,6 +133,7 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
 type Props = {
   amount: string;
   disabled: boolean;
+  loading?: boolean;
   setFormError: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 

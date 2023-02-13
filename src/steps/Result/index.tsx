@@ -1,10 +1,9 @@
-import { Badge, CryptoAddress, ReadOnlyText } from '@map3xyz/components';
+import { ReadOnlyText } from '@map3xyz/components';
 import lottie from 'lottie-web';
 import React, { useContext, useEffect, useState } from 'react';
 
 import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { Context, Steps, TxSteps } from '../../providers/Store';
 

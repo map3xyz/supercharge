@@ -1,6 +1,6 @@
 import { Badge, CoinLogo } from '@map3xyz/components';
 import React, { useContext, useEffect } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
