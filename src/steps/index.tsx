@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from 'jsx:../assets/logo.svg';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
 import InnerWrapper from '../components/InnerWrapper';
@@ -24,6 +24,12 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const { step, steps } = state;
 
   useChainWatcher();
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch({ payload: Steps[steps[step]], type: 'SET_STEP_IN_VIEW' });
+    }, 250);
+  }, [step, steps]);
 
   return (
     <div

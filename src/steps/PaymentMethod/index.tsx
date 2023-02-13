@@ -7,6 +7,7 @@ import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import {
   PaymentMethod,
   useGetPaymentMethodsQuery,
@@ -259,18 +260,7 @@ const PaymentMethod: React.FC<Props> = () => {
             </form>
           ) : null}
         </InnerWrapper>
-
-        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-          Send {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.requiredAmount} {state.asset.symbol || ''}
-          </Badge>{' '}
-          on the {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network.networkName || ''}
-          </Badge>{' '}
-          via
-        </div>
+        <StateDescriptionHeader />
       </div>
       <div className="flex h-full flex-col overflow-hidden">
         <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">

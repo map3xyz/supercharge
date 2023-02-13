@@ -1,0 +1,41 @@
+mutation CreateBridgeQuote(
+  $amount: String!
+  $fromAddress: String!
+  $fromAssetId: String!
+  $toAddress: String!
+  $toAssetId: String!
+  $userId: String!
+) {
+  prepareBridgeQuote(
+    amount: $amount
+    fromAddress: $fromAddress
+    fromAssetId: $fromAssetId
+    toAddress: $toAddress
+    toAssetId: $toAssetId
+    userId: $userId
+  ) {
+    aggregator
+    approval {
+      address
+      amount
+    }
+    estimate {
+      amountToReceive
+      executionDurationSeconds
+      fromAmountUsd
+      gasCostsUsd
+      slippage
+      toAmountUsd
+    }
+    id
+    transaction {
+      to
+      from
+      gasLimit
+      gasPrice
+      data
+      value
+      chainId
+    }
+  }
+}

@@ -533,6 +533,18 @@ export type CreateBinanceOrderMutationVariables = Exact<{
 
 export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'CreateOrderResponse', checkoutUrl?: string | null, id?: string | null, qrContent?: string | null, universalUrl?: string | null } | null };
 
+export type CreateBridgeQuoteMutationVariables = Exact<{
+  amount: Scalars['String'];
+  fromAddress: Scalars['String'];
+  fromAssetId: Scalars['String'];
+  toAddress: Scalars['String'];
+  toAssetId: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type CreateBridgeQuoteMutation = { __typename?: 'Mutation', prepareBridgeQuote?: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } | null };
+
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
 }>;
@@ -748,6 +760,73 @@ export function useCreateBinanceOrderMutation(baseOptions?: Apollo.MutationHookO
 export type CreateBinanceOrderMutationHookResult = ReturnType<typeof useCreateBinanceOrderMutation>;
 export type CreateBinanceOrderMutationResult = Apollo.MutationResult<CreateBinanceOrderMutation>;
 export type CreateBinanceOrderMutationOptions = Apollo.BaseMutationOptions<CreateBinanceOrderMutation, CreateBinanceOrderMutationVariables>;
+export const CreateBridgeQuoteDocument = gql`
+    mutation CreateBridgeQuote($amount: String!, $fromAddress: String!, $fromAssetId: String!, $toAddress: String!, $toAssetId: String!, $userId: String!) {
+  prepareBridgeQuote(
+    amount: $amount
+    fromAddress: $fromAddress
+    fromAssetId: $fromAssetId
+    toAddress: $toAddress
+    toAssetId: $toAssetId
+    userId: $userId
+  ) {
+    aggregator
+    approval {
+      address
+      amount
+    }
+    estimate {
+      amountToReceive
+      executionDurationSeconds
+      fromAmountUsd
+      gasCostsUsd
+      slippage
+      toAmountUsd
+    }
+    id
+    transaction {
+      to
+      from
+      gasLimit
+      gasPrice
+      data
+      value
+      chainId
+    }
+  }
+}
+    `;
+export type CreateBridgeQuoteMutationFn = Apollo.MutationFunction<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>;
+
+/**
+ * __useCreateBridgeQuoteMutation__
+ *
+ * To run a mutation, you first call `useCreateBridgeQuoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBridgeQuoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBridgeQuoteMutation, { data, loading, error }] = useCreateBridgeQuoteMutation({
+ *   variables: {
+ *      amount: // value for 'amount'
+ *      fromAddress: // value for 'fromAddress'
+ *      fromAssetId: // value for 'fromAssetId'
+ *      toAddress: // value for 'toAddress'
+ *      toAssetId: // value for 'toAssetId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useCreateBridgeQuoteMutation(baseOptions?: Apollo.MutationHookOptions<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>(CreateBridgeQuoteDocument, options);
+      }
+export type CreateBridgeQuoteMutationHookResult = ReturnType<typeof useCreateBridgeQuoteMutation>;
+export type CreateBridgeQuoteMutationResult = Apollo.MutationResult<CreateBridgeQuoteMutation>;
+export type CreateBridgeQuoteMutationOptions = Apollo.BaseMutationOptions<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>;
 export const RemoveWatchedAddressDocument = gql`
     mutation RemoveWatchedAddress($watchedAddressId: ID!) {
   removeWatchedAddress(watchedAddressId: $watchedAddressId)

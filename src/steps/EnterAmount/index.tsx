@@ -1,16 +1,17 @@
-import { Badge, CryptoAddress } from '@map3xyz/components';
+import { Badge } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
 import { useTranslation } from 'react-i18next';
 
+import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import BinancePay from '../../components/methods/BinancePay';
 import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum from '../../components/methods/WindowEthereum';
+import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
@@ -81,6 +82,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     data,
     error,
     loading,
+    refetch,
   } = useGetAssetByMappedAssetIdAndNetworkCodeQuery({
     skip: state.asset?.type !== 'asset',
     variables: {
@@ -387,9 +389,20 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     return null;
   }
 
+  if (error) {
+    return (
+      <ErrorWrapper
+        description="We had an issue loading the selected asset. Please go back and try again."
+        header="Failed to Fetch Asset"
+        retry={refetch}
+        stacktrace={JSON.stringify(error)}
+      />
+    );
+  }
+
   return (
     <InnerWrapper className="h-full">
-      {loading || !!error ? (
+      {loading ? (
         <LoadingWrapper />
       ) : (
         <form
@@ -663,43 +676,7 @@ const EnterAmount: React.FC<Props> = () => {
           {t('title.enter_amount')}
         </h3>
       </InnerWrapper>
-      <div className="w-full border-y border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-        {t('copy.send')} {/* @ts-ignore */}
-        <Badge color="blue" size="large">
-          {state.requiredAmount} {state.asset.symbol || ''}
-        </Badge>{' '}
-        {state.method.value === 'binance-pay' ? null : (
-          <>
-            on the {/* @ts-ignore */}
-            <Badge color="blue" size="large">
-              {state.network.networkName || ''}
-            </Badge>{' '}
-          </>
-        )}
-        {t('copy.via')} {/* @ts-ignore */}
-        <Badge
-          color={
-            state.account.status === 'loading' ||
-            state.account.status === 'idle'
-              ? 'yellow'
-              : state.account.status === 'error'
-              ? 'red'
-              : 'green'
-          }
-          dot
-          size="large"
-        >
-          {/* @ts-ignore */}
-          <span className="flex items-center gap-1">
-            <MethodIcon method={state.method} /> {state.method.name}{' '}
-            {state.account.status === 'success' && state.account.data ? (
-              <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
-            ) : (
-              ''
-            )}
-          </span>
-        </Badge>
-      </div>
+      <StateDescriptionHeader />
       {loading ? (
         <LoadingWrapper />
       ) : (

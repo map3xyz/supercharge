@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import MethodIcon from '../../components/MethodIcon';
+import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { Context, Steps, TxSteps } from '../../providers/Store';
 
 const Result: React.FC<Props> = () => {
@@ -64,41 +65,7 @@ const Result: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col items-center">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-          Send {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.requiredAmount} {state.asset?.symbol || ''}
-          </Badge>{' '}
-          on the {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network?.networkName || ''}
-          </Badge>{' '}
-          via
-          <Badge
-            color={
-              state.method.value === 'show-address'
-                ? 'blue'
-                : state.account.status === 'loading' ||
-                  state.account.status === 'idle'
-                ? 'yellow'
-                : state.account.status === 'error'
-                ? 'red'
-                : 'green'
-            }
-            dot
-            size="large"
-          >
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}{' '}
-              {state.account.status === 'success' && state.account.data ? (
-                <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
-              ) : (
-                ''
-              )}
-            </span>
-          </Badge>
-        </div>
+        <StateDescriptionHeader />
       </div>
       <InnerWrapper
         className={`relative h-full transition-all ${

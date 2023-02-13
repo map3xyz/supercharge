@@ -46,6 +46,7 @@ type State = {
     error?: string;
     status: RemoteType;
   };
+  destinationNetwork?: Network;
   embed?: {
     height?: string;
     id?: string;
@@ -82,6 +83,7 @@ type State = {
   shortcutAmounts?: number[];
   slug?: string;
   step: number;
+  stepInView: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
   tx: {
@@ -105,8 +107,10 @@ type State = {
 type Action =
   | { payload: Asset; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
+  | { payload: Network; type: 'SET_DESTINATION_NETWORK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
+  | { payload: number; type: 'SET_STEP_IN_VIEW' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
   | {
       payload: { address: string; memo?: string };
@@ -183,6 +187,7 @@ const initialState: State = {
     data: undefined,
     status: 'idle',
   },
+  destinationNetwork: undefined,
   fiat: undefined,
   method: undefined,
   network: undefined,
@@ -201,6 +206,7 @@ const initialState: State = {
   shortcutAmounts: [],
   slug: undefined,
   step: Steps.AssetSelection,
+  stepInView: Steps.AssetSelection,
   steps: [
     'AssetSelection',
     'NetworkSelection',
@@ -272,6 +278,8 @@ export const Store: React.FC<
       switch (action.type) {
         case 'SET_ASSET':
           return { ...state, asset: action.payload };
+        case 'SET_DESTINATION_NETWORK':
+          return { ...state, destinationNetwork: action.payload };
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
         case 'SET_STEP':
@@ -279,6 +287,13 @@ export const Store: React.FC<
             ...state,
             prevStep: state.step,
             step: state.steps.indexOf(
+              Steps[action.payload] as keyof typeof Steps
+            ),
+          };
+        case 'SET_STEP_IN_VIEW':
+          return {
+            ...state,
+            stepInView: state.steps.indexOf(
               Steps[action.payload] as keyof typeof Steps
             ),
           };
