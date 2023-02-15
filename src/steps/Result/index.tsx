@@ -116,11 +116,21 @@ const Result: React.FC<Props> = () => {
               type: 'SET_TX',
             });
             try {
-              await approveTokenAllowance(
+              const hash = await approveTokenAllowance(
                 fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
                 state.bridgeQuote.transaction?.to,
                 ethers.BigNumber.from(state.bridgeQuote.approval?.amount)
               );
+              dispatch({
+                payload: {
+                  data: `Waiting for the approval transaction to complete.`,
+                  status: 'loading',
+                  step: 'ApproveToken',
+                  title: 'Awaiting Approval',
+                },
+                type: 'SET_TX',
+              });
+              await waitForTransaction(hash, 1);
               dispatch({
                 payload: {
                   data: `Token approved on ${state.method?.name}.`,
@@ -133,15 +143,25 @@ const Result: React.FC<Props> = () => {
             } catch (e: any) {
               dispatch({
                 payload: {
-                  data: e.message,
+                  data: `Action denied on ${state.method?.name}.`,
                   status: 'error',
                   step: 'ApproveToken',
-                  title: 'Action Denied',
+                  title: 'Awaiting Approval',
                 },
                 type: 'SET_TX',
               });
               return;
             }
+          } else {
+            dispatch({
+              payload: {
+                data: `Token approved for spending.`,
+                status: 'success',
+                step: 'ApproveToken',
+                title: 'Token Approved',
+              },
+              type: 'SET_TX',
+            });
           }
 
           dispatch({
@@ -172,10 +192,10 @@ const Result: React.FC<Props> = () => {
           } catch (e: any) {
             dispatch({
               payload: {
-                data: e.message,
+                data: 'Action denied.',
                 status: 'error',
                 step: 'Submitted',
-                title: 'Action Denied',
+                title: 'Submitted',
               },
               type: 'SET_TX',
             });
@@ -220,7 +240,7 @@ const Result: React.FC<Props> = () => {
           await waitForTransaction(hash, MIN_CONFIRMATIONS);
           dispatch({
             payload: {
-              data: '🚀 Transaction confirmed!',
+              data: 'From Transaction confirmed.',
               status: 'success',
               step: 'Confirmed',
             },
@@ -301,7 +321,7 @@ const Result: React.FC<Props> = () => {
                     </div>
                   ) : state.tx.progress[step].status === 'error' ? (
                     <div className="text-xs text-red-500">
-                      {state.tx.progress[step].error}
+                      {state.tx.progress[step].data}
                     </div>
                   ) : null}
                 </div>

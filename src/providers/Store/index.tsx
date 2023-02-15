@@ -100,7 +100,6 @@ type State = {
     progress: {
       [key in keyof typeof TxSteps]: {
         data?: string;
-        error?: string;
         status: RemoteType;
         title?: string;
       };
@@ -172,7 +171,6 @@ type Action =
   | {
       payload: {
         data?: string;
-        error?: string;
         status: RemoteType;
         step: keyof typeof TxSteps;
         title?: string;
@@ -235,27 +233,22 @@ const initialState: State = {
     progress: {
       ApproveToken: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
       Confirmed: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
       Confirming: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
       DestinationNetwork: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
       Submitted: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
     },

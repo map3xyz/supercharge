@@ -79,7 +79,7 @@ export const useWeb3 = () => {
 
     const tx = await contract.approve(spenderAddress, amount.toHexString());
 
-    return tx.wait();
+    return tx.hash;
   };
 
   const getTokenAllowance = async (
@@ -235,7 +235,6 @@ export const useWeb3 = () => {
   };
 
   const sendFinalTransaction = async (finalTx: FinalTx): Promise<string> => {
-    debugger;
     try {
       const hash: string = await state.provider?.data?.send?.(
         'eth_sendTransaction',

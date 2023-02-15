@@ -325,17 +325,31 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           networkCode: state.network?.networkCode!,
         },
       });
+      const {
+        data: destinationAsset,
+      } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+        variables: {
+          mappedAssetId: state.asset?.id!,
+          networkCode: state.destinationNetwork?.networkCode!,
+        },
+      });
+      if (
+        !fromAsset?.assetByMappedAssetIdAndNetworkCode?.id ||
+        !destinationAsset?.assetByMappedAssetIdAndNetworkCode?.id
+      ) {
+        throw new Error(
+          'Cannot create bridge quote without to and destination assets.'
+        );
+      }
       await createBridgeQuote({
         variables: {
           amount: ethers.utils
             .parseUnits(amount, state.asset?.decimals!)
             .toString(),
           fromAddress: state.account.data,
-          fromAssetId: fromAsset!.assetByMappedAssetIdAndNetworkCode!.id!,
+          fromAssetId: fromAsset.assetByMappedAssetIdAndNetworkCode.id,
           toAddress: requestedAddress.address,
-          // TODO: correct toAssetId, know the correct destination network
-          // currently it's the primary mapped asset id
-          toAssetId: state.asset?.id!,
+          toAssetId: destinationAsset.assetByMappedAssetIdAndNetworkCode.id,
           userId: state.userId,
         },
       });
@@ -464,7 +478,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         setFormError(e.message);
         dispatch({
           payload: {
-            error: e.message,
             status: 'error',
             step: 'Submitted',
             title: 'Action Denied',
