@@ -22,7 +22,6 @@ import {
 import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
-import { FinalTx } from '../../utils/transactions/evm';
 
 const BASE_FONT_SIZE = 48;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
@@ -37,7 +36,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { t } = useTranslation();
   const [state, dispatch, { onAddressRequested }] = useContext(Context);
   const [isConfirming, setIsConfirming] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
@@ -107,8 +105,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   ] = useCreateBridgeQuoteMutation();
 
   const {
-    approveTokenAllowance,
-    getTokenAllowance,
     getTransaction,
     handleAuthorizeTransactionProxy,
     prepareFinalTransaction,
@@ -290,52 +286,25 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       throw new Error('Account not found.');
     }
 
-    const {
-      data: fromAsset,
-    } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
-      variables: {
-        mappedAssetId: state.asset?.id!,
-        networkCode: state.network?.networkCode!,
-      },
-    });
-
     if (isConfirming) {
-      const allowance = await getTokenAllowance(
-        fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
-        bridgeQuoteData?.prepareBridgeQuote?.transaction?.to
-      );
-
-      if (!bridgeQuoteData?.prepareBridgeQuote?.transaction?.to) {
-        throw new Error('Bridge contract not found.');
+      if (!bridgeQuoteData?.prepareBridgeQuote) {
+        throw new Error('Quote not found.');
       }
-
-      if (!bridgeQuoteData?.prepareBridgeQuote?.approval?.amount) {
-        throw new Error('Approval amount not found.');
-      }
-
-      if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
-        throw new Error('Asset address not found.');
-      }
-
-      if (allowance.lt(bridgeQuoteData?.prepareBridgeQuote?.approval?.amount)) {
-        try {
-          setIsLoading(true);
-          await approveTokenAllowance(
-            fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
-            bridgeQuoteData?.prepareBridgeQuote?.transaction?.to,
-            ethers.BigNumber.from(
-              bridgeQuoteData?.prepareBridgeQuote?.approval?.amount
-            )
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      await sendFinalTransaction({
-        ...(bridgeQuoteData?.prepareBridgeQuote?.transaction as FinalTx),
-        gas: bridgeQuoteData?.prepareBridgeQuote?.transaction
-          ?.gasLimit as string,
+      dispatch({
+        payload: bridgeQuoteData?.prepareBridgeQuote,
+        type: 'SET_BRIDGE_QUOTE',
       });
+      dispatch({
+        payload: [
+          'ApproveToken',
+          'Submitted',
+          'Confirming',
+          'Confirmed',
+          'DestinationNetwork',
+        ],
+        type: 'SET_TX_STEPS',
+      });
+      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
     } else {
       if (!state.asset?.symbol) throw new Error('Asset not found.');
       if (!state.destinationNetwork?.networkCode)
@@ -348,6 +317,14 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       if (!requestedAddress?.address) {
         throw new Error('Address not found.');
       }
+      const {
+        data: fromAsset,
+      } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+        variables: {
+          mappedAssetId: state.asset?.id!,
+          networkCode: state.network?.networkCode!,
+        },
+      });
       await createBridgeQuote({
         variables: {
           amount: ethers.utils
@@ -368,11 +345,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
 
   const handleProviderTransaction = async () => {
     dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-
-    dispatch({
-      payload: amount + ' ' + state.asset?.symbol,
-      type: 'SET_TX_AMOUNT',
-    });
     dispatch({
       payload: {
         data: `Please confirm the transaction on ${state.method?.name}.`,
@@ -475,6 +447,11 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             state.network?.networkCode,
             amount
           );
+
+          dispatch({
+            payload: amount + ' ' + state.asset?.symbol,
+            type: 'SET_TX_AMOUNT',
+          });
 
           if (state.network?.bridged) {
             handleBridgeTransaction();
@@ -749,7 +726,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 amount={amount}
                 bridgeQuote={bridgeQuoteData}
                 disabled={
-                  isLoading ||
                   state.depositAddress.status === 'loading' ||
                   state.prebuiltTx.status !== 'success' ||
                   state.prebuiltTx.data?.feeError ||
@@ -757,7 +733,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   !!formError?.includes(INSUFFICIENT_FUNDS)
                 }
                 isConfirming={isConfirming}
-                loading={isLoading || bridgeQuoteLoading}
+                loading={bridgeQuoteLoading}
                 ref={submitRef}
                 setFormError={setFormError}
                 setIsConfirming={setIsConfirming}

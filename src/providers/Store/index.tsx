@@ -3,7 +3,12 @@ import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Map3InitConfig } from '../..';
 import { ISO_4217_TO_SYMBOL } from '../../constants/iso4217';
-import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
+import {
+  Asset,
+  BridgeQuote,
+  Network,
+  PaymentMethod,
+} from '../../generated/apollo-gql';
 import { PrebuiltTx } from '../../utils/transactions/evm';
 
 export enum Steps {
@@ -43,6 +48,7 @@ type State = {
     status: RemoteType;
   };
   asset?: Asset;
+  bridgeQuote?: BridgeQuote;
   depositAddress: {
     data?: { address: string; memo?: string };
     error?: string;
@@ -152,6 +158,10 @@ type Action =
       };
       type: 'SET_PREBUILT_TX_SUCCESS';
     }
+  | {
+      payload?: BridgeQuote;
+      type: 'SET_BRIDGE_QUOTE';
+    }
   | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
   | { type: 'SET_PREBUILT_TX_IDLE' }
   | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
@@ -168,6 +178,10 @@ type Action =
         title?: string;
       };
       type: 'SET_TX';
+    }
+  | {
+      payload: (keyof typeof TxSteps)[];
+      type: 'SET_TX_STEPS';
     }
   | { payload: string; type: 'SET_TX_HASH' }
   | { payload: string; type: 'SET_TX_AMOUNT' }
@@ -379,6 +393,11 @@ export const Store: React.FC<
               status: 'idle',
             },
           };
+        case 'SET_BRIDGE_QUOTE':
+          return {
+            ...state,
+            bridgeQuote: action.payload,
+          };
         case 'SET_PREBUILT_TX_SUCCESS':
           return {
             ...state,
@@ -469,6 +488,14 @@ export const Store: React.FC<
                 },
               },
               step: TxSteps[action.payload.step],
+            },
+          };
+        case 'SET_TX_STEPS':
+          return {
+            ...state,
+            tx: {
+              ...state.tx,
+              steps: action.payload,
             },
           };
         case 'SET_TX_HASH':

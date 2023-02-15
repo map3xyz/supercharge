@@ -191,7 +191,7 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
                   </div>
                 )}
               {bridgeQuote.prepareBridgeQuote?.estimate?.amountToReceive ? (
-                <div className="flex w-full items-center justify-between">
+                <div className="flex w-full items-center justify-between font-semibold">
                   <div>{t('copy.receive_amount')}:</div>
                   <div>
                     {ethers.utils.formatUnits(

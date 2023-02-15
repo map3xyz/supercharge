@@ -1,15 +1,32 @@
 import { ReadOnlyText } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import lottie from 'lottie-web';
 import React, { useContext, useEffect, useState } from 'react';
 
 import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import { MIN_CONFIRMATIONS } from '../../constants';
+import { useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery } from '../../generated/apollo-gql';
+import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps, TxSteps } from '../../providers/Store';
+import { FinalTx } from '../../utils/transactions/evm';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
   const [toggleDetails, setToggleDetails] = useState(false);
+
+  const {
+    approveTokenAllowance,
+    getTokenAllowance,
+    getTransaction,
+    sendFinalTransaction,
+    waitForTransaction,
+  } = useWeb3();
+
+  const [
+    getAssetMappedAssetIdAndNetworkCodeQueryLazy,
+  ] = useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery();
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -54,6 +71,169 @@ const Result: React.FC<Props> = () => {
   ]);
 
   useEffect(() => {
+    const run = async () => {
+      try {
+        if (state.network?.bridged) {
+          if (!state.bridgeQuote) {
+            // send user back to Enter Amount?
+            throw new Error('Bridge quote not found.');
+          }
+
+          const {
+            data: fromAsset,
+          } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+            variables: {
+              mappedAssetId: state.asset?.id!,
+              networkCode: state.network?.networkCode!,
+            },
+          });
+
+          const allowance = await getTokenAllowance(
+            fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+            state.bridgeQuote.transaction?.to
+          );
+
+          if (!state.bridgeQuote.transaction?.to) {
+            throw new Error('Bridge contract not found.');
+          }
+
+          if (!state.bridgeQuote.approval?.amount) {
+            throw new Error('Approval amount not found.');
+          }
+
+          if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
+            throw new Error('Asset address not found.');
+          }
+
+          if (allowance.lt(state.bridgeQuote.approval?.amount)) {
+            dispatch({
+              payload: {
+                data: `Please approve the token on ${state.method?.name}.`,
+                status: 'loading',
+                step: 'ApproveToken',
+                title: 'Awaiting Approval',
+              },
+              type: 'SET_TX',
+            });
+            try {
+              await approveTokenAllowance(
+                fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+                state.bridgeQuote.transaction?.to,
+                ethers.BigNumber.from(state.bridgeQuote.approval?.amount)
+              );
+              dispatch({
+                payload: {
+                  data: `Token approved on ${state.method?.name}.`,
+                  status: 'success',
+                  step: 'ApproveToken',
+                  title: 'Token Approved',
+                },
+                type: 'SET_TX',
+              });
+            } catch (e: any) {
+              dispatch({
+                payload: {
+                  data: e.message,
+                  status: 'error',
+                  step: 'ApproveToken',
+                  title: 'Action Denied',
+                },
+                type: 'SET_TX',
+              });
+              return;
+            }
+          }
+
+          dispatch({
+            payload: {
+              data: `Please confirm the transaction on ${state.method?.name}.`,
+              status: 'loading',
+              step: 'Submitted',
+              title: 'Awaiting Submission',
+            },
+            type: 'SET_TX',
+          });
+          let hash: string;
+          try {
+            hash = await sendFinalTransaction({
+              ...(state.bridgeQuote.transaction as FinalTx),
+              gas: state.bridgeQuote.transaction?.gasLimit as string,
+            });
+            dispatch({ payload: hash, type: 'SET_TX_HASH' });
+            dispatch({
+              payload: {
+                data: `Transaction submitted at ${new Date().toLocaleString()}.`,
+                status: 'success',
+                step: 'Submitted',
+                title: 'Submitted',
+              },
+              type: 'SET_TX',
+            });
+          } catch (e: any) {
+            dispatch({
+              payload: {
+                data: e.message,
+                status: 'error',
+                step: 'Submitted',
+                title: 'Action Denied',
+              },
+              type: 'SET_TX',
+            });
+            return;
+          }
+
+          if (!hash) {
+            throw new Error('Transaction hash not found.');
+          }
+
+          dispatch({
+            payload: {
+              data: 'Waiting for transaction to be included in a block.',
+              status: 'loading',
+              step: 'Confirming',
+            },
+            type: 'SET_TX',
+          });
+          let response;
+          while (!response) {
+            response = await getTransaction(hash);
+          }
+          dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
+          const receipt = await waitForTransaction(hash, 1);
+          dispatch({
+            payload: {
+              data:
+                'Transaction included in block ' + receipt.blockNumber + '.',
+              status: 'success',
+              step: 'Confirming',
+            },
+            type: 'SET_TX',
+          });
+          dispatch({
+            payload: {
+              data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
+              status: 'loading',
+              step: 'Confirmed',
+            },
+            type: 'SET_TX',
+          });
+          await waitForTransaction(hash, MIN_CONFIRMATIONS);
+          dispatch({
+            payload: {
+              data: '🚀 Transaction confirmed!',
+              status: 'success',
+              step: 'Confirmed',
+            },
+            type: 'SET_TX',
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    run();
+
     return () => {
       dispatch({
         type: 'RESET_TX',
