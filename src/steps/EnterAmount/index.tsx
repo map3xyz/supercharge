@@ -22,6 +22,7 @@ import {
 import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
+import { FinalTx } from '../../utils/transactions/evm';
 
 const BASE_FONT_SIZE = 48;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
@@ -34,8 +35,9 @@ export type SubmitHandler = {
 
 const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { t } = useTranslation();
-  const [state, dispatch] = useContext(Context);
+  const [state, dispatch, { onAddressRequested }] = useContext(Context);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState<string | undefined>('');
   const [formValue, setFormValue] = useState<{
     base: string;
@@ -98,16 +100,19 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const [
     createBridgeQuote,
     {
-      data: _bridgeQuoteData,
+      data: bridgeQuoteData,
       error: _bridgeQuoteError,
       loading: bridgeQuoteLoading,
     },
   ] = useCreateBridgeQuoteMutation();
 
   const {
+    approveTokenAllowance,
+    getTokenAllowance,
     getTransaction,
     handleAuthorizeTransactionProxy,
-    sendTransaction,
+    prepareFinalTransaction,
+    sendFinalTransaction,
     waitForTransaction,
   } = useWeb3();
   const { prebuildTx } = usePrebuildTx();
@@ -275,138 +280,208 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     }, 100);
   };
 
+  const handleBinancePay = () => {
+    dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
+    dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
+  };
+
+  const handleBridgeTransaction = async () => {
+    if (!state.account.data) {
+      throw new Error('Account not found.');
+    }
+
+    const {
+      data: fromAsset,
+    } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+      variables: {
+        mappedAssetId: state.asset?.id!,
+        networkCode: state.network?.networkCode!,
+      },
+    });
+
+    if (isConfirming) {
+      const allowance = await getTokenAllowance(
+        fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+        bridgeQuoteData?.prepareBridgeQuote?.transaction?.to
+      );
+
+      if (!bridgeQuoteData?.prepareBridgeQuote?.transaction?.to) {
+        throw new Error('Bridge contract not found.');
+      }
+
+      if (!bridgeQuoteData?.prepareBridgeQuote?.approval?.amount) {
+        throw new Error('Approval amount not found.');
+      }
+
+      if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
+        throw new Error('Asset address not found.');
+      }
+
+      if (allowance.lt(bridgeQuoteData?.prepareBridgeQuote?.approval?.amount)) {
+        try {
+          setIsLoading(true);
+          await approveTokenAllowance(
+            fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+            bridgeQuoteData?.prepareBridgeQuote?.transaction?.to,
+            ethers.BigNumber.from(
+              bridgeQuoteData?.prepareBridgeQuote?.approval?.amount
+            )
+          );
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      await sendFinalTransaction({
+        ...(bridgeQuoteData?.prepareBridgeQuote?.transaction as FinalTx),
+        gas: bridgeQuoteData?.prepareBridgeQuote?.transaction
+          ?.gasLimit as string,
+      });
+    } else {
+      if (!state.asset?.symbol) throw new Error('Asset not found.');
+      if (!state.destinationNetwork?.networkCode)
+        throw new Error('Network not found.');
+
+      const requestedAddress = await onAddressRequested?.(
+        state.asset?.symbol,
+        state.destinationNetwork?.networkCode
+      );
+      if (!requestedAddress?.address) {
+        throw new Error('Address not found.');
+      }
+      await createBridgeQuote({
+        variables: {
+          amount: ethers.utils
+            .parseUnits(amount, state.asset?.decimals!)
+            .toString(),
+          fromAddress: state.account.data,
+          fromAssetId: fromAsset!.assetByMappedAssetIdAndNetworkCode!.id!,
+          toAddress: requestedAddress.address,
+          // TODO: correct toAssetId, know the correct destination network
+          // currently it's the primary mapped asset id
+          toAssetId: state.asset?.id!,
+          userId: state.userId,
+        },
+      });
+      setIsConfirming(true);
+    }
+  };
+
+  const handleProviderTransaction = async () => {
+    dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+
+    dispatch({
+      payload: amount + ' ' + state.asset?.symbol,
+      type: 'SET_TX_AMOUNT',
+    });
+    dispatch({
+      payload: {
+        data: `Please confirm the transaction on ${state.method?.name}.`,
+        status: 'loading',
+        step: 'Submitted',
+        title: 'Awaiting Submission',
+      },
+      type: 'SET_TX',
+    });
+    const finalTx = await prepareFinalTransaction(
+      amount,
+      data?.assetByMappedAssetIdAndNetworkCode?.address as string
+    );
+    const hash = await sendFinalTransaction(finalTx);
+    dispatch({ payload: hash, type: 'SET_TX_HASH' });
+    dispatch({
+      payload: {
+        data: `Transaction submitted at ${new Date().toLocaleString()}.`,
+        status: 'success',
+        step: 'Submitted',
+        title: 'Submitted',
+      },
+      type: 'SET_TX',
+    });
+    dispatch({
+      payload: {
+        data: 'Waiting for transaction to be included in a block.',
+        status: 'loading',
+        step: 'Confirming',
+      },
+      type: 'SET_TX',
+    });
+    let response;
+    while (!response) {
+      response = await getTransaction(hash);
+    }
+    dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
+    const receipt = await waitForTransaction(hash, 1);
+    dispatch({
+      payload: {
+        data: 'Transaction included in block ' + receipt.blockNumber + '.',
+        status: 'success',
+        step: 'Confirming',
+      },
+      type: 'SET_TX',
+    });
+    dispatch({
+      payload: {
+        data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
+        status: 'loading',
+        step: 'Confirmed',
+      },
+      type: 'SET_TX',
+    });
+    await waitForTransaction(hash, MIN_CONFIRMATIONS);
+    dispatch({
+      payload: {
+        data: '🚀 Transaction confirmed!',
+        status: 'success',
+        step: 'Confirmed',
+      },
+      type: 'SET_TX',
+    });
+  };
+
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     try {
       e?.preventDefault();
       setFormError(undefined);
 
-      if (state.method?.value === 'binance-pay') {
-        dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
-        dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
-        return;
+      switch (state.method?.value) {
+        case 'binance-pay':
+          return handleBinancePay();
+        case 'isMetaMask' || 'isCoinbaseWallet' || 'isWalletConnect':
+          if (
+            state.account.status === 'idle' ||
+            state.account.status === 'error'
+          ) {
+            submitRef.current?.submit();
+            return;
+          }
+
+          if (state.depositAddress.status !== 'success') {
+            throw new Error('Deposit address not found.');
+          }
+
+          if (state.prebuiltTx.status !== 'success') {
+            throw new Error('Prebuilt transaction not found.');
+          }
+
+          if (
+            state.asset?.type === 'asset' &&
+            !data?.assetByMappedAssetIdAndNetworkCode?.address
+          ) {
+            throw new Error('Asset contract not found.');
+          }
+
+          await handleAuthorizeTransactionProxy(
+            state.account.data,
+            state.network?.networkCode,
+            amount
+          );
+
+          if (state.network?.bridged) {
+            handleBridgeTransaction();
+          } else {
+            handleProviderTransaction();
+          }
       }
-
-      if (state.account.status === 'idle' || state.account.status === 'error') {
-        submitRef.current?.submit();
-        return;
-      }
-
-      if (state.depositAddress.status !== 'success') {
-        throw new Error('Deposit address not found.');
-      }
-
-      if (state.prebuiltTx.status !== 'success') {
-        throw new Error('Prebuilt transaction not found.');
-      }
-
-      if (
-        state.asset?.type === 'asset' &&
-        !data?.assetByMappedAssetIdAndNetworkCode?.address
-      ) {
-        throw new Error('Asset contract not found.');
-      }
-
-      await handleAuthorizeTransactionProxy(
-        state.account.data,
-        state.network?.networkCode,
-        amount
-      );
-
-      if (state.network?.bridged) {
-        const {
-          data: fromAsset,
-        } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
-          variables: {
-            mappedAssetId: state.asset?.id!,
-            networkCode: state.network?.networkCode!,
-          },
-        });
-
-        await createBridgeQuote({
-          variables: {
-            amount: ethers.utils
-              .parseUnits(amount, state.asset?.decimals!)
-              .toString(),
-            fromAddress: fromAsset?.assetByMappedAssetIdAndNetworkCode!
-              .address!,
-            fromAssetId: fromAsset!.assetByMappedAssetIdAndNetworkCode!.id!,
-            // TODO: correct toAddress
-            toAddress: state.asset?.address!,
-            // TODO: correct toAssetId
-            toAssetId: state.asset?.id!,
-            userId: state.userId,
-          },
-        });
-      }
-
-      dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-
-      dispatch({
-        payload: amount + ' ' + state.asset?.symbol,
-        type: 'SET_TX_AMOUNT',
-      });
-      dispatch({
-        payload: {
-          data: `Please confirm the transaction on ${state.method?.name}.`,
-          status: 'loading',
-          step: 'Submitted',
-          title: 'Awaiting Submission',
-        },
-        type: 'SET_TX',
-      });
-      const hash: string = await sendTransaction(
-        amount,
-        data?.assetByMappedAssetIdAndNetworkCode?.address as string
-      );
-      dispatch({ payload: hash, type: 'SET_TX_HASH' });
-      dispatch({
-        payload: {
-          data: `Transaction submitted at ${new Date().toLocaleString()}.`,
-          status: 'success',
-          step: 'Submitted',
-          title: 'Submitted',
-        },
-        type: 'SET_TX',
-      });
-      dispatch({
-        payload: {
-          data: 'Waiting for transaction to be included in a block.',
-          status: 'loading',
-          step: 'Confirming',
-        },
-        type: 'SET_TX',
-      });
-      let response;
-      while (!response) {
-        response = await getTransaction(hash);
-      }
-      dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
-      const receipt = await waitForTransaction(hash, 1);
-      dispatch({
-        payload: {
-          data: 'Transaction included in block ' + receipt.blockNumber + '.',
-          status: 'success',
-          step: 'Confirming',
-        },
-        type: 'SET_TX',
-      });
-      dispatch({
-        payload: {
-          data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
-          status: 'loading',
-          step: 'Confirmed',
-        },
-        type: 'SET_TX',
-      });
-      await waitForTransaction(hash, MIN_CONFIRMATIONS);
-      dispatch({
-        payload: {
-          data: '🚀 Transaction confirmed!',
-          status: 'success',
-          step: 'Confirmed',
-        },
-        type: 'SET_TX',
-      });
     } catch (e: any) {
       if (e.message) {
         setFormError(e.message);
@@ -672,15 +747,20 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             ) : (
               <WindowEthereum
                 amount={amount}
+                bridgeQuote={bridgeQuoteData}
                 disabled={
+                  isLoading ||
                   state.depositAddress.status === 'loading' ||
                   state.prebuiltTx.status !== 'success' ||
                   state.prebuiltTx.data?.feeError ||
+                  bridgeQuoteLoading ||
                   !!formError?.includes(INSUFFICIENT_FUNDS)
                 }
-                loading={bridgeQuoteLoading}
+                isConfirming={isConfirming}
+                loading={isLoading || bridgeQuoteLoading}
                 ref={submitRef}
                 setFormError={setFormError}
+                setIsConfirming={setIsConfirming}
               />
             )}
           </div>

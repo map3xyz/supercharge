@@ -21,9 +21,11 @@ export enum Steps {
 }
 
 export enum TxSteps {
-  'Submitted' = 0,
-  'Confirming' = 1,
-  'Confirmed' = 2,
+  'ApproveToken' = 0,
+  'Submitted' = 1,
+  'Confirming' = 2,
+  'Confirmed' = 3,
+  'DestinationNetwork' = 4,
 }
 
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
@@ -217,12 +219,22 @@ const initialState: State = {
   theme: undefined,
   tx: {
     progress: {
+      ApproveToken: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
       Confirmed: {
         data: undefined,
         error: undefined,
         status: 'idle',
       },
       Confirming: {
+        data: undefined,
+        error: undefined,
+        status: 'idle',
+      },
+      DestinationNetwork: {
         data: undefined,
         error: undefined,
         status: 'idle',

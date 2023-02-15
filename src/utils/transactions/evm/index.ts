@@ -9,6 +9,13 @@ export type PrebuiltTx = {
   value: string;
 };
 
+export type FinalTx = PrebuiltTx & {
+  gas: string;
+  gasPrice?: string;
+  maxFeePerGas?: string;
+  maxPriorityFeePerGas?: string;
+};
+
 export const buildTx = (params: {
   address: string;
   amount: string;

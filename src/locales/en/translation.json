@@ -21,6 +21,7 @@
       "error_fetching_payment_methods": "We couldn't get a list of payment methods to select.",
       "fetching_networks": "Fetching Networks...",
       "fetching_payment_methods": "Fetching Payment Methods...",
+      "gas_cost": "Gas Cost",
       "monitoring_for_deposits": "Monitoring for deposits",
       "loading": "Loading...",
       "no_assets_found": "We couldn't find any assets that matched your search.",

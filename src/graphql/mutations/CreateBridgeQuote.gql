@@ -23,6 +23,7 @@ mutation CreateBridgeQuote(
       amountToReceive
       executionDurationSeconds
       fromAmountUsd
+      gasCosts
       gasCostsUsd
       slippage
       toAmountUsd

@@ -247,7 +247,7 @@ type Props = {
   amount: string;
   isConfirming: boolean;
   setFormError: (error: string) => void;
-  setIsConfirming: (isConfirming: boolean) => void;
+  setIsConfirming: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default BinancePay;

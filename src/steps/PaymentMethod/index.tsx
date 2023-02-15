@@ -289,24 +289,28 @@ const PaymentMethod: React.FC<Props> = () => {
                   onClick={() => selectMethod(method)}
                   role="button"
                 >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <MethodIcon method={method} />
+                      <span>
+                        {method.name === 'MetaMask' &&
+                        method.value === 'isWalletConnect'
+                          ? method.name + ' (Mobile)'
+                          : method.name}
+                      </span>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2">
-                    <MethodIcon method={method} />
-                    <span>
-                      {method.name === 'MetaMask' &&
-                      method.value === 'isWalletConnect'
-                        ? method.name + ' (Mobile)'
-                        : method.name}
-                    </span>
                     {providers[method.value || ''] ? (
                       <Badge color="green">Installed</Badge>
                     ) : null}
+                    {`${state.method?.name}-${state.method?.value}` ===
+                    `${method.name}-${method.value}` ? (
+                      <i className="fa fa-check-circle text-green-400" />
+                    ) : (
+                      <i className="fa fa-chevron-right text-xxs" />
+                    )}
                   </div>
-                  {`${state.method?.name}-${state.method?.value}` ===
-                  `${method.name}-${method.value}` ? (
-                    <i className="fa fa-check-circle text-green-400" />
-                  ) : (
-                    <i className="fa fa-chevron-right text-xxs" />
-                  )}
                 </div>
               ) : null
             )

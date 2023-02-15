@@ -414,6 +414,7 @@ export type QuoteEstimate = {
   amountToReceive?: Maybe<Scalars['String']>;
   executionDurationSeconds?: Maybe<Scalars['Int']>;
   fromAmountUsd?: Maybe<Scalars['Float']>;
+  gasCosts?: Maybe<Scalars['Float']>;
   gasCostsUsd?: Maybe<Scalars['Float']>;
   slippage?: Maybe<Scalars['Float']>;
   toAmountUsd?: Maybe<Scalars['Float']>;
@@ -543,7 +544,7 @@ export type CreateBridgeQuoteMutationVariables = Exact<{
 }>;
 
 
-export type CreateBridgeQuoteMutation = { __typename?: 'Mutation', prepareBridgeQuote?: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } | null };
+export type CreateBridgeQuoteMutation = { __typename?: 'Mutation', prepareBridgeQuote?: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCosts?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } | null };
 
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
@@ -779,6 +780,7 @@ export const CreateBridgeQuoteDocument = gql`
       amountToReceive
       executionDurationSeconds
       fromAmountUsd
+      gasCosts
       gasCostsUsd
       slippage
       toAmountUsd
