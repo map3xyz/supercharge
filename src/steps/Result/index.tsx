@@ -7,9 +7,13 @@ import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { MIN_CONFIRMATIONS } from '../../constants';
-import { useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery } from '../../generated/apollo-gql';
+import {
+  useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
+  useSubscribeToBridgeTransactionMutation,
+} from '../../generated/apollo-gql';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps, TxSteps } from '../../providers/Store';
+import { listenToBridgeTransaction } from '../../utils/supabase';
 import { FinalTx } from '../../utils/transactions/evm';
 
 const Result: React.FC<Props> = () => {
@@ -27,6 +31,10 @@ const Result: React.FC<Props> = () => {
   const [
     getAssetMappedAssetIdAndNetworkCodeQueryLazy,
   ] = useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery();
+
+  const [
+    subscribeToBridgeTransaction,
+  ] = useSubscribeToBridgeTransactionMutation();
 
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
@@ -92,6 +100,10 @@ const Result: React.FC<Props> = () => {
             fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
             state.bridgeQuote.transaction?.to
           );
+
+          if (!state.bridgeQuote.id) {
+            throw new Error('Bridge quote ID not found.');
+          }
 
           if (!state.bridgeQuote.transaction?.to) {
             throw new Error('Bridge contract not found.');
@@ -166,6 +178,15 @@ const Result: React.FC<Props> = () => {
 
           dispatch({
             payload: {
+              status: 'idle',
+              step: 'DestinationNetwork',
+              title: 'Awaiting Bridge Confirmation',
+            },
+            type: 'SET_TX',
+          });
+
+          dispatch({
+            payload: {
               data: `Please confirm the transaction on ${state.method?.name}.`,
               status: 'loading',
               step: 'Submitted',
@@ -174,11 +195,17 @@ const Result: React.FC<Props> = () => {
             type: 'SET_TX',
           });
           let hash: string;
+          let bridgeOrderId: string;
           try {
             hash = await sendFinalTransaction({
               ...(state.bridgeQuote.transaction as FinalTx),
               gas: state.bridgeQuote.transaction?.gasLimit as string,
             });
+            const { data } = await subscribeToBridgeTransaction({
+              variables: { id: state.bridgeQuote.id, txHash: hash },
+            });
+            // TODO: what happens if subscription fails?
+            bridgeOrderId = data?.subscribeToBridgeTransaction as string;
             dispatch({ payload: hash, type: 'SET_TX_HASH' });
             dispatch({
               payload: {
@@ -246,6 +273,57 @@ const Result: React.FC<Props> = () => {
             },
             type: 'SET_TX',
           });
+          dispatch({
+            payload: {
+              data: 'Bridge transaction pending.',
+              status: 'loading',
+              step: 'DestinationNetwork',
+              title: 'Awaiting Bridge Confirmation',
+            },
+            type: 'SET_TX',
+          });
+          listenToBridgeTransaction(
+            bridgeOrderId,
+            (payload: WatchBridgeTransactionPayload) => {
+              console.log(payload);
+              switch (payload.new.state) {
+                // initial
+                case 'quoted':
+                case 'subscribed':
+                  dispatch({
+                    payload: {
+                      data: 'Bridge transaction pending.',
+                      status: 'loading',
+                      step: 'DestinationNetwork',
+                      title: 'Awaiting Bridge Confirmation',
+                    },
+                    type: 'SET_TX',
+                  });
+                  break;
+                case 'completed':
+                  dispatch({
+                    payload: {
+                      data: 'Bridge transaction finalized!',
+                      status: 'success',
+                      step: 'DestinationNetwork',
+                      title: 'Success!',
+                    },
+                    type: 'SET_TX',
+                  });
+                  break;
+                case 'failed':
+                  dispatch({
+                    payload: {
+                      data: 'Bridge transaction failed.',
+                      status: 'error',
+                      step: 'DestinationNetwork',
+                      title: 'Failure',
+                    },
+                    type: 'SET_TX',
+                  });
+              }
+            }
+          );
         }
       } catch (e) {
         console.error(e);

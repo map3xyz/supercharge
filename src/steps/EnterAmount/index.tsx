@@ -333,10 +333,11 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           networkCode: state.destinationNetwork?.networkCode!,
         },
       });
-      if (
-        !fromAsset?.assetByMappedAssetIdAndNetworkCode?.id ||
-        !destinationAsset?.assetByMappedAssetIdAndNetworkCode?.id
-      ) {
+      const fromAssetId = fromAsset?.assetByMappedAssetIdAndNetworkCode?.id;
+      const toAssetId =
+        destinationAsset?.assetByMappedAssetIdAndNetworkCode?.id ||
+        state.asset.id;
+      if (!fromAssetId || !toAssetId) {
         throw new Error(
           'Cannot create bridge quote without to and destination assets.'
         );
@@ -347,9 +348,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             .parseUnits(amount, state.asset?.decimals!)
             .toString(),
           fromAddress: state.account.data,
-          fromAssetId: fromAsset.assetByMappedAssetIdAndNetworkCode.id,
+          fromAssetId,
           toAddress: requestedAddress.address,
-          toAssetId: destinationAsset.assetByMappedAssetIdAndNetworkCode.id,
+          toAssetId,
           userId: state.userId,
         },
       });

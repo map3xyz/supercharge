@@ -144,7 +144,7 @@ export type Mutation = {
   deleteBinanceSettingsForOrganization?: Maybe<Scalars['String']>;
   prepareBridgeQuote?: Maybe<BridgeQuote>;
   removeWatchedAddress?: Maybe<Scalars['ID']>;
-  subscribeToBridgeTransaction?: Maybe<Scalars['String']>;
+  subscribeToBridgeTransaction?: Maybe<Scalars['ID']>;
   updateBinanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
 };
@@ -206,7 +206,8 @@ export type MutationRemoveWatchedAddressArgs = {
 
 
 export type MutationSubscribeToBridgeTransactionArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
+  txHash: Scalars['String'];
 };
 
 
@@ -553,6 +554,14 @@ export type RemoveWatchedAddressMutationVariables = Exact<{
 
 export type RemoveWatchedAddressMutation = { __typename?: 'Mutation', removeWatchedAddress?: string | null };
 
+export type SubscribeToBridgeTransactionMutationVariables = Exact<{
+  id: Scalars['ID'];
+  txHash: Scalars['String'];
+}>;
+
+
+export type SubscribeToBridgeTransactionMutation = { __typename?: 'Mutation', subscribeToBridgeTransaction?: string | null };
+
 export type GetAssetByAddressAndNetworkCodeQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
   networkCode?: InputMaybe<Scalars['String']>;
@@ -860,6 +869,38 @@ export function useRemoveWatchedAddressMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveWatchedAddressMutationHookResult = ReturnType<typeof useRemoveWatchedAddressMutation>;
 export type RemoveWatchedAddressMutationResult = Apollo.MutationResult<RemoveWatchedAddressMutation>;
 export type RemoveWatchedAddressMutationOptions = Apollo.BaseMutationOptions<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>;
+export const SubscribeToBridgeTransactionDocument = gql`
+    mutation SubscribeToBridgeTransaction($id: ID!, $txHash: String!) {
+  subscribeToBridgeTransaction(id: $id, txHash: $txHash)
+}
+    `;
+export type SubscribeToBridgeTransactionMutationFn = Apollo.MutationFunction<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>;
+
+/**
+ * __useSubscribeToBridgeTransactionMutation__
+ *
+ * To run a mutation, you first call `useSubscribeToBridgeTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToBridgeTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeToBridgeTransactionMutation, { data, loading, error }] = useSubscribeToBridgeTransactionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      txHash: // value for 'txHash'
+ *   },
+ * });
+ */
+export function useSubscribeToBridgeTransactionMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>(SubscribeToBridgeTransactionDocument, options);
+      }
+export type SubscribeToBridgeTransactionMutationHookResult = ReturnType<typeof useSubscribeToBridgeTransactionMutation>;
+export type SubscribeToBridgeTransactionMutationResult = Apollo.MutationResult<SubscribeToBridgeTransactionMutation>;
+export type SubscribeToBridgeTransactionMutationOptions = Apollo.BaseMutationOptions<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>;
 export const GetAssetByAddressAndNetworkCodeDocument = gql`
     query GetAssetByAddressAndNetworkCode($address: String, $networkCode: String) {
   assetByAddressAndNetworkCodeForOrganization(
