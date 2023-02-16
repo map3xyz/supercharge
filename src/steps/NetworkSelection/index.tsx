@@ -1,10 +1,11 @@
 import { Badge, CoinLogo } from '@map3xyz/components';
 import React, { useContext, useEffect } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { useGetMappedNetworksForAssetQuery } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
 
@@ -58,9 +59,11 @@ const NetworkSelection: React.FC<Props> = () => {
       />
     );
 
+  // TODO: find the best network to bridge into
   const enabledNetworks = data?.mappedNetworksForAssetByOrg?.filter(
     (network) => !network?.bridged
   );
+  const destinationNetwork = enabledNetworks?.[0];
   const bridgedNetworks = data?.mappedNetworksForAssetByOrg?.filter(
     (network) => network?.bridged
   );
@@ -78,18 +81,7 @@ const NetworkSelection: React.FC<Props> = () => {
             {t('title.select_network')}
           </h3>
         </InnerWrapper>
-        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-          <Trans
-            components={{
-              // @ts-ignore
-              badge: <Badge color="blue" size="large" />,
-            }}
-            defaults="Send <badge>{{symbol}}</badge> on"
-            values={{
-              symbol: state.asset?.symbol,
-            }}
-          />
-        </div>
+        <StateDescriptionHeader />
       </div>
       <div className="flex h-full flex-col overflow-hidden">
         <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">
@@ -99,6 +91,12 @@ const NetworkSelection: React.FC<Props> = () => {
                 className="flex items-center justify-between border-b border-primary-200 px-4 py-3 text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800"
                 key={network.networkName}
                 onClick={() => {
+                  if (network.bridged && destinationNetwork) {
+                    dispatch({
+                      payload: destinationNetwork,
+                      type: 'SET_DESTINATION_NETWORK',
+                    });
+                  }
                   dispatch({ payload: network, type: 'SET_NETWORK' });
                   dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
                 }}

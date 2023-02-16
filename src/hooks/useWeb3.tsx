@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { useContext, useEffect, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -6,7 +6,7 @@ import { isMobile } from 'react-device-detect';
 import { Context } from '../providers/Store';
 import { erc20Abi } from '../utils/abis/erc20';
 import { toHex } from '../utils/toHex';
-import { buildTx, PrebuiltTx } from '../utils/transactions/evm';
+import { buildTx, FinalTx, PrebuiltTx } from '../utils/transactions/evm';
 
 export const useWeb3 = () => {
   const [state, _, { handleAuthorizeTransaction }] = useContext(Context);
@@ -64,6 +64,39 @@ export const useWeb3 = () => {
     }
 
     return isAuth;
+  };
+
+  const approveTokenAllowance = async (
+    tokenAddress: string,
+    spenderAddress: string,
+    amount: BigNumber
+  ) => {
+    const contract = new ethers.Contract(
+      tokenAddress,
+      new ethers.utils.Interface(erc20Abi),
+      state.provider?.data?.getSigner()
+    );
+
+    const tx = await contract.approve(spenderAddress, amount.toHexString());
+
+    return tx.hash;
+  };
+
+  const getTokenAllowance = async (
+    tokenAddress?: string | null,
+    spenderAddress?: string | null
+  ): Promise<BigNumber> => {
+    if (!tokenAddress || !spenderAddress) {
+      return ethers.BigNumber.from(0);
+    }
+
+    const contract = new ethers.Contract(
+      tokenAddress,
+      new ethers.utils.Interface(erc20Abi),
+      state.provider?.data
+    );
+
+    return await contract.allowance(state.account.data || '', spenderAddress);
   };
 
   const getBalance = async (
@@ -145,12 +178,13 @@ export const useWeb3 = () => {
     await state.provider?.data?.send?.('wallet_addEthereumChain', params);
   };
 
-  const sendTransaction = async (amount: string, assetContract?: string) => {
+  const prepareFinalTransaction = async (
+    amount: string,
+    assetContract?: string
+  ): Promise<FinalTx> => {
     if (!state.account.data) {
       throw new Error('No account');
     }
-
-    let hash;
 
     const decimals = state.asset?.decimals;
 
@@ -162,7 +196,11 @@ export const useWeb3 = () => {
       throw new Error('No recipient address.');
     }
 
-    let finalTx = buildTx({
+    if (!state.prebuiltTx.data?.gasLimit) {
+      throw new Error('No gas limit.');
+    }
+
+    const finalTx = buildTx({
       amount,
       assetContract,
       decimals,
@@ -186,19 +224,27 @@ export const useWeb3 = () => {
               gasPrice: state.prebuiltTx.data?.gasPrice.toHexString(),
             };
 
-      hash = await state.provider?.data?.send?.('eth_sendTransaction', [
-        {
-          ...finalTx,
-          ...gasParams,
-          gas: state.prebuiltTx.data?.gasLimit.toHexString(),
-        },
-      ]);
+      return {
+        ...finalTx,
+        ...gasParams,
+        gas: state.prebuiltTx.data?.gasLimit.toHexString(),
+      };
+    } catch (e: any) {
+      throw e;
+    }
+  };
+
+  const sendFinalTransaction = async (finalTx: FinalTx): Promise<string> => {
+    try {
+      const hash: string = await state.provider?.data?.send?.(
+        'eth_sendTransaction',
+        [finalTx]
+      );
       if (!hash) {
         throw new Error('No transaction hash.');
       }
-
       return hash;
-    } catch (e: any) {
+    } catch (e) {
       throw e;
     }
   };
@@ -225,14 +271,17 @@ export const useWeb3 = () => {
 
   return {
     addChain,
+    approveTokenAllowance,
     estimateGas,
     getBalance,
     getChainId,
     getFeeData,
+    getTokenAllowance,
     getTransaction,
     handleAuthorizeTransactionProxy,
+    prepareFinalTransaction,
     providers,
-    sendTransaction,
+    sendFinalTransaction,
     switchChain,
     waitForTransaction,
   };

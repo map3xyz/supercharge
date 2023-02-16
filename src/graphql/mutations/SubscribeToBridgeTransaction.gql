@@ -1,0 +1,9 @@
+mutation SubscribeToBridgeTransaction(
+  $id: ID!
+  $txHash: String!
+) {
+  subscribeToBridgeTransaction(
+    id: $id
+    txHash: $txHash
+  )
+}

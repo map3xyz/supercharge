@@ -34,3 +34,22 @@ export function listenToWatchedAddress(
     )
     .subscribe();
 }
+
+export function listenToBridgeTransaction(
+  bridgeTransactionId: string,
+  callback: WatchChannelCallbackFn
+): RealtimeChannel {
+  return supabase
+    .channel('bridge_transaction_changes')
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        filter: `id=eq.${bridgeTransactionId}`,
+        schema: 'public',
+        table: 'bridge_transaction',
+      },
+      callback
+    )
+    .subscribe();
+}

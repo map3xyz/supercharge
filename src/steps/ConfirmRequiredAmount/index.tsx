@@ -1,8 +1,9 @@
-import { Badge, Button } from '@map3xyz/components';
+import { Button } from '@map3xyz/components';
 import React, { useContext, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import InnerWrapper from '../../components/InnerWrapper';
+import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { Context, Steps } from '../../providers/Store';
 
 const ConfirmRequiredAmount: React.FC<Props> = () => {
@@ -24,20 +25,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
           </h3>
         </InnerWrapper>
 
-        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-          <Trans
-            components={{
-              // @ts-ignore
-              badge: <Badge color="blue" size="large" />,
-            }}
-            defaults="Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>"
-            values={{
-              amount: state.requiredAmount,
-              network: state.network?.networkName,
-              symbol: state.asset?.symbol,
-            }}
-          />
-        </div>
+        <StateDescriptionHeader />
       </div>
       <InnerWrapper>
         <div className="flex flex-col items-center justify-center dark:text-white">

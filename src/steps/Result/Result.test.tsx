@@ -65,7 +65,7 @@ describe('Result', () => {
       const waitForTransactionMock = jest.fn().mockImplementation(() => ({
         blockNumber: 1,
       }));
-      const mockSendTransaction = jest
+      const mockPrepareFinalTransaction = jest
         .fn()
         .mockImplementation(
           () =>
@@ -74,7 +74,7 @@ describe('Result', () => {
       web3MockSpy.mockImplementation(() => ({
         ...web3Mock,
         getBalance: getBalanceMock,
-        sendTransaction: mockSendTransaction,
+        prepareFinalTransaction: mockPrepareFinalTransaction,
         waitForTransaction: waitForTransactionMock,
       }));
       global.window.ethereum = testingUtils.getProvider();
@@ -119,7 +119,9 @@ describe('Result', () => {
         fireEvent.click(toggle);
       });
       const details = await screen.findByTestId('transaction-details');
-      expect(details).toHaveClass('h-full');
+      expect(details).toHaveClass(
+        ' w-full px-4 py-3 relative border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 hidden'
+      );
     });
   });
 });
