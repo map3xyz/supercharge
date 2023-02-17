@@ -159,11 +159,8 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
                   {Number(amount).toFixed(
                     Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
                   )}{' '}
-                  {state.asset?.symbol} (~{ISO_4217_TO_SYMBOL['USD']}
-                  {bridgeQuote.prepareBridgeQuote?.estimate?.fromAmountUsd?.toFixed(
-                    2
-                  )}
-                  )
+                  {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
+                  {bridgeQuote.prepareBridgeQuote?.estimate?.fromAmountUsd})
                 </div>
               </div>
               {bridgeQuote.prepareBridgeQuote?.transaction?.gasPrice &&
@@ -172,16 +169,10 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
                     <div>{t('copy.gas_cost')}:</div>
                     <div>
                       <>
-                        {Number(
-                          ethers.utils.formatUnits(
-                            ethers.BigNumber.from(
-                              // TODO: format on backend
-                              bridgeQuote.prepareBridgeQuote.estimate?.gasCosts?.toString()
-                            ).toString(),
-                            state.network?.decimals || DECIMAL_FALLBACK
-                          )
-                        ).toFixed(6)}{' '}
-                        {state.network?.symbol} (~{ISO_4217_TO_SYMBOL['USD']}
+                        {bridgeQuote.prepareBridgeQuote.estimate?.gasCosts?.toFixed(
+                          6
+                        )}{' '}
+                        {state.network?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
                         {bridgeQuote.prepareBridgeQuote.estimate?.gasCostsUsd?.toFixed(
                           2
                         )}
@@ -194,13 +185,8 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
                 <div className="flex w-full items-center justify-between font-semibold">
                   <div>{t('copy.receive_amount')}:</div>
                   <div>
-                    {ethers.utils.formatUnits(
-                      ethers.BigNumber.from(
-                        bridgeQuote.prepareBridgeQuote.estimate.amountToReceive
-                      ),
-                      state.asset?.decimals || DECIMAL_FALLBACK
-                    )}{' '}
-                    {state.asset?.symbol} (~{ISO_4217_TO_SYMBOL['USD']}
+                    {bridgeQuote.prepareBridgeQuote.estimate.amountToReceive}{' '}
+                    {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
                     {bridgeQuote.prepareBridgeQuote.estimate.toAmountUsd?.toFixed(
                       2
                     )}
