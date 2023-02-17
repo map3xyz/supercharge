@@ -31,3 +31,17 @@ type WatchAddressPayload = {
   schema: 'public';
   table: 'watched_address';
 };
+
+type WatchBridgeTransactionPayload = {
+  commit_timestamp: string; // '2023-01-13T15:36:49Z';
+  errors: null;
+  eventType: 'UPDATE';
+  new: {
+    state: 'quoted' | 'subscribed' | 'failed' | 'completed';
+  };
+  old: {
+    id: '650b5833-1a98-4d30-bbfd-922c077bb400';
+  };
+  schema: 'public';
+  table: 'watched_address';
+};

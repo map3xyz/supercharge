@@ -1,13 +1,16 @@
 export const web3Mock = {
   addChain: jest.fn(),
+  approveTokenAllowance: jest.fn(),
   estimateGas: jest.fn(),
   getBalance: jest.fn(),
   getChainId: jest.fn(),
   getFeeData: jest.fn(),
+  getTokenAllowance: jest.fn(),
   getTransaction: jest.fn().mockImplementation(() => true),
   handleAuthorizeTransactionProxy: jest.fn(),
+  prepareFinalTransaction: jest.fn(),
   providers: {},
-  sendTransaction: jest.fn(),
+  sendFinalTransaction: jest.fn(),
   switchChain: jest.fn(),
   waitForTransaction: jest.fn(),
 };

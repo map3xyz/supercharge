@@ -8,6 +8,7 @@ import {
 const bitcoinNetwork = [
   {
     __typename: 'Network',
+    bridged: false,
     decimals: 8,
     id: 'bitcoinId',
     identifiers: {
@@ -35,6 +36,7 @@ const bitcoinNetwork = [
 export const networksForAssetMockResult = [
   {
     __typename: 'Network',
+    bridged: false,
     decimals: 18,
     id: 'ethId',
     identifiers: {
@@ -59,6 +61,7 @@ export const networksForAssetMockResult = [
   },
   {
     __typename: 'Network',
+    bridged: false,
     decimals: 18,
     identifiers: {
       chainId: 137,
@@ -79,6 +82,30 @@ export const networksForAssetMockResult = [
       address: '^(0x)[0-9a-fA-F]{40}$',
     },
     symbol: 'MATIC',
+  },
+  {
+    __typename: 'Network',
+    bridged: true,
+    decimals: 18,
+    identifiers: {
+      chainId: 43114,
+    },
+    links: {
+      explorer: 'https://avax.network',
+    },
+    logo: {
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/avalanche/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/avalanche/logo.svg',
+    },
+    name: 'Avalanche',
+    networkCode: 'avalanche',
+    networkName: 'Avalanche',
+    regex: {
+      address: '^(0x)[0-9a-fA-F]{40}$',
+    },
+    symbol: 'AVAX',
   },
 ];
 
@@ -130,6 +157,7 @@ export const getNetworksMock = () => ({
       networks: [
         {
           __typename: 'Network',
+          bridged: false,
           decimals: 18,
           identifiers: {
             chainId: null,
@@ -154,6 +182,7 @@ export const getNetworksMock = () => ({
         },
         {
           __typename: 'Network',
+          bridged: false,
           decimals: 18,
           identifiers: {
             chainId: 1,
@@ -177,6 +206,7 @@ export const getNetworksMock = () => ({
         },
         {
           __typename: 'Network',
+          bridged: false,
           decimals: 18,
           identifiers: {
             chainId: 137,

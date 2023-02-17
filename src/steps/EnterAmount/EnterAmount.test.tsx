@@ -304,7 +304,7 @@ describe('window.ethereum > ERC20', () => {
     chainBalance: ethers.BigNumber.from('20000000000000000000'),
   }));
   const getTransactionMock = jest.fn().mockImplementation(() => true);
-  const sendTransactionMock = jest.fn();
+  const prepareFinalTransactionMock = jest.fn();
   const waitForTransactionMock = jest.fn().mockImplementation(() => ({
     blockNumber: 1,
   }));
@@ -313,7 +313,7 @@ describe('window.ethereum > ERC20', () => {
       ...web3Mock,
       getBalance: getBalanceMock,
       getTransaction: getTransactionMock,
-      sendTransaction: sendTransactionMock,
+      prepareFinalTransaction: prepareFinalTransactionMock,
       waitForTransaction: waitForTransactionMock,
     }));
     render(
@@ -369,7 +369,7 @@ describe('window.ethereum > ERC20', () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
-      expect(sendTransactionMock).toHaveBeenCalledWith(
+      expect(prepareFinalTransactionMock).toHaveBeenCalledWith(
         '1.0',
         '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
       );
@@ -389,7 +389,7 @@ describe('txAuth - Failure', () => {
   const mockAuthTransactionProxy = jest.fn().mockImplementationOnce(() => {
     throw new Error('Unable to authorize transaction.');
   });
-  const sendTransactionMock = jest.fn();
+  const prepareFinalTransactionMock = jest.fn();
   const mockWaitForTransaction = jest.fn().mockImplementation(() => ({
     blockNumber: 1,
   }));
@@ -398,7 +398,7 @@ describe('txAuth - Failure', () => {
       ...web3Mock,
       getBalance: getBalanceMock,
       handleAuthorizeTransactionProxy: mockAuthTransactionProxy,
-      sendTransaction: sendTransactionMock,
+      prepareFinalTransaction: prepareFinalTransactionMock,
       waitForTransaction: mockWaitForTransaction,
     }));
     render(
@@ -466,7 +466,7 @@ describe('txAuth - Failure', () => {
         'ethereum',
         '1.0'
       );
-      expect(sendTransactionMock).not.toHaveBeenCalled();
+      expect(prepareFinalTransactionMock).not.toHaveBeenCalled();
     });
   });
 });
@@ -480,7 +480,7 @@ describe('txAuth - Success', () => {
   }));
 
   const mockAuthTransactionProxy = jest.fn();
-  const sendTransactionMock = jest.fn();
+  const prepareFinalTransactionMock = jest.fn();
   const mockWaitForTransaction = jest.fn().mockImplementation(() => ({
     blockNumber: 1,
   }));
@@ -490,7 +490,7 @@ describe('txAuth - Success', () => {
       ...web3Mock,
       getBalance: getBalanceMock,
       handleAuthorizeTransactionProxy: mockAuthTransactionProxy,
-      sendTransaction: sendTransactionMock,
+      prepareFinalTransaction: prepareFinalTransactionMock,
       waitForTransaction: mockWaitForTransaction,
     }));
     render(
@@ -557,7 +557,7 @@ describe('txAuth - Success', () => {
         'ethereum',
         '1.0'
       );
-      expect(sendTransactionMock).toHaveBeenCalled();
+      expect(prepareFinalTransactionMock).toHaveBeenCalled();
     });
   });
 });
@@ -571,7 +571,7 @@ describe('EnterAmount - MaxLimit', () => {
   }));
 
   const mockAuthTransactionProxy = jest.fn();
-  const sendTransactionMock = jest.fn();
+  const prepareFinalTransactionMock = jest.fn();
   beforeEach(async () => {
     // @ts-ignore
     web3MockSpy.mockImplementation(() => ({
@@ -583,7 +583,7 @@ describe('EnterAmount - MaxLimit', () => {
         maxPriorityFeePerGas: ethers.BigNumber.from('1500000000'),
       })),
       handleAuthorizeTransactionProxy: mockAuthTransactionProxy,
-      sendTransaction: sendTransactionMock,
+      prepareFinalTransaction: prepareFinalTransactionMock,
     }));
     render(
       <App
@@ -661,7 +661,14 @@ describe('Enter Amount Errors', () => {
 describe('WindowEthereum Errors', () => {
   it('renders', () => {
     render(
-      <WindowEthereum amount="1.000" disabled={false} setFormError={() => {}} />
+      <WindowEthereum
+        amount="1.000"
+        bridgeQuote={{}}
+        disabled={false}
+        isConfirming={false}
+        setFormError={() => {}}
+        setIsConfirming={() => {}}
+      />
     );
     expect(true).toBe(true);
   });

@@ -13,25 +13,13 @@ root.render(
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
             callbacks: {
-              handleOrderFeeCalculation: async () => {
+              onAddressRequested: async () => {
                 return {
-                  fixedFee: 0.3,
-                  variableFee: 0.01,
+                  address: '0x2639DCc4368c16f75a2af0BCaf26991027667fBE',
                 };
               },
             },
-            selection: {
-              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
-              fiat: 'USD',
-              paymentMethod: 'binance-pay',
-              shortcutAmounts: [1, 2, 3, 4, 5],
-            },
             style: {
-              colors: {
-                accent: '#dfff86',
-                primary: '#0e1523',
-              },
-              locale: 'es',
               theme: 'dark',
             },
           },

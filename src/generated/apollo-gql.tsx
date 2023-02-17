@@ -144,7 +144,7 @@ export type Mutation = {
   deleteBinanceSettingsForOrganization?: Maybe<Scalars['String']>;
   prepareBridgeQuote?: Maybe<BridgeQuote>;
   removeWatchedAddress?: Maybe<Scalars['ID']>;
-  subscribeToBridgeTransaction?: Maybe<Scalars['String']>;
+  subscribeToBridgeTransaction?: Maybe<Scalars['ID']>;
   updateBinanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
   updateSdkConfigForOrganization?: Maybe<SdkConfigField>;
 };
@@ -206,7 +206,8 @@ export type MutationRemoveWatchedAddressArgs = {
 
 
 export type MutationSubscribeToBridgeTransactionArgs = {
-  id: Scalars['String'];
+  id: Scalars['ID'];
+  txHash: Scalars['String'];
 };
 
 
@@ -414,6 +415,7 @@ export type QuoteEstimate = {
   amountToReceive?: Maybe<Scalars['String']>;
   executionDurationSeconds?: Maybe<Scalars['Int']>;
   fromAmountUsd?: Maybe<Scalars['Float']>;
+  gasCosts?: Maybe<Scalars['Float']>;
   gasCostsUsd?: Maybe<Scalars['Float']>;
   slippage?: Maybe<Scalars['Float']>;
   toAmountUsd?: Maybe<Scalars['Float']>;
@@ -512,7 +514,7 @@ export type WatchedAddress = {
 
 export type AssetFieldsFragment = { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null };
 
-export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null };
+export type NetworkFieldsFragment = { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null };
 
 export type AddWatchedAddressMutationVariables = Exact<{
   address: Scalars['String'];
@@ -533,12 +535,32 @@ export type CreateBinanceOrderMutationVariables = Exact<{
 
 export type CreateBinanceOrderMutation = { __typename?: 'Mutation', createBinanceOrder?: { __typename?: 'CreateOrderResponse', checkoutUrl?: string | null, id?: string | null, qrContent?: string | null, universalUrl?: string | null } | null };
 
+export type CreateBridgeQuoteMutationVariables = Exact<{
+  amount: Scalars['String'];
+  fromAddress: Scalars['String'];
+  fromAssetId: Scalars['String'];
+  toAddress: Scalars['String'];
+  toAssetId: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type CreateBridgeQuoteMutation = { __typename?: 'Mutation', prepareBridgeQuote?: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCosts?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } | null };
+
 export type RemoveWatchedAddressMutationVariables = Exact<{
   watchedAddressId: Scalars['ID'];
 }>;
 
 
 export type RemoveWatchedAddressMutation = { __typename?: 'Mutation', removeWatchedAddress?: string | null };
+
+export type SubscribeToBridgeTransactionMutationVariables = Exact<{
+  id: Scalars['ID'];
+  txHash: Scalars['String'];
+}>;
+
+
+export type SubscribeToBridgeTransactionMutation = { __typename?: 'Mutation', subscribeToBridgeTransaction?: string | null };
 
 export type GetAssetByAddressAndNetworkCodeQueryVariables = Exact<{
   address?: InputMaybe<Scalars['String']>;
@@ -554,7 +576,7 @@ export type GetAssetByMappedAssetIdAndNetworkCodeQueryVariables = Exact<{
 }>;
 
 
-export type GetAssetByMappedAssetIdAndNetworkCodeQuery = { __typename?: 'Query', assetByMappedAssetIdAndNetworkCode?: { __typename?: 'Asset', address?: string | null } | null };
+export type GetAssetByMappedAssetIdAndNetworkCodeQuery = { __typename?: 'Query', assetByMappedAssetIdAndNetworkCode?: { __typename?: 'Asset', id?: string | null, address?: string | null } | null };
 
 export type GetAssetPriceQueryVariables = Exact<{
   assetId?: InputMaybe<Scalars['String']>;
@@ -580,19 +602,19 @@ export type GetMappedNetworksForAssetQueryVariables = Exact<{
 }>;
 
 
-export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null> | null };
+export type GetMappedNetworksForAssetQuery = { __typename?: 'Query', mappedNetworksForAssetByOrg?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null> | null };
 
 export type GetNetworkByChainIdQueryVariables = Exact<{
   chainId: Scalars['Int'];
 }>;
 
 
-export type GetNetworkByChainIdQuery = { __typename?: 'Query', networkByChainId?: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null };
+export type GetNetworkByChainIdQuery = { __typename?: 'Query', networkByChainId?: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null };
 
 export type GetNetworksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null> | null };
+export type GetNetworksQuery = { __typename?: 'Query', networks?: Array<{ __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null } | null> | null };
 
 export type GetOrganizationByIdQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -651,6 +673,7 @@ export const NetworkFieldsFragmentDoc = gql`
   networkCode
   networkName
   symbol
+  bridged
   identifiers {
     chainId
   }
@@ -747,6 +770,74 @@ export function useCreateBinanceOrderMutation(baseOptions?: Apollo.MutationHookO
 export type CreateBinanceOrderMutationHookResult = ReturnType<typeof useCreateBinanceOrderMutation>;
 export type CreateBinanceOrderMutationResult = Apollo.MutationResult<CreateBinanceOrderMutation>;
 export type CreateBinanceOrderMutationOptions = Apollo.BaseMutationOptions<CreateBinanceOrderMutation, CreateBinanceOrderMutationVariables>;
+export const CreateBridgeQuoteDocument = gql`
+    mutation CreateBridgeQuote($amount: String!, $fromAddress: String!, $fromAssetId: String!, $toAddress: String!, $toAssetId: String!, $userId: String!) {
+  prepareBridgeQuote(
+    amount: $amount
+    fromAddress: $fromAddress
+    fromAssetId: $fromAssetId
+    toAddress: $toAddress
+    toAssetId: $toAssetId
+    userId: $userId
+  ) {
+    aggregator
+    approval {
+      address
+      amount
+    }
+    estimate {
+      amountToReceive
+      executionDurationSeconds
+      fromAmountUsd
+      gasCosts
+      gasCostsUsd
+      slippage
+      toAmountUsd
+    }
+    id
+    transaction {
+      to
+      from
+      gasLimit
+      gasPrice
+      data
+      value
+      chainId
+    }
+  }
+}
+    `;
+export type CreateBridgeQuoteMutationFn = Apollo.MutationFunction<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>;
+
+/**
+ * __useCreateBridgeQuoteMutation__
+ *
+ * To run a mutation, you first call `useCreateBridgeQuoteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBridgeQuoteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBridgeQuoteMutation, { data, loading, error }] = useCreateBridgeQuoteMutation({
+ *   variables: {
+ *      amount: // value for 'amount'
+ *      fromAddress: // value for 'fromAddress'
+ *      fromAssetId: // value for 'fromAssetId'
+ *      toAddress: // value for 'toAddress'
+ *      toAssetId: // value for 'toAssetId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useCreateBridgeQuoteMutation(baseOptions?: Apollo.MutationHookOptions<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>(CreateBridgeQuoteDocument, options);
+      }
+export type CreateBridgeQuoteMutationHookResult = ReturnType<typeof useCreateBridgeQuoteMutation>;
+export type CreateBridgeQuoteMutationResult = Apollo.MutationResult<CreateBridgeQuoteMutation>;
+export type CreateBridgeQuoteMutationOptions = Apollo.BaseMutationOptions<CreateBridgeQuoteMutation, CreateBridgeQuoteMutationVariables>;
 export const RemoveWatchedAddressDocument = gql`
     mutation RemoveWatchedAddress($watchedAddressId: ID!) {
   removeWatchedAddress(watchedAddressId: $watchedAddressId)
@@ -778,6 +869,38 @@ export function useRemoveWatchedAddressMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveWatchedAddressMutationHookResult = ReturnType<typeof useRemoveWatchedAddressMutation>;
 export type RemoveWatchedAddressMutationResult = Apollo.MutationResult<RemoveWatchedAddressMutation>;
 export type RemoveWatchedAddressMutationOptions = Apollo.BaseMutationOptions<RemoveWatchedAddressMutation, RemoveWatchedAddressMutationVariables>;
+export const SubscribeToBridgeTransactionDocument = gql`
+    mutation SubscribeToBridgeTransaction($id: ID!, $txHash: String!) {
+  subscribeToBridgeTransaction(id: $id, txHash: $txHash)
+}
+    `;
+export type SubscribeToBridgeTransactionMutationFn = Apollo.MutationFunction<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>;
+
+/**
+ * __useSubscribeToBridgeTransactionMutation__
+ *
+ * To run a mutation, you first call `useSubscribeToBridgeTransactionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToBridgeTransactionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeToBridgeTransactionMutation, { data, loading, error }] = useSubscribeToBridgeTransactionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      txHash: // value for 'txHash'
+ *   },
+ * });
+ */
+export function useSubscribeToBridgeTransactionMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>(SubscribeToBridgeTransactionDocument, options);
+      }
+export type SubscribeToBridgeTransactionMutationHookResult = ReturnType<typeof useSubscribeToBridgeTransactionMutation>;
+export type SubscribeToBridgeTransactionMutationResult = Apollo.MutationResult<SubscribeToBridgeTransactionMutation>;
+export type SubscribeToBridgeTransactionMutationOptions = Apollo.BaseMutationOptions<SubscribeToBridgeTransactionMutation, SubscribeToBridgeTransactionMutationVariables>;
 export const GetAssetByAddressAndNetworkCodeDocument = gql`
     query GetAssetByAddressAndNetworkCode($address: String, $networkCode: String) {
   assetByAddressAndNetworkCodeForOrganization(
@@ -823,6 +946,7 @@ export const GetAssetByMappedAssetIdAndNetworkCodeDocument = gql`
     mappedAssetId: $mappedAssetId
     networkCode: $networkCode
   ) {
+    id
     address
   }
 }

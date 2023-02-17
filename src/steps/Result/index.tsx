@@ -1,20 +1,90 @@
-import { Badge, CryptoAddress, ReadOnlyText } from '@map3xyz/components';
+import { ReadOnlyText } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import lottie from 'lottie-web';
 import React, { useContext, useEffect, useState } from 'react';
 
 import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
-import MethodIcon from '../../components/MethodIcon';
+import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import { MIN_CONFIRMATIONS } from '../../constants';
+import {
+  useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
+  useSubscribeToBridgeTransactionMutation,
+} from '../../generated/apollo-gql';
+import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps, TxSteps } from '../../providers/Store';
+import { listenToBridgeTransaction } from '../../utils/supabase';
+import { FinalTx } from '../../utils/transactions/evm';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
   const [toggleDetails, setToggleDetails] = useState(false);
 
+  const {
+    approveTokenAllowance,
+    getTokenAllowance,
+    getTransaction,
+    sendFinalTransaction,
+    waitForTransaction,
+  } = useWeb3();
+
+  const [
+    getAssetMappedAssetIdAndNetworkCodeQueryLazy,
+  ] = useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery();
+
+  const [
+    subscribeToBridgeTransaction,
+  ] = useSubscribeToBridgeTransactionMutation();
+
   if (!state.method) {
     dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
     return null;
   }
+
+  const startCountdown = () => {
+    if (
+      state.bridgeQuote?.estimate?.executionDurationSeconds &&
+      state.tx.progress.DestinationNetwork.status !== 'success' &&
+      state.tx.progress.DestinationNetwork.status !== 'error'
+    ) {
+      const originalTime = new Date().getTime();
+      setInterval(() => {
+        if (state.bridgeQuote?.estimate?.executionDurationSeconds) {
+          const time = new Date().getTime();
+          const executionDurationMilliseconds =
+            state.bridgeQuote.estimate.executionDurationSeconds * 1000;
+          const expiresAt = new Date(
+            originalTime + executionDurationMilliseconds
+          ).getTime();
+          const millisecondsRemaining = expiresAt - time;
+
+          const seconds = Math.floor((millisecondsRemaining / 1000) % 60);
+          const minutes = Math.floor(
+            (millisecondsRemaining / (1000 * 60)) % 60
+          );
+          const hours = Math.floor(
+            (millisecondsRemaining / (1000 * 60 * 60)) % 24
+          );
+          const timeString = `${
+            hours ? hours.toString().padStart(2, '0') + ':' : ''
+          }${minutes.toString().padStart(2, '0')}:${seconds
+            .toString()
+            .padStart(2, '0')}`;
+          dispatch({
+            payload: {
+              data: `Bridge transaction pending.${
+                minutes > 0 ? `\nEstimated time remaining: ${timeString}` : ''
+              }`,
+              status: 'loading',
+              step: 'DestinationNetwork',
+              title: 'Processing Deposit',
+            },
+            type: 'SET_TX',
+          });
+        }
+      }, 1000);
+    }
+  };
 
   useEffect(() => {
     const success = Object.keys(state.tx.progress).every(
@@ -53,7 +123,246 @@ const Result: React.FC<Props> = () => {
     state.tx?.progress.Confirmed?.status,
   ]);
 
+  // awaiting approval
+  // confirming transaction
+  // processing deposits
+
   useEffect(() => {
+    const run = async () => {
+      try {
+        if (state.network?.bridged) {
+          if (!state.bridgeQuote) {
+            // send user back to Enter Amount?
+            throw new Error('Bridge quote not found.');
+          }
+
+          const {
+            data: fromAsset,
+          } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+            variables: {
+              mappedAssetId: state.asset?.id!,
+              networkCode: state.network?.networkCode!,
+            },
+          });
+
+          const allowance = await getTokenAllowance(
+            fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+            state.bridgeQuote.transaction?.to
+          );
+
+          if (!state.bridgeQuote.id) {
+            throw new Error('Bridge quote ID not found.');
+          }
+
+          if (!state.bridgeQuote.transaction?.to) {
+            throw new Error('Bridge contract not found.');
+          }
+
+          if (!state.bridgeQuote.approval?.amount) {
+            throw new Error('Approval amount not found.');
+          }
+
+          if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
+            throw new Error('Asset address not found.');
+          }
+
+          // Change Step Titles
+          dispatch({
+            payload: {
+              status: 'idle',
+              step: 'DestinationNetwork',
+              title: 'Processing Deposit',
+            },
+            type: 'SET_TX',
+          });
+          dispatch({
+            payload: {
+              status: 'idle',
+              step: 'Confirming',
+              title: 'Confirming Transaction',
+            },
+            type: 'SET_TX',
+          });
+          dispatch({
+            payload: {
+              status: 'idle',
+              step: 'DestinationNetwork',
+              title: 'Processing Deposit',
+            },
+            type: 'SET_TX',
+          });
+
+          if (allowance.lt(state.bridgeQuote.approval?.amount)) {
+            dispatch({
+              payload: {
+                data: `Please approve the token on ${state.method?.name}.`,
+                status: 'loading',
+                step: 'ApproveToken',
+                title: 'Awaiting Approval',
+              },
+              type: 'SET_TX',
+            });
+            try {
+              const hash = await approveTokenAllowance(
+                fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+                state.bridgeQuote.transaction?.to,
+                ethers.BigNumber.from(state.bridgeQuote.approval?.amount)
+              );
+              dispatch({
+                payload: {
+                  data: `Waiting for the approval transaction to complete.`,
+                  status: 'loading',
+                  step: 'ApproveToken',
+                  title: 'Awaiting Approval',
+                },
+                type: 'SET_TX',
+              });
+              await waitForTransaction(hash, 1);
+              dispatch({
+                payload: {
+                  data: `Token approved on ${state.method?.name}.`,
+                  status: 'success',
+                  step: 'ApproveToken',
+                  title: 'Token Approved',
+                },
+                type: 'SET_TX',
+              });
+            } catch (e: any) {
+              dispatch({
+                payload: {
+                  data: `Action denied on ${state.method?.name}.`,
+                  status: 'error',
+                  step: 'ApproveToken',
+                  title: 'Awaiting Approval',
+                },
+                type: 'SET_TX',
+              });
+              return;
+            }
+          } else {
+            dispatch({
+              payload: {
+                data: `Token approved for spending.`,
+                status: 'success',
+                step: 'ApproveToken',
+                title: 'Token Approved',
+              },
+              type: 'SET_TX',
+            });
+          }
+
+          dispatch({
+            payload: {
+              data: `Please confirm the transaction on ${state.method?.name}.`,
+              status: 'loading',
+              step: 'Confirming',
+              title: 'Confirming Transaction',
+            },
+            type: 'SET_TX',
+          });
+          let hash: string;
+          let bridgeOrderId: string;
+          try {
+            hash = await sendFinalTransaction({
+              ...(state.bridgeQuote.transaction as FinalTx),
+              gas: state.bridgeQuote.transaction?.gasLimit as string,
+            });
+            const { data } = await subscribeToBridgeTransaction({
+              variables: { id: state.bridgeQuote.id, txHash: hash },
+            });
+            // TODO: what happens if subscription fails?
+            bridgeOrderId = data?.subscribeToBridgeTransaction as string;
+            dispatch({ payload: hash, type: 'SET_TX_HASH' });
+          } catch (e: any) {
+            dispatch({
+              payload: {
+                data: 'Action denied.',
+                status: 'error',
+                step: 'Confirming',
+                title: 'Confirming Transaction',
+              },
+              type: 'SET_TX',
+            });
+            return;
+          }
+
+          if (!hash) {
+            throw new Error('Transaction hash not found.');
+          }
+
+          dispatch({
+            payload: {
+              data: `Transaction submitted at ${new Date().toLocaleString()}.\nWaiting for transaction to be included in a block.`,
+              status: 'loading',
+              step: 'Confirming',
+              title: 'Confirming Transaction',
+            },
+            type: 'SET_TX',
+          });
+          let response;
+          while (!response) {
+            response = await getTransaction(hash);
+          }
+          dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
+          const receipt = await waitForTransaction(hash, 1);
+          dispatch({
+            payload: {
+              data:
+                'Transaction included in block ' + receipt.blockNumber + '.',
+              status: 'success',
+              step: 'Confirming',
+              title: 'Transaction Confirming',
+            },
+            type: 'SET_TX',
+          });
+          await waitForTransaction(hash, MIN_CONFIRMATIONS);
+          dispatch({
+            payload: {
+              data: 'From Transaction confirmed.',
+              status: 'success',
+              step: 'Confirming',
+              title: 'Transaction Confirmed',
+            },
+            type: 'SET_TX',
+          });
+          startCountdown();
+          listenToBridgeTransaction(
+            bridgeOrderId,
+            (payload: WatchBridgeTransactionPayload) => {
+              switch (payload.new.state) {
+                // initial
+                case 'completed':
+                  dispatch({
+                    payload: {
+                      data: 'Bridge transaction finalized!',
+                      status: 'success',
+                      step: 'DestinationNetwork',
+                      title: 'Deposit Processed',
+                    },
+                    type: 'SET_TX',
+                  });
+                  break;
+                case 'failed':
+                  dispatch({
+                    payload: {
+                      data: 'Bridge transaction failed.',
+                      status: 'error',
+                      step: 'DestinationNetwork',
+                      title: 'Deposit Failed',
+                    },
+                    type: 'SET_TX',
+                  });
+              }
+            }
+          );
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    run();
+
     return () => {
       dispatch({
         type: 'RESET_TX',
@@ -63,43 +372,7 @@ const Result: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center">
-      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <div className="w-full border-t border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white">
-          Send {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.requiredAmount} {state.asset?.symbol || ''}
-          </Badge>{' '}
-          on the {/* @ts-ignore */}
-          <Badge color="blue" size="large">
-            {state.network?.networkName || ''}
-          </Badge>{' '}
-          via
-          <Badge
-            color={
-              state.method.value === 'show-address'
-                ? 'blue'
-                : state.account.status === 'loading' ||
-                  state.account.status === 'idle'
-                ? 'yellow'
-                : state.account.status === 'error'
-                ? 'red'
-                : 'green'
-            }
-            dot
-            size="large"
-          >
-            {/* @ts-ignore */}
-            <span className="flex items-center gap-1">
-              <MethodIcon method={state.method} /> {state.method.name}{' '}
-              {state.account.status === 'success' && state.account.data ? (
-                <CryptoAddress hint={false}>{state.account.data}</CryptoAddress>
-              ) : (
-                ''
-              )}
-            </span>
-          </Badge>
-        </div>
-      </div>
+      <StateDescriptionHeader />
       <InnerWrapper
         className={`relative h-full transition-all ${
           toggleDetails ? 'h-0 p-0' : ''
@@ -108,7 +381,7 @@ const Result: React.FC<Props> = () => {
         {state.tx.steps.map((step, i) => {
           return (
             <div
-              className={`flex min-h-[56px] flex-col ${
+              className={`relative flex min-h-[56px] flex-col ${
                 TxSteps[step] <= state.tx.step ? '' : 'opacity-50'
               }`}
               key={step}
@@ -150,12 +423,12 @@ const Result: React.FC<Props> = () => {
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (
-                    <div className="text-xs text-primary-500">
+                    <div className="whitespace-pre-wrap text-xs text-primary-500">
                       {state.tx.progress[step].data}
                     </div>
                   ) : state.tx.progress[step].status === 'error' ? (
                     <div className="text-xs text-red-500">
-                      {state.tx.progress[step].error}
+                      {state.tx.progress[step].data}
                     </div>
                   ) : null}
                 </div>

@@ -3,7 +3,12 @@ import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Map3InitConfig } from '../..';
 import { ISO_4217_TO_SYMBOL } from '../../constants/iso4217';
-import { Asset, Network, PaymentMethod } from '../../generated/apollo-gql';
+import {
+  Asset,
+  BridgeQuote,
+  Network,
+  PaymentMethod,
+} from '../../generated/apollo-gql';
 import { PrebuiltTx } from '../../utils/transactions/evm';
 
 export enum Steps {
@@ -21,9 +26,11 @@ export enum Steps {
 }
 
 export enum TxSteps {
-  'Submitted' = 0,
-  'Confirming' = 1,
-  'Confirmed' = 2,
+  'ApproveToken' = 0,
+  'Submitted' = 1,
+  'Confirming' = 2,
+  'Confirmed' = 3,
+  'DestinationNetwork' = 4,
 }
 
 type RemoteType = 'loading' | 'success' | 'error' | 'idle';
@@ -41,11 +48,13 @@ type State = {
     status: RemoteType;
   };
   asset?: Asset;
+  bridgeQuote?: BridgeQuote;
   depositAddress: {
     data?: { address: string; memo?: string };
     error?: string;
     status: RemoteType;
   };
+  destinationNetwork?: Network;
   embed?: {
     height?: string;
     id?: string;
@@ -82,6 +91,7 @@ type State = {
   shortcutAmounts?: number[];
   slug?: string;
   step: number;
+  stepInView: number;
   steps: (keyof typeof Steps)[];
   theme?: 'dark' | 'light';
   tx: {
@@ -90,7 +100,6 @@ type State = {
     progress: {
       [key in keyof typeof TxSteps]: {
         data?: string;
-        error?: string;
         status: RemoteType;
         title?: string;
       };
@@ -105,8 +114,10 @@ type State = {
 type Action =
   | { payload: Asset; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
+  | { payload: Network; type: 'SET_DESTINATION_NETWORK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
+  | { payload: number; type: 'SET_STEP_IN_VIEW' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
   | {
       payload: { address: string; memo?: string };
@@ -146,6 +157,10 @@ type Action =
       };
       type: 'SET_PREBUILT_TX_SUCCESS';
     }
+  | {
+      payload?: BridgeQuote;
+      type: 'SET_BRIDGE_QUOTE';
+    }
   | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
   | { type: 'SET_PREBUILT_TX_IDLE' }
   | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
@@ -156,12 +171,15 @@ type Action =
   | {
       payload: {
         data?: string;
-        error?: string;
         status: RemoteType;
         step: keyof typeof TxSteps;
         title?: string;
       };
       type: 'SET_TX';
+    }
+  | {
+      payload: (keyof typeof TxSteps)[];
+      type: 'SET_TX_STEPS';
     }
   | { payload: string; type: 'SET_TX_HASH' }
   | { payload: string; type: 'SET_TX_AMOUNT' }
@@ -183,6 +201,7 @@ const initialState: State = {
     data: undefined,
     status: 'idle',
   },
+  destinationNetwork: undefined,
   fiat: undefined,
   method: undefined,
   network: undefined,
@@ -201,6 +220,7 @@ const initialState: State = {
   shortcutAmounts: [],
   slug: undefined,
   step: Steps.AssetSelection,
+  stepInView: Steps.AssetSelection,
   steps: [
     'AssetSelection',
     'NetworkSelection',
@@ -211,19 +231,24 @@ const initialState: State = {
   theme: undefined,
   tx: {
     progress: {
+      ApproveToken: {
+        data: undefined,
+        status: 'idle',
+      },
       Confirmed: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
       Confirming: {
         data: undefined,
-        error: undefined,
+        status: 'idle',
+      },
+      DestinationNetwork: {
+        data: undefined,
         status: 'idle',
       },
       Submitted: {
         data: undefined,
-        error: undefined,
         status: 'idle',
       },
     },
@@ -272,6 +297,8 @@ export const Store: React.FC<
       switch (action.type) {
         case 'SET_ASSET':
           return { ...state, asset: action.payload };
+        case 'SET_DESTINATION_NETWORK':
+          return { ...state, destinationNetwork: action.payload };
         case 'SET_NETWORK':
           return { ...state, network: action.payload };
         case 'SET_STEP':
@@ -279,6 +306,13 @@ export const Store: React.FC<
             ...state,
             prevStep: state.step,
             step: state.steps.indexOf(
+              Steps[action.payload] as keyof typeof Steps
+            ),
+          };
+        case 'SET_STEP_IN_VIEW':
+          return {
+            ...state,
+            stepInView: state.steps.indexOf(
               Steps[action.payload] as keyof typeof Steps
             ),
           };
@@ -351,6 +385,11 @@ export const Store: React.FC<
               data: undefined,
               status: 'idle',
             },
+          };
+        case 'SET_BRIDGE_QUOTE':
+          return {
+            ...state,
+            bridgeQuote: action.payload,
           };
         case 'SET_PREBUILT_TX_SUCCESS':
           return {
@@ -442,6 +481,14 @@ export const Store: React.FC<
                 },
               },
               step: TxSteps[action.payload.step],
+            },
+          };
+        case 'SET_TX_STEPS':
+          return {
+            ...state,
+            tx: {
+              ...state.tx,
+              steps: action.payload,
             },
           };
         case 'SET_TX_HASH':
