@@ -295,13 +295,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         type: 'SET_BRIDGE_QUOTE',
       });
       dispatch({
-        payload: [
-          'ApproveToken',
-          'Submitted',
-          'Confirming',
-          'Confirmed',
-          'DestinationNetwork',
-        ],
+        payload: ['ApproveToken', 'Confirming', 'DestinationNetwork'],
         type: 'SET_TX_STEPS',
       });
       dispatch({ payload: Steps.Result, type: 'SET_STEP' });

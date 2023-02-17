@@ -41,6 +41,51 @@ const Result: React.FC<Props> = () => {
     return null;
   }
 
+  const startCountdown = () => {
+    if (
+      state.bridgeQuote?.estimate?.executionDurationSeconds &&
+      state.tx.progress.DestinationNetwork.status !== 'success' &&
+      state.tx.progress.DestinationNetwork.status !== 'error'
+    ) {
+      const originalTime = new Date().getTime();
+      setInterval(() => {
+        if (state.bridgeQuote?.estimate?.executionDurationSeconds) {
+          const time = new Date().getTime();
+          const executionDurationMilliseconds =
+            state.bridgeQuote.estimate.executionDurationSeconds * 1000;
+          const expiresAt = new Date(
+            originalTime + executionDurationMilliseconds
+          ).getTime();
+          const millisecondsRemaining = expiresAt - time;
+
+          const seconds = Math.floor((millisecondsRemaining / 1000) % 60);
+          const minutes = Math.floor(
+            (millisecondsRemaining / (1000 * 60)) % 60
+          );
+          const hours = Math.floor(
+            (millisecondsRemaining / (1000 * 60 * 60)) % 24
+          );
+          const timeString = `${
+            hours ? hours.toString().padStart(2, '0') + ':' : ''
+          }${minutes.toString().padStart(2, '0')}:${seconds
+            .toString()
+            .padStart(2, '0')}`;
+          dispatch({
+            payload: {
+              data: `Bridge transaction pending.${
+                minutes > 0 ? `\nEstimated time remaining: ${timeString}` : ''
+              }`,
+              status: 'loading',
+              step: 'DestinationNetwork',
+              title: 'Processing Deposit',
+            },
+            type: 'SET_TX',
+          });
+        }
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
     const success = Object.keys(state.tx.progress).every(
       (key) =>
@@ -77,6 +122,10 @@ const Result: React.FC<Props> = () => {
     state.tx.progress.Submitted.status,
     state.tx?.progress.Confirmed?.status,
   ]);
+
+  // awaiting approval
+  // confirming transaction
+  // processing deposits
 
   useEffect(() => {
     const run = async () => {
@@ -116,6 +165,32 @@ const Result: React.FC<Props> = () => {
           if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
             throw new Error('Asset address not found.');
           }
+
+          // Change Step Titles
+          dispatch({
+            payload: {
+              status: 'idle',
+              step: 'DestinationNetwork',
+              title: 'Processing Deposit',
+            },
+            type: 'SET_TX',
+          });
+          dispatch({
+            payload: {
+              status: 'idle',
+              step: 'Confirming',
+              title: 'Confirming Transaction',
+            },
+            type: 'SET_TX',
+          });
+          dispatch({
+            payload: {
+              status: 'idle',
+              step: 'DestinationNetwork',
+              title: 'Processing Deposit',
+            },
+            type: 'SET_TX',
+          });
 
           if (allowance.lt(state.bridgeQuote.approval?.amount)) {
             dispatch({
@@ -178,19 +253,10 @@ const Result: React.FC<Props> = () => {
 
           dispatch({
             payload: {
-              status: 'idle',
-              step: 'DestinationNetwork',
-              title: 'Awaiting Bridge Confirmation',
-            },
-            type: 'SET_TX',
-          });
-
-          dispatch({
-            payload: {
               data: `Please confirm the transaction on ${state.method?.name}.`,
               status: 'loading',
-              step: 'Submitted',
-              title: 'Awaiting Submission',
+              step: 'Confirming',
+              title: 'Confirming Transaction',
             },
             type: 'SET_TX',
           });
@@ -207,22 +273,13 @@ const Result: React.FC<Props> = () => {
             // TODO: what happens if subscription fails?
             bridgeOrderId = data?.subscribeToBridgeTransaction as string;
             dispatch({ payload: hash, type: 'SET_TX_HASH' });
-            dispatch({
-              payload: {
-                data: `Transaction submitted at ${new Date().toLocaleString()}.`,
-                status: 'success',
-                step: 'Submitted',
-                title: 'Submitted',
-              },
-              type: 'SET_TX',
-            });
           } catch (e: any) {
             dispatch({
               payload: {
                 data: 'Action denied.',
                 status: 'error',
-                step: 'Submitted',
-                title: 'Submitted',
+                step: 'Confirming',
+                title: 'Confirming Transaction',
               },
               type: 'SET_TX',
             });
@@ -235,9 +292,10 @@ const Result: React.FC<Props> = () => {
 
           dispatch({
             payload: {
-              data: 'Waiting for transaction to be included in a block.',
+              data: `Transaction submitted at ${new Date().toLocaleString()}.\nWaiting for transaction to be included in a block.`,
               status: 'loading',
               step: 'Confirming',
+              title: 'Confirming Transaction',
             },
             type: 'SET_TX',
           });
@@ -253,14 +311,7 @@ const Result: React.FC<Props> = () => {
                 'Transaction included in block ' + receipt.blockNumber + '.',
               status: 'success',
               step: 'Confirming',
-            },
-            type: 'SET_TX',
-          });
-          dispatch({
-            payload: {
-              data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
-              status: 'loading',
-              step: 'Confirmed',
+              title: 'Transaction Confirming',
             },
             type: 'SET_TX',
           });
@@ -269,44 +320,24 @@ const Result: React.FC<Props> = () => {
             payload: {
               data: 'From Transaction confirmed.',
               status: 'success',
-              step: 'Confirmed',
+              step: 'Confirming',
+              title: 'Transaction Confirmed',
             },
             type: 'SET_TX',
           });
-          dispatch({
-            payload: {
-              data: 'Bridge transaction pending.',
-              status: 'loading',
-              step: 'DestinationNetwork',
-              title: 'Awaiting Bridge Confirmation',
-            },
-            type: 'SET_TX',
-          });
+          startCountdown();
           listenToBridgeTransaction(
             bridgeOrderId,
             (payload: WatchBridgeTransactionPayload) => {
-              console.log(payload);
               switch (payload.new.state) {
                 // initial
-                case 'quoted':
-                case 'subscribed':
-                  dispatch({
-                    payload: {
-                      data: 'Bridge transaction pending.',
-                      status: 'loading',
-                      step: 'DestinationNetwork',
-                      title: 'Awaiting Bridge Confirmation',
-                    },
-                    type: 'SET_TX',
-                  });
-                  break;
                 case 'completed':
                   dispatch({
                     payload: {
                       data: 'Bridge transaction finalized!',
                       status: 'success',
                       step: 'DestinationNetwork',
-                      title: 'Success!',
+                      title: 'Deposit Processed',
                     },
                     type: 'SET_TX',
                   });
@@ -317,7 +348,7 @@ const Result: React.FC<Props> = () => {
                       data: 'Bridge transaction failed.',
                       status: 'error',
                       step: 'DestinationNetwork',
-                      title: 'Failure',
+                      title: 'Deposit Failed',
                     },
                     type: 'SET_TX',
                   });
@@ -341,9 +372,7 @@ const Result: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center">
-      <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <StateDescriptionHeader />
-      </div>
+      <StateDescriptionHeader />
       <InnerWrapper
         className={`relative h-full transition-all ${
           toggleDetails ? 'h-0 p-0' : ''
@@ -352,7 +381,7 @@ const Result: React.FC<Props> = () => {
         {state.tx.steps.map((step, i) => {
           return (
             <div
-              className={`flex min-h-[56px] flex-col ${
+              className={`relative flex min-h-[56px] flex-col ${
                 TxSteps[step] <= state.tx.step ? '' : 'opacity-50'
               }`}
               key={step}
@@ -394,7 +423,7 @@ const Result: React.FC<Props> = () => {
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (
-                    <div className="text-xs text-primary-500">
+                    <div className="whitespace-pre-wrap text-xs text-primary-500">
                       {state.tx.progress[step].data}
                     </div>
                   ) : state.tx.progress[step].status === 'error' ? (
