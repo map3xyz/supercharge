@@ -11,6 +11,7 @@ import {
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useSubscribeToBridgeTransactionMutation,
 } from '../../generated/apollo-gql';
+import { MAP3_ORDER_HISTORY_STORAGE_KEY } from '../../hooks/useOrderHistoryStorageWatcher';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps, TxSteps } from '../../providers/Store';
 import { listenToBridgeTransaction } from '../../utils/supabase';
@@ -268,6 +269,12 @@ const Result: React.FC<Props> = () => {
             });
             // TODO: what happens if subscription fails?
             bridgeOrderId = data?.subscribeToBridgeTransaction as string;
+            if (state.orderHistory.indexOf(bridgeOrderId) === -1) {
+              localStorage.setItem(
+                MAP3_ORDER_HISTORY_STORAGE_KEY,
+                JSON.stringify([...(state.orderHistory || []), bridgeOrderId])
+              );
+            }
             dispatch({ payload: hash, type: 'SET_TX_HASH' });
           } catch (e: any) {
             dispatch({

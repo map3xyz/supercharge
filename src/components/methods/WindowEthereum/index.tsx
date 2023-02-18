@@ -169,9 +169,9 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
                     <div>{t('copy.gas_cost')}:</div>
                     <div>
                       <>
-                        {bridgeQuote.prepareBridgeQuote.estimate?.gasCosts?.toFixed(
-                          6
-                        )}{' '}
+                        {Number(
+                          bridgeQuote.prepareBridgeQuote.estimate?.gasCosts
+                        )?.toFixed(6)}{' '}
                         {state.network?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
                         {bridgeQuote.prepareBridgeQuote.estimate?.gasCostsUsd?.toFixed(
                           2
@@ -185,7 +185,9 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
                 <div className="flex w-full items-center justify-between font-semibold">
                   <div>{t('copy.receive_amount')}:</div>
                   <div>
-                    {bridgeQuote.prepareBridgeQuote.estimate.amountToReceive}{' '}
+                    {Number(
+                      bridgeQuote.prepareBridgeQuote.estimate.amountToReceive
+                    ).toFixed(6)}{' '}
                     {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
                     {bridgeQuote.prepareBridgeQuote.estimate.toAmountUsd?.toFixed(
                       2

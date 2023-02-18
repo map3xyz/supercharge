@@ -5,15 +5,17 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Context, Steps } from '../../providers/Store';
 import MethodIcon from '../MethodIcon';
 
-const Wrapper = ({
+export const BgOffsetWrapper = ({
   border,
   children,
+  className = '',
 }: {
   border: 't' | 'y';
   children: React.ReactNode;
+  className?: string;
 }) => (
   <div
-    className={`${
+    className={`${className} ${
       border === 't' ? 'border-t' : 'border-y'
     } w-full border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white`}
   >
@@ -29,7 +31,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   switch (true) {
     case steps[step] === Steps[Steps.NetworkSelection]:
       return (
-        <Wrapper border="t">
+        <BgOffsetWrapper border="t">
           <Trans
             components={{
               // @ts-ignore
@@ -40,11 +42,11 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               symbol: state.asset?.symbol,
             }}
           />
-        </Wrapper>
+        </BgOffsetWrapper>
       );
     case steps[step] === Steps[Steps.WalletConnect]:
       return (
-        <Wrapper border="y">
+        <BgOffsetWrapper border="y">
           <div className="flex items-center gap-2">
             <img className="h-4" src={state.method?.logo || ''} />
             <div className="font-bold">{state.method?.name}</div>
@@ -52,11 +54,11 @@ const StateDescriptionHeader: React.FC<Props> = () => {
           <div className="text-xs text-primary-500">
             {state.method?.description}
           </div>
-        </Wrapper>
+        </BgOffsetWrapper>
       );
     case steps[step] === Steps[Steps.ConfirmRequiredAmount]:
       return (
-        <Wrapper border="y">
+        <BgOffsetWrapper border="y">
           <Trans
             components={{
               // @ts-ignore
@@ -69,13 +71,13 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               symbol: state.asset?.symbol,
             }}
           />
-        </Wrapper>
+        </BgOffsetWrapper>
       );
     case steps[step] === Steps[Steps.PaymentMethod]:
       if (!state.asset?.symbol) return null;
       if (!state.network?.networkName) return null;
       return (
-        <Wrapper border="t">
+        <BgOffsetWrapper border="t">
           <Trans
             components={{
               // @ts-ignore
@@ -88,7 +90,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               symbol: state.asset?.symbol,
             }}
           />
-        </Wrapper>
+        </BgOffsetWrapper>
       );
     case steps[step] === Steps[Steps.SwitchChain]:
     case steps[step] === Steps[Steps.EnterAmount]:
@@ -98,7 +100,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
       if (!state.method?.value) return null;
 
       return (
-        <Wrapper border="y">
+        <BgOffsetWrapper border="y">
           {t('copy.send')}
           {/* @ts-ignore */}
           <Badge color="blue" size="large">
@@ -135,7 +137,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               )}
             </span>
           </Badge>
-        </Wrapper>
+        </BgOffsetWrapper>
       );
     default:
       return null;

@@ -1,3 +1,4 @@
+import { Badge } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from 'jsx:../assets/logo.svg';
 import React, { useContext, useEffect } from 'react';
@@ -5,8 +6,10 @@ import { isMobile, isTablet } from 'react-device-detect';
 
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
+import { BgOffsetWrapper } from '../components/StateDescriptionHeader';
 import { Organization } from '../generated/apollo-gql';
 import { useChainWatcher } from '../hooks/useChainWatcher';
+import { useOrderHistoryStorageWatcher } from '../hooks/useOrderHistoryStorageWatcher';
 import { Context, Steps } from '../providers/Store';
 import AssetSelection from '../steps/AssetSelection';
 import EnterAmount from '../steps/EnterAmount';
@@ -14,6 +17,7 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import BinancePay from './BinancePay';
 import ConfirmRequiredAmount from './ConfirmRequiredAmount';
+import OrderHistory from './OrderHistory';
 import Result from './Result';
 import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
@@ -21,9 +25,10 @@ import WalletConnect from './WalletConnect';
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
-  const { step, steps } = state;
+  const { step, stepInView, steps } = state;
 
   useChainWatcher();
+  useOrderHistoryStorageWatcher();
 
   useEffect(() => {
     setTimeout(() => {
@@ -39,30 +44,59 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
       id="map3-modal-stepper"
     >
       <>
-        <InnerWrapper>
-          <div className="flex w-full items-center justify-between gap-4">
-            <button
-              aria-label="Back"
-              className={step === 0 ? 'invisible' : 'visible'}
+        {steps[stepInView] !== Steps[Steps.OrderHistory] ? (
+          <InnerWrapper>
+            <div className="flex w-full items-center justify-between gap-4">
+              <button
+                aria-label="Back"
+                className={step === 0 ? 'invisible' : 'visible'}
+                onClick={() => {
+                  dispatch({
+                    payload: Steps[state.steps[state.step - 1]],
+                    type: 'SET_STEP',
+                  });
+                }}
+              >
+                <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
+              </button>
+              <ProgressBar progress={step / (steps.length - 1)} />
+              {state.embed?.id || window.isMap3Hosted ? null : (
+                <div>
+                  <button aria-label="Close" onClick={onClose}>
+                    <i className="fa fa-close transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </InnerWrapper>
+        ) : null}
+        {state.orderHistory.length &&
+        steps[stepInView] !== Steps[Steps.OrderHistory] ? (
+          <BgOffsetWrapper border="y" className="mb-2">
+            <div
+              className="group flex cursor-pointer items-center justify-between"
               onClick={() => {
                 dispatch({
-                  payload: Steps[state.steps[state.step - 1]],
+                  payload: [...steps, 'OrderHistory'],
+                  type: 'SET_STEPS',
+                });
+                dispatch({
+                  payload: Steps.OrderHistory,
                   type: 'SET_STEP',
                 });
               }}
             >
-              <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
-            </button>
-            <ProgressBar progress={step / (steps.length - 1)} />
-            {state.embed?.id || window.isMap3Hosted ? null : (
-              <div>
-                <button aria-label="Close" onClick={onClose}>
-                  <i className="fa fa-close transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
-                </button>
+              <div className="text-sm font-normal">Active Orders</div>
+              <div className="flex items-center gap-2">
+                <Badge color="blue" dot>
+                  {/* @ts-ignore */}
+                  {state.orderHistory.length}
+                </Badge>
+                <i className="fa fa-long-arrow-right transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400 dark:group-hover:text-primary-400" />
               </div>
-            )}
-          </div>
-        </InnerWrapper>
+            </div>
+          </BgOffsetWrapper>
+        ) : null}
         <div className="!mt-0 h-full w-full overflow-hidden">
           <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (
@@ -162,6 +196,17 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 key={Steps[step]}
               >
                 <ShowAddress />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.OrderHistory] && (
+              <motion.div
+                animate={{ opacity: 1 }}
+                className="h-full"
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={Steps[step]}
+              >
+                <OrderHistory />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.Result] && (

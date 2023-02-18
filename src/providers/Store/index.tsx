@@ -21,7 +21,8 @@ export enum Steps {
   'WalletConnect' = 6,
   'ConfirmRequiredAmount' = 7,
   'ShowAddress' = 8,
-  'Result' = 9,
+  'OrderHistory' = 9,
+  'Result' = 10,
   __LENGTH,
 }
 
@@ -64,6 +65,7 @@ type State = {
   fiatDisplaySymbol?: string;
   method?: PaymentMethod & { description?: string };
   network?: Network;
+  orderHistory: string[];
   prebuiltTx: {
     data?: {
       feeError: boolean;
@@ -80,6 +82,7 @@ type State = {
     status: RemoteType;
   };
   prevStep: number;
+  prevSteps: (keyof typeof Steps)[];
   provider?: {
     data?: ethers.providers.Web3Provider;
     error?: string;
@@ -119,6 +122,7 @@ type Action =
   | { payload: number; type: 'SET_STEP' }
   | { payload: number; type: 'SET_STEP_IN_VIEW' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
+  | { payload: string[]; type: 'SET_ORDER_HISTORY' }
   | {
       payload: { address: string; memo?: string };
       type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS';
@@ -205,12 +209,14 @@ const initialState: State = {
   fiat: undefined,
   method: undefined,
   network: undefined,
+  orderHistory: [],
   prebuiltTx: {
     data: undefined,
     error: undefined,
     status: 'idle',
   },
   prevStep: Steps.AssetSelection,
+  prevSteps: [],
   provider: {
     data: undefined,
     error: undefined,
@@ -317,8 +323,10 @@ export const Store: React.FC<
             ),
           };
         case 'SET_STEPS': {
-          return { ...state, steps: action.payload };
+          return { ...state, prevSteps: state.steps, steps: action.payload };
         }
+        case 'SET_ORDER_HISTORY':
+          return { ...state, orderHistory: action.payload };
         case 'SET_PAYMENT_METHOD':
           return { ...state, method: action.payload };
         case 'GENERATE_DEPOSIT_ADDRESS_SUCCESS':
