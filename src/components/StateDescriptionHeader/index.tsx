@@ -3,25 +3,8 @@ import React, { useContext } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Context, Steps } from '../../providers/Store';
+import { BgOffsetWrapper } from '../BgOffsetWrapper';
 import MethodIcon from '../MethodIcon';
-
-export const BgOffsetWrapper = ({
-  border,
-  children,
-  className = '',
-}: {
-  border: 't' | 'y';
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div
-    className={`${className} ${
-      border === 't' ? 'border-t' : 'border-y'
-    } w-full border-primary-200 bg-primary-100 px-4 py-3 font-bold leading-6 dark:border-primary-700 dark:bg-primary-800 dark:text-white`}
-  >
-    {children}
-  </div>
-);
 
 const StateDescriptionHeader: React.FC<Props> = () => {
   const { t } = useTranslation();

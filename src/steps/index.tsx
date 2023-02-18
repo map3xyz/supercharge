@@ -4,9 +4,9 @@ import Logo from 'jsx:../assets/logo.svg';
 import React, { useContext, useEffect } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
+import { BgOffsetWrapper } from '../components/BgOffsetWrapper';
 import InnerWrapper from '../components/InnerWrapper';
 import ProgressBar from '../components/ProgressBar';
-import { BgOffsetWrapper } from '../components/StateDescriptionHeader';
 import { Organization } from '../generated/apollo-gql';
 import { useChainWatcher } from '../hooks/useChainWatcher';
 import { useOrderHistoryStorageWatcher } from '../hooks/useOrderHistoryStorageWatcher';
@@ -72,20 +72,21 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
         ) : null}
         {state.orderHistory.length &&
         steps[stepInView] !== Steps[Steps.OrderHistory] ? (
-          <BgOffsetWrapper border="y" className="mb-2">
-            <div
-              className="group flex cursor-pointer items-center justify-between"
-              onClick={() => {
-                dispatch({
-                  payload: [...steps, 'OrderHistory'],
-                  type: 'SET_STEPS',
-                });
-                dispatch({
-                  payload: Steps.OrderHistory,
-                  type: 'SET_STEP',
-                });
-              }}
-            >
+          <BgOffsetWrapper
+            border="y"
+            className="group mb-2 cursor-pointer"
+            onClick={() => {
+              dispatch({
+                payload: [...steps, 'OrderHistory'],
+                type: 'SET_STEPS',
+              });
+              dispatch({
+                payload: Steps.OrderHistory,
+                type: 'SET_STEP',
+              });
+            }}
+          >
+            <div className="flex items-center justify-between">
               <div className="text-sm font-normal">Active Orders</div>
               <div className="flex items-center gap-2">
                 <Badge color="blue" dot>
@@ -98,7 +99,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
           </BgOffsetWrapper>
         ) : null}
         <div className="!mt-0 h-full w-full overflow-hidden">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
                 animate={{ opacity: 1 }}
@@ -198,17 +199,6 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 <ShowAddress />
               </motion.div>
             )}
-            {steps[step] === Steps[Steps.OrderHistory] && (
-              <motion.div
-                animate={{ opacity: 1 }}
-                className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
-                key={Steps[step]}
-              >
-                <OrderHistory />
-              </motion.div>
-            )}
             {steps[step] === Steps[Steps.Result] && (
               <motion.div
                 animate={{ opacity: 1 }}
@@ -221,6 +211,17 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
               </motion.div>
             )}
           </AnimatePresence>
+          {/* Leave certain layouts outside of AnimatePresence to avoid layout shift */}
+          {steps[step] === Steps[Steps.OrderHistory] && (
+            <motion.div
+              animate={{ opacity: 1 }}
+              className="h-full"
+              initial={{ opacity: 0 }}
+              key={Steps[step]}
+            >
+              <OrderHistory />
+            </motion.div>
+          )}
         </div>
       </>
       {plan === 'enterprise' ? null : (
