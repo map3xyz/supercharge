@@ -123,17 +123,13 @@ const Result: React.FC<Props> = () => {
     state.tx?.progress.Confirmed?.status,
   ]);
 
-  // awaiting approval
-  // confirming transaction
-  // processing deposits
-
   useEffect(() => {
     const run = async () => {
       try {
         if (state.network?.bridged) {
           if (!state.bridgeQuote) {
-            // send user back to Enter Amount?
-            throw new Error('Bridge quote not found.');
+            dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
+            return;
           }
 
           const {
