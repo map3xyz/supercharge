@@ -113,6 +113,7 @@ const SwitchChain: React.FC<Props> = () => {
           disabled={loading}
           loading={loading}
           onClick={handleSwitch}
+          size="large"
           type="default"
         >
           Switch Chain

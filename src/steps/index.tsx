@@ -1,7 +1,7 @@
 import { Badge } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from 'jsx:../assets/logo.svg';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
 import { BgOffsetWrapper } from '../components/BgOffsetWrapper';
@@ -23,9 +23,13 @@ import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
 
+const ANIMATION_DURATION = 0.2;
+
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
-  const { step, stepInView, steps } = state;
+  const { prevStep, prevSteps, step, stepInView, steps } = state;
+
+  const orderHistoryRef = useRef<HTMLDivElement>(null);
 
   useChainWatcher();
   useOrderHistoryStorageWatcher();
@@ -33,8 +37,14 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   useEffect(() => {
     setTimeout(() => {
       dispatch({ payload: Steps[steps[step]], type: 'SET_STEP_IN_VIEW' });
-    }, 250);
+    }, ANIMATION_DURATION * 1000);
   }, [step, steps]);
+
+  const variants = {
+    exit: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
+    hidden: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
+    visible: { opacity: 1, transition: { duration: ANIMATION_DURATION } },
+  };
 
   return (
     <div
@@ -44,184 +54,218 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
       id="map3-modal-stepper"
     >
       <>
-        {steps[stepInView] !== Steps[Steps.OrderHistory] ? (
-          <InnerWrapper>
-            <div className="flex w-full items-center justify-between gap-4">
-              <button
-                aria-label="Back"
-                className={step === 0 ? 'invisible' : 'visible'}
+        <InnerWrapper>
+          <div className="flex w-full items-center justify-between gap-4">
+            <button
+              aria-label="Back"
+              className={step === 0 ? 'invisible' : 'visible'}
+              onClick={() => {
+                if (steps[step] === Steps[Steps.OrderHistory]) {
+                  dispatch({
+                    payload: prevSteps,
+                    type: 'SET_STEPS',
+                  });
+                  dispatch({
+                    payload: Steps[prevSteps[prevStep]],
+                    type: 'SET_STEP',
+                  });
+                } else {
+                  dispatch({
+                    payload: Steps[steps[step - 1]],
+                    type: 'SET_STEP',
+                  });
+                }
+              }}
+            >
+              <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
+            </button>
+            {steps[step] === Steps[Steps.OrderHistory] ? null : (
+              <ProgressBar progress={step / (steps.length - 1)} />
+            )}
+            {state.embed?.id || window.isMap3Hosted ? null : (
+              <div>
+                <button aria-label="Close" onClick={onClose}>
+                  <i className="fa fa-close transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
+                </button>
+              </div>
+            )}
+          </div>
+        </InnerWrapper>
+        <AnimatePresence>
+          {state.orderHistory.length &&
+          steps[step] !== Steps[Steps.OrderHistory] &&
+          prevSteps[stepInView] !== Steps[Steps.OrderHistory] ? (
+            <motion.div
+              animate="visible"
+              exit="exit"
+              initial="hidden"
+              variants={variants}
+            >
+              <BgOffsetWrapper
+                border="y"
+                className="group mb-3 cursor-pointer !py-2"
                 onClick={() => {
                   dispatch({
-                    payload: Steps[state.steps[state.step - 1]],
+                    payload: [...steps, 'OrderHistory'],
+                    type: 'SET_STEPS',
+                  });
+                  dispatch({
+                    payload: Steps.OrderHistory,
                     type: 'SET_STEP',
                   });
                 }}
               >
-                <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
-              </button>
-              <ProgressBar progress={step / (steps.length - 1)} />
-              {state.embed?.id || window.isMap3Hosted ? null : (
-                <div>
-                  <button aria-label="Close" onClick={onClose}>
-                    <i className="fa fa-close transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
-                  </button>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-normal">Active Orders</div>
+                  <div className="flex items-center gap-2">
+                    <Badge color="blue" dot>
+                      {/* @ts-ignore */}
+                      {state.orderHistory.length}
+                    </Badge>
+                    <i className="fa fa-long-arrow-right transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400 dark:group-hover:text-primary-400" />
+                  </div>
                 </div>
-              )}
-            </div>
-          </InnerWrapper>
-        ) : null}
-        {state.orderHistory.length &&
-        steps[stepInView] !== Steps[Steps.OrderHistory] ? (
-          <BgOffsetWrapper
-            border="y"
-            className="group mb-2 cursor-pointer"
-            onClick={() => {
-              dispatch({
-                payload: [...steps, 'OrderHistory'],
-                type: 'SET_STEPS',
-              });
-              dispatch({
-                payload: Steps.OrderHistory,
-                type: 'SET_STEP',
-              });
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-normal">Active Orders</div>
-              <div className="flex items-center gap-2">
-                <Badge color="blue" dot>
-                  {/* @ts-ignore */}
-                  {state.orderHistory.length}
-                </Badge>
-                <i className="fa fa-long-arrow-right transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400 dark:group-hover:text-primary-400" />
-              </div>
-            </div>
-          </BgOffsetWrapper>
-        ) : null}
+              </BgOffsetWrapper>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+
         <div className="!mt-0 h-full w-full overflow-hidden">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <AssetSelection />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.NetworkSelection] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <NetworkSelection />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.PaymentMethod] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <PaymentMethod />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.SwitchChain] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <SwitchChain />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.EnterAmount] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <EnterAmount />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.BinancePay] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <BinancePay />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.WalletConnect] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <WalletConnect />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.ConfirmRequiredAmount] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <ConfirmRequiredAmount />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.ShowAddress] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <ShowAddress />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.Result] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={variants}
               >
                 <Result />
               </motion.div>
             )}
+            {steps[step] === Steps[Steps.OrderHistory] && (
+              <motion.div
+                animate="visible"
+                className="h-full"
+                exit="exit"
+                initial="hidden"
+                variants={variants}
+              >
+                <div ref={orderHistoryRef}>
+                  <OrderHistory />
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
-          {/* Leave certain layouts outside of AnimatePresence to avoid layout shift */}
-          {steps[step] === Steps[Steps.OrderHistory] && (
-            <motion.div
-              animate={{ opacity: 1 }}
-              className="h-full"
-              initial={{ opacity: 0 }}
-              key={Steps[step]}
-            >
-              <OrderHistory />
-            </motion.div>
-          )}
         </div>
       </>
       {plan === 'enterprise' ? null : (

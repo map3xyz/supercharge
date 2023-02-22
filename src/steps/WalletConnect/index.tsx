@@ -186,7 +186,7 @@ const WalletConnect: React.FC<Props> = () => {
           <MobileView className="w-full">
             <InnerWrapper className="w-full">
               {deeplink ? (
-                <Button block size="xlarge" type="default">
+                <Button block size="large" type="default">
                   <a
                     data-testid="connect-app"
                     href={deeplink}
