@@ -1,0 +1,19 @@
+query getBridgeTransactionsByIds($ids: [ID!]!) {
+  getBridgeTransactionsByIds(ids: $ids) {
+    id
+    created
+    organizationId
+    sourceChainTxId
+    destinationChainTxId
+    state
+    fromAsset {
+      ...AssetFields
+    }
+    toAsset {
+      ...AssetFields
+    }
+    quote {
+      ...BridgeQuoteFields
+    }
+  }
+}

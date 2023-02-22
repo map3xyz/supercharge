@@ -336,7 +336,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           'Cannot create bridge quote without to and destination assets.'
         );
       }
-      await createBridgeQuote({
+      const { errors } = await createBridgeQuote({
         variables: {
           amount: ethers.utils
             .parseUnits(amount, state.asset?.decimals!)
@@ -348,6 +348,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           userId: state.userId,
         },
       });
+      if (errors?.[0]) {
+        throw new Error('Error creating bridge quote.');
+      }
       setIsConfirming(true);
     }
   };
@@ -463,9 +466,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           });
 
           if (state.network?.bridged) {
-            handleBridgeTransaction();
+            await handleBridgeTransaction();
           } else {
-            handleProviderTransaction();
+            await handleProviderTransaction();
           }
       }
     } catch (e: any) {
@@ -764,7 +767,7 @@ const EnterAmount: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col">
-      <InnerWrapper className="!pt-0">
+      <InnerWrapper>
         <h3
           className="text-lg font-semibold dark:text-white"
           data-testid="enter-amount"

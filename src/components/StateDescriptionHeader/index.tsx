@@ -20,7 +20,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               // @ts-ignore
               badge: <Badge color="blue" size="large" />,
             }}
-            defaults="Send <badge>{{symbol}}</badge> on"
+            defaults="Deposit <badge>{{symbol}}</badge> on"
             values={{
               symbol: state.asset?.symbol,
             }}
@@ -47,7 +47,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               // @ts-ignore
               badge: <Badge color="blue" size="large" />,
             }}
-            defaults="Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>"
+            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>"
             values={{
               amount: state.requiredAmount,
               network: state.network?.networkName,
@@ -66,7 +66,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               // @ts-ignore
               badge: <Badge color="blue" size="large" />,
             }}
-            defaults="Send <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge> via"
+            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge> via"
             values={{
               amount: state.requiredAmount,
               network: state.network?.networkName,
@@ -84,7 +84,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
 
       return (
         <BgOffsetWrapper border="y">
-          {t('copy.send')}
+          {t('copy.deposit')}
           {/* @ts-ignore */}
           <Badge color="blue" size="large">
             {state.requiredAmount} {state.asset.symbol || ''}

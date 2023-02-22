@@ -14,29 +14,6 @@ mutation CreateBridgeQuote(
     toAssetId: $toAssetId
     userId: $userId
   ) {
-    aggregator
-    approval {
-      address
-      amount
-    }
-    estimate {
-      amountToReceive
-      executionDurationSeconds
-      fromAmountUsd
-      gasCosts
-      gasCostsUsd
-      slippage
-      toAmountUsd
-    }
-    id
-    transaction {
-      to
-      from
-      gasLimit
-      gasPrice
-      data
-      value
-      chainId
-    }
+    ...BridgeQuoteFields
   }
 }

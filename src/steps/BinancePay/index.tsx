@@ -111,7 +111,7 @@ const BinancePay: React.FC<Props> = () => {
 
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
-      <InnerWrapper className="!pt-0">
+      <InnerWrapper>
         <h3
           className="text-center text-lg font-semibold dark:text-white"
           data-testid="show-address-method"

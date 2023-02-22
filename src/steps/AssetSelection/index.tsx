@@ -5,6 +5,7 @@ import { InView } from 'react-intersection-observer';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
+import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import {
   Asset,
@@ -64,7 +65,7 @@ const AssetSelection: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <InnerWrapper className="!pt-0">
+        <InnerWrapper>
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="select-asset"
@@ -110,8 +111,7 @@ const AssetSelection: React.FC<Props> = () => {
           ) : (
             assets?.map((asset) => {
               return (
-                <div
-                  className="flex items-center justify-between border-b border-primary-200 px-4 py-3 text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800"
+                <ListItem
                   key={asset?.name}
                   onClick={() => {
                     dispatch({
@@ -123,7 +123,6 @@ const AssetSelection: React.FC<Props> = () => {
                       type: 'SET_STEP',
                     });
                   }}
-                  role="button"
                 >
                   <div className="flex items-center gap-2">
                     <div className="flex w-4 justify-center">
@@ -142,7 +141,7 @@ const AssetSelection: React.FC<Props> = () => {
                   ) : (
                     <i className="fa fa-chevron-right text-xxs" />
                   )}
-                </div>
+                </ListItem>
               );
             })
           )}

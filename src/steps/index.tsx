@@ -1,7 +1,7 @@
 import { Badge } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from 'jsx:../assets/logo.svg';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
 import { BgOffsetWrapper } from '../components/BgOffsetWrapper';
@@ -29,8 +29,6 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
   const { prevStep, prevSteps, step, stepInView, steps } = state;
 
-  const orderHistoryRef = useRef<HTMLDivElement>(null);
-
   useChainWatcher();
   useOrderHistoryStorageWatcher();
 
@@ -54,7 +52,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
       id="map3-modal-stepper"
     >
       <>
-        <InnerWrapper>
+        <InnerWrapper className="!pb-0">
           <div className="flex w-full items-center justify-between gap-4">
             <button
               aria-label="Back"
@@ -103,7 +101,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
             >
               <BgOffsetWrapper
                 border="y"
-                className="group mb-3 cursor-pointer !py-2"
+                className="group mt-3 cursor-pointer !py-2"
                 onClick={() => {
                   dispatch({
                     payload: [...steps, 'OrderHistory'],
@@ -130,7 +128,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
           ) : null}
         </AnimatePresence>
 
-        <div className="!mt-0 h-full w-full overflow-hidden">
+        <div className="h-full w-full overflow-hidden">
           <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
@@ -260,9 +258,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 initial="hidden"
                 variants={variants}
               >
-                <div ref={orderHistoryRef}>
-                  <OrderHistory />
-                </div>
+                <OrderHistory />
               </motion.div>
             )}
           </AnimatePresence>
