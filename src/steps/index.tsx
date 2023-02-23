@@ -1,15 +1,13 @@
-import { Badge } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
 import Logo from 'jsx:../assets/logo.svg';
 import React, { useContext, useEffect } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
-import { BgOffsetWrapper } from '../components/BgOffsetWrapper';
 import InnerWrapper from '../components/InnerWrapper';
+import OrderHistoryRow from '../components/OrderHistoryRow';
 import ProgressBar from '../components/ProgressBar';
 import { Organization } from '../generated/apollo-gql';
 import { useChainWatcher } from '../hooks/useChainWatcher';
-import { useOrderHistoryStorageWatcher } from '../hooks/useOrderHistoryStorageWatcher';
 import { Context, Steps } from '../providers/Store';
 import AssetSelection from '../steps/AssetSelection';
 import EnterAmount from '../steps/EnterAmount';
@@ -24,25 +22,23 @@ import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
 
 const ANIMATION_DURATION = 0.2;
+export const ANIMATION_VARIANTS = {
+  exit: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
+  hidden: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
+  visible: { opacity: 1, transition: { duration: ANIMATION_DURATION } },
+};
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
-  const { prevStep, prevSteps, step, stepInView, steps } = state;
+  const { prevStep, prevSteps, step, steps } = state;
 
   useChainWatcher();
-  useOrderHistoryStorageWatcher();
 
   useEffect(() => {
     setTimeout(() => {
       dispatch({ payload: Steps[steps[step]], type: 'SET_STEP_IN_VIEW' });
     }, ANIMATION_DURATION * 1000);
   }, [step, steps]);
-
-  const variants = {
-    exit: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
-    hidden: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
-    visible: { opacity: 1, transition: { duration: ANIMATION_DURATION } },
-  };
 
   return (
     <div
@@ -90,42 +86,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
           </div>
         </InnerWrapper>
         <AnimatePresence>
-          {state.orderHistory.length &&
-          steps[step] !== Steps[Steps.OrderHistory] &&
-          prevSteps[stepInView] !== Steps[Steps.OrderHistory] ? (
-            <motion.div
-              animate="visible"
-              exit="exit"
-              initial="hidden"
-              variants={variants}
-            >
-              <BgOffsetWrapper
-                border="y"
-                className="group mt-3 cursor-pointer !py-2"
-                onClick={() => {
-                  dispatch({
-                    payload: [...steps, 'OrderHistory'],
-                    type: 'SET_STEPS',
-                  });
-                  dispatch({
-                    payload: Steps.OrderHistory,
-                    type: 'SET_STEP',
-                  });
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-normal">Active Orders</div>
-                  <div className="flex items-center gap-2">
-                    <Badge color="blue" dot>
-                      {/* @ts-ignore */}
-                      {state.orderHistory.length}
-                    </Badge>
-                    <i className="fa fa-long-arrow-right transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400 dark:group-hover:text-primary-400" />
-                  </div>
-                </div>
-              </BgOffsetWrapper>
-            </motion.div>
-          ) : null}
+          <OrderHistoryRow />
         </AnimatePresence>
 
         <div className="h-full w-full overflow-hidden">
@@ -137,7 +98,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <AssetSelection />
               </motion.div>
@@ -149,7 +110,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <NetworkSelection />
               </motion.div>
@@ -161,7 +122,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <PaymentMethod />
               </motion.div>
@@ -173,7 +134,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <SwitchChain />
               </motion.div>
@@ -185,7 +146,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <EnterAmount />
               </motion.div>
@@ -197,7 +158,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <BinancePay />
               </motion.div>
@@ -209,7 +170,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <WalletConnect />
               </motion.div>
@@ -221,7 +182,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <ConfirmRequiredAmount />
               </motion.div>
@@ -233,7 +194,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <ShowAddress />
               </motion.div>
@@ -245,7 +206,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 exit="exit"
                 initial="hidden"
                 key={Steps[step]}
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <Result />
               </motion.div>
@@ -256,7 +217,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 className="h-full"
                 exit="exit"
                 initial="hidden"
-                variants={variants}
+                variants={ANIMATION_VARIANTS}
               >
                 <OrderHistory />
               </motion.div>

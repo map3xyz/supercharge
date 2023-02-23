@@ -1,19 +1,27 @@
-import { Badge, CoinAndNetworkLogo, CoinLogo } from '@map3xyz/components';
-import React, { useContext, useEffect } from 'react';
+import { Badge, CoinAndNetworkLogo } from '@map3xyz/components';
+import React, { useContext } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import { useGetBridgeTransactionsByIdsQuery } from '../../generated/apollo-gql';
-import { Context } from '../../providers/Store';
+import {
+  BridgeTransactionWithAssetsAndNetworks,
+  useGetBridgeTransactionsByUserIdQuery,
+} from '../../generated/apollo-gql';
+import { Context, Steps } from '../../providers/Store';
 
 const OrderHistory: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
-  const { data, error, loading, refetch } = useGetBridgeTransactionsByIdsQuery({
-    skip: !state.orderHistory.length,
+  const {
+    data,
+    error,
+    loading,
+    refetch,
+  } = useGetBridgeTransactionsByUserIdQuery({
+    fetchPolicy: 'network-only',
     variables: {
-      ids: state.orderHistory,
+      id: state.userId,
     },
   });
 
@@ -47,9 +55,51 @@ const OrderHistory: React.FC<Props> = () => {
       ) : (
         <div className="flex h-full flex-col overflow-hidden">
           <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">
-            {data?.getBridgeTransactionsByIds.map((order) => {
+            {data?.getBridgeTransactionsByUserId.map((order) => {
               return (
-                <ListItem key={order.id}>
+                <ListItem
+                  key={order.id}
+                  onClick={() => {
+                    dispatch({
+                      payload: order.fromAsset,
+                      type: 'SET_ASSET',
+                    });
+                    dispatch({
+                      payload: { ...order.fromNetwork, bridged: true },
+                      type: 'SET_NETWORK',
+                    });
+                    dispatch({
+                      payload: order as BridgeTransactionWithAssetsAndNetworks,
+                      type: 'SET_BRIDGE_TRANSACTION',
+                    });
+                    dispatch({
+                      payload: order.quote,
+                      type: 'SET_BRIDGE_QUOTE',
+                    });
+                    dispatch({
+                      payload: order.sourceChainTxId as string,
+                      type: 'SET_TX_HASH',
+                    });
+                    dispatch({
+                      payload: `${
+                        order.quote.estimate?.amountToReceive as string
+                      } ${order.toAsset.symbol}`,
+                      type: 'SET_TX_AMOUNT',
+                    });
+                    dispatch({
+                      payload: [
+                        'ApproveToken',
+                        'Confirming',
+                        'DestinationNetwork',
+                      ],
+                      type: 'SET_TX_STEPS',
+                    });
+                    dispatch({
+                      payload: Steps.Result,
+                      type: 'SET_STEP',
+                    });
+                  }}
+                >
                   <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-2">
                       <CoinAndNetworkLogo

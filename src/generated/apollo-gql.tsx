@@ -305,7 +305,7 @@ export type Query = {
   assetsCount?: Maybe<Scalars['Int']>;
   assetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
   binanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
-  getBridgeTransactionsByIds: Array<BridgeTransactionWithAssetsAndNetworks>;
+  getBridgeTransactionsByUserId: Array<BridgeTransactionWithAssetsAndNetworks>;
   mappedNetworksForAsset?: Maybe<Array<Maybe<Network>>>;
   mappedNetworksForAssetByOrg?: Maybe<Array<Maybe<Network>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
@@ -367,8 +367,8 @@ export type QueryAssetsForOrganizationArgs = {
 };
 
 
-export type QueryGetBridgeTransactionsByIdsArgs = {
-  ids: Array<Scalars['ID']>;
+export type QueryGetBridgeTransactionsByUserIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -623,12 +623,12 @@ export type GetAssetsForOrgQueryVariables = Exact<{
 
 export type GetAssetsForOrgQuery = { __typename?: 'Query', assetsForOrganization?: Array<{ __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null } | null> | null };
 
-export type GetBridgeTransactionsByIdsQueryVariables = Exact<{
-  ids: Array<Scalars['ID']> | Scalars['ID'];
+export type GetBridgeTransactionsByUserIdQueryVariables = Exact<{
+  id: Scalars['String'];
 }>;
 
 
-export type GetBridgeTransactionsByIdsQuery = { __typename?: 'Query', getBridgeTransactionsByIds: Array<{ __typename?: 'BridgeTransactionWithAssetsAndNetworks', id: string, created: string, organizationId: string, sourceChainTxId?: string | null, destinationChainTxId?: string | null, state: string, fromAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, fromNetwork: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null }, toAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, toNetwork: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null }, quote: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCosts?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } }> };
+export type GetBridgeTransactionsByUserIdQuery = { __typename?: 'Query', getBridgeTransactionsByUserId: Array<{ __typename?: 'BridgeTransactionWithAssetsAndNetworks', id: string, created: string, organizationId: string, sourceChainTxId?: string | null, destinationChainTxId?: string | null, state: string, fromAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, fromNetwork: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null }, toAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, toNetwork: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null }, quote: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCosts?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } }> };
 
 export type GetMappedNetworksForAssetQueryVariables = Exact<{
   assetId?: InputMaybe<Scalars['String']>;
@@ -1099,9 +1099,9 @@ export function useGetAssetsForOrgLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetAssetsForOrgQueryHookResult = ReturnType<typeof useGetAssetsForOrgQuery>;
 export type GetAssetsForOrgLazyQueryHookResult = ReturnType<typeof useGetAssetsForOrgLazyQuery>;
 export type GetAssetsForOrgQueryResult = Apollo.QueryResult<GetAssetsForOrgQuery, GetAssetsForOrgQueryVariables>;
-export const GetBridgeTransactionsByIdsDocument = gql`
-    query getBridgeTransactionsByIds($ids: [ID!]!) {
-  getBridgeTransactionsByIds(ids: $ids) {
+export const GetBridgeTransactionsByUserIdDocument = gql`
+    query getBridgeTransactionsByUserId($id: String!) {
+  getBridgeTransactionsByUserId(id: $id) {
     id
     created
     organizationId
@@ -1130,32 +1130,32 @@ ${NetworkFieldsFragmentDoc}
 ${BridgeQuoteFieldsFragmentDoc}`;
 
 /**
- * __useGetBridgeTransactionsByIdsQuery__
+ * __useGetBridgeTransactionsByUserIdQuery__
  *
- * To run a query within a React component, call `useGetBridgeTransactionsByIdsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBridgeTransactionsByIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetBridgeTransactionsByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBridgeTransactionsByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetBridgeTransactionsByIdsQuery({
+ * const { data, loading, error } = useGetBridgeTransactionsByUserIdQuery({
  *   variables: {
- *      ids: // value for 'ids'
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetBridgeTransactionsByIdsQuery(baseOptions: Apollo.QueryHookOptions<GetBridgeTransactionsByIdsQuery, GetBridgeTransactionsByIdsQueryVariables>) {
+export function useGetBridgeTransactionsByUserIdQuery(baseOptions: Apollo.QueryHookOptions<GetBridgeTransactionsByUserIdQuery, GetBridgeTransactionsByUserIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetBridgeTransactionsByIdsQuery, GetBridgeTransactionsByIdsQueryVariables>(GetBridgeTransactionsByIdsDocument, options);
+        return Apollo.useQuery<GetBridgeTransactionsByUserIdQuery, GetBridgeTransactionsByUserIdQueryVariables>(GetBridgeTransactionsByUserIdDocument, options);
       }
-export function useGetBridgeTransactionsByIdsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBridgeTransactionsByIdsQuery, GetBridgeTransactionsByIdsQueryVariables>) {
+export function useGetBridgeTransactionsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBridgeTransactionsByUserIdQuery, GetBridgeTransactionsByUserIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetBridgeTransactionsByIdsQuery, GetBridgeTransactionsByIdsQueryVariables>(GetBridgeTransactionsByIdsDocument, options);
+          return Apollo.useLazyQuery<GetBridgeTransactionsByUserIdQuery, GetBridgeTransactionsByUserIdQueryVariables>(GetBridgeTransactionsByUserIdDocument, options);
         }
-export type GetBridgeTransactionsByIdsQueryHookResult = ReturnType<typeof useGetBridgeTransactionsByIdsQuery>;
-export type GetBridgeTransactionsByIdsLazyQueryHookResult = ReturnType<typeof useGetBridgeTransactionsByIdsLazyQuery>;
-export type GetBridgeTransactionsByIdsQueryResult = Apollo.QueryResult<GetBridgeTransactionsByIdsQuery, GetBridgeTransactionsByIdsQueryVariables>;
+export type GetBridgeTransactionsByUserIdQueryHookResult = ReturnType<typeof useGetBridgeTransactionsByUserIdQuery>;
+export type GetBridgeTransactionsByUserIdLazyQueryHookResult = ReturnType<typeof useGetBridgeTransactionsByUserIdLazyQuery>;
+export type GetBridgeTransactionsByUserIdQueryResult = Apollo.QueryResult<GetBridgeTransactionsByUserIdQuery, GetBridgeTransactionsByUserIdQueryVariables>;
 export const GetMappedNetworksForAssetDocument = gql`
     query GetMappedNetworksForAsset($assetId: String) {
   mappedNetworksForAssetByOrg(assetId: $assetId) {

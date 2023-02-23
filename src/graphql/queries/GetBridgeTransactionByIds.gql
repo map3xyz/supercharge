@@ -1,5 +1,5 @@
-query getBridgeTransactionsByIds($ids: [ID!]!) {
-  getBridgeTransactionsByIds(ids: $ids) {
+query getBridgeTransactionsByUserId($id: String!) {
+  getBridgeTransactionsByUserId(id: $id) {
     id
     created
     organizationId
