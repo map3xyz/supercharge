@@ -60,19 +60,21 @@ export type BridgeTransactionRequest = {
   value?: Maybe<Scalars['String']>;
 };
 
-export type BridgeTransactionWithAssets = {
-  __typename?: 'BridgeTransactionWithAssets';
+export type BridgeTransactionWithAssetsAndNetworks = {
+  __typename?: 'BridgeTransactionWithAssetsAndNetworks';
   aggregator: Scalars['String'];
   aggregatorId: Scalars['String'];
   created: Scalars['String'];
   destinationChainTxId?: Maybe<Scalars['String']>;
   fromAsset: Asset;
+  fromNetwork: Network;
   id: Scalars['ID'];
   organizationId: Scalars['String'];
   quote: BridgeQuote;
   sourceChainTxId?: Maybe<Scalars['String']>;
   state: Scalars['String'];
   toAsset: Asset;
+  toNetwork: Network;
   userId: Scalars['String'];
 };
 
@@ -303,7 +305,7 @@ export type Query = {
   assetsCount?: Maybe<Scalars['Int']>;
   assetsForOrganization?: Maybe<Array<Maybe<Asset>>>;
   binanceSettingsForOrganization?: Maybe<BinanceSettingsData>;
-  getBridgeTransactionsByIds: Array<BridgeTransactionWithAssets>;
+  getBridgeTransactionsByIds: Array<BridgeTransactionWithAssetsAndNetworks>;
   mappedNetworksForAsset?: Maybe<Array<Maybe<Network>>>;
   mappedNetworksForAssetByOrg?: Maybe<Array<Maybe<Network>>>;
   methods?: Maybe<Array<Maybe<PaymentMethod>>>;
@@ -626,7 +628,7 @@ export type GetBridgeTransactionsByIdsQueryVariables = Exact<{
 }>;
 
 
-export type GetBridgeTransactionsByIdsQuery = { __typename?: 'Query', getBridgeTransactionsByIds: Array<{ __typename?: 'BridgeTransactionWithAssets', id: string, created: string, organizationId: string, sourceChainTxId?: string | null, destinationChainTxId?: string | null, state: string, fromAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, toAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, quote: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCosts?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } }> };
+export type GetBridgeTransactionsByIdsQuery = { __typename?: 'Query', getBridgeTransactionsByIds: Array<{ __typename?: 'BridgeTransactionWithAssetsAndNetworks', id: string, created: string, organizationId: string, sourceChainTxId?: string | null, destinationChainTxId?: string | null, state: string, fromAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, fromNetwork: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null }, toAsset: { __typename?: 'Asset', address?: string | null, decimals?: number | null, id?: string | null, name?: string | null, networkCode?: string | null, symbol?: string | null, type?: string | null, config?: { __typename?: 'Config', mappedAssetId?: string | null } | null, networks?: Array<{ __typename?: 'Network', name?: string | null, networkCode?: string | null } | null> | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null }, toNetwork: { __typename?: 'Network', decimals?: number | null, name?: string | null, networkCode?: string | null, networkName?: string | null, symbol?: string | null, bridged?: boolean | null, identifiers?: { __typename?: 'Identifiers', chainId?: number | null } | null, links?: { __typename?: 'Links', explorer?: string | null } | null, logo?: { __typename?: 'Logo', png?: string | null, svg?: string | null } | null, regex?: { __typename?: 'Regex', address?: string | null } | null }, quote: { __typename?: 'BridgeQuote', aggregator?: string | null, id?: string | null, approval?: { __typename?: 'QuoteApprovalInfo', address?: string | null, amount?: string | null } | null, estimate?: { __typename?: 'QuoteEstimate', amountToReceive?: string | null, executionDurationSeconds?: number | null, fromAmountUsd?: number | null, gasCosts?: number | null, gasCostsUsd?: number | null, slippage?: number | null, toAmountUsd?: number | null } | null, transaction?: { __typename?: 'BridgeTransactionRequest', to?: string | null, from?: string | null, gasLimit?: string | null, gasPrice?: string | null, data?: string | null, value?: string | null, chainId?: number | null } | null } }> };
 
 export type GetMappedNetworksForAssetQueryVariables = Exact<{
   assetId?: InputMaybe<Scalars['String']>;
@@ -1109,8 +1111,14 @@ export const GetBridgeTransactionsByIdsDocument = gql`
     fromAsset {
       ...AssetFields
     }
+    fromNetwork {
+      ...NetworkFields
+    }
     toAsset {
       ...AssetFields
+    }
+    toNetwork {
+      ...NetworkFields
     }
     quote {
       ...BridgeQuoteFields
@@ -1118,6 +1126,7 @@ export const GetBridgeTransactionsByIdsDocument = gql`
   }
 }
     ${AssetFieldsFragmentDoc}
+${NetworkFieldsFragmentDoc}
 ${BridgeQuoteFieldsFragmentDoc}`;
 
 /**

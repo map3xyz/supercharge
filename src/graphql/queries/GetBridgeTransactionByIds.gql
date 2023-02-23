@@ -9,8 +9,14 @@ query getBridgeTransactionsByIds($ids: [ID!]!) {
     fromAsset {
       ...AssetFields
     }
+    fromNetwork {
+      ...NetworkFields
+    }
     toAsset {
       ...AssetFields
+    }
+    toNetwork {
+      ...NetworkFields
     }
     quote {
       ...BridgeQuoteFields

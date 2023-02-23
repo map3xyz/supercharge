@@ -2740,10 +2740,10 @@
     shelljs "^0.8.5"
     uuid "^8.3.2"
 
-"@map3xyz/components@0.1.51":
-  version "0.1.51"
-  resolved "https://registry.npmjs.org/@map3xyz/components/-/components-0.1.51.tgz#9510fb8b0fbf2012bad0e59f3aff79a217eb4173"
-  integrity sha512-KkNAtXNhIBnkSLb+mpjx0UY24r634OpLznpTC1BkaTEkBCbrhjMvQbtjp+kpA3G9wTD6+yE8APWQptad2rgpjw==
+"@map3xyz/components@0.1.52":
+  version "0.1.52"
+  resolved "https://registry.npmjs.org/@map3xyz/components/-/components-0.1.52.tgz#23d1a90be64b905025a34da4a9c871852ebd93cf"
+  integrity sha512-tfDDXlL81sWoSzc/GHOX00ntTcRITajd03Q0F7A/WbV2dSVKfp0lV+sBafIRMyEpOj5OySc5yqSYygSzsiVVsg==
   dependencies:
     "@fortawesome/fontawesome-free" "6.1.2"
     "@map3xyz/assets-helper" "^1.0.171"
