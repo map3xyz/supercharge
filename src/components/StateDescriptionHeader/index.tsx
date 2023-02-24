@@ -127,11 +127,10 @@ const StateDescriptionHeader: React.FC<Props> = () => {
     case steps[step] === Steps[Steps.Result]:
       if (!state.asset?.symbol) return null;
       if (!state.network?.networkName) return null;
-      if (!state.method?.value || state.bridgeQuote)
+      if (!state.method?.value || state.bridgeQuote || state.destinationNetwork)
         return (
           <BgOffsetWrapper border="y">
-            {t('copy.deposit')}
-            {/* @ts-ignore */}
+            {t('copy.deposit')} {/* @ts-ignore */}
             <Badge color="blue" size="large">
               {amount} {state.asset.symbol || ''}
             </Badge>{' '}

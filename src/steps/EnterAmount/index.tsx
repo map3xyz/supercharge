@@ -97,11 +97,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   });
   const [
     createBridgeQuote,
-    {
-      data: bridgeQuoteData,
-      error: _bridgeQuoteError,
-      loading: bridgeQuoteLoading,
-    },
+    { loading: bridgeQuoteLoading },
   ] = useCreateBridgeQuoteMutation();
 
   const {
@@ -227,6 +223,16 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   ]);
 
   useEffect(() => {
+    dispatch({
+      payload: undefined,
+      type: 'SET_BRIDGE_QUOTE',
+    });
+    dispatch({
+      type: 'RESET_TX',
+    });
+  }, [amount]);
+
+  useEffect(() => {
     return () => {
       dispatch({
         type: 'GENERATE_DEPOSIT_ADDRESS_IDLE',
@@ -291,13 +297,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     }
 
     if (isConfirming) {
-      if (!bridgeQuoteData?.prepareBridgeQuote) {
+      if (!state.bridgeQuote) {
         throw new Error('Quote not found.');
       }
-      dispatch({
-        payload: bridgeQuoteData?.prepareBridgeQuote,
-        type: 'SET_BRIDGE_QUOTE',
-      });
       dispatch({
         payload: ['ApproveToken', 'Confirming', 'DestinationNetwork'],
         type: 'SET_TX_STEPS',
@@ -340,7 +342,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           'Cannot create bridge quote without to and destination assets.'
         );
       }
-      const { errors } = await createBridgeQuote({
+      const { data, errors } = await createBridgeQuote({
         variables: {
           amount: ethers.utils
             .parseUnits(amount, state.asset?.decimals!)
@@ -355,6 +357,10 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       if (errors?.[0]) {
         throw new Error('Error creating bridge quote.');
       }
+      dispatch({
+        payload: data?.prepareBridgeQuote!,
+        type: 'SET_BRIDGE_QUOTE',
+      });
       setIsConfirming(true);
     }
   };
@@ -434,7 +440,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       switch (state.method?.value) {
         case 'binance-pay':
           return handleBinancePay();
-        case 'isMetaMask' || 'isCoinbaseWallet' || 'isWalletConnect':
+        case 'isCoinbaseWallet':
+        case 'isWalletConnect':
+        case 'isMetaMask':
           if (
             state.account.status === 'idle' ||
             state.account.status === 'error'
@@ -726,13 +734,17 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
               state.depositAddress.status === 'loading' ||
               state.prebuiltTx.status !== 'success' ||
               state.prebuiltTx.data?.feeError ||
+              bridgeQuoteLoading ||
               !!formError?.includes(INSUFFICIENT_FUNDS)
             }
+            isConfirming={isConfirming}
+            loading={bridgeQuoteLoading}
+            setFormError={setFormError}
+            setIsConfirming={setIsConfirming}
           />
         ) : (
           <WindowEthereum
             amount={amount}
-            bridgeQuote={bridgeQuoteData}
             disabled={
               state.depositAddress.status === 'loading' ||
               state.prebuiltTx.status !== 'success' ||
