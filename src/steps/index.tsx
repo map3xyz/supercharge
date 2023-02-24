@@ -29,7 +29,7 @@ export const ANIMATION_VARIANTS = {
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
-  const { prevStep, prevSteps, step, steps } = state;
+  const { step, steps } = state;
 
   useChainWatcher();
 
