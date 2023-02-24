@@ -86,6 +86,13 @@ export class Map3 {
       throw new Error('userId is required.');
     }
 
+    if (
+      config.options?.selection?.paymentMethod !== 'binance-pay' &&
+      !config.options?.callbacks?.onAddressRequested
+    ) {
+      throw new Error('options.callbacks.onAddressRequested is required.');
+    }
+
     if (!config.options) {
       config.options = {};
     }

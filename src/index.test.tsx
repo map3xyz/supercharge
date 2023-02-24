@@ -78,6 +78,12 @@ describe('Map3Sdk', () => {
         anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
           selection: {
             address: '0x123',
             fiat: 'USD',
@@ -112,6 +118,10 @@ describe('Map3Sdk', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
             onClose: () => {},
           },
         },
@@ -126,6 +136,10 @@ describe('Map3Sdk', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
             onFailure: () => {},
           },
         },
@@ -140,6 +154,10 @@ describe('Map3Sdk', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
           callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
             onSuccess: () => {},
           },
         },
@@ -153,6 +171,12 @@ describe('Map3Sdk', () => {
         anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
           style: {
             colors: {
               accent: '#000000',
@@ -171,6 +195,12 @@ describe('Map3Sdk', () => {
         anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
           style: {
             colors: {
               // @ts-expect-error
@@ -214,6 +244,12 @@ describe('Map3Sdk', () => {
         anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
           style: {
             colors: {
               primary: 'not-a-color',
@@ -275,6 +311,12 @@ describe('Map3Sdk', () => {
         anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
         options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+              return { address: '0x000000' };
+            },
+          },
           selection: {
             shortcutAmounts: [1, 2, 3, 4, 5],
           },
@@ -285,5 +327,14 @@ describe('Map3Sdk', () => {
     expect(warnSpy).toBeCalledWith(
       'Warning: shortcutAmounts should not exceed 3 values. Falling back to first 3 values.'
     );
+  });
+  it('should throw if method is not binance-pay and no onAddressRequested callback is provided', () => {
+    const initFn = () =>
+      initMap3Supercharge({
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
+        userId: 'test',
+      });
+    expect(initFn).toThrow('options.callbacks.onAddressRequested is required.');
   });
 });
