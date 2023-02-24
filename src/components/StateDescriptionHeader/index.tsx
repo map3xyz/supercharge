@@ -14,10 +14,6 @@ const StateDescriptionHeader: React.FC<Props> = () => {
 
   let amount;
   if (state.bridgeQuote?.approval?.amount && state.asset?.decimals) {
-    console.log(
-      'state.bridgeQuote?.approval?.amount',
-      state.bridgeQuote?.approval?.amount
-    );
     amount = ethers.utils.formatUnits(
       state.bridgeQuote?.approval?.amount as string,
       state.asset?.decimals
