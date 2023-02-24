@@ -4,7 +4,6 @@ import React, { useContext } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Context, Steps } from '../../providers/Store';
-import { DECIMAL_FALLBACK } from '../../steps/EnterAmount';
 import { BgOffsetWrapper } from '../BgOffsetWrapper';
 import MethodIcon from '../MethodIcon';
 
@@ -13,13 +12,23 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   const [state] = useContext(Context);
   const { stepInView: step, steps } = state;
 
-  const amount =
-    state.requiredAmount || state.bridgeQuote?.approval?.amount
-      ? ethers.utils.formatUnits(
-          state.bridgeQuote?.approval?.amount as string,
-          state.asset?.decimals || DECIMAL_FALLBACK
-        )
-      : state.tx.amount?.split(' ')[0];
+  let amount;
+  if (state.bridgeQuote?.approval?.amount && state.asset?.decimals) {
+    console.log(
+      'state.bridgeQuote?.approval?.amount',
+      state.bridgeQuote?.approval?.amount
+    );
+    amount = ethers.utils.formatUnits(
+      state.bridgeQuote?.approval?.amount as string,
+      state.asset?.decimals
+    );
+  }
+  if (!amount && state.tx.amount) {
+    amount = state.tx.amount.split(' ')[0];
+  }
+  if (!amount && state.requiredAmount) {
+    amount = state.requiredAmount;
+  }
 
   switch (true) {
     case steps[step] === Steps[Steps.NetworkSelection]:
