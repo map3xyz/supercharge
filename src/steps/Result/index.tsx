@@ -37,7 +37,7 @@ const Result: React.FC<Props> = () => {
   ] = useSubscribeToBridgeTransactionMutation();
 
   if (!state.asset || !state.network) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 
@@ -402,7 +402,7 @@ const Result: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col items-center">
+    <div className="flex h-full flex-col items-center pt-3">
       <StateDescriptionHeader />
       <InnerWrapper
         className={`relative h-full transition-all ${

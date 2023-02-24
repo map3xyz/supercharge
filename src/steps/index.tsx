@@ -54,14 +54,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
               className={step === 0 ? 'invisible' : 'visible'}
               onClick={() => {
                 if (steps[step] === Steps[Steps.OrderHistory]) {
-                  dispatch({
-                    payload: prevSteps,
-                    type: 'SET_STEPS',
-                  });
-                  dispatch({
-                    payload: Steps[prevSteps[prevStep]],
-                    type: 'SET_STEP',
-                  });
+                  dispatch({ type: 'RESET_STATE' });
                 } else {
                   dispatch({
                     payload: Steps[steps[step - 1]],

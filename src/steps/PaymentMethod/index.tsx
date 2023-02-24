@@ -148,7 +148,7 @@ const PaymentMethod: React.FC<Props> = () => {
     return null;
 
   if (!state.asset || !state.network) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 

@@ -1,8 +1,10 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import React, { useContext } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Context, Steps } from '../../providers/Store';
+import { DECIMAL_FALLBACK } from '../../steps/EnterAmount';
 import { BgOffsetWrapper } from '../BgOffsetWrapper';
 import MethodIcon from '../MethodIcon';
 
@@ -10,6 +12,14 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   const { t } = useTranslation();
   const [state] = useContext(Context);
   const { stepInView: step, steps } = state;
+
+  const amount =
+    state.requiredAmount || state.bridgeQuote?.approval?.amount
+      ? ethers.utils.formatUnits(
+          state.bridgeQuote?.approval?.amount as string,
+          state.asset?.decimals || DECIMAL_FALLBACK
+        )
+      : state.tx.amount?.split(' ')[0];
 
   switch (true) {
     case steps[step] === Steps[Steps.NetworkSelection]:
@@ -40,7 +50,23 @@ const StateDescriptionHeader: React.FC<Props> = () => {
         </BgOffsetWrapper>
       );
     case steps[step] === Steps[Steps.ConfirmRequiredAmount]:
-      return (
+      return state.network?.bridged ? (
+        <BgOffsetWrapper border="y">
+          <Trans
+            components={{
+              // @ts-ignore
+              badge: <Badge color="blue" size="large" />,
+            }}
+            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{destinationNetwork}}</badge> via <badge>{{network}} Bridge</badge>"
+            values={{
+              amount,
+              destinationNetwork: state.destinationNetwork?.networkName,
+              network: state.network?.networkName,
+              symbol: state.asset?.symbol,
+            }}
+          />
+        </BgOffsetWrapper>
+      ) : (
         <BgOffsetWrapper border="y">
           <Trans
             components={{
@@ -49,7 +75,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
             }}
             defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>"
             values={{
-              amount: state.requiredAmount,
+              amount,
               network: state.network?.networkName,
               symbol: state.asset?.symbol,
             }}
@@ -59,16 +85,32 @@ const StateDescriptionHeader: React.FC<Props> = () => {
     case steps[step] === Steps[Steps.PaymentMethod]:
       if (!state.asset?.symbol) return null;
       if (!state.network?.networkName) return null;
-      return (
+      return state.network.bridged ? (
         <BgOffsetWrapper border="t">
           <Trans
             components={{
               // @ts-ignore
               badge: <Badge color="blue" size="large" />,
             }}
-            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge> via"
+            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{destinationNetwork}}</badge> via the <badge>{{network}} Bridge</badge> with"
             values={{
-              amount: state.requiredAmount,
+              amount,
+              destinationNetwork: state.destinationNetwork?.networkName,
+              network: state.network?.networkName,
+              symbol: state.asset?.symbol,
+            }}
+          />
+        </BgOffsetWrapper>
+      ) : (
+        <BgOffsetWrapper border="t">
+          <Trans
+            components={{
+              // @ts-ignore
+              badge: <Badge color="blue" size="large" />,
+            }}
+            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge> with"
+            values={{
+              amount,
               network: state.network?.networkName,
               symbol: state.asset?.symbol,
             }}
@@ -80,14 +122,34 @@ const StateDescriptionHeader: React.FC<Props> = () => {
     case steps[step] === Steps[Steps.Result]:
       if (!state.asset?.symbol) return null;
       if (!state.network?.networkName) return null;
-      if (!state.method?.value) return null;
+      if (!state.method?.value || state.bridgeQuote)
+        return (
+          <BgOffsetWrapper border="y">
+            {t('copy.deposit')}
+            {/* @ts-ignore */}
+            <Badge color="blue" size="large">
+              {amount} {state.asset.symbol || ''}
+            </Badge>{' '}
+            <>
+              on the
+              <Badge color="blue" size="large">
+                {/* @ts-ignore */}
+                {state.destinationNetwork.networkName}
+              </Badge>{' '}
+            </>
+            {t('copy.via')} {/* @ts-ignore */}
+            <Badge color={'blue'} size="large">
+              {state.network.networkName} Bridge
+            </Badge>
+          </BgOffsetWrapper>
+        );
 
       return (
         <BgOffsetWrapper border="y">
           {t('copy.deposit')}
           {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {state.requiredAmount} {state.asset.symbol || ''}
+            {amount} {state.asset.symbol || ''}
           </Badge>{' '}
           {state.method.value === 'binance-pay' ? null : (
             <>

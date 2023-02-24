@@ -2,7 +2,6 @@
   "translation": {
     "Deposit <badge>{{symbol}}</badge> on": "Enviar <badge>{{symbol}}</badge> en",
     "Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge>": "Enviar <badge>{{amount}} {{symbol}}</badge> en la red <badge>{{network}}</badge>",
-    "Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge> via": "Deposit <badge>{{amount}} {{symbol}}</badge> on the <badge>{{network}}</badge> via",
     "You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be delayed, returned or lost.": "Debes enviar <italic>exactamente</italic> <bold>{{amount}} {{symbol}}</bold> en la red <bold>{{network}}</bold> o tu pago podría ser dilatado, devuelto o extraviado.",
     "By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{{networkName}}</bold>.": "Acepto que debo enviar exactamente <bold>{{amount}} {{symbol}}</bold> en la red <bold>{{networkName}}</bold>.",
     "title": {

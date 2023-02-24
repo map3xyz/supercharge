@@ -118,7 +118,7 @@ type State = {
 type Action =
   | { payload: Asset; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
-  | { payload: BridgeQuote; type: 'SET_BRIDGE_QUOTE' }
+  | { payload?: BridgeQuote; type: 'SET_BRIDGE_QUOTE' }
   | {
       payload: BridgeTransactionWithAssetsAndNetworks;
       type: 'SET_BRIDGE_TRANSACTION';
@@ -201,6 +201,9 @@ type Action =
     }
   | {
       type: 'RESET_TX';
+    }
+  | {
+      type: 'RESET_STATE';
     };
 
 const initialState: State = {
@@ -296,7 +299,7 @@ export const Store: React.FC<
     step = Steps.PaymentMethod;
   }
 
-  let requiredAmount;
+  let requiredAmount: string | undefined;
   if (amount && asset?.decimals) {
     requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
   }
@@ -541,6 +544,21 @@ export const Store: React.FC<
             tx: {
               ...initialState.tx,
             },
+          };
+        case 'RESET_STATE':
+          return {
+            ...initialState,
+            asset,
+            embed,
+            fiat,
+            fiatDisplaySymbol,
+            network,
+            requiredAmount,
+            requiredPaymentMethod,
+            shortcutAmounts,
+            step,
+            theme,
+            userId,
           };
         /* istanbul ignore next */
         default:

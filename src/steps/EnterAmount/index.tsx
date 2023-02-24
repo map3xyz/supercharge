@@ -234,6 +234,10 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       dispatch({
         type: 'SET_PREBUILT_TX_IDLE',
       });
+      dispatch({
+        payload: undefined,
+        type: 'SET_BRIDGE_QUOTE',
+      });
     };
   }, []);
 
@@ -488,7 +492,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   };
 
   if (!state.asset || !state.network || !state.method) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 
@@ -593,7 +597,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         </div>
       </div>
       <InnerWrapper className="relative w-full">
-        <span className="absolute -top-2 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center">
+        <span className="absolute -top-1 left-1/2 flex w-full -translate-x-1/2 -translate-y-full justify-center px-4">
           {formError?.includes(INSUFFICIENT_FUNDS) ? (
             <motion.span
               animate={{ opacity: 1 }}
@@ -760,8 +764,8 @@ const EnterAmount: React.FC<Props> = () => {
   });
   const { t } = useTranslation();
 
-  if (!state.asset || !state.network || !state.method) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+  if (!state.asset || !state.network || !state.method || !state.asset.config) {
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 

@@ -68,6 +68,10 @@ const OrderHistory: React.FC<Props> = () => {
                         type: 'SET_NETWORK',
                       });
                       dispatch({
+                        payload: order.toNetwork,
+                        type: 'SET_DESTINATION_NETWORK',
+                      });
+                      dispatch({
                         payload: order as BridgeTransactionWithAssetsAndNetworks,
                         type: 'SET_BRIDGE_TRANSACTION',
                       });
@@ -168,8 +172,7 @@ const OrderHistory: React.FC<Props> = () => {
                     className="text-blue-600"
                     onClick={() => {
                       dispatch({
-                        payload: Steps.AssetSelection,
-                        type: 'SET_STEP',
+                        type: 'RESET_STATE',
                       });
                     }}
                     role="button"

@@ -28,7 +28,7 @@ const ShowAddress: React.FC<Props> = () => {
   const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
 
   if (!state.asset || !state.network || !state.method) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 
