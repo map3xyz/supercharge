@@ -667,7 +667,6 @@ describe('WindowEthereum Errors', () => {
     render(
       <WindowEthereum
         amount="1.000"
-        bridgeQuote={{}}
         disabled={false}
         isConfirming={false}
         setFormError={() => {}}
@@ -680,7 +679,15 @@ describe('WindowEthereum Errors', () => {
 
 describe('WalletConnect Errors', () => {
   it('renders', () => {
-    render(<WalletConnect amount="1.000" disabled={false} />);
+    render(
+      <WalletConnect
+        amount="1.000"
+        disabled={false}
+        isConfirming={false}
+        setFormError={() => {}}
+        setIsConfirming={() => {}}
+      />
+    );
     expect(true).toBe(true);
   });
 });

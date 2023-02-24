@@ -227,6 +227,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       payload: undefined,
       type: 'SET_BRIDGE_QUOTE',
     });
+    dispatch({
+      type: 'RESET_TX',
+    });
   }, [amount]);
 
   useEffect(() => {
