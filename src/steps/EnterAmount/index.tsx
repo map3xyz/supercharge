@@ -97,11 +97,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   });
   const [
     createBridgeQuote,
-    {
-      data: bridgeQuoteData,
-      error: _bridgeQuoteError,
-      loading: bridgeQuoteLoading,
-    },
+    { loading: bridgeQuoteLoading },
   ] = useCreateBridgeQuoteMutation();
 
   const {
