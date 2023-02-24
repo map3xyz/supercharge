@@ -434,7 +434,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   };
 
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
-    debugger;
     try {
       e?.preventDefault();
       setFormError(undefined);
