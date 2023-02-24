@@ -498,7 +498,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         description="We had an issue loading the selected asset. Please go back and try again."
         header="Failed to Fetch Asset"
         retry={refetch}
-        stacktrace={JSON.stringify(error)}
+        stacktrace={JSON.stringify(error, null, 2)}
       />
     );
   }

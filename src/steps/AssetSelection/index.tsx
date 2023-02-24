@@ -45,7 +45,7 @@ const AssetSelection: React.FC<Props> = () => {
         description={t('copy.error_fetching_assets')}
         header={t('title.error_fetching_assets')}
         retry={() => refetch()}
-        stacktrace={JSON.stringify(error)}
+        stacktrace={JSON.stringify(error, null, 2)}
       />
     );
   }

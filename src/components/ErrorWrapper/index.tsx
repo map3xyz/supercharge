@@ -9,7 +9,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
   stacktrace,
 }) => {
   return (
-    <InnerWrapper className="layout-scrollbar h-full overflow-scroll !pt-0">
+    <InnerWrapper className="layout-scrollbar h-full overflow-scroll">
       <div className="sticky top-0 bg-white pb-2 dark:bg-primary-900">
         <div className="flex items-center gap-2 text-lg font-bold leading-5">
           <i className="fa fa-circle-xmark text-red-600"></i>{' '}

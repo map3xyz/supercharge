@@ -402,7 +402,7 @@ const Result: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="mt-3 flex h-full flex-col items-center">
+    <div className="flex h-full flex-col items-center">
       <StateDescriptionHeader />
       <InnerWrapper
         className={`relative h-full transition-all ${

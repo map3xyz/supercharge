@@ -4,7 +4,6 @@ import React, { useContext, useEffect } from 'react';
 import { isMobile, isTablet } from 'react-device-detect';
 
 import InnerWrapper from '../components/InnerWrapper';
-import OrderHistoryRow from '../components/OrderHistoryRow';
 import ProgressBar from '../components/ProgressBar';
 import { Organization } from '../generated/apollo-gql';
 import { useChainWatcher } from '../hooks/useChainWatcher';
@@ -73,9 +72,27 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
             >
               <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
             </button>
-            {steps[step] === Steps[Steps.OrderHistory] ? null : (
-              <ProgressBar progress={step / (steps.length - 1)} />
-            )}
+            <ProgressBar progress={step / (steps.length - 1)} />
+            <div>
+              <button aria-label="Order History">
+                <i
+                  className="fa fa-receipt transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400"
+                  onClick={() => {
+                    dispatch({
+                      payload: [
+                        ...steps.filter((s) => s !== 'OrderHistory'),
+                        'OrderHistory',
+                      ],
+                      type: 'SET_STEPS',
+                    });
+                    dispatch({
+                      payload: Steps.OrderHistory,
+                      type: 'SET_STEP',
+                    });
+                  }}
+                />
+              </button>
+            </div>
             {state.embed?.id || window.isMap3Hosted ? null : (
               <div>
                 <button aria-label="Close" onClick={onClose}>
@@ -85,10 +102,6 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
             )}
           </div>
         </InnerWrapper>
-        <AnimatePresence>
-          <OrderHistoryRow />
-        </AnimatePresence>
-
         <div className="h-full w-full overflow-hidden">
           <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (

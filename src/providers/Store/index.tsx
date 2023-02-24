@@ -6,7 +6,6 @@ import { ISO_4217_TO_SYMBOL } from '../../constants/iso4217';
 import {
   Asset,
   BridgeQuote,
-  BridgeTransactionRequest,
   BridgeTransactionWithAssetsAndNetworks,
   Network,
   PaymentMethod,
