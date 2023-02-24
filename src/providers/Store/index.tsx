@@ -6,6 +6,7 @@ import { ISO_4217_TO_SYMBOL } from '../../constants/iso4217';
 import {
   Asset,
   BridgeQuote,
+  BridgeTransactionWithAssetsAndNetworks,
   Network,
   PaymentMethod,
 } from '../../generated/apollo-gql';
@@ -21,7 +22,8 @@ export enum Steps {
   'WalletConnect' = 6,
   'ConfirmRequiredAmount' = 7,
   'ShowAddress' = 8,
-  'Result' = 9,
+  'OrderHistory' = 9,
+  'Result' = 10,
   __LENGTH,
 }
 
@@ -49,6 +51,7 @@ type State = {
   };
   asset?: Asset;
   bridgeQuote?: BridgeQuote;
+  bridgeTransaction?: BridgeTransactionWithAssetsAndNetworks;
   depositAddress: {
     data?: { address: string; memo?: string };
     error?: string;
@@ -80,6 +83,7 @@ type State = {
     status: RemoteType;
   };
   prevStep: number;
+  prevSteps: (keyof typeof Steps)[];
   provider?: {
     data?: ethers.providers.Web3Provider;
     error?: string;
@@ -114,11 +118,23 @@ type State = {
 type Action =
   | { payload: Asset; type: 'SET_ASSET' }
   | { payload: Network; type: 'SET_NETWORK' }
+  | { payload?: BridgeQuote; type: 'SET_BRIDGE_QUOTE' }
+  | {
+      payload: BridgeTransactionWithAssetsAndNetworks;
+      type: 'SET_BRIDGE_TRANSACTION';
+    }
   | { payload: Network; type: 'SET_DESTINATION_NETWORK' }
   | { payload?: PaymentMethod; type: 'SET_PAYMENT_METHOD' }
   | { payload: number; type: 'SET_STEP' }
   | { payload: number; type: 'SET_STEP_IN_VIEW' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
+  | {
+      payload: {
+        id: string;
+        state: 'subscribed' | 'quoted' | 'completed' | 'failed';
+      }[];
+      type: 'SET_ORDER_HISTORY';
+    }
   | {
       payload: { address: string; memo?: string };
       type: 'GENERATE_DEPOSIT_ADDRESS_SUCCESS';
@@ -157,10 +173,6 @@ type Action =
       };
       type: 'SET_PREBUILT_TX_SUCCESS';
     }
-  | {
-      payload?: BridgeQuote;
-      type: 'SET_BRIDGE_QUOTE';
-    }
   | { payload: string; type: 'SET_PREBUILT_TX_ERROR' }
   | { type: 'SET_PREBUILT_TX_IDLE' }
   | { payload?: number; type: 'SET_PROVIDER_CHAIN_ID' }
@@ -189,6 +201,9 @@ type Action =
     }
   | {
       type: 'RESET_TX';
+    }
+  | {
+      type: 'RESET_STATE';
     };
 
 const initialState: State = {
@@ -211,6 +226,7 @@ const initialState: State = {
     status: 'idle',
   },
   prevStep: Steps.AssetSelection,
+  prevSteps: [],
   provider: {
     data: undefined,
     error: undefined,
@@ -283,7 +299,7 @@ export const Store: React.FC<
     step = Steps.PaymentMethod;
   }
 
-  let requiredAmount;
+  let requiredAmount: string | undefined;
   if (amount && asset?.decimals) {
     requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
   }
@@ -317,7 +333,7 @@ export const Store: React.FC<
             ),
           };
         case 'SET_STEPS': {
-          return { ...state, steps: action.payload };
+          return { ...state, prevSteps: state.steps, steps: action.payload };
         }
         case 'SET_PAYMENT_METHOD':
           return { ...state, method: action.payload };
@@ -390,6 +406,11 @@ export const Store: React.FC<
           return {
             ...state,
             bridgeQuote: action.payload,
+          };
+        case 'SET_BRIDGE_TRANSACTION':
+          return {
+            ...state,
+            bridgeTransaction: action.payload,
           };
         case 'SET_PREBUILT_TX_SUCCESS':
           return {
@@ -518,9 +539,26 @@ export const Store: React.FC<
         case 'RESET_TX':
           return {
             ...state,
+            bridgeQuote: undefined,
+            bridgeTransaction: undefined,
             tx: {
               ...initialState.tx,
             },
+          };
+        case 'RESET_STATE':
+          return {
+            ...initialState,
+            asset,
+            embed,
+            fiat,
+            fiatDisplaySymbol,
+            network,
+            requiredAmount,
+            requiredPaymentMethod,
+            shortcutAmounts,
+            step,
+            theme,
+            userId,
           };
         /* istanbul ignore next */
         default:

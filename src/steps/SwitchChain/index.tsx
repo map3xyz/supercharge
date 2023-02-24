@@ -50,7 +50,7 @@ const SwitchChain: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col items-center justify-between">
       <div className="w-full">
-        <InnerWrapper className="!pt-0">
+        <InnerWrapper>
           <h3 className="text-lg font-semibold dark:text-white">
             Switch Chain
           </h3>
@@ -113,6 +113,7 @@ const SwitchChain: React.FC<Props> = () => {
           disabled={loading}
           loading={loading}
           onClick={handleSwitch}
+          size="large"
           type="default"
         >
           Switch Chain

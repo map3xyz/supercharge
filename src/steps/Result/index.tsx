@@ -1,4 +1,3 @@
-import { ReadOnlyText } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import lottie from 'lottie-web';
 import React, { useContext, useEffect, useState } from 'react';
@@ -6,7 +5,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
-import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useSubscribeToBridgeTransactionMutation,
@@ -15,6 +13,8 @@ import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps, TxSteps } from '../../providers/Store';
 import { listenToBridgeTransaction } from '../../utils/supabase';
 import { FinalTx } from '../../utils/transactions/evm';
+import BridgeQuoteTransactionDetails from './BridgeQuoteTransactionDetails';
+import TransactionDetails from './TransactionDetails';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
@@ -36,8 +36,8 @@ const Result: React.FC<Props> = () => {
     subscribeToBridgeTransaction,
   ] = useSubscribeToBridgeTransactionMutation();
 
-  if (!state.method) {
-    dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
+  if (!state.asset || !state.network) {
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 
@@ -118,10 +118,7 @@ const Result: React.FC<Props> = () => {
         state.asset?.address || undefined
       );
     }
-  }, [
-    state.tx.progress.Submitted.status,
-    state.tx?.progress.Confirmed?.status,
-  ]);
+  }, [state.tx.progress]);
 
   useEffect(() => {
     const run = async () => {
@@ -130,36 +127,6 @@ const Result: React.FC<Props> = () => {
           if (!state.bridgeQuote) {
             dispatch({ payload: Steps.EnterAmount, type: 'SET_STEP' });
             return;
-          }
-
-          const {
-            data: fromAsset,
-          } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
-            variables: {
-              mappedAssetId: state.asset?.id!,
-              networkCode: state.network?.networkCode!,
-            },
-          });
-
-          const allowance = await getTokenAllowance(
-            fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
-            state.bridgeQuote.transaction?.to
-          );
-
-          if (!state.bridgeQuote.id) {
-            throw new Error('Bridge quote ID not found.');
-          }
-
-          if (!state.bridgeQuote.transaction?.to) {
-            throw new Error('Bridge contract not found.');
-          }
-
-          if (!state.bridgeQuote.approval?.amount) {
-            throw new Error('Approval amount not found.');
-          }
-
-          if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
-            throw new Error('Asset address not found.');
           }
 
           // Change Step Titles
@@ -179,149 +146,217 @@ const Result: React.FC<Props> = () => {
             },
             type: 'SET_TX',
           });
-          dispatch({
-            payload: {
-              status: 'idle',
-              step: 'DestinationNetwork',
-              title: 'Processing Deposit',
-            },
-            type: 'SET_TX',
-          });
 
-          if (allowance.lt(state.bridgeQuote.approval?.amount)) {
+          const bridgeOrderId = state.bridgeQuote.id as string;
+          // If there is already a sourceChainTxId hash, we can skip approvals, and go straight to monitoring the bridge transaction
+          if (state.tx.hash) {
+            // update states
             dispatch({
               payload: {
-                data: `Please approve the token on ${state.method?.name}.`,
-                status: 'loading',
-                step: 'ApproveToken',
-                title: 'Awaiting Approval',
-              },
-              type: 'SET_TX',
-            });
-            try {
-              const hash = await approveTokenAllowance(
-                fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
-                state.bridgeQuote.transaction?.to,
-                ethers.BigNumber.from(state.bridgeQuote.approval?.amount)
-              );
-              dispatch({
-                payload: {
-                  data: `Waiting for the approval transaction to complete.`,
-                  status: 'loading',
-                  step: 'ApproveToken',
-                  title: 'Awaiting Approval',
-                },
-                type: 'SET_TX',
-              });
-              await waitForTransaction(hash, 1);
-              dispatch({
-                payload: {
-                  data: `Token approved on ${state.method?.name}.`,
-                  status: 'success',
-                  step: 'ApproveToken',
-                  title: 'Token Approved',
-                },
-                type: 'SET_TX',
-              });
-            } catch (e: any) {
-              dispatch({
-                payload: {
-                  data: `Action denied on ${state.method?.name}.`,
-                  status: 'error',
-                  step: 'ApproveToken',
-                  title: 'Awaiting Approval',
-                },
-                type: 'SET_TX',
-              });
-              return;
-            }
-          } else {
-            dispatch({
-              payload: {
-                data: `Token approved for spending.`,
+                data: 'Token previously approved.',
                 status: 'success',
                 step: 'ApproveToken',
                 title: 'Token Approved',
               },
               type: 'SET_TX',
             });
-          }
-
-          dispatch({
-            payload: {
-              data: `Please confirm the transaction on ${state.method?.name}.`,
-              status: 'loading',
-              step: 'Confirming',
-              title: 'Confirming Transaction',
-            },
-            type: 'SET_TX',
-          });
-          let hash: string;
-          let bridgeOrderId: string;
-          try {
-            hash = await sendFinalTransaction({
-              ...(state.bridgeQuote.transaction as FinalTx),
-              gas: state.bridgeQuote.transaction?.gasLimit as string,
-            });
-            const { data } = await subscribeToBridgeTransaction({
-              variables: { id: state.bridgeQuote.id, txHash: hash },
-            });
-            // TODO: what happens if subscription fails?
-            bridgeOrderId = data?.subscribeToBridgeTransaction as string;
-            dispatch({ payload: hash, type: 'SET_TX_HASH' });
-          } catch (e: any) {
             dispatch({
               payload: {
-                data: 'Action denied.',
-                status: 'error',
+                data:
+                  'Transaction previously confirmed. Monitoring bridge transaction.',
+                status: 'success',
+                step: 'Confirming',
+                title: 'Transaction Confirmed',
+              },
+              type: 'SET_TX',
+            });
+            if (
+              state.bridgeTransaction?.state === 'quoted' ||
+              state.bridgeTransaction?.state === 'subscribed'
+            ) {
+              dispatch({
+                payload: {
+                  status: 'loading',
+                  step: 'DestinationNetwork',
+                  title: 'Processing Deposit',
+                },
+                type: 'SET_TX',
+              });
+            } else if (state.bridgeTransaction?.state === 'completed') {
+              dispatch({
+                payload: {
+                  data: 'Bridge transaction completed.',
+                  status: 'success',
+                  step: 'DestinationNetwork',
+                  title: 'Deposit Complete',
+                },
+                type: 'SET_TX',
+              });
+            } else {
+              dispatch({
+                payload: {
+                  data: 'Bridge transaction failed.',
+                  status: 'error',
+                  step: 'DestinationNetwork',
+                  title: 'Deposit Failed',
+                },
+                type: 'SET_TX',
+              });
+            }
+          } else {
+            const {
+              data: fromAsset,
+            } = await getAssetMappedAssetIdAndNetworkCodeQueryLazy({
+              variables: {
+                mappedAssetId: state.asset?.id!,
+                networkCode: state.network?.networkCode!,
+              },
+            });
+
+            const allowance = await getTokenAllowance(
+              fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+              state.bridgeQuote.transaction?.to
+            );
+
+            if (!state.bridgeQuote.id) {
+              throw new Error('Bridge quote ID not found.');
+            }
+
+            if (!state.bridgeQuote.transaction?.to) {
+              throw new Error('Bridge contract not found.');
+            }
+
+            if (!state.bridgeQuote.approval?.amount) {
+              throw new Error('Approval amount not found.');
+            }
+
+            if (!fromAsset?.assetByMappedAssetIdAndNetworkCode?.address) {
+              throw new Error('Asset address not found.');
+            }
+
+            if (allowance.lt(state.bridgeQuote.approval?.amount)) {
+              dispatch({
+                payload: {
+                  data: `Please approve the token on ${state.method?.name}.`,
+                  status: 'loading',
+                  step: 'ApproveToken',
+                  title: 'Awaiting Approval',
+                },
+                type: 'SET_TX',
+              });
+              try {
+                const hash = await approveTokenAllowance(
+                  fromAsset?.assetByMappedAssetIdAndNetworkCode?.address,
+                  state.bridgeQuote.transaction?.to,
+                  ethers.BigNumber.from(state.bridgeQuote.approval?.amount)
+                );
+                dispatch({
+                  payload: {
+                    data: `Waiting for the approval transaction to complete.`,
+                    status: 'loading',
+                    step: 'ApproveToken',
+                    title: 'Awaiting Approval',
+                  },
+                  type: 'SET_TX',
+                });
+                await waitForTransaction(hash, 1);
+                dispatch({
+                  payload: {
+                    data: `Token approved on ${state.method?.name}.`,
+                    status: 'success',
+                    step: 'ApproveToken',
+                    title: 'Token Approved',
+                  },
+                  type: 'SET_TX',
+                });
+              } catch (e: any) {
+                dispatch({
+                  payload: {
+                    data: `Action denied on ${state.method?.name}.`,
+                    status: 'error',
+                    step: 'ApproveToken',
+                    title: 'Awaiting Approval',
+                  },
+                  type: 'SET_TX',
+                });
+                return;
+              }
+            } else {
+              dispatch({
+                payload: {
+                  data: `Token approved for spending.`,
+                  status: 'success',
+                  step: 'ApproveToken',
+                  title: 'Token Approved',
+                },
+                type: 'SET_TX',
+              });
+            }
+
+            dispatch({
+              payload: {
+                data: `Please confirm the transaction on ${state.method?.name}.`,
+                status: 'loading',
                 step: 'Confirming',
                 title: 'Confirming Transaction',
               },
               type: 'SET_TX',
             });
-            return;
+            let hash: string;
+            try {
+              hash = await sendFinalTransaction({
+                ...(state.bridgeQuote.transaction as FinalTx),
+                gas: state.bridgeQuote.transaction?.gasLimit as string,
+              });
+              await subscribeToBridgeTransaction({
+                variables: { id: bridgeOrderId, txHash: hash },
+              });
+              dispatch({ payload: hash, type: 'SET_TX_HASH' });
+            } catch (e: any) {
+              dispatch({
+                payload: {
+                  data: 'Action denied.',
+                  status: 'error',
+                  step: 'Confirming',
+                  title: 'Confirming Transaction',
+                },
+                type: 'SET_TX',
+              });
+              return;
+            }
+
+            if (!hash) {
+              throw new Error('Transaction hash not found.');
+            }
+
+            dispatch({
+              payload: {
+                data: `Transaction submitted at ${new Date().toLocaleString()}.\nWaiting for transaction to be included in a block.`,
+                status: 'loading',
+                step: 'Confirming',
+                title: 'Confirming Transaction',
+              },
+              type: 'SET_TX',
+            });
+            let response;
+            while (!response) {
+              response = await getTransaction(hash);
+            }
+            dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
+            const receipt = await waitForTransaction(hash, 1);
+            dispatch({
+              payload: {
+                data:
+                  'Transaction included in block ' + receipt.blockNumber + '.',
+                status: 'success',
+                step: 'Confirming',
+                title: 'Transaction Confirming',
+              },
+              type: 'SET_TX',
+            });
+            startCountdown();
           }
 
-          if (!hash) {
-            throw new Error('Transaction hash not found.');
-          }
-
-          dispatch({
-            payload: {
-              data: `Transaction submitted at ${new Date().toLocaleString()}.\nWaiting for transaction to be included in a block.`,
-              status: 'loading',
-              step: 'Confirming',
-              title: 'Confirming Transaction',
-            },
-            type: 'SET_TX',
-          });
-          let response;
-          while (!response) {
-            response = await getTransaction(hash);
-          }
-          dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
-          const receipt = await waitForTransaction(hash, 1);
-          dispatch({
-            payload: {
-              data:
-                'Transaction included in block ' + receipt.blockNumber + '.',
-              status: 'success',
-              step: 'Confirming',
-              title: 'Transaction Confirming',
-            },
-            type: 'SET_TX',
-          });
-          await waitForTransaction(hash, MIN_CONFIRMATIONS);
-          dispatch({
-            payload: {
-              data: 'From Transaction confirmed.',
-              status: 'success',
-              step: 'Confirming',
-              title: 'Transaction Confirmed',
-            },
-            type: 'SET_TX',
-          });
-          startCountdown();
           listenToBridgeTransaction(
             bridgeOrderId,
             (payload: WatchBridgeTransactionPayload) => {
@@ -367,7 +402,7 @@ const Result: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col items-center">
+    <div className="flex h-full flex-col items-center pt-3">
       <StateDescriptionHeader />
       <InnerWrapper
         className={`relative h-full transition-all ${
@@ -467,32 +502,11 @@ const Result: React.FC<Props> = () => {
                 }`}
               />
             </div>
-            <div className="mt-3 mb-0.5 text-xs font-semibold dark:text-white">
-              Amount
-            </div>
-            <div className="text-xs font-medium dark:text-white">
-              <ReadOnlyText value={state.tx.amount} />
-            </div>
-            {state.tx.response ? (
-              <>
-                <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
-                  From
-                </div>
-                <ReadOnlyText copyButton value={state.tx.response?.from} />
-                <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
-                  To
-                </div>
-                <ReadOnlyText copyButton value={state.tx.response?.to} />
-              </>
-            ) : null}
-            {state.tx.hash ? (
-              <>
-                <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
-                  Hash
-                </div>
-                <ReadOnlyText copyButton value={state.tx.hash} />
-              </>
-            ) : null}
+            {state.bridgeQuote ? (
+              <BridgeQuoteTransactionDetails />
+            ) : (
+              <TransactionDetails />
+            )}
           </div>
           <div className="w-full text-center">
             {state.tx.hash ? (

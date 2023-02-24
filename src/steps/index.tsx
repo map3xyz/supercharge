@@ -14,10 +14,18 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import BinancePay from './BinancePay';
 import ConfirmRequiredAmount from './ConfirmRequiredAmount';
+import OrderHistory from './OrderHistory';
 import Result from './Result';
 import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
 import WalletConnect from './WalletConnect';
+
+const ANIMATION_DURATION = 0.2;
+export const ANIMATION_VARIANTS = {
+  exit: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
+  hidden: { opacity: 0, transition: { duration: ANIMATION_DURATION } },
+  visible: { opacity: 1, transition: { duration: ANIMATION_DURATION } },
+};
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
@@ -28,7 +36,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   useEffect(() => {
     setTimeout(() => {
       dispatch({ payload: Steps[steps[step]], type: 'SET_STEP_IN_VIEW' });
-    }, 250);
+    }, ANIMATION_DURATION * 1000);
   }, [step, steps]);
 
   return (
@@ -39,21 +47,45 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
       id="map3-modal-stepper"
     >
       <>
-        <InnerWrapper>
+        <InnerWrapper className="!pb-0">
           <div className="flex w-full items-center justify-between gap-4">
             <button
               aria-label="Back"
               className={step === 0 ? 'invisible' : 'visible'}
               onClick={() => {
-                dispatch({
-                  payload: Steps[state.steps[state.step - 1]],
-                  type: 'SET_STEP',
-                });
+                if (steps[step] === Steps[Steps.OrderHistory]) {
+                  dispatch({ type: 'RESET_STATE' });
+                } else {
+                  dispatch({
+                    payload: Steps[steps[step - 1]],
+                    type: 'SET_STEP',
+                  });
+                }
               }}
             >
               <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
+            <div>
+              <button aria-label="Order History">
+                <i
+                  className="fa fa-receipt transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400"
+                  onClick={() => {
+                    dispatch({
+                      payload: [
+                        ...steps.filter((s) => s !== 'OrderHistory'),
+                        'OrderHistory',
+                      ],
+                      type: 'SET_STEPS',
+                    });
+                    dispatch({
+                      payload: Steps.OrderHistory,
+                      type: 'SET_STEP',
+                    });
+                  }}
+                />
+              </button>
+            </div>
             {state.embed?.id || window.isMap3Hosted ? null : (
               <div>
                 <button aria-label="Close" onClick={onClose}>
@@ -63,116 +95,137 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
             )}
           </div>
         </InnerWrapper>
-        <div className="!mt-0 h-full w-full overflow-hidden">
+        <div className="h-full w-full overflow-hidden">
           <AnimatePresence mode="wait">
             {steps[step] === Steps[Steps.AssetSelection] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <AssetSelection />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.NetworkSelection] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <NetworkSelection />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.PaymentMethod] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <PaymentMethod />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.SwitchChain] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <SwitchChain />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.EnterAmount] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <EnterAmount />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.BinancePay] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <BinancePay />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.WalletConnect] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <WalletConnect />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.ConfirmRequiredAmount] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <ConfirmRequiredAmount />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.ShowAddress] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <ShowAddress />
               </motion.div>
             )}
             {steps[step] === Steps[Steps.Result] && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="h-full"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="exit"
+                initial="hidden"
                 key={Steps[step]}
+                variants={ANIMATION_VARIANTS}
               >
                 <Result />
+              </motion.div>
+            )}
+            {steps[step] === Steps[Steps.OrderHistory] && (
+              <motion.div
+                animate="visible"
+                className="h-full"
+                exit="exit"
+                initial="hidden"
+                variants={ANIMATION_VARIANTS}
+              >
+                <OrderHistory />
               </motion.div>
             )}
           </AnimatePresence>

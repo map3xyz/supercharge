@@ -104,14 +104,14 @@ const BinancePay: React.FC<Props> = () => {
         description="We were unable to create your order. Please try again."
         header="Error Creating Order"
         retry={run}
-        stacktrace={JSON.stringify(error)}
+        stacktrace={JSON.stringify(error, null, 2)}
       />
     );
   }
 
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
-      <InnerWrapper className="!pt-0">
+      <InnerWrapper>
         <h3
           className="text-center text-lg font-semibold dark:text-white"
           data-testid="show-address-method"

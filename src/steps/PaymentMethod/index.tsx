@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
+import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
@@ -147,7 +148,7 @@ const PaymentMethod: React.FC<Props> = () => {
     return null;
 
   if (!state.asset || !state.network) {
-    dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+    dispatch({ type: 'RESET_STATE' });
     return null;
   }
 
@@ -236,7 +237,7 @@ const PaymentMethod: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <InnerWrapper className="!pt-0">
+        <InnerWrapper>
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="payment-method"
@@ -278,13 +279,8 @@ const PaymentMethod: React.FC<Props> = () => {
             />
           ) : (
             methodsForSearch?.map((method) =>
-              method ? (
-                <div
-                  className={`flex items-center justify-between border-b border-primary-200 px-4 py-3 text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800 ${
-                    method.flags?.enabled
-                      ? ''
-                      : '!cursor-not-allowed opacity-50 hover:bg-white dark:hover:bg-primary-900'
-                  }`}
+              method && method.flags?.enabled ? (
+                <ListItem
                   key={method.name + '-' + method.value}
                   onClick={() => selectMethod(method)}
                   role="button"
@@ -311,7 +307,7 @@ const PaymentMethod: React.FC<Props> = () => {
                       <i className="fa fa-chevron-right text-xxs" />
                     )}
                   </div>
-                </div>
+                </ListItem>
               ) : null
             )
           )}

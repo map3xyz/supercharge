@@ -9,6 +9,7 @@ import App from '../../App';
 import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum from '../../components/methods/WindowEthereum';
 import * as useWeb3Mock from '../../hooks/useWeb3';
+import { wait } from '../../utils/wait';
 import EnterAmount from '.';
 
 jest.mock('ethers', () => {
@@ -57,6 +58,9 @@ describe('Enter Amount', () => {
     });
     await act(() => {
       fireEvent.click(back);
+    });
+    await act(async () => {
+      await wait(1000);
     });
     await screen.findByText('Loading...');
     const elonCoin = await screen.findByText('ElonCoin');

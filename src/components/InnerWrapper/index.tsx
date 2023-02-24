@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { AriaRole, PropsWithChildren } from 'react';
 
 const InnerWrapper: React.FC<PropsWithChildren<Props>> = ({
   children,
@@ -14,6 +14,7 @@ const InnerWrapper: React.FC<PropsWithChildren<Props>> = ({
 
 type Props = {
   className?: string;
+  role?: AriaRole;
 };
 
 export default InnerWrapper;

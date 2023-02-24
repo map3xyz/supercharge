@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
+import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import { useGetMappedNetworksForAssetQuery } from '../../generated/apollo-gql';
@@ -73,7 +74,7 @@ const NetworkSelection: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <InnerWrapper className="!pt-0">
+        <InnerWrapper>
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="network-select"
@@ -87,8 +88,7 @@ const NetworkSelection: React.FC<Props> = () => {
         <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">
           {data?.mappedNetworksForAssetByOrg?.map((network) =>
             network ? (
-              <div
-                className="flex items-center justify-between border-b border-primary-200 px-4 py-3 text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800"
+              <ListItem
                 key={network.networkName}
                 onClick={() => {
                   if (network.bridged && destinationNetwork) {
@@ -125,7 +125,7 @@ const NetworkSelection: React.FC<Props> = () => {
                     <i className="fa fa-chevron-right text-xxs" />
                   )}
                 </div>
-              </div>
+              </ListItem>
             ) : null
           )}
         </div>

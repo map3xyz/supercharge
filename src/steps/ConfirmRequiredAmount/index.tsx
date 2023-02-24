@@ -19,7 +19,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col items-center justify-between">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <InnerWrapper className="!pt-0">
+        <InnerWrapper>
           <h3 className="text-lg font-semibold dark:text-white">
             {t('title.confirm_amount')}
           </h3>
