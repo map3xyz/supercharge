@@ -1,5 +1,13 @@
-import { Badge, CoinAndNetworkLogo } from '@map3xyz/components';
-import React, { useContext } from 'react';
+import {
+  Badge,
+  Button,
+  CoinAndNetworkLogo,
+  Input,
+  Radio,
+  Textarea,
+} from '@map3xyz/components';
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { useContext, useState } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -13,6 +21,7 @@ import { Context, Steps } from '../../providers/Store';
 
 const OrderHistory: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const [showContactUs, setShowContactUs] = useState(false);
   const {
     data,
     error,
@@ -39,19 +48,31 @@ const OrderHistory: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <InnerWrapper>
+        <InnerWrapper className="flex flex-row items-center justify-between">
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="order-history"
           >
             Order History
           </h3>
+          {!loading ? (
+            <button
+              aria-label="Contact Us"
+              onClick={() => setShowContactUs((s) => !s)}
+            >
+              <i
+                className={`fa ${
+                  showContactUs ? 'fa-chevron-down' : 'fa-circle-question'
+                } text-xs transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400`}
+              />
+            </button>
+          ) : null}
         </InnerWrapper>
       </div>
       {loading ? (
         <LoadingWrapper message="Fetching Order History..."></LoadingWrapper>
       ) : (
-        <div className="flex h-full flex-col overflow-hidden">
+        <div className="relative flex h-full flex-col overflow-hidden">
           {data?.getBridgeTransactionsByUserId?.length ? (
             <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">
               {data?.getBridgeTransactionsByUserId.map((order) => {
@@ -184,6 +205,59 @@ const OrderHistory: React.FC<Props> = () => {
               </div>
             </div>
           )}
+          <AnimatePresence>
+            {showContactUs ? (
+              <motion.div
+                animate={{ transform: 'translateY(0%)' }}
+                className="layout-scrollbar absolute z-10 h-full w-full bg-white dark:bg-primary-900"
+                exit={{ opacity: 0, transform: 'translateY(100%)' }}
+                initial={{ transform: 'translateY(100%)' }}
+                transition={{ duration: 0.5, type: 'spring' }}
+              >
+                <InnerWrapper className="h-full w-full">
+                  <form className="flex h-full w-full flex-col justify-between">
+                    <div className="flex h-full flex-col gap-2">
+                      <div>
+                        <label className="mb-1 block text-xs text-primary-400">
+                          What can we help you with?
+                        </label>
+                        <Radio
+                          label="My order is stuck as pending."
+                          name="tx-problem"
+                          value="pending"
+                        />
+                        <Radio
+                          label="I don't see my order."
+                          name="tx-problem"
+                          value="no-order"
+                        />
+                        <Radio
+                          label="My order failed."
+                          name="tx-problem"
+                          value="failed"
+                        />
+                      </div>
+                      <Input label="Email Address" type="email" />
+                      <Input label="Order ID" type="text" />
+                      <Textarea label="Message" style={{ resize: 'none' }} />
+                    </div>
+                    <div className="flex flex-col gap-2 text-center">
+                      <Button block htmlType="submit">
+                        Submit
+                      </Button>
+                      <span
+                        className="text-xs text-primary-400"
+                        onClick={() => setShowContactUs(false)}
+                        role="button"
+                      >
+                        Cancel
+                      </span>
+                    </div>
+                  </form>
+                </InnerWrapper>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </div>
       )}
     </div>
