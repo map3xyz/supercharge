@@ -1,12 +1,5 @@
-import {
-  Badge,
-  Button,
-  CoinAndNetworkLogo,
-  Input,
-  Radio,
-  Textarea,
-} from '@map3xyz/components';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Badge, CoinAndNetworkLogo } from '@map3xyz/components';
+import { AnimatePresence } from 'framer-motion';
 import React, { useContext, useState } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
