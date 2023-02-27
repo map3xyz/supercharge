@@ -18,8 +18,9 @@ import {
   useGetBridgeTransactionsByUserIdQuery,
 } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
+import HistoryContactUs from './HistoryContactUs';
 
-const OrderHistory: React.FC<Props> = () => {
+const History: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const [showContactUs, setShowContactUs] = useState(false);
   const {
@@ -37,8 +38,8 @@ const OrderHistory: React.FC<Props> = () => {
   if (error) {
     return (
       <ErrorWrapper
-        description="We were unable to fetch your order history."
-        header="Error Fetching Order History"
+        description="We were unable to fetch your history."
+        header="Error Fetching History"
         retry={refetch}
         stacktrace={JSON.stringify(error, null, 2)}
       />
@@ -53,7 +54,7 @@ const OrderHistory: React.FC<Props> = () => {
             className="text-lg font-semibold dark:text-white"
             data-testid="order-history"
           >
-            Order History
+            History
           </h3>
           {!loading ? (
             <button
@@ -70,7 +71,7 @@ const OrderHistory: React.FC<Props> = () => {
         </InnerWrapper>
       </div>
       {loading ? (
-        <LoadingWrapper message="Fetching Order History..."></LoadingWrapper>
+        <LoadingWrapper message="Fetching History..."></LoadingWrapper>
       ) : (
         <div className="relative flex h-full flex-col overflow-hidden">
           {data?.getBridgeTransactionsByUserId?.length ? (
@@ -183,9 +184,11 @@ const OrderHistory: React.FC<Props> = () => {
           ) : (
             <div className="flex flex-1 items-center justify-center dark:text-white">
               <div className="text-center">
-                <h3 className="text-xl font-semibold">No Orders</h3>
+                <h3 className="text-xl font-semibold">
+                  No Transaction History
+                </h3>
                 <p className="mt-1 text-xs">
-                  You have not placed any orders yet.
+                  Find your bridge transaction history here.
                 </p>
                 <p className="mt-0.5 text-xs">
                   Click{' '}
@@ -200,62 +203,14 @@ const OrderHistory: React.FC<Props> = () => {
                   >
                     here
                   </span>{' '}
-                  to get started.
+                  to start a deposit.
                 </p>
               </div>
             </div>
           )}
           <AnimatePresence>
             {showContactUs ? (
-              <motion.div
-                animate={{ transform: 'translateY(0%)' }}
-                className="layout-scrollbar absolute z-10 h-full w-full bg-white dark:bg-primary-900"
-                exit={{ opacity: 0, transform: 'translateY(100%)' }}
-                initial={{ transform: 'translateY(100%)' }}
-                transition={{ duration: 0.5, type: 'spring' }}
-              >
-                <InnerWrapper className="h-full w-full">
-                  <form className="flex h-full w-full flex-col justify-between">
-                    <div className="flex h-full flex-col gap-2">
-                      <div>
-                        <label className="mb-1 block text-xs text-primary-400">
-                          What can we help you with?
-                        </label>
-                        <Radio
-                          label="My order is stuck as pending."
-                          name="tx-problem"
-                          value="pending"
-                        />
-                        <Radio
-                          label="I don't see my order."
-                          name="tx-problem"
-                          value="no-order"
-                        />
-                        <Radio
-                          label="My order failed."
-                          name="tx-problem"
-                          value="failed"
-                        />
-                      </div>
-                      <Input label="Email Address" type="email" />
-                      <Input label="Order ID" type="text" />
-                      <Textarea label="Message" style={{ resize: 'none' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 text-center">
-                      <Button block htmlType="submit">
-                        Submit
-                      </Button>
-                      <span
-                        className="text-xs text-primary-400"
-                        onClick={() => setShowContactUs(false)}
-                        role="button"
-                      >
-                        Cancel
-                      </span>
-                    </div>
-                  </form>
-                </InnerWrapper>
-              </motion.div>
+              <HistoryContactUs setShowContactUs={setShowContactUs} />
             ) : null}
           </AnimatePresence>
         </div>
@@ -266,4 +221,4 @@ const OrderHistory: React.FC<Props> = () => {
 
 type Props = {};
 
-export default OrderHistory;
+export default History;

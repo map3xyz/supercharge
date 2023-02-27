@@ -14,7 +14,7 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import BinancePay from './BinancePay';
 import ConfirmRequiredAmount from './ConfirmRequiredAmount';
-import OrderHistory from './OrderHistory';
+import History from './History';
 import Result from './Result';
 import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
@@ -53,7 +53,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
               aria-label="Back"
               className={step === 0 ? 'invisible' : 'visible'}
               onClick={() => {
-                if (steps[step] === Steps[Steps.OrderHistory]) {
+                if (steps[step] === Steps[Steps.History]) {
                   dispatch({ type: 'RESET_STATE' });
                 } else {
                   dispatch({
@@ -67,19 +67,19 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
             <div>
-              <button aria-label="Order History">
+              <button aria-label="History">
                 <i
                   className="fa fa-receipt transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400"
                   onClick={() => {
                     dispatch({
                       payload: [
-                        ...steps.filter((s) => s !== 'OrderHistory'),
-                        'OrderHistory',
+                        ...steps.filter((s) => s !== 'History'),
+                        'History',
                       ],
                       type: 'SET_STEPS',
                     });
                     dispatch({
-                      payload: Steps.OrderHistory,
+                      payload: Steps.History,
                       type: 'SET_STEP',
                     });
                   }}
@@ -217,7 +217,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 <Result />
               </motion.div>
             )}
-            {steps[step] === Steps[Steps.OrderHistory] && (
+            {steps[step] === Steps[Steps.History] && (
               <motion.div
                 animate="visible"
                 className="h-full"
@@ -225,7 +225,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 initial="hidden"
                 variants={ANIMATION_VARIANTS}
               >
-                <OrderHistory />
+                <History />
               </motion.div>
             )}
           </AnimatePresence>
