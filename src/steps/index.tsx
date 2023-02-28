@@ -66,7 +66,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
               <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
-            <div>
+            {/* <div>
               <button aria-label="Order History">
                 <i
                   className="fa fa-receipt transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400"
@@ -85,7 +85,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                   }}
                 />
               </button>
-            </div>
+            </div> */}
             {state.embed?.id || window.isMap3Hosted ? null : (
               <div>
                 <button aria-label="Close" onClick={onClose}>
