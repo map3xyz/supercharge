@@ -2,7 +2,13 @@ import { Badge } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
+import {
+  isChrome,
+  isEdge,
+  isFirefox,
+  isMobile,
+  isOpera,
+} from 'react-device-detect';
 import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
@@ -287,6 +293,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   };
 
   const handleBinancePay = () => {
+    if (!isMobile && !isConfirming) {
+      return submitRef.current?.submit();
+    }
     dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
     dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
   };

@@ -13,6 +13,12 @@ root.render(
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
             callbacks: {
+              handleOrderFeeCalculation: async () => {
+                return {
+                  fixedFee: 1,
+                  variableFee: 0.3,
+                };
+              },
               onAddressRequested: async () => {
                 return {
                   address: '0x2639DCc4368c16f75a2af0BCaf26991027667fBE',

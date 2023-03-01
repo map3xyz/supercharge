@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import BinanceLogo from 'url:../../assets/binance-pay.png';
+import BinancePayButton from 'url:../../assets/binance-pay-button.png';
+import BinanceLogo from 'url:../../assets/binance-pay-logo.png';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
-import MethodIcon from '../../components/MethodIcon';
 import {
   Map3PlatformOrderStatus,
   useCreateBinanceOrderMutation,
@@ -169,10 +169,7 @@ const BinancePay: React.FC<Props> = () => {
                 target="_blank"
               >
                 <Button block size="large" type={'default'}>
-                  <span className="flex items-center gap-2">
-                    <MethodIcon method={state.method} />{' '}
-                    {t('copy.pay_on_binance_com')}
-                  </span>
+                  <img className="h-4" src={BinancePayButton} />
                 </Button>
               </a>
             </div>

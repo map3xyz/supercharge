@@ -10,12 +10,12 @@ import React, {
 } from 'react';
 import { isMobile } from 'react-device-detect';
 import { useTranslation } from 'react-i18next';
+import BinancePayButton from 'url:../../../assets/binance-pay-button.png';
 
 import { useCreateBinanceOrderMutation } from '../../../generated/apollo-gql';
 import useOnClickOutside from '../../../hooks/useOnClickOutside';
 import { Context } from '../../../providers/Store';
 import { DECIMAL_FALLBACK, SubmitHandler } from '../../../steps/EnterAmount';
-import MethodIcon from '../../MethodIcon';
 
 const BinancePay = forwardRef<SubmitHandler, Props>(
   ({ amount, isConfirming, setFormError, setIsConfirming }, submitRef) => {
@@ -227,16 +227,10 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
           loading={
             loading || isFeeLoading || state.account.status === 'loading'
           }
-          onClick={handleClick}
           size="large"
           type={'default'}
         >
-          <span className="flex items-center gap-2">
-            <MethodIcon method={state.method} />{' '}
-            {isConfirming
-              ? t('button.finalize_on_binance')
-              : t('button.pay_via_binance')}
-          </span>
+          <img className="h-4" src={BinancePayButton} />
         </Button>
       </div>
     );
