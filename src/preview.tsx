@@ -23,6 +23,7 @@ root.render(
               amount: '10000',
               assetId: '53adbb94-6a68-4eeb-af49-6b6d9e84a1f4',
               fiat: 'USD',
+              rate: 2,
             },
             style: {
               theme: 'dark',

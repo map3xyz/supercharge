@@ -53,6 +53,7 @@ export interface Map3InitConfig {
       fiat?: string;
       networkCode?: string;
       paymentMethod?: 'binance-pay';
+      rate?: number;
       shortcutAmounts?: number[];
     };
     style?: {
@@ -105,6 +106,11 @@ export class Map3 {
       config.options.selection.fiat = 'USD';
     }
 
+    const isAsset =
+      config.options.selection.assetId ||
+      (config.options.selection.address &&
+        config.options.selection.networkCode);
+
     if (!ISO_4217_TO_SYMBOL[config.options.selection.fiat]) {
       console.warn(
         `Warning: fiat ${config.options.selection.fiat} is not supported. Falling back to USD.`
@@ -135,14 +141,18 @@ export class Map3 {
       config.options.selection.address = undefined;
     }
 
-    if (
-      config.options.selection.amount &&
-      !config.options.selection.networkCode
-    ) {
+    if (config.options.selection.amount && !isAsset) {
       console.warn(
-        'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
+        'Warning: amount is provided but not assetId or address and network. Falling back to undefined amount.'
       );
       config.options.selection.amount = undefined;
+    }
+
+    if (config.options.selection.rate && !isAsset) {
+      console.warn(
+        'Warning: rate is provided but not assetId or address and network. Falling back to default rate.'
+      );
+      config.options.selection.rate = undefined;
     }
 
     if (config.options.style?.appName) {

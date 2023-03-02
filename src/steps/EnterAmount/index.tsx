@@ -768,6 +768,7 @@ type Props = {};
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { data, loading } = useGetAssetPriceQuery({
+    skip: !!state.rate,
     variables: {
       assetId: state.asset?.id,
       currency: state.fiat,
@@ -780,6 +781,8 @@ const EnterAmount: React.FC<Props> = () => {
     return null;
   }
 
+  const price = state.rate || data?.assetPrice?.price || 0;
+
   return (
     <div className="flex h-full flex-col">
       <InnerWrapper>
@@ -791,11 +794,7 @@ const EnterAmount: React.FC<Props> = () => {
         </h3>
       </InnerWrapper>
       <StateDescriptionHeader />
-      {loading ? (
-        <LoadingWrapper />
-      ) : (
-        <EnterAmountForm price={data?.assetPrice?.price || 0} />
-      )}
+      {loading ? <LoadingWrapper /> : <EnterAmountForm price={price} />}
     </div>
   );
 };
