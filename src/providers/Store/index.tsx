@@ -66,6 +66,7 @@ type State = {
   fiat?: string;
   fiatDisplaySymbol?: string;
   method?: PaymentMethod & { description?: string };
+  minStep: number;
   network?: Network;
   prebuiltTx: {
     data?: {
@@ -219,6 +220,7 @@ const initialState: State = {
   destinationNetwork: undefined,
   fiat: undefined,
   method: undefined,
+  minStep: Steps.AssetSelection,
   network: undefined,
   prebuiltTx: {
     data: undefined,
@@ -572,6 +574,7 @@ export const Store: React.FC<
       embed,
       fiat,
       fiatDisplaySymbol,
+      minStep: step,
       network,
       requiredAmount,
       requiredPaymentMethod,
