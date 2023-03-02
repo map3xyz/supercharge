@@ -293,11 +293,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   };
 
   const handleBinancePay = () => {
-    if (!isMobile && !isConfirming) {
-      return submitRef.current?.submit();
-    }
-    dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
-    dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
+    submitRef.current?.submit();
   };
 
   const handleBridgeTransaction = async () => {

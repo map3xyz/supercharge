@@ -14,7 +14,7 @@ import BinancePayButton from 'url:../../../assets/binance-pay-button.png';
 
 import { useCreateBinanceOrderMutation } from '../../../generated/apollo-gql';
 import useOnClickOutside from '../../../hooks/useOnClickOutside';
-import { Context } from '../../../providers/Store';
+import { Context, Steps } from '../../../providers/Store';
 import { DECIMAL_FALLBACK, SubmitHandler } from '../../../steps/EnterAmount';
 
 const BinancePay = forwardRef<SubmitHandler, Props>(
@@ -22,7 +22,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
     const { t } = useTranslation();
     const [
       state,
-      _dispatch,
+      dispatch,
       { handleOrderFeeCalculation, onOrderCreated },
     ] = useContext(Context);
     const [isFeeLoading, setIsFeeLoading] = useState(false);
@@ -40,7 +40,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
     const ref = useRef<HTMLDivElement>(null);
     useOnClickOutside(ref, () => setIsConfirming(false));
 
-    const handleClick = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (e?: React.MouseEvent<HTMLButtonElement>) => {
       if (!isConfirming) {
         setIsFeeLoading(true);
         const feeData = await handleOrderFeeCalculation?.(
@@ -100,6 +100,9 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
         if (data?.createBinanceOrder?.universalUrl) {
           window.location.href = data.createBinanceOrder.universalUrl;
         }
+      } else {
+        dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
+        dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
       }
     };
 
@@ -115,7 +118,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
 
     useImperativeHandle(submitRef, () => ({
       submit: () => {
-        handleClick();
+        handleSubmit();
       },
     }));
 
