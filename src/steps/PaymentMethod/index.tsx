@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { useTranslation } from 'react-i18next';
 
+import CountdownTimer from '../../components/CountdownTimer';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import ListItem from '../../components/ListItem';
@@ -239,10 +240,10 @@ const PaymentMethod: React.FC<Props> = () => {
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper>
           <h3
-            className="text-lg font-semibold dark:text-white"
+            className="flex items-center justify-between text-lg font-semibold dark:text-white"
             data-testid="payment-method"
           >
-            Payment Method
+            <span>Payment Method</span> <CountdownTimer />
           </h3>
           {methodsForNetwork?.length && methodsForNetwork.length > 6 ? (
             <form

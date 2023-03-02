@@ -11,3 +11,12 @@
         margin: 0;
     }
 }
+
+@keyframes countdown {
+    from {
+        stroke-dashoffset: 0px;
+    }
+    to {
+        stroke-dashoffset: 63px;
+    }
+}
