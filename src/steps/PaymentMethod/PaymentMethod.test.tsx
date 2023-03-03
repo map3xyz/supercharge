@@ -82,6 +82,36 @@ describe('Payment Selection', () => {
   });
 });
 
+describe('Payment Selection', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            selection: {
+              assetId: 'elon123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+  const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+  beforeAll(() => {
+    global.window.ethereum = testingUtils.getProvider();
+    global.window.ethereum.providers = [testingUtils.getProvider()];
+  });
+  afterEach(() => {
+    testingUtils.clearAllMocks();
+  });
+  it('doesnt allow the user to go back beyond min step', async () => {
+    const back = await screen.findByLabelText('Back');
+    expect(back).toHaveClass('invisible');
+  });
+});
+
 describe('Payment Method Errors', () => {
   it('renders', () => {
     render(<PaymentMethod />);

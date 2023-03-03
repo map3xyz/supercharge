@@ -234,7 +234,7 @@ describe('Map3Sdk', () => {
     };
     expect(initFn).not.toThrow();
     expect(warnSpy).toBeCalledWith(
-      'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
+      'Warning: amount is provided but not assetId or address and network. Falling back to undefined amount.'
     );
   });
   it('should check valid config.colors.primary', () => {
@@ -336,5 +336,55 @@ describe('Map3Sdk', () => {
         userId: 'test',
       });
     expect(initFn).toThrow('options.callbacks.onAddressRequested is required.');
+  });
+  it('should warn if rate is provided but not assetId or address and network', () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+
+    const initFn = () =>
+      initMap3Supercharge({
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
+        options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              return { address: '0x000000' };
+            },
+          },
+          selection: {
+            rate: 10_000,
+          },
+        },
+        userId: 'test',
+      });
+
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: rate is provided but not assetId or address and network. Falling back to default rate.'
+    );
+  });
+  it('should allow an expiration time in the form of milliseconds or ISO 8601 in the future', () => {
+    const warnSpy = jest.spyOn(console, 'warn');
+
+    const initFn = () =>
+      initMap3Supercharge({
+        anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25zb2xlIiwib3JnX2lkIjoiYzljNDczMzYtNWM5MS00MDM0LWIyYTgtMGI1NzA5ZTAwMGI1Iiwicm9sZXMiOlsiYW5vbnltb3VzIl0sImlhdCI6MTY3NTg4ODUwOCwiZXhwIjoxNzA3NDI0NTA4fQ.GzuXjFzSVkE3L-LlhtvpXa3aIi48rvHgMY3hw6lS8KU',
+        options: {
+          callbacks: {
+            onAddressRequested: async () => {
+              return { address: '0x000000' };
+            },
+          },
+          selection: {
+            expiration: '2021-12-31T23:59:59.999Z',
+          },
+        },
+        userId: 'test',
+      });
+
+    expect(initFn).not.toThrow();
+    expect(warnSpy).toBeCalledWith(
+      'Warning: expiration is in the past or invalid. Falling back to default expiration.'
+    );
   });
 });

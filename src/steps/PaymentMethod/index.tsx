@@ -9,6 +9,7 @@ import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import MethodIcon from '../../components/MethodIcon';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import StepTitle from '../../components/StepTitle';
 import {
   PaymentMethod,
   useGetPaymentMethodsQuery,
@@ -238,12 +239,7 @@ const PaymentMethod: React.FC<Props> = () => {
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper>
-          <h3
-            className="text-lg font-semibold dark:text-white"
-            data-testid="payment-method"
-          >
-            Payment Method
-          </h3>
+          <StepTitle testId="payment-method" value="Payment Method" />
           {methodsForNetwork?.length && methodsForNetwork.length > 6 ? (
             <form
               className="mt-2"
