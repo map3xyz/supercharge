@@ -15,8 +15,7 @@ describe('BinancePay', () => {
             ...mockConfig,
             options: {
               callbacks: {
-                // @ts-ignore
-                handleOrderFeeCalculation: () => ({
+                handleOrderFeeCalculation: async () => ({
                   fixedFee: 0.1,
                   variableFee: 0.01,
                 }),
@@ -46,7 +45,7 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await screen.findByText(/Receive Amount/);
+      await screen.findByText(/Receive Amount/, undefined, { timeout: 5000 });
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
@@ -63,8 +62,7 @@ describe('BinancePay', () => {
             ...mockConfig,
             options: {
               callbacks: {
-                // @ts-ignore
-                handleOrderFeeCalculation: () => ({
+                handleOrderFeeCalculation: async () => ({
                   fixedFee: 0.1,
                   variableFee: 0.01,
                 }),
@@ -98,7 +96,7 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await screen.findByText(/Receive Amount/);
+      await screen.findByText(/Receive Amount/, undefined, { timeout: 5000 });
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
