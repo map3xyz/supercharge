@@ -4,6 +4,7 @@ import React, { useContext, useState } from 'react';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import StepTitle from '../../components/StepTitle';
 import { useGetNetworkByChainIdQuery } from '../../generated/apollo-gql';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
@@ -51,9 +52,7 @@ const SwitchChain: React.FC<Props> = () => {
     <div className="flex h-full flex-col items-center justify-between">
       <div className="w-full">
         <InnerWrapper>
-          <h3 className="text-lg font-semibold dark:text-white">
-            Switch Chain
-          </h3>
+          <StepTitle value="Switch Chain" />
         </InnerWrapper>
         <StateDescriptionHeader />
       </div>
