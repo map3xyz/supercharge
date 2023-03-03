@@ -43,8 +43,8 @@ describe('BinancePay', () => {
     it('renders', async () => {
       expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
       const button = await screen.findByTestId('binance-pay-button');
-      await act(() => {
-        fireEvent.click(button);
+      await act(async () => {
+        await fireEvent.click(button);
       });
       await screen.findByText(/Receive Amount/);
       const button2 = await screen.findByTestId('binance-pay-button');
@@ -95,8 +95,8 @@ describe('BinancePay', () => {
 
       expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
       const button = await screen.findByTestId('binance-pay-button');
-      await act(() => {
-        fireEvent.click(button);
+      await act(async () => {
+        await fireEvent.click(button);
       });
       await screen.findByText(/Receive Amount/);
       const button2 = await screen.findByTestId('binance-pay-button');
