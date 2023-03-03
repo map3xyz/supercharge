@@ -39,12 +39,17 @@ const CountdownTimer: React.FC<Props> = () => {
     setPosition(position);
   }, [seconds]);
 
-  const minutes = Math.floor(seconds / 60).toString();
+  const hours = Math.floor(seconds / 3600)
+    .toString()
+    .padStart(2, '0');
+  const minutes = (Math.floor(seconds / 60) % 60).toString().padStart(2, '0');
   const secondsLeft = (seconds % 60).toString().padStart(2, '0');
 
   return seconds > 0 ? (
     <span
-      aria-label={`Expires in ${minutes}:${secondsLeft}`}
+      aria-label={`Expires in ${
+        hours === '00' ? '' : `${hours}:`
+      }${minutes}:${secondsLeft}`}
       className="hint--left relative h-[22px] w-[22px] rounded-full border-[2px] border-accent-light"
     >
       <svg
