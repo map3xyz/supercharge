@@ -2,13 +2,7 @@ import { Badge } from '@map3xyz/components';
 import { ethers } from 'ethers';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-  isChrome,
-  isEdge,
-  isFirefox,
-  isMobile,
-  isOpera,
-} from 'react-device-detect';
+import { isChrome, isEdge, isFirefox, isOpera } from 'react-device-detect';
 import { useTranslation } from 'react-i18next';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
