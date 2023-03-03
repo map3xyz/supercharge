@@ -7,6 +7,7 @@ import InnerWrapper from '../../components/InnerWrapper';
 import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import StepTitle from '../../components/StepTitle';
 import { useGetMappedNetworksForAssetQuery } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
 
@@ -75,12 +76,10 @@ const NetworkSelection: React.FC<Props> = () => {
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper>
-          <h3
-            className="text-lg font-semibold dark:text-white"
-            data-testid="network-select"
-          >
-            {t('title.select_network')}
-          </h3>
+          <StepTitle
+            testId="network-select"
+            value={t('title.select_network')}
+          />
         </InnerWrapper>
         <StateDescriptionHeader />
       </div>

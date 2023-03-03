@@ -63,8 +63,10 @@ type State = {
     id?: string;
     width?: string;
   };
+  expiration?: Date;
   fiat?: string;
   fiatDisplaySymbol?: string;
+  initTime: Date;
   method?: PaymentMethod & { description?: string };
   minStep: number;
   network?: Network;
@@ -219,7 +221,9 @@ const initialState: State = {
     status: 'idle',
   },
   destinationNetwork: undefined,
+  expiration: undefined,
   fiat: undefined,
+  initTime: new Date(),
   method: undefined,
   minStep: Steps.AssetSelection,
   network: undefined,
@@ -309,6 +313,11 @@ export const Store: React.FC<
     requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
   }
 
+  let expiration;
+  if (selection?.expiration) {
+    expiration = new Date(selection.expiration);
+  }
+
   const requiredPaymentMethod = paymentMethod;
 
   const fiatDisplaySymbol = ISO_4217_TO_SYMBOL[fiat || 'USD'];
@@ -316,6 +325,7 @@ export const Store: React.FC<
   const rest = {
     asset,
     embed,
+    expiration,
     fiat,
     fiatDisplaySymbol,
     minStep: step,

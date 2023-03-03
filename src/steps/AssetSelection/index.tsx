@@ -7,6 +7,7 @@ import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import ListItem from '../../components/ListItem';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import StepTitle from '../../components/StepTitle';
 import {
   Asset,
   useGetAssetsForOrgQuery,
@@ -66,12 +67,7 @@ const AssetSelection: React.FC<Props> = () => {
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper>
-          <h3
-            className="text-lg font-semibold dark:text-white"
-            data-testid="select-asset"
-          >
-            {t('copy.select_asset')}
-          </h3>
+          <StepTitle testId="select-asset" value={t('copy.select_asset')} />
           {assets?.length && assets.length > 6 ? (
             <form
               className="mt-2"

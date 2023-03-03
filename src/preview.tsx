@@ -22,6 +22,7 @@ root.render(
             selection: {
               amount: '10000',
               assetId: '53adbb94-6a68-4eeb-af49-6b6d9e84a1f4',
+              expiration: 1677869630177,
               fiat: 'USD',
               rate: 2,
             },

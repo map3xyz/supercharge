@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 
 import InnerWrapper from '../../components/InnerWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import StepTitle from '../../components/StepTitle';
 import { Context, Steps } from '../../providers/Store';
 
 const ConfirmRequiredAmount: React.FC<Props> = () => {
@@ -20,9 +21,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
     <div className="flex h-full flex-col items-center justify-between">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
         <InnerWrapper>
-          <h3 className="text-lg font-semibold dark:text-white">
-            {t('title.confirm_amount')}
-          </h3>
+          <StepTitle value={t('title.confirm_amount')} />
         </InnerWrapper>
 
         <StateDescriptionHeader />

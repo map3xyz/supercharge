@@ -50,6 +50,7 @@ export interface Map3InitConfig {
       address?: string;
       amount?: string;
       assetId?: string;
+      expiration?: string | number;
       fiat?: string;
       networkCode?: string;
       paymentMethod?: 'binance-pay';
@@ -155,6 +156,23 @@ export class Map3 {
       config.options.selection.rate = undefined;
     }
 
+    if (config.options.selection.expiration) {
+      try {
+        const timeRemainingMs =
+          new Date(config.options.selection.expiration).getTime() -
+          new Date().getTime();
+
+        if (timeRemainingMs < 0) {
+          throw new Error('Expiration is in the past.');
+        }
+      } catch (e) {
+        console.warn(
+          'Warning: expiration is in the past or invalid. Falling back to default expiration.'
+        );
+        config.options.selection.expiration = undefined;
+      }
+    }
+
     if (config.options.style?.appName) {
       document.title = config.options.style.appName;
     }
@@ -178,7 +196,14 @@ export class Map3 {
     });
 
     // orange-600
-    document.body.style.setProperty('--accent-color', 'rgb(234, 88, 12)');
+    const orange600 = 'rgb(234, 88, 12)';
+    document.body.style.setProperty('--accent-color', orange600);
+    document.body.style.setProperty(
+      '--accent-color-light',
+      colord(config.options.style?.colors?.accent || orange600)
+        .lighten(0.35)
+        .toHex()
+    );
 
     // theme colors
     if (config.options.style && config.options.style.colors) {
@@ -234,7 +259,6 @@ export class Map3 {
             primaryColor.mix(shades[shade as keyof typeof shades], 0.5).toHex()
           );
         });
-      } else {
       }
     }
 

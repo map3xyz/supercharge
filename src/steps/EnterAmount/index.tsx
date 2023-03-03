@@ -12,6 +12,7 @@ import BinancePay from '../../components/methods/BinancePay';
 import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum from '../../components/methods/WindowEthereum';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import StepTitle from '../../components/StepTitle';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useCreateBridgeQuoteMutation,
@@ -786,12 +787,7 @@ const EnterAmount: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col">
       <InnerWrapper>
-        <h3
-          className="text-lg font-semibold dark:text-white"
-          data-testid="enter-amount"
-        >
-          {t('title.enter_amount')}
-        </h3>
+        <StepTitle testId="enter-amount" value={t('title.enter_amount')} />
       </InnerWrapper>
       <StateDescriptionHeader />
       {loading ? <LoadingWrapper /> : <EnterAmountForm price={price} />}
