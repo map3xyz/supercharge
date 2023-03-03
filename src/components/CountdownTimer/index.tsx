@@ -12,17 +12,13 @@ const CountdownTimer: React.FC<Props> = () => {
   }
 
   const currentTime = new Date().getTime();
+  const progressedTime = currentTime - state.initTime.getTime();
+  const totalTime = state.expiration.getTime() - state.initTime.getTime();
   const remainingTime = state.expiration.getTime() - currentTime;
   const remainingTimeSeconds = Math.floor(remainingTime / 1000);
-  const completedPercentage =
-    (currentTime - state.initTime.getTime()) / remainingTime;
-
+  const completedPercentage = progressedTime / totalTime;
   const [seconds, setSeconds] = useState(remainingTimeSeconds);
   const [position, setPosition] = useState(0);
-
-  if (remainingTimeSeconds <= 0) {
-    return null;
-  }
 
   const countdown = () => {
     if (seconds <= 0) {
@@ -46,7 +42,7 @@ const CountdownTimer: React.FC<Props> = () => {
   const minutes = Math.floor(seconds / 60).toString();
   const secondsLeft = (seconds % 60).toString().padStart(2, '0');
 
-  return position < circumference ? (
+  return seconds > 0 ? (
     <span
       aria-label={`Expires in ${minutes}:${secondsLeft}`}
       className="hint--left relative h-[22px] w-[22px] rounded-full border-[2px] border-accent-light"
