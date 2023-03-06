@@ -65,6 +65,7 @@ const ShowAddress: React.FC<Props> = () => {
                 }
             }
             switch (payload.new.state) {
+              case 'pending':
               case 'confirming':
                 dispatch({
                   payload: payload.new.tx_id,
