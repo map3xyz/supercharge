@@ -44,7 +44,7 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
             {bridgeQuote.estimate?.fromAmountUsd})
           </div>
         </div>
-        {bridgeQuote.transaction?.gasPrice && bridgeQuote.transaction.gasLimit && (
+        {bridgeQuote.estimate?.gasCosts && (
           <div className="flex w-full items-center justify-between">
             <div>{t('copy.gas_cost')}:</div>
             <div>
@@ -52,6 +52,18 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
                 {Number(bridgeQuote.estimate?.gasCosts)?.toFixed(6)}{' '}
                 {state.network?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
                 {bridgeQuote.estimate?.gasCostsUsd?.toFixed(2)})
+              </>
+            </div>
+          </div>
+        )}
+        {bridgeQuote.estimate?.feeCosts && (
+          <div className="flex w-full items-center justify-between">
+            <div>{t('copy.fee_cost')}:</div>
+            <div>
+              <>
+                {Number(bridgeQuote.estimate?.feeCosts)?.toFixed(6)}{' '}
+                {state.network?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
+                {bridgeQuote.estimate?.feeCostsUsd?.toFixed(2)})
               </>
             </div>
           </div>

@@ -50,6 +50,22 @@ const BridgeQuoteTransactionDetails: React.FC<Props> = () => {
           </div>
         </div>
       ) : null}
+      {state.bridgeQuote?.estimate?.feeCosts ? (
+        <div>
+          <div className="mt-3 mb-0.5 text-xs font-semibold dark:text-white">
+            {t('copy.fee_cost')}
+          </div>
+          <div className="text-xs font-medium dark:text-white">
+            <ReadOnlyText
+              value={`${Number(state.bridgeQuote.estimate?.feeCosts)?.toFixed(
+                6
+              )} ${state.asset?.symbol} (${
+                ISO_4217_TO_SYMBOL['USD']
+              }${state.bridgeQuote.estimate?.feeCostsUsd?.toFixed(2)})`}
+            />
+          </div>
+        </div>
+      ) : null}
       {state.bridgeQuote?.estimate?.amountToReceive ? (
         <div>
           <div className="mt-3 mb-0.5 text-xs font-semibold dark:text-white">

@@ -472,18 +472,18 @@ const Result: React.FC<Props> = () => {
           );
         })}
       </InnerWrapper>
-      <InnerWrapper
-        className={`relative border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 ${
+      <div
+        className={`layout-scrollbar relative w-full border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 ${
           toggleDetails && state.tx.hash
             ? 'h-full'
             : state.tx.hash
-            ? 'h-[48px]'
+            ? 'h-[64px]'
             : 'hidden'
         }`}
         data-testid="transaction-details"
       >
         <div className="flex h-full flex-col justify-between">
-          <div>
+          <InnerWrapper className="sticky top-0 z-20 border-b border-primary-200 bg-primary-100 dark:border-primary-700 dark:bg-primary-800">
             <div
               className={`flex cursor-pointer items-center justify-between text-sm font-semibold dark:text-white ${
                 state.tx.hash ? 'opacity-100' : 'cursor-not-allowed opacity-20'
@@ -502,13 +502,15 @@ const Result: React.FC<Props> = () => {
                 }`}
               />
             </div>
+          </InnerWrapper>
+          <InnerWrapper className="pt-0">
             {state.bridgeQuote ? (
               <BridgeQuoteTransactionDetails />
             ) : (
               <TransactionDetails />
             )}
-          </div>
-          <div className="w-full text-center">
+          </InnerWrapper>
+          <InnerWrapper className="w-full text-center">
             {state.tx.hash ? (
               <a
                 className="text-xs text-blue-600 underline"
@@ -518,9 +520,9 @@ const Result: React.FC<Props> = () => {
                 View on Explorer
               </a>
             ) : null}
-          </div>
+          </InnerWrapper>
         </div>
-      </InnerWrapper>
+      </div>
     </div>
   );
 };
