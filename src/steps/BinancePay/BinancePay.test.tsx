@@ -4,7 +4,6 @@ import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import { wait } from '../../utils/wait';
 import BinancePay from '.';
 
 describe('BinancePay', () => {
@@ -46,8 +45,9 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await wait(2000);
-      await screen.findByText(/Receive Amount/);
+      await act(async () => {
+        await screen.findByText(/Receive Amount/);
+      });
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
@@ -98,8 +98,10 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await wait(2000);
-      await screen.findByText(/Receive Amount/);
+
+      await act(async () => {
+        await screen.findByText(/Receive Amount/);
+      });
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
