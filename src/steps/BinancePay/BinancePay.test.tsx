@@ -45,9 +45,7 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await act(async () => {
-        await screen.findByText(/Receive Amount/);
-      });
+      await screen.findByText(/Receive Amount/);
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
@@ -99,9 +97,7 @@ describe('BinancePay', () => {
         await fireEvent.click(button);
       });
 
-      await act(async () => {
-        await screen.findByText(/Receive Amount/);
-      });
+      await screen.findByText(/Receive Amount/);
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
