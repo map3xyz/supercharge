@@ -4,104 +4,106 @@ import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
+import { wait } from '../../utils/wait';
 import BinancePay from '.';
 
-describe('BinancePay', () => {
-  describe('displays binance pay qr code on desktop', () => {
-    beforeEach(async () => {
-      render(
-        <App
-          config={{
-            ...mockConfig,
-            options: {
-              callbacks: {
-                handleOrderFeeCalculation: async () => ({
-                  fixedFee: 0.1,
-                  variableFee: 0.01,
-                }),
-                onAddressRequested: async (_asset, _network) => {
-                  return {
-                    address: '0x0000000000000000000000000000000000000000',
-                  };
-                },
-              },
-              selection: {
-                amount: '100000000',
-                assetId: 'elon123',
+describe('BinancePay > Desktop', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            callbacks: {
+              handleOrderFeeCalculation: async () => ({
+                fixedFee: 0.1,
+                variableFee: 0.01,
+              }),
+              onAddressRequested: async (_asset, _network) => {
+                return {
+                  address: '0x0000000000000000000000000000000000000000',
+                };
               },
             },
-          }}
-          onClose={() => {}}
-        />
-      );
+            selection: {
+              amount: '100000000',
+              assetId: 'elon123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
 
-      await screen.findByText('Loading...');
-      const binancePay = await screen.findByText('Binance Pay');
-      fireEvent.click(binancePay);
-    });
-    it('renders', async () => {
-      expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
-      const button = await screen.findByTestId('binance-pay-button');
-      await act(async () => {
-        await fireEvent.click(button);
-      });
-      await screen.findByText(/Receive Amount/);
-      const button2 = await screen.findByTestId('binance-pay-button');
-      await act(() => {
-        fireEvent.click(button2);
-      });
-      const payViaBinance = await screen.findByText('Pay via Binance');
-      expect(payViaBinance).toBeInTheDocument();
-    });
+    await screen.findByText('Loading...');
+    const binancePay = await screen.findByText('Binance Pay');
+    fireEvent.click(binancePay);
   });
-  describe('mobile', () => {
-    beforeEach(async () => {
-      render(
-        <App
-          config={{
-            ...mockConfig,
-            options: {
-              callbacks: {
-                handleOrderFeeCalculation: async () => ({
-                  fixedFee: 0.1,
-                  variableFee: 0.01,
-                }),
-                onAddressRequested: async (_asset, _network) => {
-                  return {
-                    address: '0x0000000000000000000000000000000000000000',
-                  };
-                },
-              },
-              selection: {
-                amount: '100000000',
-                assetId: 'elon123',
+  it('displays binance pay qr code on desktop', async () => {
+    expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
+    const button = await screen.findByTestId('binance-pay-button');
+    await act(async () => {
+      await fireEvent.click(button);
+    });
+    await wait(4000);
+    await screen.findByText(/Receive Amount/);
+    const button2 = await screen.findByTestId('binance-pay-button');
+    await act(() => {
+      fireEvent.click(button2);
+    });
+    const payViaBinance = await screen.findByText('Pay via Binance');
+    expect(payViaBinance).toBeInTheDocument();
+  });
+});
+
+describe('Binance Pay > Mobile', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            callbacks: {
+              handleOrderFeeCalculation: async () => ({
+                fixedFee: 0.1,
+                variableFee: 0.01,
+              }),
+              onAddressRequested: async (_asset, _network) => {
+                return {
+                  address: '0x0000000000000000000000000000000000000000',
+                };
               },
             },
-          }}
-          onClose={() => {}}
-        />
-      );
+            selection: {
+              amount: '100000000',
+              assetId: 'elon123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
 
-      await screen.findByText('Loading...');
-      const binancePay = await screen.findByText('Binance Pay');
-      fireEvent.click(binancePay);
+    await screen.findByText('Loading...');
+    const binancePay = await screen.findByText('Binance Pay');
+    fireEvent.click(binancePay);
+  });
+  it('creates an order', async () => {
+    Object.defineProperties(reactDeviceDetect, {
+      isMobile: { get: () => true },
     });
-    it('creates an order', async () => {
-      Object.defineProperties(reactDeviceDetect, {
-        isMobile: { get: () => true },
-      });
 
-      expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
-      const button = await screen.findByTestId('binance-pay-button');
-      await act(async () => {
-        await fireEvent.click(button);
-      });
+    expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
+    const button = await screen.findByTestId('binance-pay-button');
+    await act(async () => {
+      await fireEvent.click(button);
+    });
 
-      await screen.findByText(/Receive Amount/);
-      const button2 = await screen.findByTestId('binance-pay-button');
-      await act(() => {
-        fireEvent.click(button2);
-      });
+    await wait(4000);
+    await screen.findByText(/Receive Amount/);
+    const button2 = await screen.findByTestId('binance-pay-button');
+    await act(() => {
+      fireEvent.click(button2);
     });
   });
 });
