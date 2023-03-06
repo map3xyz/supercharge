@@ -35,7 +35,9 @@ describe('BinancePay', () => {
         />
       );
 
-      await screen.findByText('Loading...');
+      await act(async () => {
+        await screen.findByText('Loading...');
+      });
       const binancePay = await screen.findByText('Binance Pay');
       fireEvent.click(binancePay);
     });
@@ -45,7 +47,7 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await screen.findByText(/Receive Amount/, undefined, { timeout: 5000 });
+      await screen.findByText(/Receive Amount/, undefined, { timeout: 3500 });
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
@@ -96,7 +98,7 @@ describe('BinancePay', () => {
       await act(async () => {
         await fireEvent.click(button);
       });
-      await screen.findByText(/Receive Amount/, undefined, { timeout: 5000 });
+      await screen.findByText(/Receive Amount/, undefined, { timeout: 3500 });
       const button2 = await screen.findByTestId('binance-pay-button');
       await act(() => {
         fireEvent.click(button2);
