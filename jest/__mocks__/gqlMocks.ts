@@ -10,6 +10,7 @@ import {
   getAssetsForOrgMock,
   searchAssetsMock,
 } from './assets';
+import { createBinanceOrderMock } from './binance-order';
 import {
   getMappedNetworksForOrgMock,
   getNetworkByChainIdMock,
@@ -60,4 +61,9 @@ export const mocks: MockedResponse[] = [
   getMethodsMock({ chainId: null }),
   getMethodsMock({ chainId: 1 }),
   getMethodsMock({ chainId: 137 }),
+  createBinanceOrderMock({
+    assetId: 'elon123',
+    orderAmount: '100.0',
+    userId: 'test',
+  }),
 ];

@@ -219,6 +219,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
 
         <Button
           block
+          data-testid="binance-pay-button"
           disabled={
             loading ||
             isFeeLoading ||
