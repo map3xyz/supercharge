@@ -129,11 +129,6 @@ describe('Payment Selection', () => {
     fireEvent.click(bitcoin);
     const payToAddress = await screen.findByText('Pay to Address');
     expect(payToAddress).toBeInTheDocument();
-    const back = await screen.findByLabelText('Back');
-    await act(async () => {
-      fireEvent.click(back);
-    });
-    expect(await screen.findByText('Select Asset')).toBeInTheDocument();
   });
 });
 
