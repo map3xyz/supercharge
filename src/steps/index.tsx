@@ -29,7 +29,7 @@ export const ANIMATION_VARIANTS = {
 
 const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
   const [state, dispatch] = useContext(Context);
-  const { step, steps } = state;
+  const { minStep, step, steps } = state;
 
   useChainWatcher();
 
@@ -51,7 +51,9 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
           <div className="flex w-full items-center justify-between gap-4">
             <button
               aria-label="Back"
-              className={step === 0 ? 'invisible' : 'visible'}
+              className={
+                step === 0 || step <= minStep ? 'invisible' : 'visible'
+              }
               onClick={() => {
                 if (steps[step] === Steps[Steps.History]) {
                   dispatch({ type: 'RESET_STATE' });
@@ -67,7 +69,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
             <div>
-              <button aria-label="History">
+              <button aria-label="Order History">
                 <i
                   className="fa fa-receipt transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400"
                   onClick={() => {

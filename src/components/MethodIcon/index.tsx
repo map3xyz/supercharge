@@ -1,5 +1,5 @@
 import React from 'react';
-import BinanceLogo from 'url:../../assets/binance-pay.png';
+import BinanceLogo from 'url:../../assets/binance-pay-logo.png';
 import CoinbaseWalletLogo from 'url:../../assets/coinbase.png';
 import MetaMaskLogo from 'url:../../assets/metamask.png';
 

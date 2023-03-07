@@ -6,6 +6,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
 import LoadingWrapper from '../../components/LoadingWrapper';
+import StepTitle from '../../components/StepTitle';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useAddWatchedAddressMutation,
@@ -64,6 +65,7 @@ const ShowAddress: React.FC<Props> = () => {
                 }
             }
             switch (payload.new.state) {
+              case 'pending':
               case 'confirming':
                 dispatch({
                   payload: payload.new.tx_id,
@@ -155,12 +157,7 @@ const ShowAddress: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
       <InnerWrapper>
-        <h3
-          className="text-center text-lg font-semibold dark:text-white"
-          data-testid="show-address-method"
-        >
-          Pay to Address
-        </h3>
+        <StepTitle testId="show-address-method" value="Pay to Address" />
       </InnerWrapper>
       {state.depositAddress.status === 'error' && (
         <ErrorWrapper

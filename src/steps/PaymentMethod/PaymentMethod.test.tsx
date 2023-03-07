@@ -82,6 +82,56 @@ describe('Payment Selection', () => {
   });
 });
 
+describe('Payment Selection', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            selection: {
+              assetId: 'elon123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+  const testingUtils = generateTestingUtils({ providerType: 'MetaMask' });
+  beforeAll(() => {
+    global.window.ethereum = testingUtils.getProvider();
+    global.window.ethereum.providers = [testingUtils.getProvider()];
+  });
+  afterEach(() => {
+    testingUtils.clearAllMocks();
+  });
+  it('doesnt allow the user to go back beyond min step', async () => {
+    const back = await screen.findByLabelText('Back');
+    expect(back).toHaveClass('invisible');
+  });
+});
+
+describe('Payment Selection', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+
+  it('skips the payment selection step if there is only one payment method', async () => {
+    const bitcoin = await screen.findByText('Bitcoin');
+    fireEvent.click(bitcoin);
+    const payToAddress = await screen.findByText('Pay to Address');
+    expect(payToAddress).toBeInTheDocument();
+  });
+});
+
 describe('Payment Method Errors', () => {
   it('renders', () => {
     render(<PaymentMethod />);

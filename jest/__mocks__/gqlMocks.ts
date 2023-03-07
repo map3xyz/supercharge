@@ -10,6 +10,7 @@ import {
   getAssetsForOrgMock,
   searchAssetsMock,
 } from './assets';
+import { createBinanceOrderMock } from './binance-order';
 import {
   getMappedNetworksForOrgMock,
   getNetworkByChainIdMock,
@@ -21,6 +22,7 @@ export const mocks: MockedResponse[] = [
   getAssetsForOrgMock({ currency: 'USD', limit: 10, offset: 0 }),
   getAssetsForOrgMock({ currency: 'USD', limit: 10, offset: 0 }),
   getAssetsForOrgMock({ assetId: 'satoshi123' }),
+  getAssetsForOrgMock({ assetId: 'elon123' }),
   getAssetsForOrgMock({
     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
   }),
@@ -59,4 +61,9 @@ export const mocks: MockedResponse[] = [
   getMethodsMock({ chainId: null }),
   getMethodsMock({ chainId: 1 }),
   getMethodsMock({ chainId: 137 }),
+  createBinanceOrderMock({
+    assetId: 'elon123',
+    orderAmount: '100.0',
+    userId: 'test',
+  }),
 ];

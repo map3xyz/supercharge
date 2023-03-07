@@ -24,9 +24,12 @@ export interface Map3InitConfig {
             address?: string;
             amount?: string;
             assetId?: string;
+            canBridge?: boolean;
+            expiration?: string | number;
             fiat?: string;
             networkCode?: string;
             paymentMethod?: 'binance-pay';
+            rate?: number;
             shortcutAmounts?: number[];
         };
         style?: {

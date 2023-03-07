@@ -50,9 +50,12 @@ export interface Map3InitConfig {
       address?: string;
       amount?: string;
       assetId?: string;
+      canBridge?: boolean;
+      expiration?: string | number;
       fiat?: string;
       networkCode?: string;
       paymentMethod?: 'binance-pay';
+      rate?: number;
       shortcutAmounts?: number[];
     };
     style?: {
@@ -105,6 +108,11 @@ export class Map3 {
       config.options.selection.fiat = 'USD';
     }
 
+    const isAsset =
+      config.options.selection.assetId ||
+      (config.options.selection.address &&
+        config.options.selection.networkCode);
+
     if (!ISO_4217_TO_SYMBOL[config.options.selection.fiat]) {
       console.warn(
         `Warning: fiat ${config.options.selection.fiat} is not supported. Falling back to USD.`
@@ -135,14 +143,35 @@ export class Map3 {
       config.options.selection.address = undefined;
     }
 
-    if (
-      config.options.selection.amount &&
-      !config.options.selection.networkCode
-    ) {
+    if (config.options.selection.amount && !isAsset) {
       console.warn(
-        'Warning: networkCode is required when amount is provided. Falling back to asset selection.'
+        'Warning: amount is provided but not assetId or address and network. Falling back to undefined amount.'
       );
       config.options.selection.amount = undefined;
+    }
+
+    if (config.options.selection.rate && !isAsset) {
+      console.warn(
+        'Warning: rate is provided but not assetId or address and network. Falling back to default rate.'
+      );
+      config.options.selection.rate = undefined;
+    }
+
+    if (config.options.selection.expiration) {
+      try {
+        const timeRemainingMs =
+          new Date(config.options.selection.expiration).getTime() -
+          new Date().getTime();
+
+        if (timeRemainingMs < 0) {
+          throw new Error('Expiration is in the past.');
+        }
+      } catch (e) {
+        console.warn(
+          'Warning: expiration is in the past or invalid. Falling back to default expiration.'
+        );
+        config.options.selection.expiration = undefined;
+      }
     }
 
     if (config.options.style?.appName) {
@@ -168,7 +197,14 @@ export class Map3 {
     });
 
     // orange-600
-    document.body.style.setProperty('--accent-color', 'rgb(234, 88, 12)');
+    const orange600 = 'rgb(234, 88, 12)';
+    document.body.style.setProperty('--accent-color', orange600);
+    document.body.style.setProperty(
+      '--accent-color-light',
+      colord(config.options.style?.colors?.accent || orange600)
+        .lighten(0.35)
+        .toHex()
+    );
 
     // theme colors
     if (config.options.style && config.options.style.colors) {
@@ -224,7 +260,6 @@ export class Map3 {
             primaryColor.mix(shades[shade as keyof typeof shades], 0.5).toHex()
           );
         });
-      } else {
       }
     }
 

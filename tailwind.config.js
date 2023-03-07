@@ -10,6 +10,7 @@ module.exports = {
     extend: {
       colors: {
         accent: 'var(--accent-color)',
+        'accent-light': 'var(--accent-color-light)',
         primary: {
           100: 'var(--primary-color-100)',
           200: 'var(--primary-color-200)',

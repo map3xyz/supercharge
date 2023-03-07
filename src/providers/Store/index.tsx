@@ -64,9 +64,12 @@ type State = {
     id?: string;
     width?: string;
   };
+  expiration?: Date;
   fiat?: string;
   fiatDisplaySymbol?: string;
+  initTime: Date;
   method?: PaymentMethod & { description?: string };
+  minStep: number;
   network?: Network;
   prebuiltTx: {
     data?: {
@@ -91,6 +94,7 @@ type State = {
     status: RemoteType;
   };
   providerChainId?: number;
+  rate?: number;
   requiredAmount?: string;
   requiredPaymentMethod?: 'binance-pay' | 'show-address';
   shortcutAmounts?: number[];
@@ -219,8 +223,11 @@ const initialState: State = {
     status: 'idle',
   },
   destinationNetwork: undefined,
+  expiration: undefined,
   fiat: undefined,
+  initTime: new Date(),
   method: undefined,
+  minStep: Steps.AssetSelection,
   network: undefined,
   prebuiltTx: {
     data: undefined,
@@ -235,6 +242,7 @@ const initialState: State = {
     status: 'idle',
   },
   providerChainId: undefined,
+  rate: undefined,
   shortcutAmounts: [],
   slug: undefined,
   step: Steps.AssetSelection,
@@ -280,7 +288,8 @@ export const Store: React.FC<
   PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
 > = ({ anonKey, asset, children, network, options, userId }) => {
   const { callbacks, selection, style } = options || {};
-  const { amount, fiat, paymentMethod, shortcutAmounts } = selection || {};
+  const { amount, canBridge, fiat, paymentMethod, rate, shortcutAmounts } =
+    selection || {};
   const { embed, theme } = style || {};
   const {
     handleAuthorizeTransaction,
@@ -297,7 +306,7 @@ export const Store: React.FC<
     step = Steps.NetworkSelection;
   }
 
-  if (asset && network) {
+  if (asset && network && !canBridge) {
     step = Steps.PaymentMethod;
   }
 
@@ -306,9 +315,32 @@ export const Store: React.FC<
     requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
   }
 
+  let expiration;
+  if (selection?.expiration) {
+    expiration = new Date(selection.expiration);
+  }
+
   const requiredPaymentMethod = paymentMethod;
 
   const fiatDisplaySymbol = ISO_4217_TO_SYMBOL[fiat || 'USD'];
+
+  const rest = {
+    anonKey,
+    asset,
+    embed,
+    expiration,
+    fiat,
+    fiatDisplaySymbol,
+    minStep: step,
+    network,
+    rate,
+    requiredAmount,
+    requiredPaymentMethod,
+    shortcutAmounts,
+    step,
+    theme,
+    userId,
+  };
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
@@ -550,17 +582,7 @@ export const Store: React.FC<
         case 'RESET_STATE':
           return {
             ...initialState,
-            asset,
-            embed,
-            fiat,
-            fiatDisplaySymbol,
-            network,
-            requiredAmount,
-            requiredPaymentMethod,
-            shortcutAmounts,
-            step,
-            theme,
-            userId,
+            ...rest,
           };
         /* istanbul ignore next */
         default:
@@ -570,18 +592,7 @@ export const Store: React.FC<
     },
     {
       ...initialState,
-      anonKey,
-      asset,
-      embed,
-      fiat,
-      fiatDisplaySymbol,
-      network,
-      requiredAmount,
-      requiredPaymentMethod,
-      shortcutAmounts,
-      step,
-      theme,
-      userId,
+      ...rest,
     }
   );
 

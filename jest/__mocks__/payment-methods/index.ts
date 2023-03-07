@@ -34,6 +34,24 @@ export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
               {
                 flags: {
                   enabled: true,
+                  memo: false,
+                },
+                icon: '',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo: '',
+                name: 'Binance Pay',
+                value: 'binance-pay',
+                walletConnect: null,
+              },
+              {
+                flags: {
+                  enabled: true,
                   memo: true,
                 },
                 icon: 'metamask',

@@ -12,8 +12,10 @@ import BinancePay from '../../components/methods/BinancePay';
 import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum from '../../components/methods/WindowEthereum';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import StepTitle from '../../components/StepTitle';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
+  CreateBridgeQuoteMutation,
   useCreateBridgeQuoteMutation,
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
@@ -287,8 +289,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   };
 
   const handleBinancePay = () => {
-    dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
-    dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
+    submitRef.current?.submit();
   };
 
   const handleBridgeTransaction = async () => {
@@ -342,23 +343,57 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           'Cannot create bridge quote without to and destination assets.'
         );
       }
-      const { data, errors } = await createBridgeQuote({
+      const quoteParams = {
+        fromAddress: state.account.data,
+        fromAssetId,
+        toAddress: requestedAddress.address,
+        toAssetId,
+        userId: state.userId,
+      };
+      let bridgeQuote: CreateBridgeQuoteMutation['prepareBridgeQuote'];
+      const {
+        data: preQuoteData,
+        errors: preQuoteErrors,
+      } = await createBridgeQuote({
         variables: {
           amount: ethers.utils
             .parseUnits(amount, state.asset?.decimals!)
             .toString(),
-          fromAddress: state.account.data,
-          fromAssetId,
-          toAddress: requestedAddress.address,
-          toAssetId,
-          userId: state.userId,
+          ...quoteParams,
         },
       });
-      if (errors?.[0]) {
+      bridgeQuote = preQuoteData?.prepareBridgeQuote;
+      if (preQuoteErrors?.[0]) {
+        throw new Error('Error creating bridge quote.');
+      }
+      if (state.requiredAmount) {
+        const paddedAmountMajor =
+          Number(amount) +
+          Number(amount) -
+          Number(preQuoteData?.prepareBridgeQuote?.estimate?.amountToReceive);
+        const paddedAmountMinor = ethers.utils.parseUnits(
+          paddedAmountMajor.toString(),
+          state.asset?.decimals!
+        );
+        if (paddedAmountMinor.gt(state.prebuiltTx.data?.maxLimitRaw!)) {
+          throw new Error('Amount exceeds max limit.');
+        }
+        const { data, errors } = await createBridgeQuote({
+          variables: {
+            amount: paddedAmountMinor.toString(),
+            ...quoteParams,
+          },
+        });
+        if (errors?.[0]) {
+          throw new Error('Error creating final bridge quote.');
+        }
+        bridgeQuote = data?.prepareBridgeQuote;
+      }
+      if (!bridgeQuote) {
         throw new Error('Error creating bridge quote.');
       }
       dispatch({
-        payload: data?.prepareBridgeQuote!,
+        payload: bridgeQuote,
         type: 'SET_BRIDGE_QUOTE',
       });
       setIsConfirming(true);
@@ -769,6 +804,7 @@ type Props = {};
 const EnterAmount: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const { data, loading } = useGetAssetPriceQuery({
+    skip: !!state.rate,
     variables: {
       assetId: state.asset?.id,
       currency: state.fiat,
@@ -781,22 +817,15 @@ const EnterAmount: React.FC<Props> = () => {
     return null;
   }
 
+  const price = state.rate || data?.assetPrice?.price || 0;
+
   return (
     <div className="flex h-full flex-col">
       <InnerWrapper>
-        <h3
-          className="text-lg font-semibold dark:text-white"
-          data-testid="enter-amount"
-        >
-          {t('title.enter_amount')}
-        </h3>
+        <StepTitle testId="enter-amount" value={t('title.enter_amount')} />
       </InnerWrapper>
       <StateDescriptionHeader />
-      {loading ? (
-        <LoadingWrapper />
-      ) : (
-        <EnterAmountForm price={data?.assetPrice?.price || 0} />
-      )}
+      {loading ? <LoadingWrapper /> : <EnterAmountForm price={price} />}
     </div>
   );
 };

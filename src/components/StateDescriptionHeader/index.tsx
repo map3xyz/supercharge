@@ -1,5 +1,4 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
-import { ethers } from 'ethers';
 import React, { useContext } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -13,12 +12,6 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   const { stepInView: step, steps } = state;
 
   let amount;
-  if (state.bridgeQuote?.approval?.amount && state.asset?.decimals) {
-    amount = ethers.utils.formatUnits(
-      state.bridgeQuote?.approval?.amount as string,
-      state.asset?.decimals
-    );
-  }
   if (!amount && state.tx.amount) {
     amount = state.tx.amount.split(' ')[0];
   }
@@ -35,8 +28,9 @@ const StateDescriptionHeader: React.FC<Props> = () => {
               // @ts-ignore
               badge: <Badge color="blue" size="large" />,
             }}
-            defaults="Deposit <badge>{{symbol}}</badge> on"
+            defaults="Deposit <badge>{{amount}} {{symbol}}</badge> on"
             values={{
+              amount,
               symbol: state.asset?.symbol,
             }}
           />
