@@ -130,12 +130,6 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
       ? feeData.totalAmountMinusFee <= 0
       : false;
 
-    console.log('loading', loading);
-    console.log('isFeeLoading', isFeeLoading);
-    console.log('!!error?.message', !!error?.message);
-    console.log("amount === '0'", amount === '0');
-    console.log('feeIsGreaterThanReceiveAmount', feeIsGreaterThanReceiveAmount);
-
     return (
       <div className="relative z-40 w-full" ref={ref}>
         <AnimatePresence>
