@@ -1,5 +1,4 @@
 import { Badge, CryptoAddress } from '@map3xyz/components';
-import { ethers } from 'ethers';
 import React, { useContext } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
