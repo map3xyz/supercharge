@@ -41,7 +41,7 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
               Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
             )}{' '}
             {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
-            {bridgeQuote.estimate?.fromAmountUsd})
+            {bridgeQuote.estimate?.fromAmountUsd?.toFixed(2)})
           </div>
         </div>
         {bridgeQuote.transaction?.gasPrice && bridgeQuote.transaction.gasLimit && (
@@ -56,6 +56,22 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
             </div>
           </div>
         )}
+        {bridgeQuote.estimate?.amountToReceive ? (
+          <div className="flex w-full items-center justify-between">
+            <div>Bridge Fee:</div>
+            <div>
+              {(
+                Number(amount) - Number(bridgeQuote.estimate.amountToReceive)
+              ).toFixed(6)}{' '}
+              {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
+              {(
+                Number(bridgeQuote.estimate.fromAmountUsd) -
+                Number(bridgeQuote.estimate.toAmountUsd)
+              )?.toFixed(2)}
+              )
+            </div>
+          </div>
+        ) : null}
         {bridgeQuote.estimate?.amountToReceive ? (
           <div className="flex w-full items-center justify-between font-semibold">
             <div>{t('copy.receive_amount')}:</div>

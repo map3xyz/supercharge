@@ -286,7 +286,7 @@ export const Store: React.FC<
   PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
 > = ({ asset, children, network, options, userId }) => {
   const { callbacks, selection, style } = options || {};
-  const { amount, fiat, paymentMethod, rate, shortcutAmounts } =
+  const { amount, canBridge, fiat, paymentMethod, rate, shortcutAmounts } =
     selection || {};
   const { embed, theme } = style || {};
   const {
@@ -304,7 +304,7 @@ export const Store: React.FC<
     step = Steps.NetworkSelection;
   }
 
-  if (asset && network) {
+  if (asset && network && !canBridge) {
     step = Steps.PaymentMethod;
   }
 

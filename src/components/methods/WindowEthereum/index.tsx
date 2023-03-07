@@ -10,7 +10,11 @@ import {
 
 import useOnClickOutside from '../../../hooks/useOnClickOutside';
 import { Context } from '../../../providers/Store';
-import { DOWNLOAD_EXTENSION, SubmitHandler } from '../../../steps/EnterAmount';
+import {
+  DECIMAL_FALLBACK,
+  DOWNLOAD_EXTENSION,
+  SubmitHandler,
+} from '../../../steps/EnterAmount';
 import BridgeQuoteConfirmation from '../../confirmations/BridgeQuoteConfirmation';
 import MethodIcon from '../../MethodIcon';
 import { EvmMethodProviderProps } from '../types';
@@ -123,7 +127,12 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
       <div className="relative z-40 w-full" ref={ref}>
         {isConfirming && state.bridgeQuote && (
           <BridgeQuoteConfirmation
-            amount={amount}
+            amount={ethers.utils
+              .formatUnits(
+                state.bridgeQuote.approval?.amount || 0,
+                state.asset?.decimals || DECIMAL_FALLBACK
+              )
+              .toString()}
             setIsConfirming={setIsConfirming}
           />
         )}
