@@ -22,7 +22,7 @@ export enum Steps {
   'WalletConnect' = 6,
   'ConfirmRequiredAmount' = 7,
   'ShowAddress' = 8,
-  'OrderHistory' = 9,
+  'History' = 9,
   'Result' = 10,
   __LENGTH,
 }
@@ -49,6 +49,7 @@ type State = {
     data: string | undefined;
     status: RemoteType;
   };
+  anonKey: string;
   asset?: Asset;
   bridgeQuote?: BridgeQuote;
   bridgeTransaction?: BridgeTransactionWithAssetsAndNetworks;
@@ -215,6 +216,7 @@ const initialState: State = {
     data: undefined,
     status: 'idle',
   },
+  anonKey: '',
   asset: undefined,
   depositAddress: {
     data: undefined,
@@ -284,7 +286,7 @@ const initialState: State = {
 
 export const Store: React.FC<
   PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
-> = ({ asset, children, network, options, userId }) => {
+> = ({ anonKey, asset, children, network, options, userId }) => {
   const { callbacks, selection, style } = options || {};
   const { amount, canBridge, fiat, paymentMethod, rate, shortcutAmounts } =
     selection || {};
@@ -323,6 +325,7 @@ export const Store: React.FC<
   const fiatDisplaySymbol = ISO_4217_TO_SYMBOL[fiat || 'USD'];
 
   const rest = {
+    anonKey,
     asset,
     embed,
     expiration,

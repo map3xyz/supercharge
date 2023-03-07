@@ -14,7 +14,7 @@ import NetworkSelection from '../steps/NetworkSelection';
 import PaymentMethod from '../steps/PaymentMethod';
 import BinancePay from './BinancePay';
 import ConfirmRequiredAmount from './ConfirmRequiredAmount';
-import OrderHistory from './OrderHistory';
+import History from './History';
 import Result from './Result';
 import ShowAddress from './ShowAddress';
 import SwitchChain from './SwitchChain';
@@ -55,7 +55,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 step === 0 || step <= minStep ? 'invisible' : 'visible'
               }
               onClick={() => {
-                if (steps[step] === Steps[Steps.OrderHistory]) {
+                if (steps[step] === Steps[Steps.History]) {
                   dispatch({ type: 'RESET_STATE' });
                 } else {
                   dispatch({
@@ -68,26 +68,26 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
               <i className="fa fa-long-arrow-left transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400" />
             </button>
             <ProgressBar progress={step / (steps.length - 1)} />
-            {/* <div>
+            <div>
               <button aria-label="Order History">
                 <i
                   className="fa fa-receipt transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400"
                   onClick={() => {
                     dispatch({
                       payload: [
-                        ...steps.filter((s) => s !== 'OrderHistory'),
-                        'OrderHistory',
+                        ...steps.filter((s) => s !== 'History'),
+                        'History',
                       ],
                       type: 'SET_STEPS',
                     });
                     dispatch({
-                      payload: Steps.OrderHistory,
+                      payload: Steps.History,
                       type: 'SET_STEP',
                     });
                   }}
                 />
               </button>
-            </div> */}
+            </div>
             {state.embed?.id || window.isMap3Hosted ? null : (
               <div>
                 <button aria-label="Close" onClick={onClose}>
@@ -219,7 +219,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 <Result />
               </motion.div>
             )}
-            {steps[step] === Steps[Steps.OrderHistory] && (
+            {steps[step] === Steps[Steps.History] && (
               <motion.div
                 animate="visible"
                 className="h-full"
@@ -227,7 +227,7 @@ const Map3SdkSteps: React.FC<Props> = ({ onClose, plan }) => {
                 initial="hidden"
                 variants={ANIMATION_VARIANTS}
               >
-                <OrderHistory />
+                <History />
               </motion.div>
             )}
           </AnimatePresence>

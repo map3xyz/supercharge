@@ -438,6 +438,7 @@ export type QuoteEstimate = {
   __typename?: 'QuoteEstimate';
   amountToReceive?: Maybe<Scalars['String']>;
   executionDurationSeconds?: Maybe<Scalars['Int']>;
+  feeCostsUsd?: Maybe<Scalars['Float']>;
   fromAmountUsd?: Maybe<Scalars['Float']>;
   gasCosts?: Maybe<Scalars['Float']>;
   gasCostsUsd?: Maybe<Scalars['Float']>;

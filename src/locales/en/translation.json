@@ -20,6 +20,7 @@
       "error_fetching_assets": "We couldn't get a list of assets to select.",
       "error_fetching_networks": "We couldn't get a list of networks to select.",
       "error_fetching_payment_methods": "We couldn't get a list of payment methods to select.",
+      "fee_cost": "Fee Cost",
       "fetching_networks": "Fetching Networks...",
       "fetching_payment_methods": "Fetching Payment Methods...",
       "gas_cost": "Gas Cost",

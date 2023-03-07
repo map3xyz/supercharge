@@ -1,5 +1,6 @@
 import { Badge, CoinAndNetworkLogo } from '@map3xyz/components';
-import React, { useContext } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import React, { useContext, useState } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -10,9 +11,11 @@ import {
   useGetBridgeTransactionsByUserIdQuery,
 } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
+import HistoryContactUs from './HistoryContactUs';
 
-const OrderHistory: React.FC<Props> = () => {
+const History: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
+  const [showContactUs, setShowContactUs] = useState(false);
   const {
     data,
     error,
@@ -28,8 +31,8 @@ const OrderHistory: React.FC<Props> = () => {
   if (error) {
     return (
       <ErrorWrapper
-        description="We were unable to fetch your order history."
-        header="Error Fetching Order History"
+        description="We were unable to fetch your history."
+        header="Error Fetching History"
         retry={refetch}
         stacktrace={JSON.stringify(error, null, 2)}
       />
@@ -39,19 +42,31 @@ const OrderHistory: React.FC<Props> = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="border-b border-primary-200 dark:border-primary-700 dark:bg-primary-900">
-        <InnerWrapper>
+        <InnerWrapper className="flex flex-row items-center justify-between">
           <h3
             className="text-lg font-semibold dark:text-white"
             data-testid="order-history"
           >
-            Order History
+            History
           </h3>
+          {!loading ? (
+            <button
+              aria-label="Contact Us"
+              onClick={() => setShowContactUs((s) => !s)}
+            >
+              <i
+                className={`fa ${
+                  showContactUs ? 'fa-chevron-down' : 'fa-circle-question'
+                } text-xs transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400`}
+              />
+            </button>
+          ) : null}
         </InnerWrapper>
       </div>
       {loading ? (
-        <LoadingWrapper message="Fetching Order History..."></LoadingWrapper>
+        <LoadingWrapper message="Fetching History..."></LoadingWrapper>
       ) : (
-        <div className="flex h-full flex-col overflow-hidden">
+        <div className="relative flex h-full flex-col overflow-hidden">
           {data?.getBridgeTransactionsByUserId?.length ? (
             <div className="layout-scrollbar relative z-10 flex flex-col dark:text-white">
               {data?.getBridgeTransactionsByUserId.map((order) => {
@@ -162,9 +177,11 @@ const OrderHistory: React.FC<Props> = () => {
           ) : (
             <div className="flex flex-1 items-center justify-center dark:text-white">
               <div className="text-center">
-                <h3 className="text-xl font-semibold">No Orders</h3>
+                <h3 className="text-xl font-semibold">
+                  No Transaction History
+                </h3>
                 <p className="mt-1 text-xs">
-                  You have not placed any orders yet.
+                  Find your bridge transaction history here.
                 </p>
                 <p className="mt-0.5 text-xs">
                   Click{' '}
@@ -179,11 +196,16 @@ const OrderHistory: React.FC<Props> = () => {
                   >
                     here
                   </span>{' '}
-                  to get started.
+                  to start a deposit.
                 </p>
               </div>
             </div>
           )}
+          <AnimatePresence>
+            {showContactUs ? (
+              <HistoryContactUs setShowContactUs={setShowContactUs} />
+            ) : null}
+          </AnimatePresence>
         </div>
       )}
     </div>
@@ -192,4 +214,4 @@ const OrderHistory: React.FC<Props> = () => {
 
 type Props = {};
 
-export default OrderHistory;
+export default History;
