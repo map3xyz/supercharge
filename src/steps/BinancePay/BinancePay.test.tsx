@@ -4,7 +4,6 @@ import { mockConfig } from '~/jest/__mocks__/mockConfig';
 import { act, fireEvent, render, screen } from '~/jest/test-utils';
 
 import App from '../../App';
-import { wait } from '../../utils/wait';
 import BinancePay from '.';
 
 describe('BinancePay > Desktop', () => {
@@ -42,11 +41,8 @@ describe('BinancePay > Desktop', () => {
   it('displays binance pay qr code on desktop', async () => {
     expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
     const button = await screen.findByTestId('binance-pay-button');
-    await act(async () => {
-      await fireEvent.click(button);
-    });
-    await wait(4000);
-    await screen.findByText(/Receive Amount/);
+    fireEvent.click(button);
+    await screen.findByLabelText('(1% + 0.1 ELON)');
     const button2 = await screen.findByTestId('binance-pay-button');
     await act(() => {
       fireEvent.click(button2);
@@ -96,15 +92,11 @@ describe('Binance Pay > Mobile', () => {
     expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
     const button = await screen.findByTestId('binance-pay-button');
     await act(async () => {
-      await fireEvent.click(button);
+      fireEvent.click(button);
     });
-
-    await wait(4000);
-    await screen.findByText(/Receive Amount/);
+    await screen.findByLabelText('(1% + 0.1 ELON)');
     const button2 = await screen.findByTestId('binance-pay-button');
-    await act(() => {
-      fireEvent.click(button2);
-    });
+    fireEvent.click(button2);
   });
 });
 
