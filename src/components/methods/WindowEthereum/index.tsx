@@ -1,5 +1,6 @@
 import { Button } from '@map3xyz/components';
 import { ethers } from 'ethers';
+import { AnimatePresence } from 'framer-motion';
 import {
   forwardRef,
   useContext,
@@ -125,17 +126,19 @@ const WindowEthereum = forwardRef<SubmitHandler, Props>(
 
     return (
       <div className="relative z-40 w-full" ref={ref}>
-        {isConfirming && state.bridgeQuote && (
-          <BridgeQuoteConfirmation
-            amount={ethers.utils
-              .formatUnits(
-                state.bridgeQuote.approval?.amount || 0,
-                state.asset?.decimals || DECIMAL_FALLBACK
-              )
-              .toString()}
-            setIsConfirming={setIsConfirming}
-          />
-        )}
+        <AnimatePresence>
+          {isConfirming && state.bridgeQuote && (
+            <BridgeQuoteConfirmation
+              amount={ethers.utils
+                .formatUnits(
+                  state.bridgeQuote.approval?.amount || 0,
+                  state.asset?.decimals || DECIMAL_FALLBACK
+                )
+                .toString()}
+              setIsConfirming={setIsConfirming}
+            />
+          )}
+        </AnimatePresence>
         <Button
           block
           disabled={

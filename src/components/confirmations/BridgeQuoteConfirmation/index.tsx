@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,33 +18,33 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
   if (!bridgeQuote) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        animate={{ transform: 'translateY(calc(-100%)' }}
-        className="absolute flex w-full flex-col items-center justify-center gap-1 py-2 text-xs font-normal dark:bg-primary-900"
-        exit={{ opacity: 0, transform: 'translateY(100%)' }}
-        initial={{ transform: 'translateY(100%)' }}
-        transition={{ duration: 0.5, type: 'spring' }}
+    <motion.div
+      animate={{ transform: 'translateY(calc(-100%)' }}
+      className="absolute flex w-full flex-col items-center justify-center gap-1 py-2 text-xs font-normal dark:bg-primary-900"
+      exit={{ opacity: 0, transform: 'translateY(100%)' }}
+      initial={{ transform: 'translateY(100%)' }}
+      transition={{ duration: 0.5, type: 'spring' }}
+    >
+      <div
+        className="mb-2 flex items-center justify-center"
+        draggable
+        onClick={() => setIsConfirming(false)}
+        onDragEnd={() => setIsConfirming(false)}
       >
-        <div
-          className="mb-2 flex items-center justify-center"
-          draggable
-          onClick={() => setIsConfirming(false)}
-          onDragEnd={() => setIsConfirming(false)}
-        >
-          <span className="h-1.5 w-8 rounded-lg bg-primary-200 dark:bg-primary-400"></span>
+        <span className="h-1.5 w-8 rounded-lg bg-primary-200 dark:bg-primary-400"></span>
+      </div>
+      <div className="flex w-full items-center justify-between">
+        <div>{t('copy.amount_to_pay')}:</div>
+        <div>
+          {Number(amount).toFixed(
+            Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
+          )}{' '}
+          {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
+          {bridgeQuote.estimate?.fromAmountUsd?.toFixed(2)})
         </div>
-        <div className="flex w-full items-center justify-between">
-          <div>{t('copy.amount_to_pay')}:</div>
-          <div>
-            {Number(amount).toFixed(
-              Math.min(6, state.asset?.decimals || DECIMAL_FALLBACK)
-            )}{' '}
-            {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
-            {bridgeQuote.estimate?.fromAmountUsd?.toFixed(2)})
-          </div>
-        </div>
-        {bridgeQuote.transaction?.gasPrice && bridgeQuote.transaction.gasLimit && (
+      </div>
+      {bridgeQuote.estimate?.gasCostsUsd &&
+        bridgeQuote.estimate.gasCostsUsd > 1 && (
           <div className="flex w-full items-center justify-between">
             <div>{t('copy.gas_cost')}:</div>
             <div>
@@ -56,34 +56,33 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
             </div>
           </div>
         )}
-        {bridgeQuote.estimate?.amountToReceive ? (
-          <div className="flex w-full items-center justify-between">
-            <div>Bridge Fee:</div>
-            <div>
-              {(
-                Number(amount) - Number(bridgeQuote.estimate.amountToReceive)
-              ).toFixed(6)}{' '}
-              {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
-              {(
-                Number(bridgeQuote.estimate.fromAmountUsd) -
-                Number(bridgeQuote.estimate.toAmountUsd)
-              )?.toFixed(2)}
-              )
-            </div>
+      {bridgeQuote.estimate?.amountToReceive ? (
+        <div className="flex w-full items-center justify-between">
+          <div>Bridge Fee:</div>
+          <div>
+            {(
+              Number(amount) - Number(bridgeQuote.estimate.amountToReceive)
+            ).toFixed(6)}{' '}
+            {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
+            {(
+              Number(bridgeQuote.estimate.fromAmountUsd) -
+              Number(bridgeQuote.estimate.toAmountUsd)
+            )?.toFixed(2)}
+            )
           </div>
-        ) : null}
-        {bridgeQuote.estimate?.amountToReceive ? (
-          <div className="flex w-full items-center justify-between font-semibold">
-            <div>{t('copy.receive_amount')}:</div>
-            <div>
-              {Number(bridgeQuote.estimate.amountToReceive).toFixed(6)}{' '}
-              {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
-              {bridgeQuote.estimate.toAmountUsd?.toFixed(2)})
-            </div>
+        </div>
+      ) : null}
+      {bridgeQuote.estimate?.amountToReceive ? (
+        <div className="flex w-full items-center justify-between font-semibold">
+          <div>{t('copy.receive_amount')}:</div>
+          <div>
+            {Number(bridgeQuote.estimate.amountToReceive).toFixed(6)}{' '}
+            {state.asset?.symbol} ({ISO_4217_TO_SYMBOL['USD']}
+            {bridgeQuote.estimate.toAmountUsd?.toFixed(2)})
           </div>
-        ) : null}
-      </motion.div>
-    </AnimatePresence>
+        </div>
+      ) : null}
+    </motion.div>
   );
 };
 
