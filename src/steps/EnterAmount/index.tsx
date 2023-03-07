@@ -16,7 +16,6 @@ import StepTitle from '../../components/StepTitle';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   CreateBridgeQuoteMutation,
-  CreateBridgeQuoteMutationResult,
   useCreateBridgeQuoteMutation,
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
