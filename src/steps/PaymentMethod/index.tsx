@@ -140,6 +140,17 @@ const PaymentMethod: React.FC<Props> = () => {
     }
   }, [data?.methodsForNetwork?.length]);
 
+  useEffect(() => {
+    if (data?.methodsForNetwork?.[0] && data?.methodsForNetwork?.length === 1) {
+      // @ts-ignore
+      if (state.prevStep >= state.steps.indexOf(Steps[Steps.PaymentMethod])) {
+        dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
+      } else {
+        selectMethod(data.methodsForNetwork[0]);
+      }
+    }
+  }, [data?.methodsForNetwork?.length]);
+
   if (
     state.requiredPaymentMethod &&
     data?.methodsForNetwork?.find(

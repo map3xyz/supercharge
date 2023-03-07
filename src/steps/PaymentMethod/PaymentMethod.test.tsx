@@ -112,6 +112,31 @@ describe('Payment Selection', () => {
   });
 });
 
+describe('Payment Selection', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+
+  it('skips the payment selection step if there is only one payment method', async () => {
+    const bitcoin = await screen.findByText('Bitcoin');
+    fireEvent.click(bitcoin);
+    const payToAddress = await screen.findByText('Pay to Address');
+    expect(payToAddress).toBeInTheDocument();
+    const back = await screen.findByLabelText('Back');
+    await act(async () => {
+      fireEvent.click(back);
+    });
+    expect(await screen.findByText('Select Asset')).toBeInTheDocument();
+  });
+});
+
 describe('Payment Method Errors', () => {
   it('renders', () => {
     render(<PaymentMethod />);
