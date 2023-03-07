@@ -7,8 +7,6 @@ fragment BridgeQuoteFields on BridgeQuote {
   estimate {
     amountToReceive
     executionDurationSeconds
-    feeCosts
-    feeCostsUsd
     fromAmountUsd
     gasCosts
     gasCostsUsd
