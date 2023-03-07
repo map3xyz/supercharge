@@ -126,6 +126,10 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
       return null;
     }
 
+    const feeIsGreaterThanReceiveAmount = feeData.totalAmountMinusFee
+      ? feeData.totalAmountMinusFee <= 0
+      : false;
+
     return (
       <div className="relative z-40 w-full" ref={ref}>
         <AnimatePresence>
@@ -225,7 +229,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
             isFeeLoading ||
             !!error?.message ||
             amount === '0' ||
-            feeData.totalAmountMinusFee! <= 0
+            feeIsGreaterThanReceiveAmount
           }
           htmlType="submit"
           loading={

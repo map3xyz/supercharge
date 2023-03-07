@@ -24,7 +24,6 @@ module.exports = {
   },
   setupFiles: ['<rootDir>/jest/setupTests.js'],
   testEnvironment: 'jsdom',
-  testTimeout: 20000,
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
