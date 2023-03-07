@@ -41,7 +41,9 @@ describe('BinancePay > Desktop', () => {
   it('displays binance pay qr code on desktop', async () => {
     expect(await screen.findByText('Enter Amount')).toBeInTheDocument();
     const button = await screen.findByTestId('binance-pay-button');
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+    });
     await screen.findByLabelText('(1% + 0.1 ELON)');
     const button2 = await screen.findByTestId('binance-pay-button');
     await act(() => {
