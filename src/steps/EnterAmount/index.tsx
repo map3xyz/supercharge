@@ -15,6 +15,7 @@ import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import StepTitle from '../../components/StepTitle';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
+  CreateBridgeQuoteMutation,
   useCreateBridgeQuoteMutation,
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useGetAssetByMappedAssetIdAndNetworkCodeQuery,
@@ -342,23 +343,57 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           'Cannot create bridge quote without to and destination assets.'
         );
       }
-      const { data, errors } = await createBridgeQuote({
+      const quoteParams = {
+        fromAddress: state.account.data,
+        fromAssetId,
+        toAddress: requestedAddress.address,
+        toAssetId,
+        userId: state.userId,
+      };
+      let bridgeQuote: CreateBridgeQuoteMutation['prepareBridgeQuote'];
+      const {
+        data: preQuoteData,
+        errors: preQuoteErrors,
+      } = await createBridgeQuote({
         variables: {
           amount: ethers.utils
             .parseUnits(amount, state.asset?.decimals!)
             .toString(),
-          fromAddress: state.account.data,
-          fromAssetId,
-          toAddress: requestedAddress.address,
-          toAssetId,
-          userId: state.userId,
+          ...quoteParams,
         },
       });
-      if (errors?.[0]) {
+      bridgeQuote = preQuoteData?.prepareBridgeQuote;
+      if (preQuoteErrors?.[0]) {
+        throw new Error('Error creating bridge quote.');
+      }
+      if (state.requiredAmount) {
+        const paddedAmountMajor =
+          Number(amount) +
+          Number(amount) -
+          Number(preQuoteData?.prepareBridgeQuote?.estimate?.amountToReceive);
+        const paddedAmountMinor = ethers.utils.parseUnits(
+          paddedAmountMajor.toString(),
+          state.asset?.decimals!
+        );
+        if (paddedAmountMinor.gt(state.prebuiltTx.data?.maxLimitRaw!)) {
+          throw new Error('Amount exceeds max limit.');
+        }
+        const { data, errors } = await createBridgeQuote({
+          variables: {
+            amount: paddedAmountMinor.toString(),
+            ...quoteParams,
+          },
+        });
+        if (errors?.[0]) {
+          throw new Error('Error creating final bridge quote.');
+        }
+        bridgeQuote = data?.prepareBridgeQuote;
+      }
+      if (!bridgeQuote) {
         throw new Error('Error creating bridge quote.');
       }
       dispatch({
-        payload: data?.prepareBridgeQuote!,
+        payload: bridgeQuote,
         type: 'SET_BRIDGE_QUOTE',
       });
       setIsConfirming(true);

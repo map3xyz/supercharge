@@ -1,8 +1,11 @@
 import { Button } from '@map3xyz/components';
+import { ethers } from 'ethers';
+import { AnimatePresence } from 'framer-motion';
 import React, { useContext, useEffect, useRef } from 'react';
 
 import useOnClickOutside from '../../../hooks/useOnClickOutside';
 import { Context } from '../../../providers/Store';
+import { DECIMAL_FALLBACK } from '../../../steps/EnterAmount';
 import BridgeQuoteConfirmation from '../../confirmations/BridgeQuoteConfirmation';
 import MethodIcon from '../../MethodIcon';
 import { EvmMethodProviderProps } from '../types';
@@ -28,12 +31,19 @@ const WalletConnect: React.FC<Props> = ({
 
   return (
     <div className="relative z-40 w-full" ref={ref}>
-      {isConfirming && state.bridgeQuote && (
-        <BridgeQuoteConfirmation
-          amount={amount}
-          setIsConfirming={setIsConfirming}
-        />
-      )}
+      <AnimatePresence>
+        {isConfirming && state.bridgeQuote && (
+          <BridgeQuoteConfirmation
+            amount={ethers.utils
+              .formatUnits(
+                state.bridgeQuote.approval?.amount || 0,
+                state.asset?.decimals || DECIMAL_FALLBACK
+              )
+              .toString()}
+            setIsConfirming={setIsConfirming}
+          />
+        )}
+      </AnimatePresence>
       <Button
         block
         disabled={
