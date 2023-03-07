@@ -14,10 +14,6 @@ describe('BinancePay > Desktop', () => {
           ...mockConfig,
           options: {
             callbacks: {
-              handleOrderFeeCalculation: async () => ({
-                fixedFee: 0.1,
-                variableFee: 0.01,
-              }),
               onAddressRequested: async (_asset, _network) => {
                 return {
                   address: '0x0000000000000000000000000000000000000000',
@@ -43,11 +39,6 @@ describe('BinancePay > Desktop', () => {
     const button = await screen.findByTestId('binance-pay-button');
     await act(async () => {
       fireEvent.click(button);
-    });
-    await screen.findByLabelText('(1% + 0.1 ELON)');
-    const button2 = await screen.findByTestId('binance-pay-button');
-    await act(() => {
-      fireEvent.click(button2);
     });
     const payViaBinance = await screen.findByText('Pay via Binance');
     expect(payViaBinance).toBeInTheDocument();
@@ -102,7 +93,7 @@ describe('Binance Pay > Mobile', () => {
   });
 });
 
-describe('ConfirmRequireAmount Error', () => {
+describe('BinancePay Error', () => {
   render(<BinancePay />);
   expect(true).toBe(true);
 });
