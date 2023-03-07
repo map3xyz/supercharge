@@ -372,7 +372,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
           Number(amount) -
           Number(preQuoteData?.prepareBridgeQuote?.estimate?.amountToReceive);
         const paddedAmountMinor = ethers.utils.parseUnits(
-          paddedAmountMajor.toString(),
+          paddedAmountMajor.toFixed(state.asset?.decimals!),
           state.asset?.decimals!
         );
         if (paddedAmountMinor.gt(state.prebuiltTx.data?.maxLimitRaw!)) {

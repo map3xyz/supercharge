@@ -41,6 +41,8 @@ const Result: React.FC<Props> = () => {
     return null;
   }
 
+  let interval: NodeJS.Timer;
+
   const startCountdown = () => {
     if (
       state.bridgeQuote?.estimate?.executionDurationSeconds &&
@@ -48,7 +50,7 @@ const Result: React.FC<Props> = () => {
       state.tx.progress.DestinationNetwork.status !== 'error'
     ) {
       const originalTime = new Date().getTime();
-      setInterval(() => {
+      interval = setInterval(() => {
         if (state.bridgeQuote?.estimate?.executionDurationSeconds) {
           const time = new Date().getTime();
           const executionDurationMilliseconds =
@@ -398,6 +400,9 @@ const Result: React.FC<Props> = () => {
       dispatch({
         type: 'RESET_TX',
       });
+      if (interval) {
+        clearInterval(interval);
+      }
     };
   }, []);
 
