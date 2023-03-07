@@ -478,11 +478,11 @@ const Result: React.FC<Props> = () => {
         })}
       </InnerWrapper>
       <div
-        className={`layout-scrollbar relative w-full border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 ${
+        className={`relative w-full border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 ${
           toggleDetails && state.tx.hash
-            ? 'h-full'
+            ? 'layout-scrollbar h-full'
             : state.tx.hash
-            ? 'h-[64px]'
+            ? 'h-[45px]'
             : 'hidden'
         }`}
         data-testid="transaction-details"

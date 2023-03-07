@@ -120,7 +120,7 @@ describe('Result', () => {
       });
       const details = await screen.findByTestId('transaction-details');
       expect(details).toHaveClass(
-        'layout-scrollbar relative w-full border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 hidden'
+        'relative w-full border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 hidden'
       );
     });
   });
