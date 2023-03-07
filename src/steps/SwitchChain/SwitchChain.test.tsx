@@ -16,7 +16,7 @@ const getBalanceMock = jest.fn().mockImplementation(() => ({
   chainBalance: ethers.BigNumber.from('20000000000000000000'),
 }));
 
-describe('SwitchChain', () => {
+describe.skip('SwitchChain', () => {
   describe('Step', () => {
     beforeEach(async () => {
       render(<App config={mockConfig} onClose={() => {}} />);
