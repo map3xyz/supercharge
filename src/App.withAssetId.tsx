@@ -19,6 +19,7 @@ const AppWithAssetId: React.FC<AppProps & { plan: Organization['plan'] }> = ({
   const { selection } = config.options || {};
   const { assetId } = selection || {};
   const { data, error, loading, refetch } = useGetAssetsForOrgQuery({
+    fetchPolicy: 'no-cache',
     variables: { assetId: assetId },
   });
 
