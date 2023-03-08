@@ -43,7 +43,7 @@ const BridgeQuoteTransactionDetails: React.FC<Props> = () => {
             <ReadOnlyText
               value={`${Number(state.bridgeQuote.estimate?.gasCosts)?.toFixed(
                 6
-              )} ${state.asset?.symbol} (${
+              )} ${state.network?.symbol} (${
                 ISO_4217_TO_SYMBOL['USD']
               }${state.bridgeQuote.estimate?.gasCostsUsd?.toFixed(2)})`}
             />
