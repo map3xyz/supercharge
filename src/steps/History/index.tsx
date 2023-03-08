@@ -11,6 +11,7 @@ import {
   useGetBridgeTransactionsByUserIdQuery,
 } from '../../generated/apollo-gql';
 import { Context, Steps } from '../../providers/Store';
+import { iso8601ToString } from '../../utils/iso8601';
 import HistoryContactUs from './HistoryContactUs';
 
 const History: React.FC<Props> = () => {
@@ -159,7 +160,7 @@ const History: React.FC<Props> = () => {
                         />
                       </div>
                       <div className="flex flex-col items-end gap-1 text-xs">
-                        <div>{new Date(order.created).toLocaleString()}</div>
+                        <div>{iso8601ToString(order.created)}</div>
                         {order.state === 'quoted' ||
                         order.state === 'subscribed' ? (
                           <Badge color="blue">Pending</Badge>
