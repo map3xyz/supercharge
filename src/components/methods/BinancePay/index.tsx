@@ -101,7 +101,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
           window.location.href = data.createBinanceOrder.universalUrl;
         }
       } else {
-        dispatch({ payload: amount, type: 'SET_TX_AMOUNT' });
+        dispatch({ payload: amount, type: 'SET_TX_DISPLAY_AMOUNT' });
         dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
       }
     };

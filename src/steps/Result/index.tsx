@@ -4,15 +4,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import tadaAnimation from '../../assets/lottie/tada.json';
 import InnerWrapper from '../../components/InnerWrapper';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
+import { useBridgeProgress } from '../../hooks/useBridgeTransactionProgress';
+import { useProviderTransactionProgress } from '../../hooks/useProviderTransactionProgress';
 import { Context, TxSteps } from '../../providers/Store';
 import BridgeQuoteTransactionDetails from './BridgeQuoteTransactionDetails';
-import { useBridgeProgress } from './hooks/useBridgeProgress';
 import TransactionDetails from './TransactionDetails';
 
 const Result: React.FC<Props> = () => {
   const [state, dispatch, { onFailure, onSuccess }] = useContext(Context);
   const [toggleDetails, setToggleDetails] = useState(false);
-  const { run } = useBridgeProgress();
+  const { run: runBridge } = useBridgeProgress();
+  const { run: runProvider } = useProviderTransactionProgress();
 
   if (!state.asset || !state.network) {
     dispatch({ type: 'RESET_STATE' });
@@ -55,7 +57,9 @@ const Result: React.FC<Props> = () => {
 
   useEffect(() => {
     if (state.network?.bridged) {
-      run();
+      runBridge();
+    } else {
+      runProvider();
     }
 
     return () => {

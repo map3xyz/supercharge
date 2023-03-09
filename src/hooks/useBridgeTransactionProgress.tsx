@@ -4,13 +4,13 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import {
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
   useSubscribeToBridgeTransactionMutation,
-} from '../../../generated/apollo-gql';
-import { useWeb3 } from '../../../hooks/useWeb3';
-import { Context, Steps } from '../../../providers/Store';
-import { iso8601ToDate } from '../../../utils/iso8601';
-import { listenToBridgeTransaction } from '../../../utils/supabase';
-import { FinalTx } from '../../../utils/transactions/evm';
-import { timeToExpiration } from '../utils';
+} from '../generated/apollo-gql';
+import { Context, Steps } from '../providers/Store';
+import { timeToExpiration } from '../steps/Result/utils';
+import { iso8601ToDate } from '../utils/iso8601';
+import { listenToBridgeTransaction } from '../utils/supabase';
+import { FinalTx } from '../utils/transactions/evm';
+import { useWeb3 } from './useWeb3';
 
 export const useBridgeProgress = () => {
   const [state, dispatch] = useContext(Context);
