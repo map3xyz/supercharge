@@ -242,10 +242,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       dispatch({
         type: 'SET_PREBUILT_TX_IDLE',
       });
-      dispatch({
-        payload: undefined,
-        type: 'SET_BRIDGE_QUOTE',
-      });
     };
   }, []);
 

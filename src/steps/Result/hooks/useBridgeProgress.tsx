@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import {
   useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery,
@@ -15,6 +15,7 @@ import { timeToExpiration } from '../utils';
 export const useBridgeProgress = () => {
   const [state, dispatch] = useContext(Context);
   const [timer, setTimer] = useState<NodeJS.Timer | undefined>(undefined);
+  const completedRef = useRef<boolean>(false);
 
   const {
     approveTokenAllowance,
@@ -33,22 +34,16 @@ export const useBridgeProgress = () => {
   ] = useSubscribeToBridgeTransactionMutation();
 
   const startCountdown = () => {
-    if (
-      state.bridgeQuote?.estimate?.executionDurationSeconds &&
-      state.tx.progress.DestinationNetwork.status !== 'success' &&
-      state.tx.progress.DestinationNetwork.status !== 'error'
-    ) {
+    if (state.bridgeQuote?.estimate?.executionDurationSeconds) {
       const created = state.bridgeTransaction?.created
         ? iso8601ToDate(state.bridgeTransaction?.created)
         : new Date();
       const originalTime = created.getTime();
       setTimer(
         setInterval(() => {
-          if (
-            state.tx.progress.DestinationNetwork.status === 'success' ||
-            state.tx.progress.DestinationNetwork.status === 'error'
-          )
+          if (completedRef.current) {
             return;
+          }
 
           if (state.bridgeQuote?.estimate?.executionDurationSeconds) {
             const timeString = timeToExpiration(
@@ -305,7 +300,6 @@ export const useBridgeProgress = () => {
         bridgeOrderId,
         (payload: WatchBridgeTransactionPayload) => {
           switch (payload.new.state) {
-            // initial
             case 'completed':
               dispatch({
                 payload: {
@@ -327,6 +321,7 @@ export const useBridgeProgress = () => {
                 },
                 type: 'SET_TX',
               });
+              break;
           }
         }
       );
@@ -334,6 +329,14 @@ export const useBridgeProgress = () => {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    switch (state.tx.progress.DestinationNetwork.status) {
+      case 'success':
+      case 'error':
+        completedRef.current = true;
+    }
+  }, [state.tx.progress.DestinationNetwork.status]);
 
   useEffect(() => {
     return () => {
