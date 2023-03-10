@@ -1,4 +1,6 @@
 import { Pill, ReadOnlyText } from '@map3xyz/components';
+import { build } from 'eth-url-parser';
+import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -10,6 +12,7 @@ import StepTitle from '../../components/StepTitle';
 import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   useAddWatchedAddressMutation,
+  useGetAssetByMappedAssetIdAndNetworkCodeQuery,
   useRemoveWatchedAddressMutation,
 } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
@@ -18,7 +21,7 @@ import { useWatchedAddressProgress } from '../../hooks/useWatchedAddressProgress
 import { Context, Steps } from '../../providers/Store';
 import { listenToWatchedAddress } from '../../utils/supabase';
 
-const bip21 = require('bip21');
+const { encode } = require('bip21');
 
 const ShowAddress: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
@@ -33,10 +36,18 @@ const ShowAddress: React.FC<Props> = () => {
   const [addWatchedAddress] = useAddWatchedAddressMutation();
   const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
 
-  if (!state.asset || !state.network || !state.method) {
-    dispatch({ type: 'RESET_STATE' });
-    return null;
-  }
+  const {
+    data,
+    error,
+    loading,
+    refetch,
+  } = useGetAssetByMappedAssetIdAndNetworkCodeQuery({
+    skip: state.asset?.type !== 'asset',
+    variables: {
+      mappedAssetId: state.asset?.config?.mappedAssetId,
+      networkCode: state.network?.networkCode,
+    },
+  });
 
   useEffect(() => {
     const run = async () => {
@@ -95,35 +106,76 @@ const ShowAddress: React.FC<Props> = () => {
     if (!state.depositAddress.data?.address) {
       return;
     }
-    switch (state.asset?.networkCode) {
+
+    switch (state.network?.networkCode) {
       case 'bitcoin':
       case 'litecoin':
       case 'bitcoincash':
       case 'doge':
-        return setQrValue(
-          bip21.encode(
-            state.depositAddress.data?.address,
-            {
-              amount: state.requiredAmount,
-            },
-            state.asset.networkCode
-          )
+        const bip21 = encode(
+          state.depositAddress.data?.address,
+          {
+            amount: state.requiredAmount,
+          },
+          state.asset?.networkCode
         );
+
+        return setQrValue(bip21);
+      case 'ethereum':
+      case 'goerli':
+      case 'polygon':
+      case 'optimism':
+      case 'arbitrum':
+      case 'smartchain':
+      case 'avalanchec':
+      case 'fantom':
+      case 'cronos':
+      case 'palm':
+      case 'ronin':
+        // TODO - support ERC20
+        if (state.asset?.type === 'asset') {
+          return setQrValue(state.depositAddress.data?.address);
+        } else {
+          const eip681 = build({
+            // @ts-ignore
+            chain_id: state.network?.identifiers?.chainId,
+            parameters: state.requiredAmount
+              ? {
+                  value: ethers.utils
+                    .parseEther(state.requiredAmount)
+                    .toString(),
+                }
+              : {},
+            target_address: state.depositAddress.data?.address,
+          });
+          return setQrValue(eip681);
+        }
+      default:
+        setQrValue(state.depositAddress.data?.address);
     }
-  }, [state.depositAddress.data?.address]);
+  }, [
+    state.depositAddress.data?.address,
+    data?.assetByMappedAssetIdAndNetworkCode?.address,
+  ]);
+
+  if (!state.asset || !state.network || !state.method) {
+    dispatch({ type: 'RESET_STATE' });
+    return null;
+  }
 
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
       <InnerWrapper>
         <StepTitle testId="show-address-method" value="Pay to Address" />
       </InnerWrapper>
-      {state.depositAddress.status === 'error' && (
+      {(state.depositAddress.status === 'error' || error) && (
         <ErrorWrapper
           description={state.depositAddress.error || ''}
           header="Error Generating Address"
           retry={async () => {
             try {
               await getDepositAddress();
+              await refetch();
             } catch (e) {
               console.error(e);
             }
@@ -131,7 +183,7 @@ const ShowAddress: React.FC<Props> = () => {
         />
       )}
       <InnerWrapper className="h-full">
-        {state.depositAddress.status === 'loading' && (
+        {(state.depositAddress.status === 'loading' || loading) && (
           <LoadingWrapper message="Generating Address..." />
         )}
         {state.depositAddress.status === 'success' &&
