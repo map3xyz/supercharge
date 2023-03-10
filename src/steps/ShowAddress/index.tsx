@@ -1,7 +1,7 @@
 import { Pill, ReadOnlyText } from '@map3xyz/components';
 import { motion } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import ErrorWrapper from '../../components/ErrorWrapper';
 import InnerWrapper from '../../components/InnerWrapper';
@@ -18,13 +18,16 @@ import { useWatchedAddressProgress } from '../../hooks/useWatchedAddressProgress
 import { Context, Steps } from '../../providers/Store';
 import { listenToWatchedAddress } from '../../utils/supabase';
 
+const bip21 = require('bip21');
+
 const ShowAddress: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
-  const { getDepositAddress } = useDepositAddress();
+  const [qrValue, setQrValue] = useState<string | null>(null);
   const watchedAddressRef = useRef<string | null>();
   const ref = useRef<HTMLDivElement | null>(null);
 
   const { width } = useModalSize(ref);
+  const { getDepositAddress } = useDepositAddress();
   const { run: runWatched } = useWatchedAddressProgress();
 
   const [addWatchedAddress] = useAddWatchedAddressMutation();
@@ -88,6 +91,27 @@ const ShowAddress: React.FC<Props> = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!state.depositAddress.data?.address) {
+      return;
+    }
+    switch (state.asset?.networkCode) {
+      case 'bitcoin':
+      case 'litecoin':
+      case 'bitcoincash':
+      case 'doge':
+        return setQrValue(
+          bip21.encode(
+            state.depositAddress.data?.address,
+            {
+              amount: state.requiredAmount,
+            },
+            state.asset.networkCode
+          )
+        );
+    }
+  }, [state.depositAddress.data?.address]);
+
   return (
     <div className="flex h-full flex-col items-center" ref={ref}>
       <InnerWrapper>
@@ -111,7 +135,8 @@ const ShowAddress: React.FC<Props> = () => {
           <LoadingWrapper message="Generating Address..." />
         )}
         {state.depositAddress.status === 'success' &&
-          state.depositAddress.data && (
+          state.depositAddress.data &&
+          qrValue && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
               <div className="px-4 text-center text-xs font-bold text-primary-400">
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
@@ -131,6 +156,9 @@ const ShowAddress: React.FC<Props> = () => {
                   </Pill>
                 </motion.div>
               )}
+              <span className="hidden" data-testid="qr-value">
+                {qrValue}
+              </span>
               <div className="flex w-full justify-center">
                 <QRCodeSVG
                   bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
@@ -150,7 +178,7 @@ const ShowAddress: React.FC<Props> = () => {
                         ? '1px solid #404040'
                         : '1px solid #e5e5e5',
                   }}
-                  value={state.depositAddress.data.address}
+                  value={qrValue}
                 />
               </div>
               <div className="w-full">

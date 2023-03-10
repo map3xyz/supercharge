@@ -27,6 +27,45 @@ describe('Show Address', () => {
   });
 });
 
+describe('Show Address > bip21', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: async () => {
+                return {
+                  address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+                };
+              },
+            },
+            selection: {
+              amount: '100000',
+              assetId: 'satoshi123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+  it('generates a bip21 url scheme', async () => {
+    const ackCheckbox = await screen.findByTestId('acknowledge-checkbox');
+    fireEvent.click(ackCheckbox);
+    const ackButton = await screen.findByText('Acknowledge Amount');
+    fireEvent.click(ackButton);
+    const qrValue = await screen.findByTestId('qr-value');
+    expect(qrValue.textContent).toBe(
+      'bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.001'
+    );
+    expect(qrValue).toHaveClass('hidden');
+  });
+});
+
 describe('Show Address Errors', () => {
   it('renders', async () => {
     render(<ShowAddress />);
