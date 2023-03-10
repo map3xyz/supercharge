@@ -16,7 +16,8 @@ root.render(
             callbacks: {
               onAddressRequested: async () => {
                 return {
-                  address: '0xf32aab5cE63eF6ABC39f2F6A0586999716d889Dc',
+                  address: 'q3cde4tvozni',
+                  memo: '22749',
                 };
               },
             },

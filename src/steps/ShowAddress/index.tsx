@@ -1,4 +1,4 @@
-import { Pill, ReadOnlyText } from '@map3xyz/components';
+import { Badge, Pill, ReadOnlyText } from '@map3xyz/components';
 import { build } from 'eth-url-parser';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
@@ -234,6 +234,24 @@ const ShowAddress: React.FC<Props> = () => {
                 />
               </div>
               <div className="w-full">
+                {state.depositAddress.data.memo &&
+                !state.network.identifiers?.chainId ? (
+                  <div className="mb-1">
+                    <label className="text-xs text-primary-500 dark:text-white">
+                      Memo:{' '}
+                    </label>
+                    <ReadOnlyText
+                      copyButton
+                      value={`${state.depositAddress.data.memo}`}
+                    />
+                    <div className="mt-1 w-full">
+                      <Badge color="red" dot>
+                        WARNING! To avoid the loss of funds, you must include
+                        the memo in your transaction.
+                      </Badge>
+                    </div>
+                  </div>
+                ) : null}
                 {state.requiredAmount ? (
                   <div className="mb-1">
                     <label className="text-xs text-primary-500 dark:text-white">
