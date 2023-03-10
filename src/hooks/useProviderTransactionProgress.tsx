@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { MIN_CONFIRMATIONS } from '../constants';
-import { useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery } from '../generated/apollo-gql';
+import { useGetAssetByMappedAssetIdAndNetworkCodeQuery } from '../generated/apollo-gql';
 import { Context } from '../providers/Store';
 import { useWeb3 } from './useWeb3';
 
@@ -15,9 +15,8 @@ export const useProviderTransactionProgress = () => {
     waitForTransaction,
   } = useWeb3();
 
-  const [
-    getAssetByMappedAssetIdAndNetworkCode,
-  ] = useGetAssetByMappedAssetIdAndNetworkCodeLazyQuery({
+  const { data } = useGetAssetByMappedAssetIdAndNetworkCodeQuery({
+    skip: state.asset?.type !== 'asset',
     variables: {
       mappedAssetId: state.asset?.config?.mappedAssetId,
       networkCode: state.network?.networkCode,
@@ -25,34 +24,6 @@ export const useProviderTransactionProgress = () => {
   });
 
   const run = async () => {
-    dispatch({
-      payload: {
-        data: `Please confirm the transaction on ${state.method?.name}.`,
-        status: 'loading',
-        step: 'Submitted',
-        title: 'Awaiting Submission',
-      },
-      type: 'SET_TX',
-    });
-
-    let address: string | undefined | null;
-    if (state.asset?.type !== 'network') {
-      const { data } = await getAssetByMappedAssetIdAndNetworkCode();
-      address = data?.assetByMappedAssetIdAndNetworkCode?.address;
-      if (!address) {
-        dispatch({
-          payload: {
-            data: `Unable to prepare final transaction.`,
-            status: 'error',
-            step: 'Submitted',
-            title: 'Awaiting Submission',
-          },
-          type: 'SET_TX',
-        });
-        return;
-      }
-    }
-
     if (!state.tx.amount) {
       dispatch({
         payload: {
@@ -66,8 +37,35 @@ export const useProviderTransactionProgress = () => {
       return;
     }
 
-    const finalTx = await prepareFinalTransaction(state.tx.amount, address);
-    const hash = await sendFinalTransaction(finalTx);
+    dispatch({
+      payload: {
+        data: `Please confirm the transaction on ${state.method?.name}.`,
+        status: 'loading',
+        step: 'Submitted',
+        title: 'Awaiting Submission',
+      },
+      type: 'SET_TX',
+    });
+
+    const finalTx = await prepareFinalTransaction(
+      state.tx.amount,
+      data?.assetByMappedAssetIdAndNetworkCode?.address
+    );
+    let hash;
+    try {
+      hash = await sendFinalTransaction(finalTx);
+    } catch (e: any) {
+      dispatch({
+        payload: {
+          data: e?.message ? e.message : `Unable to submit transaction.`,
+          status: 'error',
+          step: 'Submitted',
+          title: 'Awaiting Submission',
+        },
+        type: 'SET_TX',
+      });
+      return;
+    }
     dispatch({ payload: hash, type: 'SET_TX_HASH' });
     dispatch({
       payload: {

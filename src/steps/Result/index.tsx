@@ -70,7 +70,10 @@ const Result: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col items-center pt-3">
+    <div
+      className="flex h-full flex-col items-center pt-3"
+      data-testid="result"
+    >
       <StateDescriptionHeader />
       <InnerWrapper
         className={`relative h-full transition-all ${

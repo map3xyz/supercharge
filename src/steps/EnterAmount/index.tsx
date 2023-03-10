@@ -427,6 +427,8 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             throw new Error('Asset contract not found.');
           }
 
+          console.log('HERE');
+
           await handleAuthorizeTransactionProxy(
             state.account.data,
             state.network?.networkCode,
