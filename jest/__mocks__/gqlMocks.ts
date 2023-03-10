@@ -23,6 +23,7 @@ export const mocks: MockedResponse[] = [
   getAssetsForOrgMock({ currency: 'USD', limit: 10, offset: 0 }),
   getAssetsForOrgMock({ assetId: 'satoshi123' }),
   getAssetsForOrgMock({ assetId: 'elon123' }),
+  getAssetsForOrgMock({ assetId: 'ethereum123' }),
   getAssetsForOrgMock({
     address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
   }),
@@ -48,6 +49,11 @@ export const mocks: MockedResponse[] = [
   addWatchedAddressMock({
     address: '0x0000000000000000000000000000000000000000',
     assetId: 'satoshi123',
+    confirmationsToWatch: 3,
+  }),
+  addWatchedAddressMock({
+    address: '0x0000000000000000000000000000000000000000',
+    assetId: 'ethereum123',
     confirmationsToWatch: 3,
   }),
   getAssetPrice({ assetId: 'satoshi123', currency: 'USD' }),

@@ -8,14 +8,20 @@ describe('Show Address', () => {
   beforeEach(async () => {
     render(<App config={mockConfig} onClose={() => {}} />);
     await screen.findByText('Loading...');
-    const bitcoin = await screen.findByText('Bitcoin');
-    fireEvent.click(bitcoin);
+    const elonCoin = await screen.findByText('ElonCoin');
+    fireEvent.click(elonCoin);
+    const eth = await screen.findByText('Ethereum');
+    fireEvent.click(eth);
     const showAddress = await screen.findByText('Show Address');
     fireEvent.click(showAddress);
   });
   it('renders', async () => {
     const showAddressMethod = await screen.findByTestId('show-address-method');
     expect(showAddressMethod).toBeInTheDocument();
+    const qrValue = await screen.findByTestId('qr-value');
+    expect(qrValue.textContent).toBe(
+      '0x0000000000000000000000000000000000000000'
+    );
   });
   it('goes back to the correct step', async () => {
     const back = await screen.findByLabelText('Back');
@@ -24,6 +30,86 @@ describe('Show Address', () => {
     });
     const paymentSelection = await screen.findByTestId('payment-method');
     expect(paymentSelection).toBeInTheDocument();
+  });
+});
+
+describe('Show Address > bip21', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: async () => {
+                return {
+                  address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+                };
+              },
+            },
+            selection: {
+              amount: '100000',
+              assetId: 'satoshi123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+  it('generates a bip21 url scheme', async () => {
+    const ackCheckbox = await screen.findByTestId('acknowledge-checkbox');
+    fireEvent.click(ackCheckbox);
+    const ackButton = await screen.findByText('Acknowledge Amount');
+    fireEvent.click(ackButton);
+    const qrValue = await screen.findByTestId('qr-value');
+    expect(qrValue.textContent).toBe(
+      'bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa?amount=0.001'
+    );
+    expect(qrValue).toHaveClass('hidden');
+  });
+});
+
+describe('Show Address > eip681', () => {
+  beforeEach(async () => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            ...mockConfig.options,
+            callbacks: {
+              ...mockConfig.options?.callbacks,
+              onAddressRequested: async () => {
+                return {
+                  address: '0x0000000000000000000000000000000000000000',
+                };
+              },
+            },
+            selection: {
+              amount: '100000000',
+              assetId: 'ethereum123',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+  it('generates a eip681 url scheme', async () => {
+    const showAddress = await screen.findByText('Show Address');
+    fireEvent.click(showAddress);
+    const ackCheckbox = await screen.findByTestId('acknowledge-checkbox');
+    fireEvent.click(ackCheckbox);
+    const ackButton = await screen.findByText('Acknowledge Amount');
+    fireEvent.click(ackButton);
+    const qrValue = await screen.findByTestId('qr-value');
+    expect(qrValue.textContent).toBe(
+      'ethereum:0x0000000000000000000000000000000000000000@1?value=1e8'
+    );
+    expect(qrValue).toHaveClass('hidden');
   });
 });
 
