@@ -12,8 +12,8 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   const { stepInView: step, steps } = state;
 
   let amount;
-  if (!amount && state.tx.amount) {
-    amount = state.tx.amount.split(' ')[0];
+  if (!amount && state.tx.displayAmount) {
+    amount = state.tx.displayAmount.split(' ')[0];
   }
   if (!amount && state.requiredAmount) {
     amount = state.requiredAmount;

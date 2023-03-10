@@ -56,7 +56,10 @@ const BridgeQuoteConfirmation: React.FC<Props> = ({
             </div>
           </div>
         )}
-      {bridgeQuote.estimate?.amountToReceive ? (
+      {bridgeQuote.estimate?.amountToReceive &&
+      Number(bridgeQuote.estimate.fromAmountUsd) -
+        Number(bridgeQuote.estimate.toAmountUsd) >
+        0 ? (
         <div className="flex w-full items-center justify-between">
           <div>Bridge Fee:</div>
           <div>

@@ -373,6 +373,8 @@ describe('window.ethereum > ERC20', () => {
         const form = await screen.findByTestId('enter-amount-form');
         fireEvent.submit(form);
       });
+      await screen.findByTestId('result');
+      await screen.findByText('Transaction included in block 1.');
       expect(prepareFinalTransactionMock).toHaveBeenCalledWith(
         '1.0',
         '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
@@ -561,6 +563,7 @@ describe('txAuth - Success', () => {
         'ethereum',
         '1.0'
       );
+      await screen.findByText('Transaction included in block 1.');
       expect(prepareFinalTransactionMock).toHaveBeenCalled();
     });
   });

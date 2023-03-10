@@ -13,7 +13,6 @@ import WalletConnect from '../../components/methods/WalletConnect';
 import WindowEthereum from '../../components/methods/WindowEthereum';
 import StateDescriptionHeader from '../../components/StateDescriptionHeader';
 import StepTitle from '../../components/StepTitle';
-import { MIN_CONFIRMATIONS } from '../../constants';
 import {
   CreateBridgeQuoteMutation,
   useCreateBridgeQuoteMutation,
@@ -102,13 +101,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     { loading: bridgeQuoteLoading },
   ] = useCreateBridgeQuoteMutation();
 
-  const {
-    getTransaction,
-    handleAuthorizeTransactionProxy,
-    prepareFinalTransaction,
-    sendFinalTransaction,
-    waitForTransaction,
-  } = useWeb3();
+  const { handleAuthorizeTransactionProxy } = useWeb3();
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
@@ -242,10 +235,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       dispatch({
         type: 'SET_PREBUILT_TX_IDLE',
       });
-      dispatch({
-        payload: undefined,
-        type: 'SET_BRIDGE_QUOTE',
-      });
     };
   }, []);
 
@@ -288,7 +277,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     }, 100);
   };
 
-  const handleBinancePay = () => {
+  const handleBinancePayTransaction = () => {
     submitRef.current?.submit();
   };
 
@@ -402,69 +391,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
 
   const handleProviderTransaction = async () => {
     dispatch({ payload: Steps.Result, type: 'SET_STEP' });
-    dispatch({
-      payload: {
-        data: `Please confirm the transaction on ${state.method?.name}.`,
-        status: 'loading',
-        step: 'Submitted',
-        title: 'Awaiting Submission',
-      },
-      type: 'SET_TX',
-    });
-    const finalTx = await prepareFinalTransaction(
-      amount,
-      data?.assetByMappedAssetIdAndNetworkCode?.address as string
-    );
-    const hash = await sendFinalTransaction(finalTx);
-    dispatch({ payload: hash, type: 'SET_TX_HASH' });
-    dispatch({
-      payload: {
-        data: `Transaction submitted at ${new Date().toLocaleString()}.`,
-        status: 'success',
-        step: 'Submitted',
-        title: 'Submitted',
-      },
-      type: 'SET_TX',
-    });
-    dispatch({
-      payload: {
-        data: 'Waiting for transaction to be included in a block.',
-        status: 'loading',
-        step: 'Confirming',
-      },
-      type: 'SET_TX',
-    });
-    let response;
-    while (!response) {
-      response = await getTransaction(hash);
-    }
-    dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
-    const receipt = await waitForTransaction(hash, 1);
-    dispatch({
-      payload: {
-        data: 'Transaction included in block ' + receipt.blockNumber + '.',
-        status: 'success',
-        step: 'Confirming',
-      },
-      type: 'SET_TX',
-    });
-    dispatch({
-      payload: {
-        data: `Waiting for ${MIN_CONFIRMATIONS} confirmations.`,
-        status: 'loading',
-        step: 'Confirmed',
-      },
-      type: 'SET_TX',
-    });
-    await waitForTransaction(hash, MIN_CONFIRMATIONS);
-    dispatch({
-      payload: {
-        data: '🚀 Transaction confirmed!',
-        status: 'success',
-        step: 'Confirmed',
-      },
-      type: 'SET_TX',
-    });
   };
 
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
@@ -474,7 +400,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
 
       switch (state.method?.value) {
         case 'binance-pay':
-          return handleBinancePay();
+          return handleBinancePayTransaction();
         case 'isCoinbaseWallet':
         case 'isWalletConnect':
         case 'isMetaMask':
@@ -509,6 +435,10 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
 
           dispatch({
             payload: amount + ' ' + state.asset?.symbol,
+            type: 'SET_TX_DISPLAY_AMOUNT',
+          });
+          dispatch({
+            payload: amount,
             type: 'SET_TX_AMOUNT',
           });
 

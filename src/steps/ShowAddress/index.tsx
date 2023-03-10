@@ -14,6 +14,7 @@ import {
 } from '../../generated/apollo-gql';
 import { useDepositAddress } from '../../hooks/useDepositAddress';
 import { useModalSize } from '../../hooks/useModalSize';
+import { useWatchedAddressProgress } from '../../hooks/useWatchedAddressProgress';
 import { Context, Steps } from '../../providers/Store';
 import { listenToWatchedAddress } from '../../utils/supabase';
 
@@ -24,6 +25,7 @@ const ShowAddress: React.FC<Props> = () => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const { width } = useModalSize(ref);
+  const { run: runWatched } = useWatchedAddressProgress();
 
   const [addWatchedAddress] = useAddWatchedAddressMutation();
   const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
@@ -52,7 +54,7 @@ const ShowAddress: React.FC<Props> = () => {
           watchedAddressRef.current = data.addWatchedAddress;
         }
 
-        let submmitedDate: string | undefined;
+        const submittedDate = new Date().toLocaleString();
         listenToWatchedAddress(
           data.addWatchedAddress,
           (payload: WatchAddressPayload) => {
@@ -64,76 +66,8 @@ const ShowAddress: React.FC<Props> = () => {
                   dispatch({ payload: Steps.Result, type: 'SET_STEP' });
                 }
             }
-            switch (payload.new.state) {
-              case 'pending':
-              case 'confirming':
-                dispatch({
-                  payload: payload.new.tx_id,
-                  type: 'SET_TX_HASH',
-                });
-                dispatch({
-                  payload: payload.new.tx_formatted_amount,
-                  type: 'SET_TX_AMOUNT',
-                });
-                dispatch({
-                  // @ts-expect-error
-                  payload: {
-                    to: payload.new.address,
-                  },
-                  type: 'SET_TX_RESPONSE',
-                });
-                submmitedDate = submmitedDate || new Date().toLocaleString();
-                dispatch({
-                  payload: {
-                    data: submmitedDate,
-                    status: 'success',
-                    step: 'Submitted',
-                  },
-                  type: 'SET_TX',
-                });
-                dispatch({
-                  payload: {
-                    data:
-                      state.tx.progress.Confirming.data ||
-                      `Transaction included in block ${payload.new.tx_block_height}.`,
-                    status: 'success',
-                    step: 'Confirming',
-                  },
-                  type: 'SET_TX',
-                });
-                const currentBlock =
-                  payload.new.tx_block_height + payload.new.tx_confirmations;
-                const requiredBlock =
-                  payload.new.tx_block_height + MIN_CONFIRMATIONS;
-                const remainingBlocks = Math.max(
-                  0,
-                  requiredBlock - currentBlock
-                );
-                const remainingBlocksText =
-                  remainingBlocks === 1 ? 'block' : 'blocks';
-                dispatch({
-                  payload: {
-                    data: `Current block height: ${currentBlock}. ${remainingBlocks} more ${remainingBlocksText} required for confirmation.`,
-                    status: 'loading',
-                    step: 'Confirmed',
-                  },
-                  type: 'SET_TX',
-                });
-                break;
-              case 'confirmed':
-                dispatch({
-                  payload: {
-                    data: '🚀 Transaction confirmed!',
-                    status: 'success',
-                    step: 'Confirmed',
-                  },
-                  type: 'SET_TX',
-                });
-                removeWatchedAddress({
-                  variables: { watchedAddressId: data.addWatchedAddress! },
-                });
-                break;
-            }
+
+            runWatched(payload, data.addWatchedAddress!, submittedDate);
           }
         );
       } catch (e) {

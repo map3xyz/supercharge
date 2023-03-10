@@ -76,6 +76,19 @@ const BridgeQuoteTransactionDetails: React.FC<Props> = () => {
           </div>
         </div>
       ) : null}
+      {state.bridgeTransaction?.destinationChainTxId ? (
+        <div>
+          <div className="mt-3 mb-0.5 text-xs font-semibold dark:text-white">
+            Destination Chain Tx ID
+          </div>
+          <div className="text-xs font-medium dark:text-white">
+            <ReadOnlyText
+              copyButton
+              value={state.bridgeTransaction.destinationChainTxId}
+            />
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };

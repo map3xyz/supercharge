@@ -103,7 +103,7 @@ const History: React.FC<Props> = () => {
                         payload: `${
                           order.quote.estimate?.amountToReceive as string
                         } ${order.toAsset.symbol}`,
-                        type: 'SET_TX_AMOUNT',
+                        type: 'SET_TX_DISPLAY_AMOUNT',
                       });
                       dispatch({
                         payload: [

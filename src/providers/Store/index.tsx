@@ -105,6 +105,7 @@ type State = {
   theme?: 'dark' | 'light';
   tx: {
     amount?: string;
+    displayAmount?: string;
     hash?: string;
     progress: {
       [key in keyof typeof TxSteps]: {
@@ -200,6 +201,7 @@ type Action =
     }
   | { payload: string; type: 'SET_TX_HASH' }
   | { payload: string; type: 'SET_TX_AMOUNT' }
+  | { payload: string; type: 'SET_TX_DISPLAY_AMOUNT' }
   | {
       payload: ethers.providers.TransactionResponse;
       type: 'SET_TX_RESPONSE';
@@ -560,6 +562,14 @@ export const Store: React.FC<
             tx: {
               ...state.tx,
               amount: action.payload,
+            },
+          };
+        case 'SET_TX_DISPLAY_AMOUNT':
+          return {
+            ...state,
+            tx: {
+              ...state.tx,
+              displayAmount: action.payload,
             },
           };
         case 'SET_TX_RESPONSE':

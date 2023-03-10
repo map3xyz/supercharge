@@ -1,13 +1,14 @@
+import { Button } from '@map3xyz/components';
 import { createRoot } from 'react-dom/client';
 
 import { initMap3Supercharge } from '.';
 
 const container = document.getElementById('app');
-
 const root = createRoot(container!);
 root.render(
-  <div className="p-2">
-    <button
+  <div className="map3 p-2">
+    <Button
+      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       onClick={() => {
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
@@ -15,14 +16,9 @@ root.render(
             callbacks: {
               onAddressRequested: async () => {
                 return {
-                  address: '0x2639DCc4368c16f75a2af0BCaf26991027667fBE',
+                  address: '0xf32aab5cE63eF6ABC39f2F6A0586999716d889Dc',
                 };
               },
-            },
-            selection: {
-              amount: '20000000',
-              assetId: '53adbb94-6a68-4eeb-af49-6b6d9e84a1f4',
-              canBridge: true,
             },
             style: {
               theme: 'dark',
@@ -32,9 +28,10 @@ root.render(
         });
         supercharge.open();
       }}
+      size="xlarge"
     >
       Open SDK
-    </button>
+    </Button>
     <div
       id="supercharge"
       style={{ left: '50%', position: 'absolute', top: '50%' }}

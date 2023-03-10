@@ -180,7 +180,7 @@ export const useWeb3 = () => {
 
   const prepareFinalTransaction = async (
     amount: string,
-    assetContract?: string
+    assetContract?: string | null
   ): Promise<FinalTx> => {
     if (!state.account.data) {
       throw new Error('No account');
