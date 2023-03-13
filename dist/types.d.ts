@@ -16,6 +16,7 @@ export interface Map3InitConfig {
                 memo?: string;
             };
             onClose?: () => void;
+            onExpire?: () => void;
             onFailure?: (error: string, networkCode: string, address?: string) => void;
             onOrderCreated?: (orderId: string, type: string) => void;
             onSuccess?: (txHash: string, networkCode: string, address?: string) => void;
