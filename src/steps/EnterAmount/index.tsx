@@ -631,7 +631,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                 {state.prebuiltTx.error ||
                   'Unknown error building transaction.'}
                 <span
-                  className="ml-1 text-xxs"
+                  className="ml-1 cursor-pointer text-xxs"
                   onClick={(e) => {
                     e.stopPropagation();
                     prebuildTx(
