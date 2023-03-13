@@ -14,19 +14,18 @@ root.render(
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
             callbacks: {
-              onAddressRequested: async () => {
-                return {
-                  address: '2Muv9Zzxd9M51mte3JGKk6EJFVTs74HCi15',
-                };
+              onAddressRequested: async (asset) => {
+                if (asset === 'TBTC') {
+                  return {
+                    address:
+                      'tb1q0dcxd8487kw3z3r5a0s6p5dyd9365s4dx3mu6wcyzgtdsje3a2cq6mcvve',
+                  };
+                } else {
+                  return {
+                    address: '0xf32aab5cE63eF6ABC39f2F6A0586999716d889Dc',
+                  };
+                }
               },
-              onExpire: () => {
-                console.error('Expired');
-              },
-            },
-            selection: {
-              // expiration is now plus 30 seconds
-              expiration: new Date(Date.now() + 30 * 1000).getTime(),
-              rate: 12000,
             },
             style: {
               theme: 'dark',
