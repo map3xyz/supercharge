@@ -34,6 +34,7 @@ export interface Map3InitConfig {
         | Promise<{ address: string; memo?: string }>
         | { address: string; memo?: string };
       onClose?: () => void;
+      onExpire?: () => void;
       onFailure?: (
         error: string,
         networkCode: string,
