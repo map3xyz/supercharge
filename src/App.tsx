@@ -56,7 +56,7 @@ const Layout = ({
   return (
     <motion.div
       animate={{ opacity: 1, scale: 1 }}
-      className={`map3 absolute overflow-hidden rounded-md border bg-white dark:border-primary-700 dark:bg-primary-900`}
+      className={`map3 absolute overflow-hidden rounded-md border dark:border-primary-700 dark:bg-primary-900`}
       exit={{ opacity: 0 }}
       initial={{ opacity: 0, scale: 0.5 }}
       style={{
