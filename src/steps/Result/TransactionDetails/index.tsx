@@ -14,12 +14,16 @@ const TransactionDetails: React.FC<Props> = () => {
       <div className="text-xs font-medium dark:text-white">
         <ReadOnlyText value={state.tx.displayAmount} />
       </div>
-      {state.tx.response ? (
+      {state.tx.response?.from ? (
         <>
           <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
             From
           </div>
           <ReadOnlyText copyButton value={state.tx.response?.from} />
+        </>
+      ) : null}
+      {state.tx.response?.to ? (
+        <>
           <div className="mt-2 mb-0.5 text-xs font-semibold dark:text-white">
             To
           </div>
