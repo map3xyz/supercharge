@@ -626,7 +626,23 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             </Badge>
           ) : state.prebuiltTx.status === 'error' ? (
             <Badge color="red">
-              {state.prebuiltTx.error || 'Unknown error building transaction.'}
+              {/* @ts-ignore */}
+              <span className="flex items-center whitespace-nowrap">
+                {state.prebuiltTx.error ||
+                  'Unknown error building transaction.'}
+                <span
+                  className="ml-1 cursor-pointer text-xxs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prebuildTx(
+                      '0',
+                      data?.assetByMappedAssetIdAndNetworkCode?.address
+                    );
+                  }}
+                >
+                  <i className="fa fa-refresh" />
+                </span>
+              </span>
             </Badge>
           ) : state.prebuiltTx.status === 'success' ? (
             <motion.span
@@ -638,9 +654,21 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             >
               <Badge color="blue" size="large">
                 {/* @ts-ignore */}
-                <span className="whitespace-nowrap">
+                <span className="flex items-center whitespace-nowrap">
                   Max: {state.prebuiltTx.data?.maxLimitFormatted}{' '}
                   {state.asset.symbol}
+                  <span
+                    className="ml-1 text-xxs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      prebuildTx(
+                        '0',
+                        data?.assetByMappedAssetIdAndNetworkCode?.address
+                      );
+                    }}
+                  >
+                    <i className="fa fa-refresh" />
+                  </span>
                 </span>
               </Badge>
             </motion.span>

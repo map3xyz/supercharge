@@ -58,7 +58,7 @@ const Result: React.FC<Props> = () => {
   useEffect(() => {
     if (state.network?.bridged) {
       runBridge();
-    } else {
+    } else if (state.provider?.status === 'success' && state.account.data) {
       runProvider();
     }
 
