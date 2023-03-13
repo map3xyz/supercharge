@@ -9,6 +9,20 @@ export const useWatchedAddressProgress = () => {
 
   const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
 
+  const handleConfirmed = (address: string) => {
+    dispatch({
+      payload: {
+        data: '🚀 Transaction confirmed!',
+        status: 'success',
+        step: 'Confirmed',
+      },
+      type: 'SET_TX',
+    });
+    removeWatchedAddress({
+      variables: { watchedAddressId: address },
+    });
+  };
+
   const run = async (
     payload: WatchAddressPayload,
     address: string,
@@ -55,6 +69,10 @@ export const useWatchedAddressProgress = () => {
         const requiredBlock = payload.new.tx_block_height + MIN_CONFIRMATIONS;
         const remainingBlocks = Math.max(0, requiredBlock - currentBlock);
         const remainingBlocksText = remainingBlocks === 1 ? 'block' : 'blocks';
+        if (remainingBlocks === 0) {
+          handleConfirmed(address);
+          return;
+        }
         dispatch({
           payload: {
             data: `Current block height: ${currentBlock}. ${remainingBlocks} more ${remainingBlocksText} required for confirmation.`,
@@ -65,17 +83,7 @@ export const useWatchedAddressProgress = () => {
         });
         break;
       case 'confirmed':
-        dispatch({
-          payload: {
-            data: '🚀 Transaction confirmed!',
-            status: 'success',
-            step: 'Confirmed',
-          },
-          type: 'SET_TX',
-        });
-        removeWatchedAddress({
-          variables: { watchedAddressId: address },
-        });
+        handleConfirmed(address);
         break;
     }
   };

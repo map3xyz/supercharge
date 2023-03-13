@@ -28,7 +28,9 @@ root.render(
               },
             },
             style: {
-              theme: 'dark',
+              embed: {
+                id: 'supercharge',
+              },
             },
           },
           userId: 'preview-user-id',
