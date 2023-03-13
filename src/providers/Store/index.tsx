@@ -297,6 +297,7 @@ export const Store: React.FC<
     handleAuthorizeTransaction,
     handleOrderFeeCalculation,
     onAddressRequested,
+    onExpire,
     onFailure,
     onOrderCreated,
     onSuccess,
@@ -615,6 +616,7 @@ export const Store: React.FC<
           handleAuthorizeTransaction,
           handleOrderFeeCalculation,
           onAddressRequested,
+          onExpire,
           onFailure,
           onOrderCreated,
           onSuccess,
@@ -652,6 +654,7 @@ export const Context = createContext<
       ) =>
         | Promise<{ address: string; memo?: string }>
         | { address: string; memo?: string };
+      onExpire?: () => void;
       onFailure?: (
         error: string,
         networkCode: string,
@@ -675,6 +678,7 @@ export const Context = createContext<
       new Promise((resolve) => resolve({})),
     onAddressRequested: /* istanbul ignore next */ () =>
       new Promise((resolve) => resolve({ address: '' })),
+    onExpire: /* istanbul ignore next */ () => {},
     onFailure: /* istanbul ignore next */ () => {},
     onOrderCreated: /* istanbul ignore next */ () => {},
     onSuccess: /* istanbul ignore next */ () => {},

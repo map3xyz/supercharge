@@ -5,7 +5,7 @@ import { Context } from '../../providers/Store';
 const circumference = Math.PI * 20;
 
 const CountdownTimer: React.FC<Props> = () => {
-  const [state] = useContext(Context);
+  const [state, _dispatch, { onExpire }] = useContext(Context);
 
   if (!state.expiration) {
     return null;
@@ -19,6 +19,7 @@ const CountdownTimer: React.FC<Props> = () => {
   const completedPercentage = progressedTime / totalTime;
   const [seconds, setSeconds] = useState(remainingTimeSeconds);
   const [position, setPosition] = useState(0);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   const countdown = () => {
     if (seconds <= 0) {
@@ -29,14 +30,23 @@ const CountdownTimer: React.FC<Props> = () => {
 
   useEffect(() => {
     countdown();
-    const interval = setInterval(countdown, 1000);
+    setTimer(setInterval(countdown, 1000));
 
-    return () => clearInterval(interval);
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
   }, []);
 
   useEffect(() => {
     const position = circumference - circumference * completedPercentage;
     setPosition(position);
+
+    if (seconds <= 0) {
+      onExpire?.();
+      clearInterval(timer!);
+    }
   }, [seconds]);
 
   const hours = Math.floor(seconds / 3600)

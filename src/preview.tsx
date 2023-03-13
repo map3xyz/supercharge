@@ -16,10 +16,17 @@ root.render(
             callbacks: {
               onAddressRequested: async () => {
                 return {
-                  address: 'q3cde4tvozni',
-                  memo: '22749',
+                  address: '2Muv9Zzxd9M51mte3JGKk6EJFVTs74HCi15',
                 };
               },
+              onExpire: () => {
+                console.error('Expired');
+              },
+            },
+            selection: {
+              // expiration is now plus 30 seconds
+              expiration: new Date(Date.now() + 30 * 1000).getTime(),
+              rate: 12000,
             },
             style: {
               theme: 'dark',
