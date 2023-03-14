@@ -134,13 +134,13 @@ const Result: React.FC<Props> = () => {
                   ) : null}
                 </div>
               </div>
-              <div
-                className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2"
-                id="tada"
-              />
             </div>
           );
         })}
+        <div
+          className="absolute top-1/2 left-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2"
+          id="tada"
+        />
       </InnerWrapper>
       <div
         className={`relative w-full border-t border-primary-200 bg-primary-100 transition-all dark:border-primary-700 dark:bg-primary-800 ${

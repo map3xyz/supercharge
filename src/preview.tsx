@@ -32,9 +32,6 @@ root.render(
               canBridge: true,
             },
             style: {
-              embed: {
-                id: 'supercharge',
-              },
               theme: 'dark',
             },
           },
