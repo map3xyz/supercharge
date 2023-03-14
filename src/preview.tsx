@@ -27,10 +27,12 @@ root.render(
                 }
               },
             },
+            selection: {
+              amount: '1000000',
+              canBridge: true,
+            },
             style: {
-              embed: {
-                id: 'supercharge',
-              },
+              theme: 'dark',
             },
           },
           userId: 'preview-user-id',

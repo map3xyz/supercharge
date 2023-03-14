@@ -22,16 +22,10 @@ const Result: React.FC<Props> = () => {
   }
 
   useEffect(() => {
-    const success = Object.keys(state.tx.progress).every(
-      (key) =>
-        state.tx.progress[(key as unknown) as TxSteps]?.status === 'success'
-    );
-    const error = Object.keys(state.tx.progress).find(
-      (key) =>
-        state.tx.progress[(key as unknown) as TxSteps]?.status === 'error'
-    );
-
-    if (success) {
+    if (
+      state.tx.progress.DestinationNetwork.status === 'success' ||
+      state.tx.progress.Confirmed.status === 'success'
+    ) {
       onSuccess?.(
         state.tx.hash || '',
         state.network?.networkCode || '',
@@ -46,14 +40,19 @@ const Result: React.FC<Props> = () => {
         renderer: 'svg',
       });
       animation?.play();
-    } else if (error) {
+    } else if (
+      state.tx.progress.DestinationNetwork.status === 'error' ||
+      state.tx.progress.Confirmed.status === 'error'
+    ) {
       onFailure?.(
-        state.tx.progress[(error as unknown) as TxSteps].data || '',
+        state.tx.progress.DestinationNetwork.data ||
+          state.tx.progress.Confirmed.data ||
+          '',
         state.network?.networkCode || '',
         state.asset?.address || undefined
       );
     }
-  }, [state.tx.progress]);
+  }, [state.tx.progress.DestinationNetwork, state.tx.progress.Confirmed]);
 
   useEffect(() => {
     if (state.network?.bridged) {
