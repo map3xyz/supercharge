@@ -1,3 +1,5 @@
+![Supercharge Header Image](https://user-images.githubusercontent.com/5640772/226018165-954caf3e-bf91-4ac4-a3eb-462a011d0a61.png)
+
 <h1 align='center'>💸 Supercharge</h1>
 
 <div align='center'>The Map3 Supercharge SDK connects<br/>crypto apps to Wallets, Exchanges & Bridges,
