@@ -63,7 +63,7 @@ const CountdownTimer: React.FC<Props> = () => {
       className="hint--left relative h-[22px] w-[22px] rounded-full border-[2px] border-accent-light"
     >
       <svg
-        className="absolute left-[-5px] top-[-5px] h-7 w-7 scale-75 stroke-accent "
+        className="absolute left-[-5px] top-[-5px] h-[28px] w-[28px] scale-75 stroke-accent "
         style={{ transform: 'rotateZ(-90deg)' }}
       >
         <circle
