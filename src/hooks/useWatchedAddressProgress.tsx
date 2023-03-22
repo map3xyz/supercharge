@@ -59,8 +59,6 @@ export const useWatchedAddressProgress = () => {
         const requiredBlock = payload.new.tx_block_height + MIN_CONFIRMATIONS;
         const remainingBlocks = Math.max(0, requiredBlock - currentBlock);
         const remainingBlocksText = remainingBlocks === 1 ? 'block' : 'blocks';
-        console.log(requiredBlock, currentBlock, remainingBlocks);
-        console.log(MIN_CONFIRMATIONS);
         if (remainingBlocks === 0) {
           handleConfirmed();
           return;
