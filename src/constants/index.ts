@@ -1,1 +1,1 @@
-export const MIN_CONFIRMATIONS = 6;
+export const MIN_CONFIRMATIONS = 3;
