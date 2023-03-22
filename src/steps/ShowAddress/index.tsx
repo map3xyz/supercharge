@@ -27,6 +27,7 @@ const ShowAddress: React.FC<Props> = () => {
   const [state, dispatch] = useContext(Context);
   const [qrValue, setQrValue] = useState<string | null>(null);
   const watchedAddressRef = useRef<string | null>();
+  const isWatchingRef = useRef(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
   const { width } = useModalSize(ref);
@@ -69,7 +70,7 @@ const ShowAddress: React.FC<Props> = () => {
         }
 
         const submittedDate = new Date().toLocaleString();
-        listenToWatchedAddress(
+        const listener = listenToWatchedAddress(
           data.addWatchedAddress,
           (payload: WatchAddressPayload) => {
             switch (payload.new.state) {
@@ -77,11 +78,18 @@ const ShowAddress: React.FC<Props> = () => {
               case 'confirmed':
               case 'pending':
                 if (payload.new.subscribed) {
+                  isWatchingRef.current = true;
                   dispatch({ payload: Steps.Result, type: 'SET_STEP' });
+                  runWatched(payload, submittedDate);
                 }
             }
 
-            runWatched(payload, data.addWatchedAddress!, submittedDate);
+            if (payload.new.state === 'confirmed') {
+              listener.unsubscribe();
+              removeWatchedAddress({
+                variables: { watchedAddressId: data.addWatchedAddress! },
+              });
+            }
           }
         );
       } catch (e) {
@@ -93,7 +101,7 @@ const ShowAddress: React.FC<Props> = () => {
 
   useEffect(() => {
     return () => {
-      if (watchedAddressRef.current) {
+      if (watchedAddressRef.current && !isWatchingRef.current) {
         removeWatchedAddress({
           variables: { watchedAddressId: watchedAddressRef.current },
         });

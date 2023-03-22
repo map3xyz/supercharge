@@ -1,15 +1,12 @@
 import { useContext } from 'react';
 
 import { MIN_CONFIRMATIONS } from '../constants';
-import { useRemoveWatchedAddressMutation } from '../generated/apollo-gql';
 import { Context } from '../providers/Store';
 
 export const useWatchedAddressProgress = () => {
   const [state, dispatch] = useContext(Context);
 
-  const [removeWatchedAddress] = useRemoveWatchedAddressMutation();
-
-  const handleConfirmed = (address: string) => {
+  const handleConfirmed = () => {
     dispatch({
       payload: {
         data: '🚀 Transaction confirmed!',
@@ -18,16 +15,9 @@ export const useWatchedAddressProgress = () => {
       },
       type: 'SET_TX',
     });
-    removeWatchedAddress({
-      variables: { watchedAddressId: address },
-    });
   };
 
-  const run = async (
-    payload: WatchAddressPayload,
-    address: string,
-    submmitedDate: string
-  ) => {
+  const run = async (payload: WatchAddressPayload, submmitedDate: string) => {
     switch (payload.new.state) {
       case 'pending':
       case 'confirming':
@@ -69,8 +59,10 @@ export const useWatchedAddressProgress = () => {
         const requiredBlock = payload.new.tx_block_height + MIN_CONFIRMATIONS;
         const remainingBlocks = Math.max(0, requiredBlock - currentBlock);
         const remainingBlocksText = remainingBlocks === 1 ? 'block' : 'blocks';
+        console.log(requiredBlock, currentBlock, remainingBlocks);
+        console.log(MIN_CONFIRMATIONS);
         if (remainingBlocks === 0) {
-          handleConfirmed(address);
+          handleConfirmed();
           return;
         }
         dispatch({
@@ -83,7 +75,7 @@ export const useWatchedAddressProgress = () => {
         });
         break;
       case 'confirmed':
-        handleConfirmed(address);
+        handleConfirmed();
         break;
     }
   };
