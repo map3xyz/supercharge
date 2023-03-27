@@ -24,7 +24,8 @@ import { usePrebuildTx } from '../../hooks/usePrebuildTx';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { Context, Steps } from '../../providers/Store';
 
-const BASE_FONT_SIZE = 48;
+const BASE_FONT_SIZE = 16;
+const BASE_FONT_MULTIPLIER = 3;
 const INSUFFICIENT_FUNDS = 'This amount exceeds your ';
 export const DECIMAL_FALLBACK = 8;
 export const DOWNLOAD_EXTENSION = 'Download Extension';
@@ -45,7 +46,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   }>({ base: '0', inputSelected: price ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<string>('0');
   const dummyInputRef = useRef<HTMLSpanElement>(null);
-  const dummySymbolRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
@@ -105,19 +105,26 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
-    if (!dummyInputRef.current || !dummySymbolRef.current) return;
+    if (!dummyInputRef.current) return;
 
-    dummyInputRef.current.innerText = formValue.base;
+    dummyInputRef.current.innerText =
+      formValue.inputSelected === 'crypto'
+        ? formValue.base + ' ' + state.asset?.symbol || 'BTC'
+        : state.fiatDisplaySymbol + ' ' + formValue.base;
     let nextInputWidth = dummyInputRef.current!.getBoundingClientRect().width;
-    const symbolWidth = dummySymbolRef.current!.getBoundingClientRect().width;
     const formWidth = formRef.current!.getBoundingClientRect().width;
+    const htmlFontSize =
+      parseFloat(window.getComputedStyle(document.documentElement).fontSize) ||
+      BASE_FONT_SIZE;
 
     if (inputRef.current && formRef.current) {
-      if (nextInputWidth + symbolWidth > formWidth) {
+      if (nextInputWidth > formWidth) {
         /* istanbul ignore next */
-        const percentFontChange = formWidth / (nextInputWidth + symbolWidth);
+        const percentFontChange = formWidth / nextInputWidth;
         /* istanbul ignore next */
-        const fontSize = Math.floor(BASE_FONT_SIZE * percentFontChange) - 0.5;
+        const fontSize =
+          Math.floor(htmlFontSize * BASE_FONT_MULTIPLIER * percentFontChange) -
+          0.5;
 
         /* istanbul ignore next */
         nextInputWidth = formWidth;
@@ -498,7 +505,7 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     >
       <div />
       <div className={`w-full ${isConfirming ? 'blur-[2px]' : ''}`}>
-        <div className="relative box-border flex max-w-full items-center justify-center">
+        <div className="relative box-border flex max-w-full items-center justify-center px-3">
           {formValue.inputSelected === 'fiat' ? (
             <span className="text-inherit">{state.fiatDisplaySymbol}</span>
           ) : null}
@@ -521,17 +528,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             type="number"
           />
           <span
-            className="invisible absolute -left-96 -top-96 pr-3 !text-5xl"
+            className="invisible absolute -left-96 -top-96 px-3 text-5xl"
             ref={dummyInputRef}
-          />
-          <span
-            className="invisible absolute -left-96 -top-96 !text-5xl"
-            ref={dummySymbolRef}
-          >
-            {formValue.inputSelected === 'crypto'
-              ? state.asset.symbol
-              : state.fiatDisplaySymbol}
-          </span>
+          ></span>
           {formValue.inputSelected === 'crypto' ? (
             <span className="text-inherit">{state.asset.symbol}</span>
           ) : null}
