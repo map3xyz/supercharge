@@ -29,7 +29,7 @@ root.render(
             },
             selection: {
               amount: '1000000',
-              canBridge: true,
+              assetId: '55b0c6c4-b817-4eeb-a2d2-da713d5a9674',
             },
             style: {
               theme: 'dark',
