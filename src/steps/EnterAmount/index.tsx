@@ -45,7 +45,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     quote: string;
   }>({ base: '0', inputSelected: price ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<string>('0');
+  const dummyFormRef = useRef<HTMLSpanElement>(null);
   const dummyInputRef = useRef<HTMLSpanElement>(null);
+  const dummySymbolRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const quoteRef = useRef<HTMLSpanElement>(null);
@@ -105,22 +107,24 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
   const { prebuildTx } = usePrebuildTx();
 
   useEffect(() => {
-    if (!dummyInputRef.current) return;
+    if (!dummyInputRef.current || !dummySymbolRef.current) return;
 
-    dummyInputRef.current.innerText =
+    dummyInputRef.current.innerText = formValue.base;
+    dummySymbolRef.current.innerText =
       formValue.inputSelected === 'crypto'
-        ? formValue.base + ' ' + state.asset?.symbol || 'BTC'
-        : state.fiatDisplaySymbol + ' ' + formValue.base;
+        ? state.asset?.symbol || 'BTC'
+        : state.fiatDisplaySymbol || '$';
     let nextInputWidth = dummyInputRef.current!.getBoundingClientRect().width;
+    const dummyFormWidth = dummyFormRef.current!.getBoundingClientRect().width;
     const formWidth = formRef.current!.getBoundingClientRect().width;
     const htmlFontSize =
       parseFloat(window.getComputedStyle(document.documentElement).fontSize) ||
       BASE_FONT_SIZE;
 
     if (inputRef.current && formRef.current) {
-      if (nextInputWidth > formWidth) {
+      if (dummyFormWidth > formWidth) {
         /* istanbul ignore next */
-        const percentFontChange = formWidth / nextInputWidth;
+        const percentFontChange = formWidth / dummyFormWidth;
         /* istanbul ignore next */
         const fontSize =
           Math.floor(htmlFontSize * BASE_FONT_MULTIPLIER * percentFontChange) -
@@ -135,7 +139,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
         inputRef.current.style.maxWidth = `${nextInputWidth}px`;
       } else {
         inputRef.current.style.maxWidth = `${nextInputWidth}px`;
-        formRef.current.style.fontSize = `${BASE_FONT_SIZE}px`;
+        formRef.current.style.fontSize = `${
+          BASE_FONT_SIZE * BASE_FONT_MULTIPLIER
+        }px`;
       }
     }
   }, [
@@ -507,7 +513,9 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
       <div className={`w-full ${isConfirming ? 'blur-[2px]' : ''}`}>
         <div className="relative box-border flex max-w-full items-center justify-center px-3">
           {formValue.inputSelected === 'fiat' ? (
-            <span className="text-inherit">{state.fiatDisplaySymbol}</span>
+            <span className="text-inherit">
+              {state.fiatDisplaySymbol}&nbsp;
+            </span>
           ) : null}
           <input
             autoFocus
@@ -524,17 +532,20 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
                   '0'.repeat((state.asset.decimals || DECIMAL_FALLBACK) - 1) +
                   '1'
             }
-            style={{ minWidth: `${BASE_FONT_SIZE}px` }}
+            style={{ minWidth: `${BASE_FONT_SIZE * BASE_FONT_MULTIPLIER}px` }}
             type="number"
           />
-          <span
-            className="invisible absolute -left-96 -top-96 px-3 text-5xl"
-            ref={dummyInputRef}
-          ></span>
           {formValue.inputSelected === 'crypto' ? (
-            <span className="text-inherit">{state.asset.symbol}</span>
+            <span className="text-inherit">&nbsp;{state.asset.symbol}</span>
           ) : null}
         </div>
+        <span
+          className="invisible absolute top-96 left-96 box-border block whitespace-nowrap px-3"
+          ref={dummyFormRef}
+          style={{ fontSize: `${BASE_FONT_SIZE * BASE_FONT_MULTIPLIER}px` }}
+        >
+          <span ref={dummyInputRef} /> <span ref={dummySymbolRef} />
+        </span>
         <div className="mt-4 flex items-center justify-center text-primary-400">
           {price ? (
             <>
