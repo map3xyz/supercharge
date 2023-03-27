@@ -142,8 +142,12 @@ const PaymentMethod: React.FC<Props> = () => {
 
   useEffect(() => {
     if (data?.methodsForNetwork?.[0] && data?.methodsForNetwork?.length === 1) {
-      // @ts-ignore
-      if (state.prevStep >= state.steps.indexOf(Steps[Steps.PaymentMethod])) {
+      if (
+        // @ts-ignore
+        state.prevStep >= state.steps.indexOf(Steps[Steps.PaymentMethod]) &&
+        // @ts-ignore
+        state.minStep < state.steps.indexOf(Steps[Steps.PaymentMethod])
+      ) {
         dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
       } else {
         selectMethod(data.methodsForNetwork[0]);
