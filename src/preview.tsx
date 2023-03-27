@@ -28,8 +28,8 @@ root.render(
               },
             },
             selection: {
-              amount: '1000000',
-              assetId: '55b0c6c4-b817-4eeb-a2d2-da713d5a9674',
+              amount: '1223230023498234230000',
+              assetId: '38975bff-987f-4a06-b488-c75177e06914',
             },
             style: {
               theme: 'dark',
