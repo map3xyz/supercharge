@@ -2,6 +2,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { offsetLimitPagination } from '@apollo/client/utilities';
 import { colord, extend } from 'colord';
 import mixPlugin from 'colord/plugins/mix';
+import { PostHogProvider } from 'posthog-js/react';
 import { createRoot, Root } from 'react-dom/client';
 
 import App from './App';
@@ -9,6 +10,9 @@ import { ISO_4217_TO_SYMBOL } from './constants/iso4217';
 
 extend([mixPlugin]);
 
+const postHogOptions = {
+  api_host: process.env.REACT_APP_PUBLIC_POSTHOG_HOST,
+};
 export interface Map3InitConfig {
   anonKey: string;
   options?: {
@@ -331,7 +335,12 @@ export class Map3 {
     });
     this.root.render(
       <ApolloProvider client={client}>
-        <App config={this.config} onClose={this.onClose} />
+        <PostHogProvider
+          apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY}
+          options={postHogOptions}
+        >
+          <App config={this.config} onClose={this.onClose} />
+        </PostHogProvider>
       </ApolloProvider>
     );
   }
