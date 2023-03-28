@@ -1,4 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
+import posthog from 'posthog-js';
 import React, { createContext, PropsWithChildren, useReducer } from 'react';
 
 import { Map3InitConfig } from '../..';
@@ -347,6 +348,7 @@ export const Store: React.FC<
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
+      posthog.capture(action.type, { property: action });
       switch (action.type) {
         case 'SET_ASSET':
           return { ...state, asset: action.payload };
