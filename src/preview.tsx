@@ -22,7 +22,7 @@ root.render(
                   };
                 } else {
                   return {
-                    address: '0x431fD7654B12955a25C3e0d7c37Ae13cF58D6F0C',
+                    address: '0x131a4dBF327BB44Ce423ad7A8bd0D8434e391016',
                   };
                 }
               },
@@ -32,7 +32,7 @@ root.render(
               // assetId: '38975bff-987f-4a06-b488-c75177e06914',
             },
             style: {
-              theme: 'dark',
+              theme: 'light',
             },
           },
           userId: 'preview-user-id',
