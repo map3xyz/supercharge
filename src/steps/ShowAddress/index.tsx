@@ -224,12 +224,6 @@ const ShowAddress: React.FC<Props> = () => {
                   bgColor={state.theme === 'dark' ? '#262626' : '#FFFFFF'}
                   className="rounded-lg"
                   fgColor={state.theme === 'dark' ? '#FFFFFF' : '#000000'}
-                  imageSettings={{
-                    excavate: false,
-                    height: 32,
-                    src: state.asset.logo?.png || state.asset.logo?.svg || '',
-                    width: 32,
-                  }}
                   includeMargin={true}
                   size={width ? width - 160 : 0}
                   style={{
