@@ -262,8 +262,7 @@ const ShowAddress: React.FC<Props> = () => {
                     </label>
                     <ReadOnlyText
                       copyButton
-                      // @ts-ignore
-                      onClick={() => {
+                      onCopyButtonClicked={() => {
                         posthog.capture('clicked copy required amount', {
                           property: `${state.requiredAmount} ${state.asset?.symbol}`,
                         });
@@ -277,8 +276,7 @@ const ShowAddress: React.FC<Props> = () => {
                 </label>
                 <ReadOnlyText
                   copyButton
-                  // @ts-ignore
-                  onClick={() => {
+                  onCopyButtonClicked={() => {
                     posthog.capture('clicked copy address', {
                       property: `${state.depositAddress.data?.address}`,
                     });
