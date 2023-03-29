@@ -2,6 +2,7 @@ import { Badge, Pill, ReadOnlyText } from '@map3xyz/components';
 import { build } from 'eth-url-parser';
 import { ethers } from 'ethers';
 import { motion } from 'framer-motion';
+import { posthog } from 'posthog-js';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
@@ -261,6 +262,12 @@ const ShowAddress: React.FC<Props> = () => {
                     </label>
                     <ReadOnlyText
                       copyButton
+                      // @ts-ignore
+                      onClick={() => {
+                        posthog.capture('clicked copy required amount', {
+                          property: `${state.requiredAmount} ${state.asset?.symbol}`,
+                        });
+                      }}
                       value={`${state.requiredAmount} ${state.asset.symbol}`}
                     />
                   </div>
@@ -270,6 +277,12 @@ const ShowAddress: React.FC<Props> = () => {
                 </label>
                 <ReadOnlyText
                   copyButton
+                  // @ts-ignore
+                  onClick={() => {
+                    posthog.capture('clicked copy address', {
+                      property: `${state.depositAddress.data?.address}`,
+                    });
+                  }}
                   value={state.depositAddress.data.address}
                 />
               </div>

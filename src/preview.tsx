@@ -32,7 +32,7 @@ root.render(
               // assetId: '38975bff-987f-4a06-b488-c75177e06914',
             },
             style: {
-              theme: 'light',
+              theme: 'dark',
             },
           },
           userId: 'preview-user-id',
