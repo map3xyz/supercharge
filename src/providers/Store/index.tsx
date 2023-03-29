@@ -290,6 +290,7 @@ const initialState: State = {
 export const Store: React.FC<
   PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
 > = ({ anonKey, asset, children, network, options, userId }) => {
+  posthog.identify(userId);
   const { callbacks, selection, style } = options || {};
   const { amount, canBridge, fiat, paymentMethod, rate, shortcutAmounts } =
     selection || {};
@@ -348,7 +349,7 @@ export const Store: React.FC<
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
-      posthog.capture(action.type, { property: action });
+      posthog.capture(action.type, { property: action }, {});
       switch (action.type) {
         case 'SET_ASSET':
           return { ...state, asset: action.payload };

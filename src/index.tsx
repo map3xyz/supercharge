@@ -337,7 +337,8 @@ export class Map3 {
       <ApolloProvider client={client}>
         <PostHogProvider
           apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY}
-          options={postHogOptions}
+          identify={this.config.userId}
+          options={{ ...postHogOptions }}
         >
           <App config={this.config} onClose={this.onClose} />
         </PostHogProvider>
