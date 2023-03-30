@@ -13,26 +13,17 @@ root.render(
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
-            callbacks: {
-              onAddressRequested: async (asset) => {
-                if (asset === 'TBTC') {
-                  return {
-                    address:
-                      'tb1q0dcxd8487kw3z3r5a0s6p5dyd9365s4dx3mu6wcyzgtdsje3a2cq6mcvve',
-                  };
-                } else {
-                  return {
-                    address: '0x131a4dBF327BB44Ce423ad7A8bd0D8434e391016',
-                  };
-                }
-              },
-            },
             selection: {
-              // amount: '1223230023498234230000',
-              // assetId: '38975bff-987f-4a06-b488-c75177e06914',
+              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821', // BUSD
+              paymentMethod: 'binance-pay',
+              shortcutAmounts: [10, 50, 100],
             },
             style: {
-              theme: 'dark',
+              colors: {
+                accent: '#dfff86',
+                primary: '#0e1523',
+              },
+              locale: 'es',
             },
           },
           userId: 'preview-user-id',
