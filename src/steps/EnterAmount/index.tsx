@@ -34,7 +34,11 @@ export type SubmitHandler = {
   submit: () => void;
 };
 
-const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
+const EnterAmountForm: React.FC<{
+  price: number;
+  usdRate: number;
+  usdtRate: number;
+}> = ({ price, usdRate, usdtRate }) => {
   const { t } = useTranslation();
   const [state, dispatch, { onAddressRequested }] = useContext(Context);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -237,14 +241,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     });
     dispatch({
       type: 'RESET_TX',
-    });
-    dispatch({
-      payload: amount + ' ' + state.asset?.symbol,
-      type: 'SET_TX_DISPLAY_AMOUNT',
-    });
-    dispatch({
-      payload: amount,
-      type: 'SET_TX_AMOUNT',
     });
   }, [amount]);
 
@@ -453,6 +449,15 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             state.network?.networkCode,
             amount
           );
+
+          dispatch({
+            payload: amount + ' ' + state.asset?.symbol,
+            type: 'SET_TX_DISPLAY_AMOUNT',
+          });
+          dispatch({
+            payload: amount,
+            type: 'SET_TX_AMOUNT',
+          });
 
           if (state.network?.bridged) {
             await handleBridgeTransaction();
@@ -728,6 +733,8 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             ref={submitRef}
             setFormError={setFormError}
             setIsConfirming={setIsConfirming}
+            usdRate={usdRate}
+            usdtRate={usdtRate}
           />
         ) : state.method.value === 'isWalletConnect' ? (
           <WalletConnect
@@ -777,6 +784,22 @@ const EnterAmount: React.FC<Props> = () => {
       currency: state.fiat,
     },
   });
+  const { data: usdtData, loading: usdtLoading } = useGetAssetPriceQuery({
+    skip:
+      state.asset?.id === 'e43eff17-0ddf-436d-b80e-403720b3b5dc' ||
+      state.method?.value !== 'binance-pay',
+    variables: {
+      assetId: 'e43eff17-0ddf-436d-b80e-403720b3b5dc',
+      currency: 'USD',
+    },
+  });
+  const { data: usdRateData, loading: usdRateLoading } = useGetAssetPriceQuery({
+    skip: state.fiat === 'USD' || state.method?.value !== 'binance-pay',
+    variables: {
+      assetId: state.asset?.id,
+      currency: 'USD',
+    },
+  });
   const { t } = useTranslation();
 
   if (!state.asset || !state.network || !state.method || !state.asset.config) {
@@ -785,6 +808,9 @@ const EnterAmount: React.FC<Props> = () => {
   }
 
   const price = state.rate || data?.assetPrice?.price || 0;
+  const usdtRate = usdtData?.assetPrice?.price || 0;
+  const usdRate =
+    state.fiat === 'USD' ? price : usdRateData?.assetPrice?.price || 0;
 
   return (
     <div className="flex h-full flex-col">
@@ -792,7 +818,11 @@ const EnterAmount: React.FC<Props> = () => {
         <StepTitle testId="enter-amount" value={t('title.enter_amount')} />
       </InnerWrapper>
       <StateDescriptionHeader />
-      {loading ? <LoadingWrapper /> : <EnterAmountForm price={price} />}
+      {loading || usdRateLoading || usdtLoading ? (
+        <LoadingWrapper />
+      ) : (
+        <EnterAmountForm price={price} usdRate={usdRate} usdtRate={usdtRate} />
+      )}
     </div>
   );
 };
