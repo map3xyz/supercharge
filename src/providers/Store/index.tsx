@@ -11,8 +11,8 @@ import {
   Network,
   PaymentMethod,
 } from '../../generated/apollo-gql';
+import { parseJwt } from '../../utils/parseJwt';
 import { PrebuiltTx } from '../../utils/transactions/evm';
-import { parseJwt } from './utils/parseJwt';
 
 export enum Steps {
   'AssetSelection' = 0,
