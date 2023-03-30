@@ -553,7 +553,7 @@ const EnterAmountForm: React.FC<{
         <div className="mt-4 flex items-center justify-center text-primary-400">
           {price ? (
             <>
-              <div className="text-xs">
+              <div className="text-sm sm:text-xs">
                 {formValue.inputSelected === 'crypto' ? (
                   <span>{state.fiatDisplaySymbol}&nbsp;</span>
                 ) : null}
@@ -628,7 +628,7 @@ const EnterAmountForm: React.FC<{
             )
           ) : state.prebuiltTx.status === 'loading' ? (
             <span className="sbui-badge--blue flex h-5 w-5 animate-spin items-center justify-center rounded-full">
-              {<i className="fa fa-gear text-xs" />}
+              {<i className="fa fa-gear text-sm sm:text-xs" />}
             </span>
           ) : state.prebuiltTx.data?.feeError ? (
             <Badge color="red" dot>

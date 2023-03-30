@@ -99,13 +99,13 @@ const Result: React.FC<Props> = () => {
                     }`}
                   >
                     {state.tx.progress[step].status === 'success' && (
-                      <i className="fas fa-check-circle text-xs" />
+                      <i className="fas fa-check-circle text-sm sm:text-xs" />
                     )}
                     {state.tx.progress[step].status === 'error' && (
-                      <i className="fas fa-times-circle text-xs" />
+                      <i className="fas fa-times-circle text-sm sm:text-xs" />
                     )}
                     {state.tx.progress[step].status === 'loading' && (
-                      <i className="fas fa-spinner animate-spin text-xs" />
+                      <i className="fas fa-spinner animate-spin text-sm sm:text-xs" />
                     )}
                   </div>
                   <div
@@ -119,16 +119,16 @@ const Result: React.FC<Props> = () => {
                   ></div>
                 </div>
                 <div className="ml-2 mb-2 w-full">
-                  <div className="flex items-center gap-1 text-sm font-semibold dark:text-white">
+                  <div className="flex items-center gap-1 font-semibold dark:text-white sm:text-sm">
                     {state.tx.progress[step].title || step}
                   </div>
                   {state.tx.progress[step].status === 'success' ||
                   state.tx.progress[step].status === 'loading' ? (
-                    <div className="whitespace-pre-wrap text-xs text-primary-500">
+                    <div className="whitespace-pre-wrap text-sm text-primary-500 sm:text-xs">
                       {state.tx.progress[step].data}
                     </div>
                   ) : state.tx.progress[step].status === 'error' ? (
-                    <div className="text-xs text-red-500">
+                    <div className="text-sm text-red-500 sm:text-xs">
                       {state.tx.progress[step].data}
                     </div>
                   ) : null}
@@ -155,7 +155,7 @@ const Result: React.FC<Props> = () => {
         <div className="flex h-full flex-col justify-between">
           <InnerWrapper className="sticky top-0 z-20 border-b border-primary-200 bg-primary-100 dark:border-primary-700 dark:bg-primary-800">
             <div
-              className={`flex cursor-pointer items-center justify-between text-sm font-semibold dark:text-white ${
+              className={`flex cursor-pointer items-center justify-between font-semibold dark:text-white sm:text-sm ${
                 state.tx.hash ? 'opacity-100' : 'cursor-not-allowed opacity-20'
               }`}
               onClick={() =>
@@ -183,7 +183,7 @@ const Result: React.FC<Props> = () => {
           <InnerWrapper className="w-full text-center">
             {state.tx.hash ? (
               <a
-                className="text-xs text-blue-600 underline"
+                className="text-sm text-blue-600 underline sm:text-xs"
                 href={`${state.network?.links?.explorer}/tx/${state.tx.hash}`}
                 target="_blank"
               >

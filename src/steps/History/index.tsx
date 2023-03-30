@@ -58,7 +58,7 @@ const History: React.FC<Props> = () => {
               <i
                 className={`fa ${
                   showContactUs ? 'fa-chevron-down' : 'fa-circle-question'
-                } text-xs transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400`}
+                } text-sm transition-colors duration-75 dark:text-primary-700 dark:hover:text-primary-400 sm:text-xs`}
               />
             </button>
           ) : null}
@@ -159,7 +159,7 @@ const History: React.FC<Props> = () => {
                           }}
                         />
                       </div>
-                      <div className="flex flex-col items-end gap-1 text-xs">
+                      <div className="flex flex-col items-end gap-1 text-sm sm:text-xs">
                         <div>{iso8601ToString(order.created)}</div>
                         {order.state === 'quoted' ||
                         order.state === 'subscribed' ? (
@@ -181,10 +181,10 @@ const History: React.FC<Props> = () => {
                 <h3 className="text-xl font-semibold">
                   No Transaction History
                 </h3>
-                <p className="mt-1 text-xs">
+                <p className="mt-1 text-sm sm:text-xs">
                   Find your bridge transaction history here.
                 </p>
-                <p className="mt-0.5 text-xs">
+                <p className="mt-0.5 text-sm sm:text-xs">
                   Click{' '}
                   <span
                     className="text-blue-600"
