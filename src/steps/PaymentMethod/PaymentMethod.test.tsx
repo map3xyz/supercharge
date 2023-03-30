@@ -130,6 +130,15 @@ describe('Payment Selection', () => {
     const payToAddress = await screen.findByText('Pay to Address');
     expect(payToAddress).toBeInTheDocument();
   });
+  it('skips the payment selection step if there is only one payment method due to mobile', async () => {
+    Object.defineProperties(reactDeviceDetect, {
+      isMobile: { get: () => true },
+    });
+    const ethereum = await screen.findByText('Ether');
+    fireEvent.click(ethereum);
+    const paymentSelection = await screen.findByText('Payment Method');
+    expect(paymentSelection).toBeInTheDocument();
+  });
 });
 
 describe('Payment Method Errors', () => {

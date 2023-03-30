@@ -192,10 +192,10 @@ const ShowAddress: React.FC<Props> = () => {
         />
       )}
       <InnerWrapper className="h-full">
-        {(state.depositAddress.status === 'loading' || loading) && (
+        {state.depositAddress.status === 'loading' || loading ? (
           <LoadingWrapper message="Generating Address..." />
-        )}
-        {state.depositAddress.status === 'success' &&
+        ) : (
+          state.depositAddress.status === 'success' &&
           state.depositAddress.data &&
           qrValue && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
@@ -285,7 +285,8 @@ const ShowAddress: React.FC<Props> = () => {
                 />
               </div>
             </div>
-          )}
+          )
+        )}
       </InnerWrapper>
     </div>
   );
