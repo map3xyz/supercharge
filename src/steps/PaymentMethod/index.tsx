@@ -21,12 +21,69 @@ const PaymentMethod: React.FC<Props> = () => {
   const { t } = useTranslation();
   const [state, dispatch, { onAddressRequested }] = useContext(Context);
   const [formValue, setFormValue] = useState<FormData>();
+  const [methodsForNetwork, setMethodsForNetwork] = useState<
+    (PaymentMethod | null)[]
+  >([]);
   const formRef = useRef<HTMLFormElement>(null);
   const chainId = state.network?.identifiers?.chainId;
   const { providers } = useWeb3();
   const { data, error, loading, refetch } = useGetPaymentMethodsQuery({
     variables: { chainId },
   });
+
+  useEffect(() => {
+    const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
+      if (
+        method?.value !== 'binance-pay' &&
+        typeof onAddressRequested !== 'function'
+      ) {
+        return false;
+      }
+
+      const supportsChain =
+        method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
+        method?.walletConnect?.chains?.length === 0;
+
+      if (isMobile) {
+        // if mobile filter out extensions and walletconnect
+        if (
+          method?.value === 'isMetaMask' ||
+          method?.value === 'isCoinbaseWallet' ||
+          method?.value === 'isWalletConnect'
+        )
+          return false;
+
+        // TODO: support walletconnect on mobile
+        // if (method?.walletConnect && !supportsChain) return false;
+
+        // if (method?.walletConnect) {
+        //   let app: string | null | undefined = null;
+        //   if (isIOS) {
+        //     app = method?.walletConnect?.app?.ios;
+        //   }
+        //   if (isAndroid) {
+        //     app = method?.walletConnect?.app?.android;
+        //   }
+        //   const hasAppOrUniversal = !!(
+        //     app || method?.walletConnect?.mobile?.universal
+        //   );
+
+        //   if (!hasAppOrUniversal) return false;
+        // }
+
+        return true;
+      }
+
+      return (
+        !method?.walletConnect ||
+        (method.walletConnect &&
+          supportsChain &&
+          method?.walletConnect?.mobile?.native)
+      );
+    });
+
+    setMethodsForNetwork(methodsForNetwork || []);
+  }, [data?.methodsForNetwork?.length]);
 
   const selectMethod = (method: PaymentMethod) => {
     if (!method.flags?.enabled) {
@@ -127,7 +184,7 @@ const PaymentMethod: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    const method = data?.methodsForNetwork?.find(
+    const method = methodsForNetwork?.find(
       (method) => method?.value === state.requiredPaymentMethod
     );
     if (state.requiredPaymentMethod && method) {
@@ -138,10 +195,10 @@ const PaymentMethod: React.FC<Props> = () => {
         selectMethod(method);
       }
     }
-  }, [data?.methodsForNetwork?.length]);
+  }, [methodsForNetwork.length]);
 
   useEffect(() => {
-    if (data?.methodsForNetwork?.[0] && data?.methodsForNetwork?.length === 1) {
+    if (methodsForNetwork?.[0] && methodsForNetwork?.length === 1) {
       if (
         // @ts-ignore
         state.prevStep >= state.steps.indexOf(Steps[Steps.PaymentMethod]) &&
@@ -150,14 +207,14 @@ const PaymentMethod: React.FC<Props> = () => {
       ) {
         dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
       } else {
-        selectMethod(data.methodsForNetwork[0]);
+        selectMethod(methodsForNetwork[0]);
       }
     }
-  }, [data?.methodsForNetwork?.length]);
+  }, [methodsForNetwork.length]);
 
   if (
     state.requiredPaymentMethod &&
-    data?.methodsForNetwork?.find(
+    methodsForNetwork.find(
       (method) => method?.value === state.requiredPaymentMethod
     )
   )
@@ -184,56 +241,6 @@ const PaymentMethod: React.FC<Props> = () => {
         retry={refetch}
       />
     );
-
-  const methodsForNetwork = data?.methodsForNetwork?.filter((method) => {
-    if (
-      method?.value !== 'binance-pay' &&
-      typeof onAddressRequested !== 'function'
-    ) {
-      return false;
-    }
-
-    const supportsChain =
-      method?.walletConnect?.chains?.includes('eip155:' + chainId) ||
-      method?.walletConnect?.chains?.length === 0;
-
-    if (isMobile) {
-      // if mobile filter out extensions and walletconnect
-      if (
-        method?.value === 'isMetaMask' ||
-        method?.value === 'isCoinbaseWallet' ||
-        method?.value === 'isWalletConnect'
-      )
-        return false;
-
-      // TODO: support walletconnect on mobile
-      // if (method?.walletConnect && !supportsChain) return false;
-
-      // if (method?.walletConnect) {
-      //   let app: string | null | undefined = null;
-      //   if (isIOS) {
-      //     app = method?.walletConnect?.app?.ios;
-      //   }
-      //   if (isAndroid) {
-      //     app = method?.walletConnect?.app?.android;
-      //   }
-      //   const hasAppOrUniversal = !!(
-      //     app || method?.walletConnect?.mobile?.universal
-      //   );
-
-      //   if (!hasAppOrUniversal) return false;
-      // }
-
-      return true;
-    }
-
-    return (
-      !method?.walletConnect ||
-      (method.walletConnect &&
-        supportsChain &&
-        method?.walletConnect?.mobile?.native)
-    );
-  });
 
   const methodsForSearch = methodsForNetwork?.filter((method) => {
     const searchMatch = formValue?.get('method-search')

@@ -13,18 +13,22 @@ root.render(
         const supercharge = initMap3Supercharge({
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
+            callbacks: {
+              onAddressRequested: () => {
+                return {
+                  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+                };
+              },
+            },
             selection: {
               // BUSD
               assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
-              paymentMethod: 'binance-pay',
-              shortcutAmounts: [10, 50, 100],
             },
             style: {
               colors: {
                 accent: '#dfff86',
                 primary: '#0e1523',
               },
-              locale: 'es',
             },
           },
           userId: 'preview-user-id',
