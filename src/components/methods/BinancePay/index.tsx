@@ -145,7 +145,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
           {isConfirming && (
             <motion.div
               animate={{ transform: 'translateY(calc(-100%)' }}
-              className="absolute flex w-full flex-col items-center justify-center gap-1 py-2 text-xs font-normal dark:bg-primary-900"
+              className="absolute flex w-full flex-col items-center justify-center gap-1 py-2 text-sm font-normal dark:bg-primary-900 sm:text-xs"
               exit={{ opacity: 0, transform: 'translateY(100%)' }}
               initial={{ transform: 'translateY(100%)' }}
               transition={{ duration: 0.5, type: 'spring' }}

@@ -30,7 +30,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
         <div className="flex flex-col items-center justify-center dark:text-white">
           <span className="text-lg">🎯</span>
           <h3 className="text-xl font-semibold">{t('title.attention')}</h3>
-          <div className="mt-2 text-center text-sm leading-4">
+          <div className="mt-2 text-center leading-4 sm:text-sm">
             <Trans
               components={{
                 bold: <b />,
@@ -73,7 +73,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               type="checkbox"
             />
             <label
-              className="text-xs leading-3 text-primary-400"
+              className="text-sm leading-3 text-primary-400 sm:text-xs"
               htmlFor="checkbox"
             >
               <Trans

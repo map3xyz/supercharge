@@ -122,8 +122,8 @@ const BinancePay: React.FC<Props> = () => {
       <InnerWrapper className="h-full">
         {loading && <LoadingWrapper message="Generating Address..." />}
         {data?.createBinanceOrder?.qrContent && (
-          <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-            <div className="px-4 text-center text-xs font-bold text-primary-400">
+          <div className="flex h-full w-full flex-col items-center justify-between gap-2 sm:text-sm">
+            <div className="px-4 text-center text-sm font-bold text-primary-400 sm:text-xs">
               {t('copy.scan_binance_qr_code')}
             </div>
             {isPolling && (

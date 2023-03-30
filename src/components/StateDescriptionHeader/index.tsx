@@ -43,7 +43,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
             <img className="h-4" src={state.method?.logo || ''} />
             <div className="font-bold">{state.method?.name}</div>
           </div>
-          <div className="text-xs text-primary-500">
+          <div className="text-sm text-primary-500 sm:text-xs">
             {state.method?.description}
           </div>
         </BgOffsetWrapper>

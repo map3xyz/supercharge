@@ -15,7 +15,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
           <i className="fa fa-circle-xmark text-red-600"></i>{' '}
           <h3 className="dark:text-white">{header}</h3>
         </div>
-        <div className="mt-1 text-xs text-primary-500">
+        <div className="mt-1 text-sm text-primary-500 sm:text-xs">
           {description} Please{' '}
           <a className="cursor-pointer text-blue-600 underline" onClick={retry}>
             click here
@@ -24,7 +24,7 @@ const ErrorWrapper: React.FC<PropsWithChildren<Props>> = ({
         </div>
       </div>
       {stacktrace ? (
-        <details className="text-xs dark:text-white">
+        <details className="text-sm dark:text-white sm:text-xs">
           <summary>View the raw error:</summary>{' '}
           <pre className="layout-scrollbar mt-1 whitespace-pre-wrap">
             {stacktrace}

@@ -177,29 +177,28 @@ const ShowAddress: React.FC<Props> = () => {
       <InnerWrapper>
         <StepTitle testId="show-address-method" value="Pay to Address" />
       </InnerWrapper>
-      {(state.depositAddress.status === 'error' || error) && (
-        <ErrorWrapper
-          description={state.depositAddress.error || ''}
-          header="Error Generating Address"
-          retry={async () => {
-            try {
-              await getDepositAddress();
-              await refetch();
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        />
-      )}
       <InnerWrapper className="h-full">
-        {state.depositAddress.status === 'loading' || loading ? (
+        {state.depositAddress.status === 'error' || error ? (
+          <ErrorWrapper
+            description={state.depositAddress.error || ''}
+            header="Error Generating Address"
+            retry={async () => {
+              try {
+                await getDepositAddress();
+                await refetch();
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          />
+        ) : state.depositAddress.status === 'loading' || loading ? (
           <LoadingWrapper message="Generating Address..." />
         ) : (
           state.depositAddress.status === 'success' &&
           state.depositAddress.data &&
           qrValue && (
-            <div className="flex h-full w-full flex-col items-center justify-between gap-2 text-sm">
-              <div className="px-4 text-center text-xs font-bold text-primary-400">
+            <div className="flex h-full w-full flex-col items-center justify-between gap-2 sm:text-sm">
+              <div className="px-4 text-center text-sm font-bold text-primary-400 sm:text-xs">
                 Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
                 {state.network?.networkName} to this address.
               </div>
@@ -240,7 +239,7 @@ const ShowAddress: React.FC<Props> = () => {
                 {state.depositAddress.data.memo &&
                 !state.network.identifiers?.chainId ? (
                   <div className="mb-1">
-                    <label className="text-xs text-primary-500 dark:text-white">
+                    <label className="text-sm text-primary-500 dark:text-white sm:text-xs">
                       Memo:{' '}
                     </label>
                     <ReadOnlyText
@@ -257,7 +256,7 @@ const ShowAddress: React.FC<Props> = () => {
                 ) : null}
                 {state.requiredAmount ? (
                   <div className="mb-1">
-                    <label className="text-xs text-primary-500 dark:text-white">
+                    <label className="text-sm text-primary-500 dark:text-white sm:text-xs">
                       Amount:
                     </label>
                     <ReadOnlyText
@@ -271,7 +270,7 @@ const ShowAddress: React.FC<Props> = () => {
                     />
                   </div>
                 ) : null}
-                <label className="text-xs text-primary-500 dark:text-white">
+                <label className="text-sm text-primary-500 dark:text-white sm:text-xs">
                   Address:
                 </label>
                 <ReadOnlyText

@@ -153,7 +153,7 @@ const WalletConnect: React.FC<Props> = () => {
           <InnerWrapper className="flex items-center gap-2 dark:text-white">
             <i className="fa fa-handshake" />{' '}
             <div
-              className="text-xs font-bold leading-4"
+              className="text-sm font-bold leading-4 sm:text-xs"
               data-testid="scan-wallet-connect"
             >
               <MobileView>
@@ -204,7 +204,7 @@ const WalletConnect: React.FC<Props> = () => {
                 </Button>
               ) : null}
               {showInstall ? (
-                <div className="text-center text-xs">
+                <div className="text-center text-sm sm:text-xs">
                   <Divider className="my-3">Or</Divider>
                   <a
                     className="flex w-full justify-center"

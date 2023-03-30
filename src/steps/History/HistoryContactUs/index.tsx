@@ -69,7 +69,7 @@ const HistoryContactUs: React.FC<Props> = ({ setShowContactUs }) => {
         >
           <div className="flex h-full flex-col gap-2">
             <div>
-              <label className="mb-1 block text-xs text-primary-400">
+              <label className="mb-1 block text-sm text-primary-400 sm:text-xs">
                 What can we help you with?
               </label>
               <Radio
@@ -115,7 +115,7 @@ const HistoryContactUs: React.FC<Props> = ({ setShowContactUs }) => {
               </Button>
             )}
             <span
-              className="text-xs text-primary-400"
+              className="text-sm text-primary-400 sm:text-xs"
               onClick={() => setShowContactUs(false)}
               role="button"
             >
