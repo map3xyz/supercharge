@@ -1,5 +1,13 @@
 require('jest-fetch-mock').enableMocks();
 
+jest.mock('posthog-js', () => ({
+  __esModule: true,
+  default: {
+    capture: jest.fn(),
+    identify: jest.fn(),
+  },
+}));
+
 jest.mock('../src/utils/supabase', () => ({
   __esModule: true,
   listenToWatchedAddress: jest.fn(),

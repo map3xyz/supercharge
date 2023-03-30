@@ -238,6 +238,14 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
     dispatch({
       type: 'RESET_TX',
     });
+    dispatch({
+      payload: amount + ' ' + state.asset?.symbol,
+      type: 'SET_TX_DISPLAY_AMOUNT',
+    });
+    dispatch({
+      payload: amount,
+      type: 'SET_TX_AMOUNT',
+    });
   }, [amount]);
 
   useEffect(() => {
@@ -413,15 +421,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
 
       switch (state.method?.value) {
         case 'binance-pay':
-          dispatch({
-            payload: amount + ' ' + state.asset?.symbol,
-            type: 'SET_TX_DISPLAY_AMOUNT',
-          });
-          dispatch({
-            payload: amount,
-            type: 'SET_TX_AMOUNT',
-          });
-
           return handleBinancePayTransaction();
         case 'isCoinbaseWallet':
         case 'isWalletConnect':
@@ -454,15 +453,6 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
             state.network?.networkCode,
             amount
           );
-
-          dispatch({
-            payload: amount + ' ' + state.asset?.symbol,
-            type: 'SET_TX_DISPLAY_AMOUNT',
-          });
-          dispatch({
-            payload: amount,
-            type: 'SET_TX_AMOUNT',
-          });
 
           if (state.network?.bridged) {
             await handleBridgeTransaction();
