@@ -413,6 +413,15 @@ const EnterAmountForm: React.FC<{ price: number }> = ({ price }) => {
 
       switch (state.method?.value) {
         case 'binance-pay':
+          dispatch({
+            payload: amount + ' ' + state.asset?.symbol,
+            type: 'SET_TX_DISPLAY_AMOUNT',
+          });
+          dispatch({
+            payload: amount,
+            type: 'SET_TX_AMOUNT',
+          });
+
           return handleBinancePayTransaction();
         case 'isCoinbaseWallet':
         case 'isWalletConnect':
