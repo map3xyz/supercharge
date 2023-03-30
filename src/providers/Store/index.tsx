@@ -12,6 +12,7 @@ import {
   PaymentMethod,
 } from '../../generated/apollo-gql';
 import { PrebuiltTx } from '../../utils/transactions/evm';
+import { parseJwt } from './utils/parseJwt';
 
 export enum Steps {
   'AssetSelection' = 0,
@@ -290,7 +291,8 @@ const initialState: State = {
 export const Store: React.FC<
   PropsWithChildren<Map3InitConfig & { asset?: Asset; network?: Network }>
 > = ({ anonKey, asset, children, network, options, userId }) => {
-  posthog.identify(userId);
+  const { org_id } = parseJwt(anonKey);
+  posthog.identify(userId, { organizationId: org_id });
   const { callbacks, selection, style } = options || {};
   const { amount, canBridge, fiat, paymentMethod, rate, shortcutAmounts } =
     selection || {};
