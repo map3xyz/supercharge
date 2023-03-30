@@ -14,7 +14,8 @@ root.render(
           anonKey: process.env.CONSOLE_ANON_KEY || '',
           options: {
             selection: {
-              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821', // BUSD
+              // BUSD
+              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
               paymentMethod: 'binance-pay',
               shortcutAmounts: [10, 50, 100],
             },

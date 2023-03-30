@@ -18,7 +18,10 @@ import { Context, Steps } from '../../../providers/Store';
 import { DECIMAL_FALLBACK, SubmitHandler } from '../../../steps/EnterAmount';
 
 const BinancePay = forwardRef<SubmitHandler, Props>(
-  ({ amount, isConfirming, setFormError, setIsConfirming }, submitRef) => {
+  (
+    { amount, isConfirming, setFormError, setIsConfirming, usdRate, usdtRate },
+    submitRef
+  ) => {
     const { t } = useTranslation();
     const [
       state,
@@ -81,6 +84,11 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
         setIsFeeLoading(false);
       }
 
+      // triangulate amount to usd to usdt
+      const usdAmount = Number(amount) * usdRate;
+      const usdtAmount = usdAmount * usdtRate;
+      const usdtString = usdtAmount.toString();
+
       if (isMobile) {
         e?.preventDefault();
         e?.stopPropagation();
@@ -88,7 +96,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
         const { data } = await createBinanceOrder({
           variables: {
             assetId: state.asset!.id!,
-            orderAmount: amount,
+            orderAmount: usdtString,
             userId: state.userId,
           },
         });
@@ -101,6 +109,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
           window.location.href = data.createBinanceOrder.universalUrl;
         }
       } else {
+        dispatch({ payload: usdtString, type: 'SET_TX_AMOUNT' });
         dispatch({ payload: amount, type: 'SET_TX_DISPLAY_AMOUNT' });
         dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
       }
@@ -250,6 +259,8 @@ type Props = {
   isConfirming: boolean;
   setFormError: (error: string) => void;
   setIsConfirming: React.Dispatch<React.SetStateAction<boolean>>;
+  usdRate: number;
+  usdtRate: number;
 };
 
 export default BinancePay;
