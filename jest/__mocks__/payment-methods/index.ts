@@ -4,7 +4,61 @@ import {
 } from '../../../src/generated/apollo-gql';
 
 export const getMethodsMock = (variables: GetPaymentMethodsQueryVariables) =>
-  variables.chainId
+  variables.chainId === 137
+    ? {
+        request: {
+          query: GetPaymentMethodsDocument,
+          variables,
+        },
+        result: {
+          data: {
+            methodsForNetwork: [
+              {
+                flags: {
+                  enabled: true,
+                  memo: false,
+                },
+                icon: 'fa fa-qrcode',
+                links: {
+                  brave: null,
+                  chrome: null,
+                  edge: null,
+                  firefox: null,
+                  opera: null,
+                },
+                logo: '',
+                name: 'Show Address',
+                value: 'show-address',
+                walletConnect: null,
+              },
+              {
+                flags: {
+                  enabled: true,
+                  memo: true,
+                },
+                icon: 'metamask',
+                links: {
+                  brave:
+                    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+                  chrome:
+                    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+                  edge:
+                    'https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm',
+                  firefox:
+                    'https://addons.mozilla.org/en-US/firefox/addon/ether-metamask',
+                  opera:
+                    'https://addons.opera.com/en-gb/extensions/details/metamask-10',
+                },
+                logo: '',
+                name: 'MetaMask',
+                value: 'isMetaMask',
+                walletConnect: null,
+              },
+            ],
+          },
+        },
+      }
+    : variables.chainId
     ? {
         request: {
           query: GetPaymentMethodsDocument,

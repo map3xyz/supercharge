@@ -193,6 +193,7 @@ const PaymentMethod: React.FC<Props> = () => {
         dispatch({ payload: Steps.AssetSelection, type: 'SET_STEP' });
       } else {
         selectMethod(method);
+        dispatch({ payload: Steps.EnterAmount, type: 'SET_MIN_STEP' });
       }
     }
   }, [methodsForNetwork.length]);

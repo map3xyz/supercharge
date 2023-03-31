@@ -91,6 +91,55 @@ describe.skip('Binance Pay > Mobile', () => {
     const button2 = await screen.findByTestId('binance-pay-button');
     fireEvent.click(button2);
   });
+  it('sets min step to Enter Amount if binance-pay is required method', async () => {
+    jest.clearAllMocks();
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            selection: {
+              paymentMethod: 'binance-pay',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+    const ethereum = await screen.findByText('Ether');
+    fireEvent.click(ethereum);
+    const binancePay = await screen.findByText('Binance Pay');
+    expect(binancePay).toBeInTheDocument();
+  });
+});
+
+describe('BinancePay > Required', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            ...mockConfig.options,
+            selection: {
+              ...mockConfig.options?.selection,
+              paymentMethod: 'binance-pay',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+
+  it('sets min step to Enter Amount', async () => {
+    const ethereum = await screen.findByText('Ether');
+    fireEvent.click(ethereum);
+    const enterAmount = await screen.findByText('Enter Amount');
+    expect(enterAmount).toBeInTheDocument();
+    const back = await screen.findByLabelText('Back');
+    expect(back).toHaveClass('invisible');
+  });
 });
 
 describe('BinancePay Error', () => {

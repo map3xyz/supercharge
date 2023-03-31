@@ -43,6 +43,16 @@ export const mocks: MockedResponse[] = [
   searchAssetsMock(),
   addWatchedAddressMock({
     address: '0x0000000000000000000000000000000000000000',
+    assetId: 'polygon123',
+    confirmationsToWatch: 3,
+  }),
+  addWatchedAddressMock({
+    address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+    assetId: 'satoshi123',
+    confirmationsToWatch: 3,
+  }),
+  addWatchedAddressMock({
+    address: '0x0000000000000000000000000000000000000000',
     assetId: 'satoshi123',
     confirmationsToWatch: 3,
   }),
@@ -61,6 +71,7 @@ export const mocks: MockedResponse[] = [
   getMappedNetworksForOrgMock({ assetId: 'elon123' }),
   getMappedNetworksForOrgMock({ assetId: 'satoshi123' }),
   getMappedNetworksForOrgMock({ assetId: 'ethereum123' }),
+  getMappedNetworksForOrgMock({ assetId: 'polygon123' }),
   getNetworkByChainIdMock(1),
   getNetworkByChainIdMock(137),
   getNetworksMock(),

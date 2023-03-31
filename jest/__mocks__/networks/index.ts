@@ -124,6 +124,8 @@ export const getMappedNetworksForOrgMock = (
           ? bitcoinNetwork
           : variables.assetId === 'ethereum123'
           ? [networksForAssetMockResult[0]]
+          : variables.assetId === 'polygon123'
+          ? [networksForAssetMockResult[1]]
           : networksForAssetMockResult,
     },
   },
