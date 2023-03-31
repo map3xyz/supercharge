@@ -134,10 +134,37 @@ describe('Payment Selection', () => {
     Object.defineProperties(reactDeviceDetect, {
       isMobile: { get: () => true },
     });
+    const polygon = await screen.findByText('Polygon');
+    fireEvent.click(polygon);
+    const showAddr = await screen.findByText('Pay to Address');
+    expect(showAddr).toBeInTheDocument();
+  });
+});
+
+describe('Payment Selection', () => {
+  beforeEach(() => {
+    render(
+      <App
+        config={{
+          ...mockConfig,
+          options: {
+            ...mockConfig.options,
+            selection: {
+              ...mockConfig.options?.selection,
+              paymentMethod: 'binance-pay',
+            },
+          },
+        }}
+        onClose={() => {}}
+      />
+    );
+  });
+
+  it('skips the payment selection step if method is required and present', async () => {
     const ethereum = await screen.findByText('Ether');
     fireEvent.click(ethereum);
-    const paymentSelection = await screen.findByText('Payment Method');
-    expect(paymentSelection).toBeInTheDocument();
+    const enterAmount = await screen.findByText('Enter Amount');
+    expect(enterAmount).toBeInTheDocument();
   });
 });
 

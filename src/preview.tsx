@@ -22,7 +22,8 @@ root.render(
             },
             selection: {
               // BUSD
-              assetId: '6b562c23-d79f-4a34-a47f-cc7b28726821',
+              assetId: 'da5eb9b1-7e2b-4976-a260-07a3eab89618',
+              // paymentMethod: 'binance-pay',
             },
             style: {
               colors: {

@@ -168,6 +168,29 @@ export const assetsForOrganizationMockResult = [
     symbol: 'AAVE',
     type: 'asset',
   },
+  {
+    __typename: 'Asset',
+    address: '0x514910771af9ca656af840dff83e8264ecf986ca',
+    config: {
+      mappedAssetId: 'polygon123',
+    },
+    decimals: 18,
+    id: 'polygon123',
+    logo: {
+      png:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.png',
+      svg:
+        'https://raw.githubusercontent.com/map3xyz/assets/master/networks/polygon/logo.svg',
+    },
+    name: 'Polygon',
+    networkCode: 'polygon',
+    networks: {
+      name: 'Polygon',
+      networkCode: 'polygon',
+    },
+    symbol: 'MATIC',
+    type: 'asset',
+  },
 ];
 
 export const getAssetsForOrgMock = (

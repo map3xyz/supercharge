@@ -136,6 +136,7 @@ type Action =
   | { payload: number; type: 'SET_STEP' }
   | { payload: number; type: 'SET_STEP_IN_VIEW' }
   | { payload: (keyof typeof Steps)[]; type: 'SET_STEPS' }
+  | { payload: number; type: 'SET_MIN_STEP' }
   | {
       payload: {
         id: string;
@@ -377,6 +378,13 @@ export const Store: React.FC<
         case 'SET_STEPS': {
           return { ...state, prevSteps: state.steps, steps: action.payload };
         }
+        case 'SET_MIN_STEP':
+          return {
+            ...state,
+            minStep: state.steps.indexOf(
+              Steps[action.payload] as keyof typeof Steps
+            ),
+          };
         case 'SET_PAYMENT_METHOD':
           return { ...state, method: action.payload };
         case 'GENERATE_DEPOSIT_ADDRESS_SUCCESS':
