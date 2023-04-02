@@ -22,14 +22,11 @@ root.render(
             },
             selection: {
               // BUSD
-              assetId: 'da5eb9b1-7e2b-4976-a260-07a3eab89618',
+              // assetId: 'da5eb9b1-7e2b-4976-a260-07a3eab89618',
               // paymentMethod: 'binance-pay',
             },
             style: {
-              colors: {
-                accent: '#dfff86',
-                primary: '#0e1523',
-              },
+              theme: 'dark',
             },
           },
           userId: 'preview-user-id',

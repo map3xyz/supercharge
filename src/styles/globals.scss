@@ -10,4 +10,16 @@
         -webkit-appearance: none;
         margin: 0;
     }
+
+    @media (min-width: 640px) {
+        .sm\:text-xs {
+            font-size: .75rem !important;
+            line-height: 1rem !important;
+        }
+
+        .sm\:text-sm {
+            font-size: .875rem !important;
+            line-height: 1.25rem !important;
+        }
+    }
 }
