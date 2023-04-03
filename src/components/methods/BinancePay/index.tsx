@@ -1,5 +1,6 @@
 import { Badge, Button } from '@map3xyz/components';
 import { AnimatePresence, motion } from 'framer-motion';
+import { posthog } from 'posthog-js';
 import React, {
   forwardRef,
   useContext,
@@ -99,6 +100,11 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
             orderAmount: usdtString,
             userId: state.userId,
           },
+        });
+
+        posthog.capture('BINANCE_PAY_ORDER_CREATED', {
+          amount: usdtString,
+          asset: state.asset!.symbol,
         });
 
         if (data?.createBinanceOrder?.id) {

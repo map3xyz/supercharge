@@ -1,5 +1,6 @@
 import { Button, Pill } from '@map3xyz/components';
 import { motion } from 'framer-motion';
+import { posthog } from 'posthog-js';
 import { QRCodeSVG } from 'qrcode.react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,6 +58,11 @@ const BinancePay: React.FC<Props> = () => {
         orderAmount: state.tx.amount,
         userId: state.userId,
       },
+    });
+
+    posthog.capture('BINANCE_PAY_ORDER_CREATED', {
+      amount: state.tx.amount,
+      asset: state.asset!.symbol,
     });
 
     if (data?.createBinanceOrder?.id) {
