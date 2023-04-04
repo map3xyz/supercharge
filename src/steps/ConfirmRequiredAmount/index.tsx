@@ -1,4 +1,5 @@
 import { Button } from '@map3xyz/components';
+import { ethers } from 'ethers';
 import React, { useContext, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -69,6 +70,22 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               id="checkbox"
               onChange={(e) => {
                 setAcknowledged(e.target.checked);
+
+                if (!e.target.checked) return;
+
+                dispatch({
+                  payload: {
+                    assetId: state.asset?.id as string,
+                    symbol: state.asset?.symbol as string,
+                    txAmount: ethers.utils
+                      .parseUnits(
+                        state.requiredAmount as string,
+                        state.asset?.decimals as number
+                      )
+                      .toString(),
+                  },
+                  type: 'SET_COMMITTED_TX_AMOUNT',
+                });
               }}
               type="checkbox"
             />

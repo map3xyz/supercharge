@@ -49,6 +49,7 @@ const EnterAmountForm: React.FC<{
     quote: string;
   }>({ base: '0', inputSelected: price ? 'fiat' : 'crypto', quote: '0' });
   const [amount, setAmount] = useState<string>('0');
+  const [amountMinor, setAmountMinor] = useState<string>('0');
   const dummyFormRef = useRef<HTMLSpanElement>(null);
   const dummyInputRef = useRef<HTMLSpanElement>(null);
   const dummySymbolRef = useRef<HTMLSpanElement>(null);
@@ -210,6 +211,8 @@ const EnterAmountForm: React.FC<{
         state.asset?.decimals || DECIMAL_FALLBACK
       );
     }
+
+    setAmountMinor(cryptoAmtWei.toString());
 
     if (maxLimitRaw.lt(cryptoAmtWei)) {
       setFormError(INSUFFICIENT_FUNDS + state.asset?.symbol + ' balance.');
@@ -451,12 +454,16 @@ const EnterAmountForm: React.FC<{
           );
 
           dispatch({
-            payload: amount + ' ' + state.asset?.symbol,
-            type: 'SET_TX_DISPLAY_AMOUNT',
-          });
-          dispatch({
             payload: amount,
             type: 'SET_TX_AMOUNT',
+          });
+          dispatch({
+            payload: {
+              assetId: state.asset?.id as string,
+              symbol: state.asset?.symbol as string,
+              txAmount: amountMinor,
+            },
+            type: 'SET_COMMITTED_TX_AMOUNT',
           });
 
           if (state.network?.bridged) {
@@ -618,7 +625,7 @@ const EnterAmountForm: React.FC<{
               ) : (
                 // @ts-ignore
                 <Badge color="yellow" dot>
-                  Please download the {state.method.name} extension.
+                  Please download the {state.method.name as string} extension.
                 </Badge>
               )
             ) : (

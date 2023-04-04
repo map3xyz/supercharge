@@ -12,7 +12,7 @@ const TransactionDetails: React.FC<Props> = () => {
         Amount
       </div>
       <div className="text-sm font-medium dark:text-white sm:text-xs">
-        <ReadOnlyText value={state.tx.displayAmount} />
+        <ReadOnlyText value={state.tx.amount + ' ' + state.asset?.symbol} />
       </div>
       {state.tx.response?.from ? (
         <>
