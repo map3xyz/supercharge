@@ -16,7 +16,7 @@ root.render(
             callbacks: {
               onAddressRequested: () => {
                 return {
-                  address: '0x6887246668a3b87f54deb3b94ba47a6f63f32985',
+                  address: '0xfd16A13d2bC5c4fe4e077Ff7C55C600Ca7f08D3c',
                 };
               },
             },
