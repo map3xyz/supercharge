@@ -61,6 +61,7 @@ const ShowAddress: React.FC<Props> = () => {
             address,
             assetId: state.asset!.id!,
             confirmationsToWatch: MIN_CONFIRMATIONS,
+            expectedAmount: state.requiredAmount,
           },
         });
 
