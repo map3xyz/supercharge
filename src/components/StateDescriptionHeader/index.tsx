@@ -15,8 +15,8 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   if (!amount && state.tx.amount) {
     amount = state.tx.amount as string;
   }
-  if (!amount && state.requiredAmount) {
-    amount = state.requiredAmount;
+  if (!amount && state.requiredAmountMajor) {
+    amount = state.requiredAmountMajor;
   }
 
   switch (true) {

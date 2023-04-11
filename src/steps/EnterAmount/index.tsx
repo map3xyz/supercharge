@@ -71,20 +71,20 @@ const EnterAmountForm: React.FC<{
     ];
 
   useEffect(() => {
-    if (!state.requiredAmount) return;
+    if (!state.requiredAmountMajor) return;
 
     if (inputRef.current && dummyInputRef.current) {
-      inputRef.current.value = state.requiredAmount;
+      inputRef.current.value = state.requiredAmountMajor;
     }
 
     setFormValue({
-      base: state.requiredAmount,
+      base: state.requiredAmountMajor,
       inputSelected: 'crypto',
-      quote: (Number(state.requiredAmount) * (price || 0)).toFixed(2),
+      quote: (Number(state.requiredAmountMajor) * (price || 0)).toFixed(2),
     });
   }, [
     inputRef.current,
-    state.requiredAmount,
+    state.requiredAmountMajor,
     state.prebuiltTx.data?.maxLimitFormatted,
   ]);
 
@@ -273,7 +273,7 @@ const EnterAmountForm: React.FC<{
 
   const setMax = () => {
     if (!inputRef.current) return;
-    if (state.requiredAmount) return;
+    if (state.requiredAmountMajor) return;
     if (formValue.inputSelected === 'fiat') toggleBase();
     inputRef.current.value = state.prebuiltTx.data!.maxLimitFormatted;
     setFormValue({
@@ -375,7 +375,7 @@ const EnterAmountForm: React.FC<{
       if (preQuoteErrors?.[0]) {
         throw new Error('Error creating bridge quote.');
       }
-      if (state.requiredAmount) {
+      if (state.requiredAmountMajor) {
         const paddedAmountMajor =
           Number(amount) +
           Number(amount) -
@@ -532,7 +532,7 @@ const EnterAmountForm: React.FC<{
             autoFocus
             className="flex h-14 w-full max-w-full bg-transparent text-center text-inherit outline-0 ring-0"
             data-testid="input"
-            disabled={!!state.requiredAmount}
+            disabled={!!state.requiredAmountMajor}
             name="base"
             placeholder="0"
             ref={inputRef}
@@ -572,7 +572,7 @@ const EnterAmountForm: React.FC<{
                 ) : null}
               </div>
               <div className="ml-4 flex items-center justify-center">
-                {state.requiredAmount ? null : (
+                {state.requiredAmountMajor ? null : (
                   <div
                     className="flex cursor-pointer flex-col text-xxs transition-colors duration-100 hover:text-blue-600 hover:dark:text-blue-600"
                     data-testid="toggle-base"
