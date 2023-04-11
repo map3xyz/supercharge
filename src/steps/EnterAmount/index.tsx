@@ -815,7 +815,7 @@ const EnterAmount: React.FC<Props> = () => {
   }
 
   const price = state.rate || data?.assetPrice?.price || 0;
-  const usdtRate = usdtData?.assetPrice?.price || 0;
+  const usdtRate = usdtData?.assetPrice?.price || 1;
   const usdRate =
     state.fiat === 'USD' ? price : usdRateData?.assetPrice?.price || 0;
 

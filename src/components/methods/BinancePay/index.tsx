@@ -88,7 +88,7 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
       // triangulate amount to usd to usdt
       const usdAmount = Number(amount) * usdRate;
       const usdtAmount = usdAmount * usdtRate;
-      const usdtString = usdtAmount.toString();
+      const usdtString = usdtAmount.toFixed(6);
 
       if (isMobile) {
         e?.preventDefault();
