@@ -16,13 +16,14 @@ root.render(
             callbacks: {
               onAddressRequested: () => {
                 return {
-                  address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+                  address: '0xfd16A13d2bC5c4fe4e077Ff7C55C600Ca7f08D3c',
                 };
               },
             },
             selection: {
+              amount: '1000000000000000000',
               // BUSD
-              // assetId: 'da5eb9b1-7e2b-4976-a260-07a3eab89618',
+              assetId: 'da5eb9b1-7e2b-4976-a260-07a3eab89618',
               // paymentMethod: 'binance-pay',
             },
             style: {
