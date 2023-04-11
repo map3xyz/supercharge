@@ -94,7 +94,7 @@ const PaymentMethod: React.FC<Props> = () => {
       type: 'SET_PAYMENT_METHOD',
     });
     if (method.value === 'show-address') {
-      if (state.requiredAmount) {
+      if (state.requiredAmountMajor) {
         dispatch({
           payload: [
             'AssetSelection',

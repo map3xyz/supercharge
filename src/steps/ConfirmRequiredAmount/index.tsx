@@ -40,7 +40,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
               defaults="You must send <italic>exactly</italic> <bold>{{amount}} {{symbol}}</bold> on the <bold>{{network}}</bold> or your payment may be
             delayed, returned or lost."
               values={{
-                amount: state.requiredAmount,
+                amount: state.requiredAmountMajor,
                 network: state.network?.networkName,
                 symbol: state.asset?.symbol,
               }}
@@ -79,7 +79,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
                     symbol: state.asset?.symbol as string,
                     txAmount: ethers.utils
                       .parseUnits(
-                        state.requiredAmount as string,
+                        state.requiredAmountMajor as string,
                         state.asset?.decimals as number
                       )
                       .toString(),
@@ -99,7 +99,7 @@ const ConfirmRequiredAmount: React.FC<Props> = () => {
                 }}
                 defaults="By clicking this checkbox I acknowledge I must send exactly <bold>{{amount}} {{symbol}}</bold> on the <bold>{{networkName}}</bold>."
                 values={{
-                  amount: state.requiredAmount,
+                  amount: state.requiredAmountMajor,
                   networkName: state.network?.networkName,
                   symbol: state.asset?.symbol,
                 }}

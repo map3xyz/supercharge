@@ -61,6 +61,7 @@ const ShowAddress: React.FC<Props> = () => {
             address,
             assetId: state.asset!.id!,
             confirmationsToWatch: MIN_CONFIRMATIONS,
+            expectedAmount: state.requiredAmountMinor,
           },
         });
 
@@ -124,7 +125,7 @@ const ShowAddress: React.FC<Props> = () => {
         const bip21 = encode(
           state.depositAddress.data?.address,
           {
-            amount: state.requiredAmount,
+            amount: state.requiredAmountMajor,
           },
           state.asset?.networkCode
         );
@@ -148,10 +149,10 @@ const ShowAddress: React.FC<Props> = () => {
           const eip681 = build({
             // @ts-ignore
             chain_id: state.network?.identifiers?.chainId,
-            parameters: state.requiredAmount
+            parameters: state.requiredAmountMajor
               ? {
                   value: ethers.utils
-                    .parseEther(state.requiredAmount)
+                    .parseEther(state.requiredAmountMajor)
                     .toString(),
                 }
               : {},
@@ -199,8 +200,8 @@ const ShowAddress: React.FC<Props> = () => {
           qrValue && (
             <div className="flex h-full w-full flex-col items-center justify-between gap-2 sm:text-sm">
               <div className="px-4 text-center text-sm font-bold text-primary-400 sm:text-xs">
-                Only send {state.requiredAmount} {state.asset.symbol} on the{' '}
-                {state.network?.networkName} to this address.
+                Only send {state.requiredAmountMajor} {state.asset.symbol} on
+                the {state.network?.networkName} to this address.
               </div>
               {watchedAddressRef.current && state.depositAddress.data && (
                 <motion.div
@@ -254,7 +255,7 @@ const ShowAddress: React.FC<Props> = () => {
                     </div>
                   </div>
                 ) : null}
-                {state.requiredAmount ? (
+                {state.requiredAmountMajor ? (
                   <div className="mb-1">
                     <label className="text-sm text-primary-500 dark:text-white sm:text-xs">
                       Amount:
@@ -263,10 +264,10 @@ const ShowAddress: React.FC<Props> = () => {
                       copyButton
                       onCopyButtonClicked={() => {
                         posthog.capture('clicked copy required amount', {
-                          property: `${state.requiredAmount} ${state.asset?.symbol}`,
+                          property: `${state.requiredAmountMajor} ${state.asset?.symbol}`,
                         });
                       }}
-                      value={`${state.requiredAmount} ${state.asset.symbol}`}
+                      value={`${state.requiredAmountMajor} ${state.asset.symbol}`}
                     />
                   </div>
                 ) : null}

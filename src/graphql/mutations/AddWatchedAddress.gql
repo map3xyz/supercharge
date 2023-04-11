@@ -2,12 +2,14 @@ mutation AddWatchedAddress(
   $address: String!
   $assetId: String!
   $confirmationsToWatch: Int!
+  $expectedAmount: String
   $memo: String
 ) {
   addWatchedAddress(
     address: $address
     assetId: $assetId
     confirmationsToWatch: $confirmationsToWatch
+    expectedAmount: $expectedAmount
     memo: $memo
   )
 }

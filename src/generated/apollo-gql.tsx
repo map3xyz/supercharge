@@ -172,6 +172,7 @@ export type MutationAddWatchedAddressArgs = {
   address: Scalars['String'];
   assetId: Scalars['String'];
   confirmationsToWatch: Scalars['Int'];
+  expectedAmount?: InputMaybe<Scalars['String']>;
   memo?: InputMaybe<Scalars['String']>;
 };
 
@@ -547,6 +548,7 @@ export type AddWatchedAddressMutationVariables = Exact<{
   address: Scalars['String'];
   assetId: Scalars['String'];
   confirmationsToWatch: Scalars['Int'];
+  expectedAmount?: InputMaybe<Scalars['String']>;
   memo?: InputMaybe<Scalars['String']>;
 }>;
 
@@ -752,11 +754,12 @@ export const NetworkFieldsFragmentDoc = gql`
 }
     `;
 export const AddWatchedAddressDocument = gql`
-    mutation AddWatchedAddress($address: String!, $assetId: String!, $confirmationsToWatch: Int!, $memo: String) {
+    mutation AddWatchedAddress($address: String!, $assetId: String!, $confirmationsToWatch: Int!, $expectedAmount: String, $memo: String) {
   addWatchedAddress(
     address: $address
     assetId: $assetId
     confirmationsToWatch: $confirmationsToWatch
+    expectedAmount: $expectedAmount
     memo: $memo
   )
 }
@@ -779,6 +782,7 @@ export type AddWatchedAddressMutationFn = Apollo.MutationFunction<AddWatchedAddr
  *      address: // value for 'address'
  *      assetId: // value for 'assetId'
  *      confirmationsToWatch: // value for 'confirmationsToWatch'
+ *      expectedAmount: // value for 'expectedAmount'
  *      memo: // value for 'memo'
  *   },
  * });

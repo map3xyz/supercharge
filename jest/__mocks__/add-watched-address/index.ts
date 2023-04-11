@@ -4,6 +4,7 @@ export const addWatchedAddressMock = (variables: {
   address: string;
   assetId: string;
   confirmationsToWatch: number;
+  expectedAmount?: number;
 }) => ({
   request: {
     query: AddWatchedAddressDocument,

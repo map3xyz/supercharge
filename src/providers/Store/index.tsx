@@ -97,7 +97,8 @@ type State = {
   };
   providerChainId?: number;
   rate?: number;
-  requiredAmount?: string;
+  requiredAmountMajor?: string;
+  requiredAmountMinor?: string;
   requiredPaymentMethod?: 'binance-pay' | 'show-address';
   shortcutAmounts?: number[];
   slug?: string;
@@ -324,9 +325,11 @@ export const Store: React.FC<
     step = Steps.PaymentMethod;
   }
 
-  let requiredAmount: string | undefined;
+  let requiredAmountMajor: string | undefined;
+  let requiredAmountMinor: string | undefined;
   if (amount && asset?.decimals) {
-    requiredAmount = ethers.utils.formatUnits(amount, asset.decimals);
+    requiredAmountMajor = ethers.utils.formatUnits(amount, asset.decimals);
+    requiredAmountMinor = amount;
   }
 
   let expiration;
@@ -348,7 +351,8 @@ export const Store: React.FC<
     minStep: step,
     network,
     rate,
-    requiredAmount,
+    requiredAmountMajor,
+    requiredAmountMinor,
     requiredPaymentMethod,
     shortcutAmounts,
     step,
