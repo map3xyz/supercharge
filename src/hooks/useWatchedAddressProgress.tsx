@@ -26,10 +26,6 @@ export const useWatchedAddressProgress = () => {
           type: 'SET_TX_HASH',
         });
         dispatch({
-          payload: payload.new.tx_formatted_amount,
-          type: 'SET_TX_DISPLAY_AMOUNT',
-        });
-        dispatch({
           // @ts-expect-error
           payload: {
             to: payload.new.address,

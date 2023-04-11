@@ -12,8 +12,8 @@ const StateDescriptionHeader: React.FC<Props> = () => {
   const { stepInView: step, steps } = state;
 
   let amount;
-  if (!amount && state.tx.displayAmount) {
-    amount = state.tx.displayAmount.split(' ')[0];
+  if (!amount && state.tx.amount) {
+    amount = state.tx.amount as string;
   }
   if (!amount && state.requiredAmount) {
     amount = state.requiredAmount;
@@ -126,10 +126,11 @@ const StateDescriptionHeader: React.FC<Props> = () => {
           <BgOffsetWrapper border="y">
             {t('copy.deposit')} {/* @ts-ignore */}
             <Badge color="blue" size="large">
-              {amount} {state.asset.symbol || ''}
+              {amount as string} {state.asset.symbol || ''}
             </Badge>{' '}
             <>
               on the
+              {/* @ts-ignore */}
               <Badge color="blue" size="large">
                 {/* @ts-ignore */}
                 {state.destinationNetwork.networkName}
@@ -147,7 +148,7 @@ const StateDescriptionHeader: React.FC<Props> = () => {
           {t('copy.deposit')}
           {/* @ts-ignore */}
           <Badge color="blue" size="large">
-            {amount} {state.asset.symbol || ''}
+            {amount as string} {state.asset.symbol || ''}
           </Badge>{' '}
           {state.method.value === 'binance-pay' ? null : (
             <>

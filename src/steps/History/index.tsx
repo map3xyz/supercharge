@@ -100,10 +100,9 @@ const History: React.FC<Props> = () => {
                         type: 'SET_TX_HASH',
                       });
                       dispatch({
-                        payload: `${
-                          order.quote.estimate?.amountToReceive as string
-                        } ${order.toAsset.symbol}`,
-                        type: 'SET_TX_DISPLAY_AMOUNT',
+                        payload: order.quote.estimate
+                          ?.amountToReceive as string,
+                        type: 'SET_TX_AMOUNT',
                       });
                       dispatch({
                         payload: [

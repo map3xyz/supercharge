@@ -116,7 +116,6 @@ const BinancePay = forwardRef<SubmitHandler, Props>(
         }
       } else {
         dispatch({ payload: usdtString, type: 'SET_TX_AMOUNT' });
-        dispatch({ payload: amount, type: 'SET_TX_DISPLAY_AMOUNT' });
         dispatch({ payload: Steps.BinancePay, type: 'SET_STEP' });
       }
     };
