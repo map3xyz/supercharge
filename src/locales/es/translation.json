@@ -19,6 +19,7 @@
       "acknowledge_amount": "Confirma Monto",
       "amount_to_pay": "Monto a Recargar",
       "creating_order": "Creando Orden...",
+      "deposit": "Depositar",
       "error_fetching_assets": "No Pudimos Cargar la Lista de Cryptos.",
       "error_fetching_networks": "No Pudimos Cargar la Lista de Redes.",
       "error_fetching_payment_methods": "No Pudimos Cargar los Métodos de Pago.",
