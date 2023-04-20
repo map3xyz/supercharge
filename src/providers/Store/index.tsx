@@ -362,7 +362,19 @@ export const Store: React.FC<
 
   const [state, dispatch] = useReducer(
     (state: State, action: Action): State => {
-      posthog.capture(action.type, { property: action }, {});
+      if (
+        action.type === 'SET_TX' ||
+        action.type === 'SET_TX_HASH' ||
+        action.type === 'SET_PAYMENT_METHOD'
+      ) {
+        posthog.capture(
+          action.type,
+          { property: action, symbol: state.asset?.symbol },
+          {}
+        );
+      } else {
+        posthog.capture(action.type, { property: action }, {});
+      }
       switch (action.type) {
         case 'SET_ASSET':
           return { ...state, asset: action.payload };
