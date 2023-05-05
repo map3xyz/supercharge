@@ -23,7 +23,7 @@ const WalletConnect: React.FC<Props> = () => {
 
   const { width } = useModalSize(ref);
 
-  const handleConnected = (
+  const handleConnectedCB = (
     provider: ethers.providers.Web3Provider,
     account: string
   ) => {
@@ -75,7 +75,7 @@ const WalletConnect: React.FC<Props> = () => {
           throw error;
         }
 
-        handleConnected(provider, externalProvider.connector.accounts[0]);
+        handleConnectedCB(provider, externalProvider.connector.accounts[0]);
       });
 
       externalProvider.connector.on('disconnect', (error) => {
@@ -105,7 +105,7 @@ const WalletConnect: React.FC<Props> = () => {
           run();
           dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
         } else {
-          handleConnected(provider, externalProvider.connector.accounts[0]);
+          handleConnectedCB(provider, externalProvider.connector.accounts[0]);
           return;
         }
       }
