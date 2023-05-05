@@ -29,7 +29,7 @@ enabling<br/>cross-chain deposits and increasing volumes.</div>
     </head>
 
     <body>
-        <button onClick="openSdk()">Open SDK</button>
+        <button onClick="openSdk()">Open SDK </button>
     </body>
     <script>
     function openSdk() {
