@@ -283,10 +283,10 @@ export const useBridgeProgress = () => {
           response = await getTransaction(hash);
         }
         dispatch({ payload: response, type: 'SET_TX_RESPONSE' });
-        const receipt = await waitForTransaction(hash, 1);
+        await waitForTransaction(hash, 1);
         dispatch({
           payload: {
-            data: 'Transaction included in block ' + receipt.blockNumber + '.',
+            data: 'Has reached a block confirmation.',
             status: 'success',
             step: 'Confirming',
             title: 'Transaction Confirming',
