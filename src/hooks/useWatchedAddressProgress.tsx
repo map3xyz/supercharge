@@ -44,7 +44,7 @@ export const useWatchedAddressProgress = () => {
           payload: {
             data:
               state.tx.progress.Confirming.data ||
-              `Transaction included in block ${payload.new.tx_block_height}.`,
+              `Has reached a block confirmation.`,
             status: 'success',
             step: 'Confirming',
           },
@@ -61,7 +61,7 @@ export const useWatchedAddressProgress = () => {
         }
         dispatch({
           payload: {
-            data: `Current block height: ${currentBlock}. ${remainingBlocks} more ${remainingBlocksText} required for confirmation.`,
+            data: `${remainingBlocks} more ${remainingBlocksText} required for confirmation.`,
             status: 'loading',
             step: 'Confirmed',
           },
