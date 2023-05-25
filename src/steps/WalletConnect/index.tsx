@@ -53,7 +53,6 @@ const WalletConnect: React.FC<Props> = () => {
     dispatch({ type: 'SET_PROVIDER_LOADING' });
     try {
       const chainId = state.network?.identifiers?.chainId;
-      debugger;
       if (!chainId) {
         throw new Error('No chainId.');
       }
@@ -67,8 +66,6 @@ const WalletConnect: React.FC<Props> = () => {
         externalProvider,
         'any'
       );
-
-      externalProvider.enable();
 
       externalProvider.on('display_uri', (uri: string) => {
         // ... custom logic
@@ -93,26 +90,26 @@ const WalletConnect: React.FC<Props> = () => {
         dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
       });
 
-      if (!externalProvider.connected) {
-        // await externalProvider.connect({
-        //   chains: [state.network?.identifiers?.chainId || 1],
-        // });
-      } else {
-        const appChange = !externalProvider.session?.self.metadata.name.includes(
-          state.method?.name || ''
-        );
-        const chainChange =
-          state.providerChainId !== state.network?.identifiers?.chainId;
-        if (appChange || chainChange) {
-          await localStorage.removeItem('walletconnect');
-          await externalProvider.disconnect();
-          // run();
-          dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
-        } else {
-          handleConnectedCB(provider, externalProvider.accounts[0]);
-          return;
-        }
-      }
+      externalProvider.enable();
+
+      // NB: externalProvider says its connected when not?
+      // if (!externalProvider.connected) {
+      //   externalProvider.enable();
+      // } else {
+      //   const appChange = !externalProvider.session?.self.metadata.name.includes(
+      //     state.method?.name || ''
+      //   );
+      //   const chainChange =
+      //     state.providerChainId !== state.network?.identifiers?.chainId;
+      //   if (appChange || chainChange) {
+      //     await localStorage.removeItem('walletconnect');
+      //     await externalProvider.disconnect();
+      //     dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
+      //   } else {
+      //     handleConnectedCB(provider, externalProvider.accounts[0]);
+      //     return;
+      //   }
+      // }
 
       if (isMobile) {
         let deeplink =
