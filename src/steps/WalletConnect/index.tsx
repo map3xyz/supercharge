@@ -67,8 +67,18 @@ const WalletConnect: React.FC<Props> = () => {
         'any'
       );
 
+      externalProvider.on('message', (e) => console.log('message', e));
+
+      externalProvider.on('session_event', (event) => {
+        console.log(event);
+      });
+
+      externalProvider.on('session_update', (event) => {
+        console.log(event);
+      });
+
       externalProvider.on('display_uri', (uri: string) => {
-        // ... custom logic
+        console.log(uri);
         setUri(uri);
       });
 
@@ -287,7 +297,9 @@ const WalletConnect: React.FC<Props> = () => {
           </InnerWrapper>
         </div>
       ) : (
-        <LoadingWrapper />
+        <div className="h-full">
+          <LoadingWrapper />
+        </div>
       )}
     </div>
   );
