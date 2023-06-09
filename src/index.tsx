@@ -335,12 +335,12 @@ export class Map3 {
     });
     this.root.render(
       <ApolloProvider client={client}>
-        <PostHogProvider
+        {/* <PostHogProvider
           apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY}
           options={{ ...postHogOptions }}
-        >
-          <App config={this.config} onClose={this.onClose} />
-        </PostHogProvider>
+        > */}
+        <App config={this.config} onClose={this.onClose} />
+        {/* </PostHogProvider> */}
       </ApolloProvider>
     );
   }
