@@ -8,7 +8,7 @@ const ListItem: React.FC<
   return (
     <InnerWrapper
       {...rest}
-      className="flex items-center justify-between border-b border-primary-200 hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800 sm:text-sm"
+      className="flex items-center justify-between border-b border-primary-200 sm:text-sm hover:bg-primary-100 dark:border-primary-700 hover:dark:bg-primary-800"
       role="button"
     >
       {children}
