@@ -34,7 +34,7 @@ const defaults = {
 
 const mockDefault = jest.fn(() => defaults);
 
-jest.mock('@walletconnect/web3-provider', () => ({
+jest.mock('@walletconnect/ethereum-provider', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => mockDefault()),
 }));
