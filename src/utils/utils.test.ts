@@ -1,4 +1,4 @@
-// import { iso8601ToString } from './iso8601';
+import { iso8601ToString } from './iso8601';
 import { toHex } from './toHex';
 
 describe('toHex', () => {
@@ -17,8 +17,8 @@ describe('toHex', () => {
   });
 });
 
-// describe('iso8601', () => {
-//   expect(iso8601ToString('2023-03-07T22:33:50.6', 300)).toBe(
-//     '3/7/2023, 5:33:50 PM'
-//   );
-// });
+describe('iso8601', () => {
+  expect(iso8601ToString('2023-03-07T22:33:50.6', 300)).toBe(
+    '3/7/2023, 5:33:50 PM'
+  );
+});
