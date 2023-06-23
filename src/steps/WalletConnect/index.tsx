@@ -57,35 +57,44 @@ const WalletConnect: React.FC<Props> = () => {
         throw new Error('No chainId.');
       }
 
+      localStorage.clear();
+      const rpc = `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
+
       const externalProvider = await EthereumProvider.init({
         chains: [chainId],
         projectId: '75f2c16d7fce6364075928d3c6462f87',
+        rpcMap: {
+          chainId: rpc,
+        },
         showQrModal: false,
       });
       const provider = new ethers.providers.Web3Provider(
         externalProvider,
-        'any'
+        chainId
       );
 
-      // externalProvider.on('message', (e) => console.log('message', e));
+      externalProvider.on('message', (e) => {
+        // console.log('message', e);
+      });
 
-      // externalProvider.on('session_event', (event) => {
-      //   console.log(event);
-      // });
+      externalProvider.on('session_event', (event) => {
+        // console.log(event);
+      });
 
-      // externalProvider.on('session_update', (event) => {
-      //   console.log(event);
-      // });
+      externalProvider.on('session_update', (event) => {
+        // console.log(event);
+      });
 
       externalProvider.on('display_uri', (uri: string) => {
         // console.log(uri);
         setUri(uri);
       });
 
-      externalProvider.on('connect', (error) => {
-        if (error) {
-          throw error;
-        }
+      externalProvider.on('connect', (data) => {
+        // console.log('RPC Connected');
+        // if (error) {
+        //   throw error;
+        // }
 
         handleConnectedCB(provider, externalProvider.accounts[0]);
       });
