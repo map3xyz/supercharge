@@ -1,5 +1,5 @@
 import { Badge, Button, Divider, ReadOnlyText } from '@map3xyz/components';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
 import { ethers } from 'ethers';
 import AppStoreBadge from 'jsx:../../assets/app-store-badge.svg';
 import { QRCodeSVG } from 'qrcode.react';
@@ -56,7 +56,6 @@ const WalletConnect: React.FC<Props> = () => {
       if (!chainId) {
         throw new Error('No chainId.');
       }
-      const rpc = `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
 
       localStorage.clear();
       const rpc = `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
@@ -69,22 +68,20 @@ const WalletConnect: React.FC<Props> = () => {
         },
         showQrModal: false,
       });
-      externalProvider.updateRpcUrl(chainId, rpc);
       const provider = new ethers.providers.Web3Provider(
         externalProvider,
         chainId
       );
-      externalProvider.enable();
 
-      externalProvider.on('message', (e) => {
+      externalProvider.on('message', (e: any) => {
         // console.log('message', e);
       });
 
-      externalProvider.on('session_event', (event) => {
+      externalProvider.on('session_event', (event: any) => {
         // console.log(event);
       });
 
-      externalProvider.on('session_update', (event) => {
+      externalProvider.on('session_update', (event: any) => {
         // console.log(event);
       });
 
@@ -93,16 +90,16 @@ const WalletConnect: React.FC<Props> = () => {
         setUri(uri);
       });
 
-      externalProvider.on('connect', (data) => {
+      externalProvider.on('connect', (data: any) => {
         // console.log('RPC Connected');
         // if (error) {
         //   throw error;
         // }
 
-        handleConnectedCB(provider, externalProvider.connector.accounts[0]);
+        handleConnectedCB(provider, externalProvider.accounts[0]);
       });
 
-      externalProvider.connector.on('disconnect', (error) => {
+      externalProvider.on('disconnect', (error) => {
         if (error) {
           throw error;
         }
@@ -114,41 +111,37 @@ const WalletConnect: React.FC<Props> = () => {
 
       externalProvider.enable();
 
-// Note: Old WC V1 Handling code      
-//       if (!externalProvider.connector.connected) {
-//         await externalProvider.connector.createSession({
-//           chainId: state.network?.identifiers?.chainId || 1,
-//         });
-//       } else {
-//         const appChange = !externalProvider.connector.peerMeta?.name?.includes(
-//           state.method?.name || ''
-//         );
-//         const chainChange =
-//           state.providerChainId !== state.network?.identifiers?.chainId;
-//         if (appChange || chainChange) {
-//           await localStorage.removeItem('walletconnect');
-//           await externalProvider.connector.killSession();
-//           await externalProvider.onDisconnect();
-//           run();
-//           dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
-//         } else {
-//           handleConnectedCB(provider, externalProvider.connector.accounts[0]);
-//           return;
-//         }
-//       }
+      // NB: externalProvider says its connected when not?
+      // if (!externalProvider.connected) {
+      //   externalProvider.enable();
+      // } else {
+      //   const appChange = !externalProvider.session?.self.metadata.name.includes(
+      //     state.method?.name || ''
+      //   );
+      //   const chainChange =
+      //     state.providerChainId !== state.network?.identifiers?.chainId;
+      //   if (appChange || chainChange) {
+      //     await localStorage.removeItem('walletconnect');
+      //     await externalProvider.disconnect();
+      //     dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
+      //   } else {
+      //     handleConnectedCB(provider, externalProvider.accounts[0]);
+      //     return;
+      //   }
+      // }
 
       if (isMobile) {
         let deeplink =
           state.method?.walletConnect?.mobile?.native + '//wc?uri=';
         if (state.method?.name === 'MetaMask') {
-          deeplink += externalProvider.connector.uri;
-        } else {
-          deeplink += encodeURIComponent(externalProvider.connector.uri);
+          deeplink += externalProvider.session?.self.metadata.url;
+        } else if (externalProvider.session) {
+          deeplink += encodeURIComponent(
+            externalProvider.session.self.metadata.url
+          );
         }
         setDeeplink(deeplink);
       }
-
-      setUri(externalProvider.connector.uri);
     } catch (e: any) {
       dispatch({ payload: e.message, type: 'SET_PROVIDER_ERROR' });
     }
@@ -313,7 +306,9 @@ const WalletConnect: React.FC<Props> = () => {
           </InnerWrapper>
         </div>
       ) : (
-        <LoadingWrapper />
+        <div className="h-full">
+          <LoadingWrapper />
+        </div>
       )}
     </div>
   );
