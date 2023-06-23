@@ -21,7 +21,7 @@ root.render(
               },
             },
             selection: {
-              amount: '1023420000000000000',
+              amount: '102342000000000',
               // BUSD
               assetId: 'da5eb9b1-7e2b-4976-a260-07a3eab89618',
               // 1 min from now

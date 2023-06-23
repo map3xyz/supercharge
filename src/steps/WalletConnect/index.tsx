@@ -58,22 +58,46 @@ const WalletConnect: React.FC<Props> = () => {
       }
       const rpc = `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
 
-      const externalProvider = await new WalletConnectProvider({
-        bridge: 'https://bridge.walletconnect.org',
-        qrcode: false,
-        rpc: { [chainId]: rpc },
+      localStorage.clear();
+      const rpc = `${process.env.CONSOLE_API_URL}/rpcProxy?chainId=${chainId}`;
+
+      const externalProvider = await EthereumProvider.init({
+        chains: [chainId],
+        projectId: '75f2c16d7fce6364075928d3c6462f87',
+        rpcMap: {
+          chainId: rpc,
+        },
+        showQrModal: false,
       });
       externalProvider.updateRpcUrl(chainId, rpc);
       const provider = new ethers.providers.Web3Provider(
         externalProvider,
-        'any'
+        chainId
       );
       externalProvider.enable();
 
-      externalProvider.connector.on('connect', (error) => {
-        if (error) {
-          throw error;
-        }
+      externalProvider.on('message', (e) => {
+        // console.log('message', e);
+      });
+
+      externalProvider.on('session_event', (event) => {
+        // console.log(event);
+      });
+
+      externalProvider.on('session_update', (event) => {
+        // console.log(event);
+      });
+
+      externalProvider.on('display_uri', (uri: string) => {
+        // console.log(uri);
+        setUri(uri);
+      });
+
+      externalProvider.on('connect', (data) => {
+        // console.log('RPC Connected');
+        // if (error) {
+        //   throw error;
+        // }
 
         handleConnectedCB(provider, externalProvider.connector.accounts[0]);
       });
@@ -88,27 +112,30 @@ const WalletConnect: React.FC<Props> = () => {
         dispatch({ payload: Steps.PaymentMethod, type: 'SET_STEP' });
       });
 
-      if (!externalProvider.connector.connected) {
-        await externalProvider.connector.createSession({
-          chainId: state.network?.identifiers?.chainId || 1,
-        });
-      } else {
-        const appChange = !externalProvider.connector.peerMeta?.name?.includes(
-          state.method?.name || ''
-        );
-        const chainChange =
-          state.providerChainId !== state.network?.identifiers?.chainId;
-        if (appChange || chainChange) {
-          await localStorage.removeItem('walletconnect');
-          await externalProvider.connector.killSession();
-          await externalProvider.onDisconnect();
-          run();
-          dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
-        } else {
-          handleConnectedCB(provider, externalProvider.connector.accounts[0]);
-          return;
-        }
-      }
+      externalProvider.enable();
+
+// Note: Old WC V1 Handling code      
+//       if (!externalProvider.connector.connected) {
+//         await externalProvider.connector.createSession({
+//           chainId: state.network?.identifiers?.chainId || 1,
+//         });
+//       } else {
+//         const appChange = !externalProvider.connector.peerMeta?.name?.includes(
+//           state.method?.name || ''
+//         );
+//         const chainChange =
+//           state.providerChainId !== state.network?.identifiers?.chainId;
+//         if (appChange || chainChange) {
+//           await localStorage.removeItem('walletconnect');
+//           await externalProvider.connector.killSession();
+//           await externalProvider.onDisconnect();
+//           run();
+//           dispatch({ payload: Steps.WalletConnect, type: 'SET_STEP' });
+//         } else {
+//           handleConnectedCB(provider, externalProvider.connector.accounts[0]);
+//           return;
+//         }
+//       }
 
       if (isMobile) {
         let deeplink =
